@@ -113,3 +113,59 @@ deployment.apps/kubernetes-bootcamp created
 ```
 
 http => "Readiness probe failed: HTTP probe failed with statuscode: 503"
+
+## 2019-09-17 log
+
+ 4456  export $MINIKUBE_HOME=/run/media/puhl/Data/
+ 4457  export MINIKUBE_HOME=/run/media/puhl/Data/
+ 4458  minikube delete
+ 4459  minikube set cpu 4
+ 4460  minikube config set cpu 4
+ 4461  minikube config set cpus 4
+ 4462  minikube config set disk-size 20g
+ 4463  minikube config set memory 11000
+ 4464  minikube config get logs_dir
+ 4465  minikube config get profile
+ 4466  minikube config view
+ 4467  minikube start
+ 4468  htop
+ 4469  kubectl run kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1 --port=8080
+ 4470  kubectl get pods
+ 4471  minikube dashboard
+ 4472  kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'
+ 4473  export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+ 4474  echo $POD_NAME
+ 4475  curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+ 4476  kubectl proxy
+ 4477  export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+ 4478  curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+ 4479  kubectl get pods
+ 4480  kubectl describe pods
+ 4481  kubectl logs $POD_NAME
+ 4482  kubectl exec $POD_NAME evn
+ 4483  kubectl exec $POD_NAME env
+ 4484  kubectl exec $POD_NAME bash
+ 4485  kubectl exec -ti $POD_NAME bash
+ 4486  kubectl logs $POD_NAME
+ 4487  kubectl get pods
+ 4488  kubectl get services
+ 4489  kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+ 4490  kubectl get services
+ 4491  kubectl describe services/kubernetes-bootcamp
+ 4492  export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+ 4493  echo $NODE_PORT
+ 4494  curl $(minikube ip):$NODE_PORT
+ 4495  kubectl describe deployment
+ 4496  kubectl get pods -l run-kubernetes-bootcamp
+ 4497  kubectl get pods -l run=kubernetes-bootcamp
+ 4498  kubectl get services -l run=kubernetes-bootcamp
+ 4499  export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+ 4500  echo $POD_NAME
+ 4501  kubectl label pod $POD_NAME app=v1
+ 4502  kubectl describe pods $POD_NAME
+ 4503  kubectl get pods -l app=v1
+ 4504  kubectl delete service -l run=kubernetes-bootcamp
+ 4505  kubectl get service
+ 4506  curl $(minikube ip):$NODE_PORT
+ 4507  kubectl exec -ti $POD_NAME curl localhost:8080
+ 4508  kubectl get deployments
