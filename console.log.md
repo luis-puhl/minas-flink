@@ -116,7 +116,6 @@ http => "Readiness probe failed: HTTP probe failed with statuscode: 503"
 
 ## 2019-09-17 log
 
- 4456  export $MINIKUBE_HOME=/run/media/puhl/Data/
  4457  export MINIKUBE_HOME=/run/media/puhl/Data/
  4458  minikube delete
  4459  minikube set cpu 4
@@ -169,3 +168,51 @@ http => "Readiness probe failed: HTTP probe failed with statuscode: 503"
  4506  curl $(minikube ip):$NODE_PORT
  4507  kubectl exec -ti $POD_NAME curl localhost:8080
  4508  kubectl get deployments
+
+## 2019-09-18 log
+
+ 4534  export MINIKUBE_HOME=/run/media/puhl/Data/
+ 4535  clear
+ 4536  minikube start
+ 4537  kubectl get pods
+ 4538  kubectl get deployments
+ 4539  kubectl scale deployments/kubernetes-bootcamp --replicas=4
+ 4540  kubectl get deployments
+ 4541  kubectl get pods -o wide
+ 4542  kubectl describe deployments/kubernetes-bootcamp
+ 4543  kubectl describe services/kubernetes-bootcamp
+ 4544  kubectl get services
+ 4545  kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+ 4546  kubectl get services
+ 4547  kubectl describe services/kubernetes-bootcamp
+ 4548  export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+ 4549  echo $NODE_PORT
+ 4550  curl $(minikube ip):$NODE_PORT
+ 4551  kubectl scale deployments/kubernetes-bootcamp --replicas=2
+ 4552  kubectl get deployments.
+ 4553  kubectl get pods -o wide
+ 4554  minikube stop
+
+## 2019-09-19 log
+
+ 4577  export MINIKUBE_HOME=/run/media/puhl/Data/
+ 4578  minikube start
+ 4582  kubectl get deployments
+ 4583  kubectl get pods
+ 4584  kubectl describe pods
+ 4587  kubectl scale deployments/kubernetes-bootcamp --replicas=4
+ 4590  kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+ 4591  kubectl get pods
+ 4592  kubectl describe services/kubernetes-bootcamp
+ 4593  export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+ 4594  echo $NODE_PORT
+ 4595  curl $(minikube ip):$NODE_PORT
+ 4598* kubectl rollout status
+ 4599* kubectl rollout status deployments/kubernetes-bootcamp
+ 4600* kubectl describe pods
+ 4601* kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v10
+ 4602* kubectl rollout status deployments/kubernetes-bootcamp
+ 4603* kubectl get pods
+ 4604* kubectl rollout undo deployments/kubernetes-bootcamp
+ 4605* kubectl get pods
+ 4606* kubectl describe pods
