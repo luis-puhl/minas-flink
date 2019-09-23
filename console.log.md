@@ -216,3 +216,57 @@ http => "Readiness probe failed: HTTP probe failed with statuscode: 503"
  4604* kubectl rollout undo deployments/kubernetes-bootcamp
  4605* kubectl get pods
  4606* kubectl describe pods
+
+## 2019-09-20 log
+
+: 1568930883:0;curl -sfL https://get.k3s.io | sh -
+: 1568930987:0;kubectl cluster-info
+: 1568931000:0;sudo k3s server &
+: 1568931018:0;sudo k3s kubectl get node\
+
+: 1568931526:0;cat /var/lib/rancher/k3s/server/node-token
+: 1568931529:0;sudo cat /var/lib/rancher/k3s/server/node-token
+: 1568931890:0;export node_token=K10bb726c494ded65a4984869aedcda5a2669a130f30d38f17cd923d9729ba438a4::node:14acf532ca0adbbed73677bd28a8f7a3
+: 1568931956:0;export NOE_TOKEN=K10bb726c494ded65a4984869aedcda5a2669a130f30d38f17cd923d9729ba438a4::node:14acf532ca0adbbed73677bd28a8f7a3
+: 1568931991:0;sudo k3s agent --server https://localhost:6443 --token ${NODE_TOKEN}
+: 1568932020:0;sudo k3s agent --server https://localhost:6443 --token $NODE_TOKEN
+: 1568932026:0;k3s agent --server https://localhost:6443 --token $NODE_TOKEN
+: 1568932261:0;export TOKEN_NODE=/var/lib/rancher/k3s/server/node-token
+: 1568932263:0;sudo k3s agent --server https://localhost:6443 --token ${NODE_TOKEN}
+: 1568932276:0;export NODE_TOKEN=/var/lib/rancher/k3s/server/node-token
+: 1568932279:0;sudo k3s agent --server https://localhost:6443 --token ${NODE_TOKEN}
+: 1568983429:0;yay -Syu
+
+## 2019-09-23 log
+
+: 1569248630:0;cd project/minas-flink
+: 1569248639:0;sudo systemctl start docker
+: 1569248659:0;docker-compose up
+: 1569249178:0;htop
+: 1569249342:0;docker-compose scale taskmanager=4
+: 1569249385:0;docker-compose scale taskmanager=1
+: 1569249868:0;yay -S sbt scala
+: 1569249924:0;sbt --version
+: 1569250002:0;sudo systemctl status
+: 1569250061:0;sbt --help
+: 1569250301:0;yay -R sbt scala
+: 1569250332:0;sdk --version
+: 1569250356:0;sdk upgrade
+: 1569250452:0;sdk install sbt
+: 1569250491:0;sdk list java
+: 1569250540:0;sdk install sbt
+: 1569250549:0;sbt --version
+: 1569250595:0;sbt new tillrohrmann/flink-project.g8
+: 1569250837:0;gst
+: 1569250840:0;git add .
+: 1569250862:0;git commit -m "Testing flink on docker and k8s"
+: 1569250864:0;git push
+: 1569250993:0;exit
+: 1569251470:0;sbt run
+: 1569251488:0;cd flink-project
+: 1569251494:0;sbt run
+: 1569267156:0;history | grep k3s
+: 1569267214:0;sudo k3s stop
+: 1569267317:0;sudo systemctl list
+: 1569267320:0;sudo systemctl show
+: 1569267337:0;sudo systemctl list-units
