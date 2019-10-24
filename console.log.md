@@ -270,3 +270,48 @@ http => "Readiness probe failed: HTTP probe failed with statuscode: 503"
 : 1569267317:0;sudo systemctl list
 : 1569267320:0;sudo systemctl show
 : 1569267337:0;sudo systemctl list-units
+
+## 2019-10-24
+
+4823  cd project/minas-flink
+ 4824  ls
+ 4825  docker-compose up
+ 4826  git clone --branch release-1.9 https://github.com/apache/flink-playgrounds.git
+ 4827  cd flink-playgrounds/operations-playground
+ 4828  docker-compose build
+ 4829  docker-compose up
+ 4830* docker-compose run --no-deps client flink --help
+ 4831* docker-compose exec kafka kafka-console-consumer.sh \\n  --bootstrap-server localhost:9092 --topic input
+ 4832* docker-compose exec kafka kafka-console-consumer.sh \\n  --bootstrap-server localhost:9092 --topic output
+ 4833* htop
+ 4834* docker-compose run --no-deps client flink list
+ 4835* docker-compose exec kafka kafka-console-consumer.sh \\n  --bootstrap-server localhost:9092 --topic output\n
+ 4836* docker-compose kill taskmanager
+ 4837* docker-compose up -d taskmanager
+ 4838* docker-compose kill taskmanager
+ 4839* docker-compose up -d taskmanager
+ 4840* docker-compose run --no-deps client flink list
+ 4841* docker-compose run --no-deps client flink stop d21f77dc2e065a9dd605aa945949091f
+ 4842* savepointpath="/tmp/flink-savepoints-directory/savepoint-d21f77-96c44d4cd923" docker-compose run --no-deps client flink run -s $savepointpath \\n  -d /opt/ClickCountJob.jar \\n  --bootstrap.servers kafka:9092 --checkpointing --event-time
+ 4843* savepointpath="/tmp/flink-savepoints-directory/savepoint-d21f77-96c44d4cd923" echo $savepointpath
+ 4844* savepointpath="/tmp/flink-savepoints-directory/savepoint-d21f77-96c44d4cd923"; echo $savepointpath
+ 4845* savepointpath="/tmp/flink-savepoints-directory/savepoint-d21f77-96c44d4cd923"; docker-compose run --no-deps client flink run -s $savepointpath \\n  -d /opt/ClickCountJob.jar \\n  --bootstrap.servers kafka:9092 --checkpointing --event-time
+ 4846* savepointpath="/tmp/flink-savepoints-directory/savepoint-d21f77-96c44d4cd923"; docker-compose run --no-deps client flink run -p 3 -s $savepointpath \\n  -d /opt/ClickCountJob.jar \\n  --bootstrap.servers kafka:9092 --checkpointing --event-time
+ 4847* docker-compose scale taskmanager=2
+ 4848* docker-compose up --scale taskmanager=1
+ 4849  docker-compose up
+ 4850* curl "localhost:8081/jobs/<jod-id>/metrics?get=lastCheckpointSize"
+ 4851* docker-compose exec kafka kafka-console-consumer.sh \\n  --bootstrap-server localhost:9092 --topic output\n
+ 4852* jobid=""; curl "localhost:8081/jobs/$jodid/metrics?get=lastCheckpointSize"
+ 4853* docker-compose run --no-deps client flink list
+ 4854* jobid="3928d6580bdbde1e7f153096be998276"; curl "localhost:8081/jobs/$jodid/metrics?get=lastCheckpointSize"
+ 4855* jobid="3928d6580bdbde1e7f153096be998276"; curl `localhost:8081/jobs/$jodid/metrics?get=lastCheckpointSize`
+ 4856* jobid="3928d6580bdbde1e7f153096be998276"; echo "localhost:8081/jobs/$jodid/metrics?get=lastCheckpointSize"
+ 4857* jobid="3928d6580bdbde1e7f153096be998276"; curl "localhost:8081/jobs/$jobid/metrics?get=lastCheckpointSize"
+ 4858* jobid="3928d6580bdbde1e7f153096be998276"; echo "localhost:8081/jobs/$jobid/metrics?get=lastCheckpointSize"
+ 4859* docker-compose kill taskmanager
+ 4860* docker-compose up -d taskmanager
+ 4861* jobid="3928d6580bdbde1e7f153096be998276"; echo "localhost:8081/jobs/$jobid/metrics?get=lastCheckpointSize"
+ 4862* jobid="3928d6580bdbde1e7f153096be998276"; curl "localhost:8081/jobs/$jobid/metrics?get=lastCheckpointSize"
+ 4863* jobid="3928d6580bdbde1e7f153096be998276"; curl "localhost:8081/jobs/$jobid"
+ 4864* exit
