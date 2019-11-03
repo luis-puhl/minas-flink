@@ -315,3 +315,14 @@ http => "Readiness probe failed: HTTP probe failed with statuscode: 503"
  4862* jobid="3928d6580bdbde1e7f153096be998276"; curl "localhost:8081/jobs/$jobid/metrics?get=lastCheckpointSize"
  4863* jobid="3928d6580bdbde1e7f153096be998276"; curl "localhost:8081/jobs/$jobid"
  4864* exit
+
+mvn archetype:generate \
+    -DarchetypeGroupId=org.apache.flink \
+    -DarchetypeArtifactId=flink-walkthrough-datastream-sacala \
+    -DarchetypeCatalog=https://repository.apache.org/content/repositories/snapshots/ \
+    -DarchetypeVersion=1.10-SNAPSHOT \
+    -DgroupId=frauddetection \
+    -DartifactId=frauddetection \
+    -Dversion=0.1 \
+    -Dpackage=spendreport \
+    -DinteractiveMode=false
