@@ -1,12 +1,8 @@
-###############################################################################
 # Build Click Count Job
-###############################################################################
-
 FROM maven:3.6-jdk-8-slim AS builder
 
-# Get Click Count job and compile it
-COPY ./java/flink-playground-clickcountjob /opt/flink-playground-clickcountjob
-WORKDIR /opt/flink-playground-clickcountjob
+COPY ./flink-project /code
+WORKDIR /code
 RUN mvn clean install
 
 

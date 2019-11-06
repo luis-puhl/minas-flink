@@ -1,0 +1,42 @@
+docker run -it --rm --name my-maven-project -v "$(pwd)":/usr/src/mymaven -w /usr/src/mymaven maven:3.3-jdk-8 bash
+
+/usr/src/mymaven# history
+    1  ls
+    2  sbt
+    3  mvn clean install
+    4  curl -s "https://get.sdkman.io" | bash
+    5  apt
+    6  apt update
+    7  apt install zip
+    8  apt install curl wget unzip zip
+    9  curl -s "https://get.sdkman.io" | bash
+   10  ource "$HOME/.sdkman/bin/sdkman-init.sh"
+   11  source "$HOME/.sdkman/bin/sdkman-init.sh"
+   12  sdk list java
+   13  sdk install java 11.0.4.hs-adpt
+   14  sdk install java 11.0.5.hs-adpt
+   15  sdk install sbt
+   16  javac -version
+   17  ls
+   18  cd ..
+   19  ls
+   20  mkdir sbt
+   21  cd sbt/
+   22  cd ../mymaven/
+   23  mkdir sbgt
+   24  cd sbgt/
+   25  ls
+   26  sbt new scala/hello-world.g8
+   27  ls
+   28  sbt new scala/hello-world.g8
+   29  ls
+   30  rm helhellhealksdjfçasdkf/
+   31  rm -rf helhellhealksdjfçasdkf/
+   32  cd helloworld/
+   33  sbt
+   34  cd ../../
+   35  sbt assembly
+   36  mv /usr/src/mymaven/target/scala-2.11/Flink Project-assembly-0.1-SNAPSHOT.jar fat.jar
+   37  cp "/usr/src/mymaven/target/scala-2.11/Flink Project-assembly-0.1-SNAPSHOT.jar" fat.jar
+   38  ls
+   39  history
