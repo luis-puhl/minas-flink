@@ -44,3 +44,42 @@ profiles:
       type: disk
   name: default
 cluster: null
+
+  111  docker-compose exec jobmanager bash
+  112  docker-compose exec taskmanager bash
+  117  cd flink-project/
+  123  docker ps
+  124  docker exec f21 bash
+  125  docker exec-it f21 bash
+  126  docker exec -it f21 bash
+  127  docker exec -it f21 bash -c nc -lp 9000
+  128  docker exec -it f21 bash -c "nc -lp 9000"
+  129  exit
+  130  docker run -it hello-flink:v0 bash
+  131  docker exec -it f21 bash
+  132  docker exec -it f21 tail -f ../log/flink-*-taskexecutor-*.out
+  133  docker exec -it f21 bash -c "tail -f ../log/flink-*-taskexecutor-*.out"
+  134  docker exec -it f21 bash -c "tals ../log/"
+  135  docker exec -it f21 bash -c "ls ../log/"
+  136  docker exec -it f21 bash -c "tail -f ../log/flink-*-taskexecutor-*.out"
+  137  exit
+  138  nc -l 9000
+  139  docker-compose ps
+  140  docker-compose run --it jobmanager bash
+  141  docker-compose exec jobmanager bash
+  142  docker-compose down
+  143  docker build . --tag hello-flink:v0
+  144  docker run hello-flink:v0 bash
+  145  docker run -it hello-flink:v0 bash
+  146  docker ps
+  147  git status
+  148  git add dockerfile 
+  149  tail history 
+  150  history | tail
+  151  history
+  152  exit
+  153  docker
+  154  docker build . --tag flink-wordcount:v0
+  155  docker help build
+  156  docker help run
+  157  docker-compose up

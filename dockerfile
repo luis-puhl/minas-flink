@@ -16,6 +16,7 @@ RUN sbt compile
 COPY ./flink-project /code
 WORKDIR /code
 RUN sbt assembly
+# RUN mv /code/target/*.jar /opt/
 # RUN mvn clean install
 
 # FROM flink:1.9.0-scala_2.11
@@ -23,4 +24,4 @@ RUN sbt assembly
 WORKDIR /opt/flink/bin
 
 # Copy Click Count Job
-COPY --from=sbt /opt/flink-playground-clickcountjob/target/flink-playground-clickcountjob-*.jar /opt/ClickCountJob.jar
+# COPY --from=sbt /opt/flink-playground-clickcountjob/target/flink-playground-clickcountjob-*.jar /opt/ClickCountJob.jar
