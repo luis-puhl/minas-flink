@@ -28,9 +28,6 @@ public class StreamUtil {
             );
             System.exit(1);
         }
-		final String outFile = params.get("output", "output");
-		dataStream.print();
-		dataStream.writeAsText(outFile, FileSystem.WriteMode.OVERWRITE);
 		return dataStream;
 	}
 }

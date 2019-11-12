@@ -16,6 +16,9 @@ public class Ex2Filter {
 			return;
 		}
 		DataStream<String> outStream = dataStream.filter(new FilterValidLength());
+		final String outFile = params.get("output", "output");
+		outStream.print();
+		outStream.writeAsText(outFile, FileSystem.WriteMode.OVERWRITE);
 		env.execute("Example 2: Simple Filter");
 	}
 	public static class FilterValidLength implements FilterFunction<String> {
@@ -26,7 +29,7 @@ public class Ex2Filter {
 				Double.parseDouble(s.trim());
 				return false;
 			} catch (Exception e) {}
-			return s.length() > 3;
+			return s.length() > 4;
 		}
 	}
 }
