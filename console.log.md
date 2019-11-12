@@ -326,3 +326,9 @@ mvn archetype:generate \
     -Dversion=0.1 \
     -Dpackage=spendreport \
     -DinteractiveMode=false
+
+## 2019-11-11
+
+ 5221  mvn clean package
+ 5227  ../flink-1.9.1/bin/start-cluster.sh
+ 5231  ../flink-1.9.1/bin/flink run -c pkg.StreamingEx1 target/minas-flink-0.jar --input README.md --output out
