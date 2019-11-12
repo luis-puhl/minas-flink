@@ -1,11 +1,11 @@
-package pkg;
+package examples;
 
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-public class StreamingEx1 {
+public class Ex1NopePipe {
 
 	public static void main(String[] args) throws Exception {
 		DataStream<String> dataStream = null;
