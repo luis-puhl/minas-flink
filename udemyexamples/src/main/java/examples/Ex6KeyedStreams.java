@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
-public class Ex5Tuples {
+public class Ex6KeyedStreams {
 
 	public static void main(String[] args) throws Exception {
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -18,20 +18,22 @@ public class Ex5Tuples {
 			return;
 		}
 		DataStream<Tuple2<String, Integer>> outStream = dataStream
-				// Extract Areas of Interest
+				// Extract Movie Name
 				.map(s -> s.split(":")[1].trim())
-				// Split Areas of Interest
-				.flatMap(new SplitAreas());
+				// Split Cast Actors
+				.flatMap(new SplitCastActors())
+				.keyBy(0)
+				.sum(1);
 		final String outFile = params.get("output", "output");
 		outStream.print();
 		outStream.writeAsText(outFile, FileSystem.WriteMode.OVERWRITE);
-		env.execute("Example 5: Tuples");
+		env.execute("Example 6: Keyed Streams Sum");
 	}
-	public static class SplitAreas implements FlatMapFunction<String, Tuple2<String, Integer>> {
+	public static class SplitCastActors implements FlatMapFunction<String, Tuple2<String, Integer>> {
 		@Override
 		public void flatMap(String s, Collector<Tuple2<String, Integer>> collector) throws Exception {
-			for (String area: s.split(",")) {
-				collector.collect(new Tuple2<String, Integer>(area.trim(), 1));
+			for (String actor: s.split(",")) {
+				collector.collect(new Tuple2<String, Integer>(actor.trim(), 1));
 			}
 		}
 	}
