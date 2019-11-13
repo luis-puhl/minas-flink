@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Ex10_a_SlidingWindow {
+public class Ex10bSlidingWindow {
     public static final String host = "127.0.0.1";
     public static final int port = 8080;
 
@@ -38,7 +38,7 @@ public class Ex10_a_SlidingWindow {
         outStream.print();
 		outStream.writeAsText(outFile, FileSystem.WriteMode.OVERWRITE);
 		dataStream.writeAsText("random-foods", FileSystem.WriteMode.OVERWRITE);
-        env.execute("Example 9: Non-Keyed Window All");
+        env.execute("Example 10b: Keyed Sliding Window");
         inputThread.join();
     }
 
