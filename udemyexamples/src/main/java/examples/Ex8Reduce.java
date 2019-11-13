@@ -26,7 +26,7 @@ public class Ex8Reduce {
 		final String outFile = params.get("output", "output");
 		outStream.print();
 		outStream.writeAsText(outFile, FileSystem.WriteMode.OVERWRITE);
-		env.execute("Example 7: Keyed Streams Min");
+		env.execute("Example 8: Reduce");
 	}
 	public static class ParseRow implements MapFunction<String, Tuple3<String, Double, Integer>> {
 		@Override
