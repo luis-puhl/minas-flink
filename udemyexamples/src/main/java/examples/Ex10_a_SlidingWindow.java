@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Ex11SlidingWindow {
+public class Ex10_a_SlidingWindow {
     public static final String host = "127.0.0.1";
     public static final int port = 8080;
 
