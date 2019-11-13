@@ -32,7 +32,7 @@ public class Ex10bSlidingWindow {
         DataStream<Tuple2<String, Double>> outStream = dataStream
                 .map(new MapSource())
                 .keyBy(0)
-                .windowAll(SlidingProcessingTimeWindows.of(Time.seconds(5), Time.seconds(1)))
+                .window(SlidingProcessingTimeWindows.of(Time.seconds(5), Time.seconds(1)))
                 .sum(1);
         final String outFile = params.get("output", "output");
         outStream.print();

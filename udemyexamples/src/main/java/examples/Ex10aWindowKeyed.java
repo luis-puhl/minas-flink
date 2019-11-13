@@ -31,7 +31,7 @@ public class Ex10aWindowKeyed {
         DataStream<Tuple2<String, Double>> outStream = dataStream
                 .map(new MapSource())
                 .keyBy(0)
-                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(1)))
+                .window(TumblingProcessingTimeWindows.of(Time.seconds(1)))
                 .sum(1);
         final String outFile = params.get("output", "output");
         outStream.print();
