@@ -41,7 +41,7 @@ public class Ex14TimeCharacteristic {
         DataStream<SourceEventPOJO> outStream = dataStream
                 .map(s -> SourceEventPOJO.fromString(s))
                 .keyBy("key")
-                .window(TumblingEventTimeWindows.of(Time.seconds(1)))
+                .window(TumblingEventTimeWindows.of(Time.seconds(3)))
                 .sum("value");
         final String outFile = params.get("output", "output");
         outStream.print();
