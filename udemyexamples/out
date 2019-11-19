@@ -1,2 +1,2 @@
-{over=2, quick=2, abc=1, lazy=2, 1000=1, junps=2, brown=2, fox=2, the=4, print=1, 245=1, 90=1, dog=2}
-{abr=1, print=1, abc=3}
+[the, quick, brown, fox, junps, over, lazy, dog, 90, 245, 1000, abc]
+[abc, abr]

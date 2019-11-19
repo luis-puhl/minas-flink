@@ -13,12 +13,11 @@ import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 public class Ex17ValueState {
     private static final Logger LOG = LoggerFactory.getLogger(Ex17ValueState.class);
@@ -38,15 +37,17 @@ public class Ex17ValueState {
 
         env.execute("Value State");
     }
+
     public static class WordToTuple implements FlatMapFunction<String, Tuple2<Integer, String>> {
         @Override
         public void flatMap(String value, Collector<Tuple2<Integer, String>> out) throws Exception {
             String[] words = value.trim().toLowerCase().split("\\W");
-            for (String word: words) {
+            for (String word : words) {
                 out.collect(Tuple2.of(1, word));
             }
         }
     }
+
     public static class AllWordCounts extends RichFlatMapFunction<Tuple2<Integer, String>, String> {
         private transient ValueState<Map<String, Integer>> allWordCounts;
 
@@ -73,7 +74,8 @@ public class Ex17ValueState {
         public void open(Configuration parameters) throws Exception {
             ValueStateDescriptor<Map<String, Integer>> descriptor = new ValueStateDescriptor<>(
                     "allWordCounts",
-                    TypeInformation.of(new TypeHint<Map<String, Integer>>() {})
+                    TypeInformation.of(new TypeHint<Map<String, Integer>>() {
+                    })
             );
             allWordCounts = getRuntimeContext().getState(descriptor);
         }
