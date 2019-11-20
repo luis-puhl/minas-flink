@@ -51,7 +51,7 @@ public class Ex27DataSetAPIReduce {
 		final String outFile = params.get("output", "output");
 		outStream.print();
 		outStream.writeAsText(outFile, FileSystem.WriteMode.OVERWRITE);
-		env.execute("Example 8: Reduce");
+		env.execute("Example 27: Data Set API Reduce");
 	}
 	public static class ParseRow implements MapFunction<String, Tuple3<String, Double, Integer>> {
 		@Override
