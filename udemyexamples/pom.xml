@@ -35,6 +35,8 @@ under the License.
 		<scala.binary.version>2.11</scala.binary.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<scala.binary.version>2.11</scala.binary.version>
+		<scala.version>2.11.12</scala.version>
 	</properties>
 
 	<repositories>
@@ -58,20 +60,20 @@ under the License.
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-java</artifactId>
 			<version>${flink.version}</version>
-			<scope>provided</scope>
+<!--			<scope>provided</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
-			<scope>provided</scope>
+<!--			<scope>provided</scope>-->
 		</dependency>
 
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-twitter_2.11</artifactId>
-			<version>1.9.0</version>
+			<version>${flink.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -81,7 +83,30 @@ under the License.
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-gelly_2.11</artifactId>
-			<version>1.9.0</version>
+			<version>${flink.version}</version>
+		</dependency>
+
+		<!-- Apache Flink Scala dependencies -->
+		<!-- These dependencies are provided, because they should not be packaged into the JAR file. -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-scala_${scala.binary.version}</artifactId>
+			<version>${flink.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
+			<version>${flink.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<!-- Scala Library, provided by Flink as well. -->
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+			<!-- <scope>provided</scope> -->
 		</dependency>
 
 		<!-- Example:
@@ -111,18 +136,6 @@ under the License.
 
 	<build>
 		<plugins>
-
-			<!-- Java Compiler -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-
 			<!-- We use the maven-shade plugin to create a fat jar that contains all necessary dependencies. -->
 			<!-- Change the value of <mainClass>...</mainClass> if your program entry point changes. -->
 			<plugin>
@@ -141,8 +154,8 @@ under the License.
 								<excludes>
 									<exclude>org.apache.flink:force-shading</exclude>
 									<exclude>com.google.code.findbugs:jsr305</exclude>
-									<exclude>org.slf4j:*</exclude>
-									<exclude>log4j:*</exclude>
+<!--									<exclude>org.slf4j:*</exclude>-->
+<!--									<exclude>log4j:*</exclude>-->
 								</excludes>
 							</artifactSet>
 							<filters>
@@ -159,13 +172,74 @@ under the License.
 							</filters>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>examples.StreamingJob</mainClass>
+									<mainClass>examples.InProcStreamEnvExample</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Java Compiler -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<!-- Scala Compiler -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>3.2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<!-- Add src/main/scala to eclipse build path -->
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/scala</source>
+							</sources>
+						</configuration>
+					</execution>
+					<!-- Add src/test/scala to eclipse build path -->
+					<execution>
+						<id>add-test-source</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test/scala</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 
 		<pluginManagement>
@@ -238,6 +312,24 @@ under the License.
 					<groupId>org.apache.flink</groupId>
 					<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
 					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-scala_${scala.binary.version}</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
+					<version>${flink.version}</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.scala-lang</groupId>
+					<artifactId>scala-library</artifactId>
+					<version>${scala.version}</version>
 					<scope>compile</scope>
 				</dependency>
 			</dependencies>
