@@ -13,7 +13,8 @@ object InProcStreamEnvExample extends App {
   // val mapper = (a: String, out: Collector[String]) => a.toLowerCase.split("\\W+").filter(p => p.nonEmpty).foreach(f => out.collect(f))
   val splitter = (value: String) => value.toLowerCase.split("\\W+").filter((p: String) => p.nonEmpty)
   // val result: DataStream[String] =  text.flatMap[String]((value: String, out: Collector[String]) => splitter(value).foreach((f: String) => out.collect(f)))
-  val result: DataStream[String] = text.flatMap[String]((v: String, c: Collector[String]) => c.collect(v))
+  // val result: DataStream[String] = text.flatMap[String]((v: String, c: Collector[String]) => c.collect(v))
+  val result: DataStream[String] = text
   result.print()
   env.execute(InProcStreamEnvExample.getClass.getName)
 }
