@@ -1,10 +1,9 @@
 package examples
 
-import org.apache.flink.api.common.io.InputFormat
 import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.streaming.api.scala._
 
-object Ex29ScalaHello {
+object Ex29aScalaHello {
   def main(args: Array[String]) {
     // set up the streaming execution environment
     val env = StreamExecutionEnvironment.getExecutionEnvironment
