@@ -21,10 +21,10 @@ object Ex29bScalaHello extends App {
 
 
 
-
-
-0.0,2.6104176374007026E-7,normal
-"" -> tuple -> trim -> window(1000) -> new Cluster() -> write.csv
+//
+//
+//0.0,2.6104176374007026E-7,normal
+//"" -> tuple -> trim -> window(1000) -> new Cluster() -> write.csv
 
 
 
