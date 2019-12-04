@@ -17,3 +17,29 @@ object Ex29bScalaHello extends App {
 
   env.execute("Flink Streaming Scala API Hello World v2")
 }
+
+
+
+
+
+
+0.0,2.6104176374007026E-7,normal
+"" -> tuple -> trim -> window(1000) -> new Cluster() -> write.csv
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

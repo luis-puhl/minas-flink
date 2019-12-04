@@ -28,9 +28,12 @@ public class Ex4FlatMap {
 	}
 	public static class SplitAreas implements FlatMapFunction<String, String> {
 		@Override
+		// "1,nome,valor"
+		// --- "1" --- "nome" --- "valor" --->
 		public void flatMap(String s, Collector<String> collector) throws Exception {
 			for (String area: s.split(",")) {
 				collector.collect(area.trim());
+				Thread.sleep(1);
 			}
 		}
 	}

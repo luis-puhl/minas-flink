@@ -22,6 +22,7 @@ public class Ex6KeyedStreams {
 				.map(s -> s.split(":")[1].trim())
 				// Split Cast Actors
 				.flatMap(new SplitCastActors())
+				// group by "actor"
 				.keyBy(0)
 				.sum(1);
 		final String outFile = params.get("output", "output");
