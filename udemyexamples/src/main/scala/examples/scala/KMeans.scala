@@ -188,7 +188,7 @@ object KMeans {
     def getCentroidDataSet(params: ParameterTool, env: ExecutionEnvironment): DataSet[Centroid] =
       env.fromCollection(List(
         Centroid(1, -31.85, -44.77), Centroid(2, 35.16, 17.46),
-        Centroid(3, -5.16, 21.93), Centroid(4, -24.06, 6.81),
+        Centroid(3, -5.16, 21.93), Centroid(4, -24.06, 6.81)
       ))
 
     def getPointDataSet(params: ParameterTool, env: ExecutionEnvironment): DataSet[Point] = {
@@ -290,7 +290,7 @@ object KMeans {
 
     def writePoint(coordinates: Seq[Double], buffer: StringBuilder, out: BufferedWriter): Seq[Double] = {
       buffer.setLength(0)
-      coordinates.map[String](FORMAT.format).addString(buffer, DELIMITER.toString)
+      coordinates.map(FORMAT.format).addString(buffer, DELIMITER.toString)
       out.write(buffer.toString())
       out.newLine()
       coordinates
@@ -302,7 +302,7 @@ object KMeans {
       buffer.append(id)
       buffer.append(DELIMITER)
 
-      coordinates.map[String](FORMAT.format).addString(buffer, DELIMITER.toString)
+      coordinates.map(FORMAT.format).addString(buffer, DELIMITER.toString)
       out.write(buffer.toString())
       out.newLine()
       coordinates
