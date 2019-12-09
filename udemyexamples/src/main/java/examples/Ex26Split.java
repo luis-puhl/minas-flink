@@ -4,16 +4,11 @@ import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.IterativeStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Ex26Split {
     public static void main(String[] args) throws Exception {
@@ -25,6 +20,7 @@ public class Ex26Split {
 
         /*
         @deprecated Please use side output instead.
+        //import org.apache.flink.streaming.api.datastream.SplitStream;
         source.split()
         SplitStream<String> split = source.split(new RerouteData());
         select(String s) {
@@ -38,8 +34,10 @@ public class Ex26Split {
         }
         */
 
-        final OutputTag<String> aWordsTag = new OutputTag<String>("A-words"){};
-        final OutputTag<String> aWordsComplementTag = new OutputTag<String>("A-words-complement"){};
+        final OutputTag<String> aWordsTag = new OutputTag<String>("A-words") {
+        };
+        final OutputTag<String> aWordsComplementTag = new OutputTag<String>("A-words-complement") {
+        };
 
         SingleOutputStreamOperator<String> mainDataStream = source
                 .process(new ProcessFunction<String, String>() {

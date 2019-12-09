@@ -6,8 +6,9 @@ flink-1.9.1*
 **/secrets*
 
 *ungraph*
-
 Project1-master*
 audioscrobbler-dataset*
+
+mvn-shennenigans/*
 
 !.gitignore
