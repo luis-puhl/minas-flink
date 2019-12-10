@@ -78,7 +78,7 @@
               </filters>
               <transformers>
                 <transformer>
-                  <mainClass>examples.Ex29bScalaHello</mainClass>
+                  <mainClass>examples.scala.KMeans</mainClass>
                 </transformer>
                 <transformer>
                   <resource>reference.conf</resource>

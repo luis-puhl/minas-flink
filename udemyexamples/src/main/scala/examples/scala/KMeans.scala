@@ -65,7 +65,7 @@ import scala.util.{Random, Try}
  *   KMeans --points <path> --centroids <path> --output <path> --iterations <n>
  * }}}
  * If no parameters are provided, the program is run with default data from
- * KMeansData
+ * [[KMeansData]]
  * and 10 iterations.
  *
  * This example shows how to use:
@@ -84,10 +84,39 @@ object KMeans {
 
     // get input data:
     // read the points and centroids from the provided paths or fall back to default data
-    val points: DataSet[Point] = KMeansData.getPointDataSet(params, env)
-    val centroids: DataSet[Centroid] = KMeansData.getCentroidDataSet(params, env)
+    
+    val points: DataSet[Point] =
+      if (params.has("points"))
+        env.readCsvFile[Point](
+          params.get("points"),
+          fieldDelimiter = " ",
+          includedFields = Array(0, 1))
+      else {
+        println("Executing K-Means example with default points data set.")
+        println("Use --points to specify file input.")
+        // env.fromCollection(KMeansData.POINTS map {
+        //   case Array(x, y) => new Point(x.asInstanceOf[Double], y.asInstanceOf[Double])
+        // })
+        KMeansData.getPointDataSet(params, env)
+      }
+    val centroids: DataSet[Centroid] =
+      if (params.has("centroids"))
+        env.readCsvFile[Centroid](
+          params.get("centroids"),
+          fieldDelimiter = " ",
+          includedFields = Array(0, 1, 2))
+      else {
+        println("Executing K-Means example with default centroid data set.")
+        println("Use --centroids to specify file input.")
+        // env.fromCollection(KMeansData.CENTROIDS map {
+        //   case Array(id, x, y) =>
+        //     new Centroid(id.asInstanceOf[Int], x.asInstanceOf[Double], y.asInstanceOf[Double])
+        // })
+        KMeansData.getCentroidDataSet(params, env)
+      }
+    val iterations = params.getInt("iterations", 10)
 
-    val finalCentroids = centroids.iterate(params.getInt("iterations", 10)) { currentCentroids =>
+    val finalCentroids = centroids.iterate(iterations) { currentCentroids =>
       val newCentroids = points
         .map(new SelectNearestCenter).withBroadcastSet(currentCentroids, "centroids")
         .map { x => (x._1, x._2, 1L) }.withForwardedFields("_1; _2")
@@ -107,56 +136,6 @@ object KMeans {
       println("Printing result to stdout. Use --output to specify output path.")
       clusteredPoints.print()
     }
-  }
-
-  /**
-   * Common trait for operations supported by both points and centroids
-   * Note: case class inheritance is not allowed in Scala
-   */
-  trait Coordinate extends Serializable {
-
-    var x: Double
-    var y: Double
-
-    def add(other: Coordinate): this.type = {
-      x += other.x
-      y += other.y
-      this
-    }
-
-    def div(other: Long): this.type = {
-      x /= other
-      y /= other
-      this
-    }
-
-    def euclideanDistance(other: Coordinate): Double =
-      Math.sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y))
-
-    def clear(): Unit = {
-      x = 0
-      y = 0
-    }
-
-    override def toString: String =
-      s"$x $y"
-
-  }
-
-  /**
-   * A simple two-dimensional point.
-   */
-  case class Point(var x: Double = 0, var y: Double = 0) extends Coordinate
-
-  /**
-   * A simple two-dimensional centroid, basically a point with an ID.
-   */
-  case class Centroid(var id: Int = 0, var x: Double = 0, var y: Double = 0) extends Coordinate {
-    def this(id: Int, p: Point) {
-      this(id, p.x, p.y)
-    }
-
-    override def toString: String = s"$id ${super.toString}"
   }
 
   /** Determines the closest cluster center for a data point. */
@@ -182,131 +161,6 @@ object KMeans {
       (closestCentroidId, p)
     }
 
-  }
-
-  object KMeansData {
-    def getCentroidDataSet(params: ParameterTool, env: ExecutionEnvironment): DataSet[Centroid] =
-      env.fromCollection(List(
-        Centroid(1, -31.85, -44.77), Centroid(2, 35.16, 17.46),
-        Centroid(3, -5.16, 21.93), Centroid(4, -24.06, 6.81)
-      ))
-
-    def getPointDataSet(params: ParameterTool, env: ExecutionEnvironment): DataSet[Point] = {
-      val points = List(
-        (-14.22, -48.01), (-22.78, 37.10), (56.18, -42.99), (35.04, 50.29),
-        (-9.53, -46.26), (-34.35, 48.25), (55.82, -57.49), (21.03, 54.64),
-        (-13.63, -42.26), (-36.57, 32.63), (50.65, -52.40), (24.48, 34.04),
-        (-2.69, -36.02), (-38.80, 36.58), (24.00, -53.74), (32.41, 24.96),
-        (-4.32, -56.92), (-22.68, 29.42), (59.02, -39.56), (24.47, 45.07),
-        (5.23, -41.20), (-23.00, 38.15), (44.55, -51.50), (14.62, 59.06),
-        (7.41, -56.05), (-26.63, 28.97), (47.37, -44.72), (29.07, 51.06),
-        (0.59, -31.89), (-39.09, 20.78), (42.97, -48.98), (34.36, 49.08),
-        (-21.91, -49.01), (-46.68, 46.04), (48.52, -43.67), (30.05, 49.25),
-        (4.03, -43.56), (-37.85, 41.72), (38.24, -48.32), (20.83, 57.85)
-      )
-      val pointsCollection: List[Point] = points.map(x => Point(x._1, x._2))
-      env.fromCollection(pointsCollection)
-    }
-  }
-
-  object KMeansDataGenerator {
-    val CENTERS_FILE: String = "centers"
-    val POINTS_FILE: String = "points"
-    val DEFAULT_SEED: Long = 4650285087650871364L
-    val DEFAULT_VALUE_RANGE: Double = 100.0
-    val RELATIVE_STDDEV: Double = 0.08
-    val DIMENSIONALITY: Int = 2
-    val FORMAT: DecimalFormat = new DecimalFormat("#0.00")
-    val DELIMITER: Char = ' '
-
-    /**
-     * Main method to generate data for the {@link KMeans} example program.
-     *
-     * <p>The generator creates to files:
-     * <ul>
-     * <li><code>&lt; output-path &gt;/points</code> for the data points
-     * <li><code>&lt; output-path &gt;/centers</code> for the cluster centers
-     * </ul>
-     *
-     * @param args
-     * <ol>
-     * <li>Int: Number of data points
-     * <li>Int: Number of cluster centers
-     * <li><b>Optional</b> String: Output path, default value is {tmp.dir}
-     * <li><b>Optional</b> Double: Standard deviation of data points
-     * <li><b>Optional</b> Double: Value range of cluster centers
-     * <li><b>Optional</b> Long: Random seed
-     * </ol>
-     * @throws IOException
-     */
-    def main(args: Array[String]) = {
-      // check parameter count
-      if (args.length < 2)
-        throw new RuntimeException("KMeansDataGenerator -points <num> -k <num clusters> [-output <output-path>] [-stddev <relative stddev>] [-range <centroid range>] [-seed <seed>]")
-      // parse parameters
-      val params: ParameterTool = ParameterTool.fromArgs(args)
-      // set up execution environment
-      val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
-
-      val numDataPoints: Int = params.getInt("points")
-      val k: Int = params.getInt("k")
-      val outDir: String = params.get("output", System.getProperty("java.io.tmpdir"))
-      val stddev: Double = params.getDouble("stddev", RELATIVE_STDDEV)
-      val range: Double = params.getDouble("range", DEFAULT_VALUE_RANGE)
-      val firstSeed: Long = params.getLong("seed", DEFAULT_SEED)
-
-      val absoluteStdDev: Double = stddev * range
-      val random: Random = new Random(firstSeed)
-
-      // the means around which data points are distributed
-      val means = uniformRandomCenters(random, k, DIMENSIONALITY, range);
-
-      // write the points out
-      val buffer: StringBuilder = new StringBuilder()
-      (for {
-        pointsOut <- Try { new BufferedWriter(new FileWriter(new File(outDir + "/" + POINTS_FILE))) }.toOption.toList
-        point <- (0 to numDataPoints)
-          .map(i => means(i % means.size)
-            .map(ci => ci + (random.nextGaussian() * absoluteStdDev)))
-        w <- writePoint(point, buffer, pointsOut)
-      } yield pointsOut).andThen(p => p.close())
-
-      // write the uniformly distributed centers to a file
-      (for {
-        centersOut: BufferedWriter <- Try { new BufferedWriter(new FileWriter(new File(outDir + "/" + CENTERS_FILE))) }.toOption.toList
-        center <- (1 to k)
-          .map(i => (i,
-            (0 to DIMENSIONALITY).map(j => (random.nextDouble() * range) - (range / 2))
-          )).toList
-        w <- writeCenter(center._1, center._2, buffer, centersOut)
-      } yield centersOut).andThen(p => p.close())
-
-      println("Wrote " + numDataPoints + " data points to " + outDir + "/" + POINTS_FILE);
-      println("Wrote " + k + " cluster centers to " + outDir + "/" + CENTERS_FILE);
-    }
-
-    def uniformRandomCenters(rnd: Random, num: Int, dimensionality: Int, range: Double): List[List[Double]] =
-      List.fill(num)(List.fill(dimensionality)(() => (rnd.nextDouble() * range) - (range / 2)).map(_.apply()))
-
-    def writePoint(coordinates: Seq[Double], buffer: StringBuilder, out: BufferedWriter): Seq[Double] = {
-      buffer.setLength(0)
-      coordinates.map(FORMAT.format).addString(buffer, DELIMITER.toString)
-      out.write(buffer.toString())
-      out.newLine()
-      coordinates
-    }
-
-    def writeCenter(id: Long, coordinates: Seq[Double], buffer: StringBuilder, out: BufferedWriter): Seq[Double] = {
-      buffer.setLength(0)
-      // write id
-      buffer.append(id)
-      buffer.append(DELIMITER)
-
-      coordinates.map(FORMAT.format).addString(buffer, DELIMITER.toString)
-      out.write(buffer.toString())
-      out.newLine()
-      coordinates
-    }
   }
 
 }
