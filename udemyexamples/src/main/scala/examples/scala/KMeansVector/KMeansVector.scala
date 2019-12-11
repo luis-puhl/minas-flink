@@ -19,17 +19,20 @@ object KMeansVector extends App {
     // env.readTextFile("./tmpfs/kddcup.data")
     env.readTextFile("./kdd.ics.uci.edu/databases/kddcup99/kddcup.data")
   // val kdd$: DataStream[Kdd.MaybeEntry] = kddString$.map { line => Kdd.fromLine(line) }
-  val words: DataStream[(Int, String)] = kddString$.flatMap { (line, out) => {
+  val words: DataStream[(Int, String, String)] = kddString$.flatMap { (line, out) => {
     val values = line.split(",")
-    Kdd.symbolicIndexes.foreach(i => out.collect( (1, s"${i._2} ${values(i._1)}") ))
+    //    symbolicIndexes.
+    Kdd.symbolicIndexes.foreach((i: (Int, String)) => out.collect( (1, i._2, values(i._1)) ))
   }}
-  val count: DataStream[(Int, String)] = words
-    .keyBy(1)
+  val count: DataStream[(Int, String, String)] = words
+    .keyBy(1, 2)
     .sum(0)
+    .keyBy(1, 2)
+    .reduce(
+      (acc: (Int, String, String), input: (Int, String, String)) =>
+      (input._1 + acc._1, acc._2, acc._3)
+    )
   // count.print()
   count.writeAsText("out", FileSystem.WriteMode.OVERWRITE)
-  count.keyBy(0).reduce(
-    (acc: (Int, String), input: (Int, String)) => (input._1 + acc._1, acc._2)
-  ).print()
   env.execute()
 }
