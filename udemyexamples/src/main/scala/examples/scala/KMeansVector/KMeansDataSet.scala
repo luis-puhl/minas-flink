@@ -25,8 +25,7 @@ object KMeansDataSet extends App {
   //
   val outFilePath = if ( Files.exists(Paths.get("tmpfs")) ) "./tmpfs/out" else "out"
 
-  val kddString$: DataSet[String] =
-    env.readTextFile(filePathInput)
+  val kddString$: DataSet[String] = env.readTextFile(filePathInput)
   val words: DataSet[(String, String)] = kddString$.flatMap { (line, out) => {
     val values = line.split(",")
     symbolicIndexes.foreach((i: (Int, String)) => out.collect( (i._2, values(i._1)) ))

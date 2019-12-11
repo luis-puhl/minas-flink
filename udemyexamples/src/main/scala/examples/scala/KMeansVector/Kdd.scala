@@ -15,6 +15,39 @@ object Kdd {
   type continuous = Double
   type symbolic = String
 
+  val symbolicIndexes = Map[Int, String](
+    2  -> "protocol_type",
+    3  -> "service",
+    4  -> "flag",
+    7  -> "land",
+    12 -> "logged_in",
+    21 -> "is_host_login",
+    22 -> "is_guest_login",
+    42 -> "label"
+  ).map(x => (x._1 - 1 -> x._2))
+  val symbolicDictionaries = Map[String, Set[String]](
+    "label" ->          Set(
+      "buffer_overflow.", "satan.", "loadmodule.", "smurf.", "multihop.",
+      "warezmaster.", "portsweep.", "perl.", "ftp_write.", "warezclient.", "land.", "nmap.", "neptune.",
+      "spy.", "guess_passwd.", "pod.", "normal.", "phf.", "rootkit.", "imap.", "ipsweep.", "teardrop.", "back."
+    ),
+    "service" ->        Set(
+      "ftp", "netbios_ssn", "hostnames", "printer", "finger", "smtp", "harvest", "aol", "name", "whois",
+      "http_8001", "private", "sql_net", "shell", "ftp_data", "auth", "ssh", "telnet", "gopher", "pop_2", "domain",
+      "pm_dump", "supdup", "netbios_dgm", "discard", "nnsp", "X11", "ctf", "red_i", "tim_i", "csnet_ns", "sunrpc",
+      "urh_i", "Z39_50", "tftp_u", "remote_job", "domain_u", "courier", "http_443", "iso_tsap", "efs", "nntp", "link",
+      "daytime", "bgp", "ecr_i", "echo", "mtp", "uucp_path", "eco_i", "pop_3", "http_2784", "klogin", "ntp_u",
+      "netstat", "systat", "ldap", "time", "login", "uucp", "vmnet", "urp_i", "exec", "http", "netbios_ns", "other",
+      "imap4", "rje", "kshell", "IRC"
+    ),
+    "is_guest_login" -> Set("0", "1"),
+    "flag" ->           Set("S1", "RSTR", "REJ", "S0", "RSTOS0", "OTH", "SH", "S3", "SF", "RSTO", "S2"),
+    "land" ->           Set("0", "1"),
+    "protocol_type" ->  Set("tcp", "udp", "icmp"),
+    "logged_in" ->      Set("0", "1"),
+    "is_host_login" ->  Set("0", "1")
+  )
+
   /**
    * stream lines in the form
    * "0,tcp,http,SF,215,45076,0,0,0,0,0,1,
@@ -89,16 +122,6 @@ object Kdd {
      )
   case class ConversionFail(msg: List[String])
   type MaybeEntry = Either[KddEntry, ConversionFail]
-  val symbolicIndexes = Map[Int, String](
-    2  -> "protocol_type",
-    3  -> "service",
-    4  -> "flag",
-    7  -> "land",
-    12 -> "logged_in",
-    21 -> "is_host_login",
-    22 -> "is_guest_login",
-    42 -> "label"
-  ).map(x => (x._1 - 1 -> x._2))
 
   /**
    * stream lines in the form
