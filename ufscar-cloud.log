@@ -83,3 +83,23 @@ cluster: null
   155  docker help build
   156  docker help run
   157  docker-compose up
+
+
+puhl@puhl-host:~/minas-flink/udemyexamples$ time java -cp 'target/udemy-examples-1.0-SNAPSHOT.jar:' examples.scala.KMeansVector.KMeansDataSet
+real	1m26.552s
+user	14m4.338s
+sys	4m36.998s
+
+# using ram-temp-fs
+real	1m27.328s
+user	14m56.892s
+sys	3m50.586s
+#---
+real	1m24.358s
+user	14m54.226s
+sys	4m7.690s
+#---
+real	1m25.824s
+user	13m30.876s
+sys	4m2.530s
+

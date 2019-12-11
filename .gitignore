@@ -1,6 +1,7 @@
 **/target/**
 **/.metals/**
 **/out/**
+**/tmpfs/**
 **/flink-1.9.1*/**
 flink-1.9.1*
 
