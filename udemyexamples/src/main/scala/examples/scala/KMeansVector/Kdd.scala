@@ -1,20 +1,11 @@
 package examples.scala.KMeansVector
 
-import org.apache.flink.api.common.serialization.SimpleStringSchema
-import org.apache.flink.api.scala._
-import org.apache.flink.core.fs.FileSystem
-import org.apache.flink.streaming.api.functions.sink.SocketClientSink
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
-import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
-import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.util.Collector
-
-import scala.util.{Failure, Try}
-
 object Kdd {
   type continuous = Double
   type symbolic = String
 
+  val sampleLine = "0,tcp,http,SF,215,45076,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0.00,0.00,0.00,0.00,1.00,0.00,0.00,0,0,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,normal."
+  lazy val sampleLineList = sampleLine.split(",")
   val symbolicIndexes = Map[Int, String](
     2  -> "protocol_type",
     3  -> "service",
@@ -47,6 +38,14 @@ object Kdd {
     "logged_in" ->      Set("0", "1"),
     "is_host_login" ->  Set("0", "1")
   )
+  val symbolicIndex = symbolicIndexes.keySet
+  val indexMap = symbolicIndexes.mapValues(x => symbolicDictionaries(x).toIndexedSeq)
+  val dimension = 41
+  val magnitude = 4898431
+  val magnitudeOne10th = 494021
+  val classes = 22
+  lazy val dimension_ = sampleLineList.size - 1
+  lazy val classes_ = symbolicDictionaries("label").size
 
   /**
    * stream lines in the form
@@ -130,69 +129,10 @@ object Kdd {
    * @param line
    * @return
    */
-  def fromLine(line: String): MaybeEntry =
-    fromList(line.split(",").toList)
-  private def fromListUnsafe(args: List[String]) =
-    KddEntry(
-      duration =                    args(1).toDouble,
-      protocol_type =               args(2),
-      service =                     args(3),
-      flag =                        args(4),
-      src_bytes =                   args(5).toDouble,
-      dst_bytes =                   args(6).toDouble,
-      land =                        args(7),
-      wrong_fragment =              args(8).toDouble,
-      urgent =                      args(9).toDouble,
-      hot =                         args(10).toDouble,
-      num_failed_logins =           args(11).toDouble,
-      logged_in =                   args(12),
-      num_compromised =             args(13).toDouble,
-      root_shell =                  args(14).toDouble,
-      su_attempted =                args(15).toDouble,
-      num_root =                    args(16).toDouble,
-      num_file_creations =          args(17).toDouble,
-      num_shells =                  args(18).toDouble,
-      num_access_files =            args(19).toDouble,
-      num_outbound_cmds =           args(20).toDouble,
-      is_host_login =               args(21),
-      is_guest_login =              args(22),
-      count =                       args(23).toDouble,
-      srv_count =                   args(24).toDouble,
-      serror_rate =                 args(25).toDouble,
-      srv_serror_rate =             args(26).toDouble,
-      rerror_rate =                 args(27).toDouble,
-      srv_rerror_rate =             args(28).toDouble,
-      same_srv_rate =               args(29).toDouble,
-      diff_srv_rate =               args(30).toDouble,
-      srv_diff_host_rate =          args(31).toDouble,
-      dst_host_count =              args(32).toDouble,
-      dst_host_srv_count =          args(33).toDouble,
-      dst_host_same_srv_rate =      args(34).toDouble,
-      dst_host_diff_srv_rate =      args(35).toDouble,
-      dst_host_same_src_port_rate = args(36).toDouble,
-      dst_host_srv_diff_host_rate = args(37).toDouble,
-      dst_host_serror_rate =        args(38).toDouble,
-      dst_host_srv_serror_rate =    args(39).toDouble,
-      dst_host_rerror_rate =        args(40).toDouble,
-      dst_host_srv_rerror_rate =    args(41).toDouble,
-      label =                       args(42)
-    )
-  def fromList(args: List[String]): MaybeEntry =
-    if (args.length != 42) throw new RuntimeException("Invalid arguments length")
-    else Try {
-      Left[KddEntry, ConversionFail](fromListUnsafe(args))
-    }.getOrElse(
-      Right[KddEntry, ConversionFail](ConversionFail(
-        (for {
-          i <- args.indices if !symbolicIndexes.contains(i) && Try {args(i).toDouble}.isFailure
-        } yield s"args[$i] = '${args(i)}'")
-          .toList
-          /*
-        args.indices
-        .filter(ignore.contains)
-        .map(x => (s"$x => ${args(x)}", Try {args(x).toDouble} ))
-        .filter(x=> x._2.isFailure).map(x => x._1).toList
-           */
-      ))
-    )
+  def fromLine(line: String): Seq[Double] = {
+    val values = line.split(",")
+    for {
+      i <- 0 until values.length
+    } yield if (symbolicIndex.contains(i)) indexMap(i).indexOf(values(i)).toDouble else values(i).toDouble
+  }
 }

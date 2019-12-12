@@ -77,44 +77,30 @@ import scala.util.{Random, Try}
 object KMeans {
 
   def main(args: Array[String]) {
-    // checking input parameters
     val params: ParameterTool = ParameterTool.fromArgs(args)
-    // set up execution environment
     val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
+    //
+    val fieldDelimiter = " "
+    val iterations = params.getInt("iterations", 10)
 
-    // get input data:
-    // read the points and centroids from the provided paths or fall back to default data
-    
-    val points: DataSet[Point] =
+    val points: DataSet[Point] = {
       if (params.has("points"))
-        env.readCsvFile[Point](
-          params.get("points"),
-          fieldDelimiter = " ",
-          includedFields = Array(0, 1))
+        env.readCsvFile[Point](params.get("points"),  fieldDelimiter, includedFields = Array(0, 1))
       else {
         println("Executing K-Means example with default points data set.")
         println("Use --points to specify file input.")
-        // env.fromCollection(KMeansData.POINTS map {
-        //   case Array(x, y) => new Point(x.asInstanceOf[Double], y.asInstanceOf[Double])
-        // })
         KMeansData.getPointDataSet(params, env)
       }
-    val centroids: DataSet[Centroid] =
+    }
+    val centroids: DataSet[Centroid] = {
       if (params.has("centroids"))
-        env.readCsvFile[Centroid](
-          params.get("centroids"),
-          fieldDelimiter = " ",
-          includedFields = Array(0, 1, 2))
+        env.readCsvFile[Centroid](params.get("centroids"), fieldDelimiter, includedFields = Array(0, 1, 2))
       else {
         println("Executing K-Means example with default centroid data set.")
         println("Use --centroids to specify file input.")
-        // env.fromCollection(KMeansData.CENTROIDS map {
-        //   case Array(id, x, y) =>
-        //     new Centroid(id.asInstanceOf[Int], x.asInstanceOf[Double], y.asInstanceOf[Double])
-        // })
         KMeansData.getCentroidDataSet(params, env)
       }
-    val iterations = params.getInt("iterations", 10)
+    }
 
     val finalCentroids = centroids.iterate(iterations) { currentCentroids =>
       val newCentroids = points
