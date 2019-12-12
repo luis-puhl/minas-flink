@@ -1,7 +1,10 @@
 **/target/**
 **/.metals/**
+.idea/
+
 **/out/**
 **/tmpfs/**
+
 **/flink-1.9.1*/**
 flink-1.9.1*
 
@@ -12,5 +15,8 @@ Project1-master*
 audioscrobbler-dataset*
 
 mvn-shennenigans/*
+udemyexamples/kdd.ics.uci.edu/databases
 
-!.gitignore
+**/.idea
+**/target
+**/dependency-reduced-pom.xml

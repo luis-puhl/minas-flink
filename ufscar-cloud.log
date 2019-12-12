@@ -86,32 +86,41 @@ cluster: null
 
 
 puhl@puhl-host:~/minas-flink/udemyexamples$ time java -cp 'target/udemy-examples-1.0-SNAPSHOT.jar:' examples.scala.KMeansVector.KMeansDataSet
-real	1m26.552s
-user	14m4.338s
-sys	4m36.998s
+real    1m26.552s
+user    14m4.338s
+sys    4m36.998s
 
 # using ram-temp-fs
-real	1m27.328s
-user	14m56.892s
-sys	3m50.586s
+real    1m27.328s
+user    14m56.892s
+sys    3m50.586s
 #---
-real	1m24.358s
-user	14m54.226s
-sys	4m7.690s
+real    1m24.358s
+user    14m54.226s
+sys    4m7.690s
 #---
-real	1m25.824s
-user	13m30.876s
-sys	4m2.530s
+real    1m25.824s
+user    13m30.876s
+sys    4m2.530s
 
 
 # Centers from one10th
 ## cloud
-real	0m39.870s 	0m32.963s	0m28.843s
-user	4m39.230s 	5m3.768s	4m20.933s
-sys	5m32.437s 	3m7.262s	2m21.765s
+real    0m39.870s     0m32.963s    0m28.843s
+user    4m39.230s     5m3.768s    4m20.933s
+sys     5m32.437s     3m7.262s    2m21.765s
 ## local
 69.76s user 3.88s system 447% cpu 16.470 total
 73.24s user 4.05s system 456% cpu 16.916 total
 69.62s user 4.06s system 442% cpu 16.657 total
 
+# Training kmeans from one10th
+## cloud
+real    1m36.415s    1m18.697s    1m16.595s
+user    20m19.103s   17m6.909s    16m49.352s
+sys     9m50.067s    5m9.445s     4m1.866s
 
+## local
+748.85s user 8.31s system 696% cpu 1:48.67 total
+758.30s user 9.03s system 414% cpu 3:04.92 total
+854.89s user 11.36s system 422% cpu 3:24.89 total
