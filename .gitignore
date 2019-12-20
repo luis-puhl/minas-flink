@@ -14,7 +14,9 @@ flink-1.9.1*
 Project1-master*
 audioscrobbler-dataset*
 
-mvn-shennenigans/*
+mvn-shennenigans
+datasets
+ref
 udemyexamples/kdd.ics.uci.edu/databases
 
 **/.idea

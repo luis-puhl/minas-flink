@@ -39,3 +39,30 @@ redes 10 Gigabit Ethernet. Acredita-se que a fusão dessas abordagens em uma nov
 implementação seja capaz de tratar uma rede de maior fluxo com nível comparável
 de precisão da análise com o mesmo hardware e maior capacidade de escalonamento
 horizontal com distribuição de carga entre nós na Fog.
+
+
+$ wc -l ../datasets/cassales/KDDTe5Classes_fold1_*
+   48791 ../datasets/cassales/KDDTe5Classes_fold1_ini.csv
+  442800 ../datasets/cassales/KDDTe5Classes_fold1_onl.csv
+  491591 total
+$ wc -l ../datasets/kdd/*
+  4898431 ../datasets/kdd/kddcup.data
+   494021 ../datasets/kdd/kddcup.data_10_percent
+  5392452 total
+$ wc -l ../datasets/cassales/bases/*
+    48791 ../datasets/cassales/bases/KDDTe5Classes_fold1_ini
+        0 ../datasets/cassales/bases/aaa
+    72000 ../datasets/cassales/bases/kyoto_binario_binarized_offline_1class_fold1_ini
+   653457 ../datasets/cassales/bases/kyoto_binario_binarized_offline_1class_fold1_onl
+    72000 ../datasets/cassales/bases/kyoto_binario_offline_1class_fold1_ini
+   653457 ../datasets/cassales/bases/kyoto_binario_offline_1class_fold1_onl
+    72000 ../datasets/cassales/bases/kyoto_multiclasse_binarized_offline_1class_fold1_ini
+   653457 ../datasets/cassales/bases/kyoto_multiclasse_binarized_offline_1class_fold1_onl
+    72000 ../datasets/cassales/bases/kyoto_multiclasse_binarized_offline_2class_fold1_ini
+   653457 ../datasets/cassales/bases/kyoto_multiclasse_binarized_offline_2class_fold1_onl
+    72000 ../datasets/cassales/bases/kyoto_multiclasse_offline_1class_fold1_ini
+   653457 ../datasets/cassales/bases/kyoto_multiclasse_offline_1class_fold1_onl
+    72000 ../datasets/cassales/bases/kyoto_multiclasse_offline_2class_fold1_ini
+   653457 ../datasets/cassales/bases/kyoto_multiclasse_offline_2class_fold1_onl
+        0 ../datasets/cassales/bases/out_
+  4401533 total
