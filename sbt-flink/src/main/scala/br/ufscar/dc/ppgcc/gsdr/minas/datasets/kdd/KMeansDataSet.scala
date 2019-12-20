@@ -1,12 +1,12 @@
-package br.ufscar.dc.ppgcc.gsdr.minas
+package br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd
 
-import java.nio.file.{Paths, Files}
+import java.nio.file.{Files, Paths}
 
 import org.apache.flink.api.scala._
+import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.apache.flink.core.fs.FileSystem
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 
-object KMeansDataSet extends App {
+object KMeansDataSet {
   val env = ExecutionEnvironment.getExecutionEnvironment
   val symbolicIndexes = Map[Int, String](
     2  -> "protocol_type",

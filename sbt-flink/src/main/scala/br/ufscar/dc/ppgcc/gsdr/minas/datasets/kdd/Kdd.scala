@@ -1,4 +1,4 @@
-package br.ufscar.dc.ppgcc.gsdr.minas
+package br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd
 
 object Kdd {
   type continuous = Double
