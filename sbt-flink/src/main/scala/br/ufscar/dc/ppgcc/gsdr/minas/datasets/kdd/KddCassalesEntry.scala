@@ -1,5 +1,12 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd
 
+import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd.KddCassalesEntry.inputFormat
+import org.apache.flink.api.common.io.FileInputFormat
+import org.apache.flink.api.common.typeinfo.BasicTypeInfo
+import org.apache.flink.api.java.io.{CsvInputFormat, PojoCsvInputFormat}
+import org.apache.flink.api.java.typeutils.PojoTypeInfo
+import org.apache.flink.core.fs.Path
+
 /**
  *  0.0,2.6104176374007026E-7,0.0010571300219495107,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
  *  0.015655577299412915,0.015655577299412915,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.03529411764705882,0.03529411764705882,
@@ -16,4 +23,30 @@ case class KddCassalesEntry(
     f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20,
     f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34
   )
+}
+object KddCassalesEntry {
+  def inputFormat(filePath: String): FileInputFormat[KddCassalesEntry] = {
+    val lineDelimiter: String = "\n"
+    val fieldDelimiter: String = ","
+    val quoteCharacter: Character = null
+    val ignoreFirstLine: Boolean = false
+    val ignoreComments: String = null
+    val lenient: Boolean = false
+
+    // val typeInfo: TypeInformation[KddCassalesEntry] = TypeInformation.of[KddCassalesEntry](new TypeHint[KddCassalesEntry])
+    // val typeInfo = implicitly[TypeInformation[KddCassalesEntry]]
+    // val typeInfo: TypeInformation[KddCassalesEntry] = Types.GENERIC(Class[KddCassalesEntry])
+    val typeInfo = BasicTypeInfo.INT_TYPE_INFO
+    val inputFormat = new PojoCsvInputFormat[KddCassalesEntry](
+      new Path(filePath),
+      typeInfo.asInstanceOf[PojoTypeInfo[KddCassalesEntry]]
+    )
+    inputFormat.setDelimiter(lineDelimiter)
+    inputFormat.setFieldDelimiter(fieldDelimiter)
+    inputFormat.setSkipFirstLineAsHeader(ignoreFirstLine)
+    inputFormat.setLenient(lenient)
+    inputFormat.setCommentPrefix(ignoreComments)
+    inputFormat.enableQuotedStringParsing(quoteCharacter)
+    inputFormat
+  }
 }
