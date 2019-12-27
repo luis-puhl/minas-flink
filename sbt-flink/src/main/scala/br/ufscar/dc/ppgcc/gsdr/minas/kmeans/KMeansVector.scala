@@ -1,16 +1,20 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
+import scala.util.Random
 import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd.Kdd.{classes, magnitude, magnitudeOne10th}
 import org.apache.flink.api.common.functions.{RichFilterFunction, RichMapFunction}
 import org.apache.flink.api.scala._
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
+import grizzled.slf4j.Logger
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 object KMeansVector {
+  val LOG = Logger(getClass)
+
   def kmeansIteration(points: DataSet[Point], centroids: DataSet[Cluster], iterations: Int): DataSet[Cluster] = {
     centroids.iterate(iterations)(currentCentroids =>
       points
@@ -55,7 +59,7 @@ object KMeansVector {
           .reduceGroup(sameCluster => {
             val seq = sameCluster.toIndexedSeq
             val cl = seq.head._2
-            assert(seq.head._1 == cl.id)
+            assert(seq.head._1 == cl.id, "Cluster id mismatch")
             val points = seq.map(x => x._3)
             val newCenter: Point = points.reduce((a, b) => a.add(b)).div(seq.size.toLong)
             val variance = points.map(p => newCenter.euclideanDistance(p)).max
@@ -64,63 +68,76 @@ object KMeansVector {
       c
     })
   }
-  // def kmeansIteration(points: DataSet[Point], centroids: Seq[Cluster], iterations: Int): DataSet[Cluster] = {
-  //   points.iterate(iterations)((points: DataSet[Point]) => {
-  //     points.map(new RichMapFunction[Point, (Long, Cluster, mutable.IndexedSeq[Point], Long)] {
-  //       private var centroids: Traversable[Cluster] = null
+  def kmeansIteration(points: Seq[Point], centroids: Seq[Cluster], iterations: Int): Seq[Cluster] = {
+    val k = centroids.map(c => c.id).toSet.size
+    var currentCentroids: Seq[Cluster] = centroids
+    var currentVariance: Double = points
+      .map(p => centroids.map(c => p.euclideanDistance(c.center)).min).sum
+    LOG.info(s"k = $k")
+    for {i <- 0 to iterations} {
+      val a = points
+        .map(p => currentCentroids.map(c => (c.id, c, p, p.euclideanDistance(c.center))).minBy(t => t._4))
+      LOG.info(s"A size k = $k == ${a.size}??")
+      val b = a
+        .groupBy(d => d._1)
+      // assert(b.keySet.size == k, s"[Iter $i] Result centroids size is not k. Expected $k, got ${b.keySet.size}.")
+      val c = b
+        .values
+        .map((sameCluster: Seq[(Long, Cluster, Point, Double)]) => {
+          val cl = sameCluster.head._2
+          assert(sameCluster.head._1 == cl.id, "Cluster id mismatch")
+          val points = sameCluster.map(x => x._3)
+          val newCenter: Point = points.reduce((a, b) => a.add(b)).div(sameCluster.size.toLong)
+          val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
+          Cluster(cl.id, newCenter, variance)
+        })
+        .toIndexedSeq
+      // val variance = c.map(c => c.variance).sum
+      currentCentroids = c
+    }
+    // assert(currentCentroids.size == k, s"Result centroids size is not k. Expected $k, got ${currentCentroids.size}.")
+    currentCentroids
+  }
+  def kmeansIterationRec(points: Seq[Point], centroids: Seq[Cluster], iterations: Int, varianceThreshold: Double): (Seq[Cluster], Double) = {
+    assert(varianceThreshold < 1, "Variance threshold is in percent between iterations and must be less than 1.")
+    @scala.annotation.tailrec
+    def iterate(currentCentroids: Seq[Cluster], prevVariance: Double, i: Int): (Seq[Cluster], Double) = {
+      val nearest = points.map(p => currentCentroids
+        .map(c => (c.id, c, p, p.euclideanDistance(c.center)))
+        .minBy(t => t._4))
+      val newCentroids = nearest
+        .groupBy(d => d._1)
+        .values
+        .map((sameCluster: Seq[(Long, Cluster, Point, Double)]) => {
+          val cl = sameCluster.head._2
+          assert(sameCluster.head._1 == cl.id, "Cluster id mismatch")
+          val points = sameCluster.map(x => x._3)
+          val newCenter: Point = points.reduce((a, b) => a.add(b)).div(sameCluster.size.toLong)
+          val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
+          Cluster(cl.id, newCenter, variance)
+        })
+        .toIndexedSeq
+      val variance = newCentroids.map(c => c.variance).sum
+      val varianceProgress = variance / prevVariance
+      LOG.info(s"Iter $i, var $prevVariance -> $variance ($varianceProgress improvement, $varianceThreshold goal).")
+      if (varianceProgress < (1.0 - varianceThreshold) || i <= 0) (newCentroids, variance)
+      else iterate(newCentroids, variance, i - 1)
+    }
 
-  //       override def open(parameters: Configuration): Unit = {
-  //         this.centroids = getRuntimeContext.getBroadcastVariable[Cluster]("centroids").asScala
-  //       }
+    val k = centroids.map(c => c.id).toSet.size
+    val currentVariance: Double = points
+      .map(p => centroids.map(c => p.euclideanDistance(c.center)).min).sum
+    iterate(centroids, currentVariance, iterations)
+  }
 
-  //       def map(p: Point): (Long, Cluster, mutable.IndexedSeq[Point], Long) = {
-  //         val minDistance: (Double, Cluster) = centroids.map(c => (p.euclideanDistance(c.center), c)).minBy(_._1)
-  //         (minDistance._2.id, minDistance._2, mutable.IndexedSeq(p), 1L)
-  //       }
-  //     })
-  //       .withBroadcastSet(centroids, "centroids")
-  //     val a: DataSet[(Cluster, Point, Double)] = currentCentroids
-  //       .flatMap(c => points.map(p => (c, p, c.center.euclideanDistance(p))))
-  //     val b: DataSet[(Long, Cluster, Point, Double)] = a.groupBy(d => d._2.hashCode())
-  //       .reduceGroup(samePoint => {
-  //         val seq = samePoint.toIndexedSeq
-  //         val p: Point = seq.head._2
-  //         val nearest: (Cluster, Point, Double) = seq.minBy(p => p._3)
-  //         (nearest._1.id, nearest._1, p, nearest._3)
-  //       })
-  //     val c: DataSet[Cluster] = b.groupBy(0)
-  //       .reduceGroup(sameCluster => {
-  //         val seq = sameCluster.toIndexedSeq
-  //         val cl = seq.head._2
-  //         assert(seq.head._1 == cl.id)
-  //         val points = seq.map(x => x._3)
-  //         val newCenter: Point = points.reduce((a, b) => a.add(b)).div(seq.size.toLong)
-  //         val variance = points.map(p => newCenter.euclideanDistance(p)).max
-  //         Cluster(cl.id, cl.label, newCenter, variance)
-  //       })
-  //     c
-  //   })
-  // }
-
-//  def kmeanspp(k: Int, dataSet: DataSet[Point]): DataSet[Point] = {
-//    // val count = dataSet.count()
-//    val f: Point = dataSet.first(1).collect().head
-//    val seed: DataSet[(Double, Point)] = dataSet.first(1)
-//      .map((x: Point) => (x.euclideanDistance(f), x))
-//    seed.iterate(k)((solution: DataSet[(Double, Point)]) => dataSet
-//        .filter(new RichFilterFunction[Point] {
-//          var chosenOnes: Traversable[(Double, Point)] = null
-//          override def open(parameters: Configuration): Unit = {
-//            chosenOnes = getRuntimeContext.getBroadcastVariable[(Double, Point)]("chosenOnes").asScala
-//            super.open(parameters)
-//          }
-//          override def filter(value: Point): Boolean = !chosenOnes.exists(p => p._2 == value)
-//        }).withBroadcastSet(solution, "chosenOnes")
-//      .map((x: Point) => (Math.random() * x.euclideanDistance(f), x))
-//      .max(0).first(1)
-//      .union(solution)
-//      ).map(x => x._2)
-//  }
+  /**
+   * Kmeans++ initialization algorith
+   *
+   * @param k
+   * @param dataSet
+   * @param seedFunction
+   * @return
+   */
   def kmeanspp(k: Int, dataSet: Seq[Point], seedFunction: () => Double = () => Math.random()): Seq[Cluster] = {
     @scala.annotation.tailrec
     def reduction(i: Int, points: Seq[Point], latest: Point, workSet: Seq[Cluster]): Seq[Cluster] = {
@@ -132,7 +149,10 @@ object KMeansVector {
     }
     val first = dataSet.head
     val workSet = IndexedSeq(Cluster(k, first, 0))
-    reduction(k-1, dataSet.tail, first, workSet)
+    val centers = reduction(k-1, dataSet.tail, first, workSet)
+    val actualK = centers.map(c => c.id).toSet.size
+    assert(actualK == k, s"Didn't get k = $k clusters. Got $actualK.")
+    centers
   }
   def kmeansInitByFarthest(k: Int, dataSet: Seq[Point]): Seq[Cluster] = {
     @scala.annotation.tailrec
@@ -144,6 +164,58 @@ object KMeansVector {
       }
     }
     val workSet = IndexedSeq(Cluster(k, dataSet.head, 0))
-    reduction(k-1, dataSet.tail, workSet)
+    val centers = reduction(k-1, dataSet.tail, workSet)
+    val actualK = centers.map(c => c.id).toSet.size
+    assert(actualK == k, s"Didn't get k = $k clusters. Got $actualK.")
+    centers
+  }
+  def byZeroDistance(k: Int, dataSet: Seq[Point]): Seq[Cluster] = {
+    val withOriginDistances: Seq[(Point, Double)] = dataSet.map(p => (p, p.fromOrigin)).sortBy(p => p._2)
+    val max = withOriginDistances.maxBy(x => x._2)._2
+    val min = withOriginDistances.minBy(x => x._2)._2
+    val sliceSize = (max - min) / k
+    val rangeInclusive = min.to(max, sliceSize)
+    LOG.info(s"rangeInclusive $rangeInclusive")
+    val centers = (0 until k)
+      .map(i => {
+        val slice = withOriginDistances.filter(p => {
+          rangeInclusive(i) <= p._2 && rangeInclusive(i+1) >= p._2
+        })
+      val limit = slice.size
+        if (limit == 0)
+      assert(limit > 0, s"wow, $limit")
+      val center = slice(Random.nextInt(limit))._1
+      (i, center)
+    })
+    val clusters = dataSet.map(p => centers
+      .map(c => (c._1, c, c._2.euclideanDistance(p))).minBy(d => d._3))
+      .groupBy(d => d._1).values
+      .map(dset => {
+        val far = dset.reduce((a, b) => (a._1, a._2, a._3.max(b._3)))
+        Cluster(far._1, far._2._2, far._3)
+      })
+      .toIndexedSeq
+    val actualK = clusters.map(c => c.id).toSet.size
+    assert(actualK == k, s"Didn't get k = $k clusters. Got $actualK.")
+    clusters
+  }
+  //
+  def kmeans(labelName: String, k: Int, points: Seq[Point]): Seq[Cluster] = {
+    def initialization(methodName: String, method: => Seq[Cluster]): (String, (Seq[Cluster], Double)) = {
+      LOG.info(s"[$labelName] Running $methodName.")
+      (methodName, kmeansIterationRec(points, method, 10, 0.00001))
+    }
+
+    val tries = mutable.IndexedSeq[(String, (Seq[Cluster], Double))](
+      initialization("kmeansInitByFarthest", kmeansInitByFarthest(k, points)),
+      initialization("kmeanspp [1]", kmeanspp(k, points)),
+      initialization("kmeanspp [2]", kmeanspp(k, points)),
+      initialization("kmeanspp [3]", kmeanspp(k, points)),
+      initialization("byZeroDistance [1]", byZeroDistance(k, points)),
+      initialization("byZeroDistance [2]", byZeroDistance(k, points)),
+      initialization("byZeroDistance [3]", byZeroDistance(k, points)))
+    val best = tries.minBy(t => t._2._2)
+    LOG.info(s"Got best result with ${best._1} algorithm with ${best._2._2} variance.")
+    best._2._1
   }
 }

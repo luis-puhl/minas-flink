@@ -3,11 +3,13 @@ package br.ufscar.dc.ppgcc.gsdr.minas
 import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector
+import grizzled.slf4j.Logger
 import org.apache.flink.api.scala._
 import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 
 object MinasKddCassales extends App {
+  val LOG = Logger(getClass)
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
   val setEnv = ExecutionEnvironment.getExecutionEnvironment
 
@@ -22,32 +24,37 @@ object MinasKddCassales extends App {
   val indexedTrainingSet: DataSet[(Long, KddCassalesEntry)] =
     org.apache.flink.api.scala.utils.DataSetUtils(trainingSet).zipWithUniqueId.rebalance()
 
-  val seedClusters = indexedTrainingSet
-    .groupBy(x => x._2.label)
-    .reduceGroup((all: Iterator[(Long, KddCassalesEntry)]) => {
-      val allVector: Vector[(Long, KddCassalesEntry)] = all.toVector
-      val label: String = allVector.head._2.label
-      val points: Seq[Point] = allVector.map(k => Point(k._2.value))
-      val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
-      (label, points, seedPoints)
-    })
-  seedClusters.writeAsText(outFilePath + "/seedClusters", FileSystem.WriteMode.OVERWRITE)
+//  val seedClusters = indexedTrainingSet
+//    .groupBy(x => x._2.label)
+//    .reduceGroup((all: Iterator[(Long, KddCassalesEntry)]) => {
+//      val allVector: Vector[(Long, KddCassalesEntry)] = all.toVector
+//      val label: String = allVector.head._2.label
+//      val points: Seq[Point] = allVector.map(k => Point(k._2.value))
+//      val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
+//      (label, seedPoints)
+//    })
+//  seedClusters.writeAsText(outFilePath + "/seedClusters", FileSystem.WriteMode.OVERWRITE)
 
   // val points = seedClusters.flatMap(x => x._2.map(p => (x._1, p)))
-  val clusters: DataSet[(String, DataSet[Cluster])] = indexedTrainingSet
+  val clusters: DataSet[(String, Seq[Cluster])] = indexedTrainingSet
     .groupBy(x => x._2.label)
     .reduceGroup((all: Iterator[(Long, KddCassalesEntry)]) => {
       val allVector: Vector[(Long, KddCassalesEntry)] = all.toVector
       val label: String = allVector.head._2.label
+      val dataPoints = allVector.size
+      LOG.info(s"Label '$label' contains $dataPoints data points.")
       val points: Seq[Point] = allVector.map(k => Point(k._2.value))
-      val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
+      // val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
       //
-      val pointsDS: DataSet[Point] = setEnv.fromCollection(points)
-      val centroids: DataSet[Cluster] = setEnv.fromCollection(seedPoints)
       val iterations: Int = 10
-      (label, KMeansVector.kmeansIteration(pointsDS, centroids, iterations))
+      // val pointsDS: DataSet[Point] = setEnv.fromCollection(points)
+      // val centroids: DataSet[Cluster] = setEnv.fromCollection(seedPoints)
+      // val centroidsKmeans = KMeansVector.kmeansIteration(pointsDS, centroids, iterations).collect()
+      // val centroidsKmeans = KMeansVector.kmeansIteration(points, seedPoints, iterations)
+      val centroidsKmeans = KMeansVector.kmeans(label, 100, points)
+      (label, centroidsKmeans)
     })
-  clusters.flatMap(p => p._2.collect().map(c => (p._1, c)))
+  clusters
     .writeAsText(outFilePath + "/clusters", FileSystem.WriteMode.OVERWRITE)
 
 //  indexedTrainingSet.groupBy()
