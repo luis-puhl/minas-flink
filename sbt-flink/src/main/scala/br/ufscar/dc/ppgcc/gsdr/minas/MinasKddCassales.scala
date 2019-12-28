@@ -21,8 +21,9 @@ object MinasKddCassales extends App {
   val trainingSet: DataSet[KddCassalesEntry] = setEnv.readCsvFile[KddCassalesEntry](inPathIni)
   trainingSet.writeAsText(outFilePath + "/kdd-ini", FileSystem.WriteMode.OVERWRITE)
 
-  val indexedTrainingSet: DataSet[(Long, KddCassalesEntry)] =
+  val pointsTrainingSet: DataSet[(String, Point)] =
     org.apache.flink.api.scala.utils.DataSetUtils(trainingSet).zipWithUniqueId.rebalance()
+    .map(entry => (entry._2.label, Point(entry._1, entry._2.value)))
 
 //  val seedClusters = indexedTrainingSet
 //    .groupBy(x => x._2.label)
@@ -36,14 +37,14 @@ object MinasKddCassales extends App {
 //  seedClusters.writeAsText(outFilePath + "/seedClusters", FileSystem.WriteMode.OVERWRITE)
 
   // val points = seedClusters.flatMap(x => x._2.map(p => (x._1, p)))
-  val clusters: DataSet[(String, Seq[Cluster])] = indexedTrainingSet
-    .groupBy(x => x._2.label)
-    .reduceGroup((all: Iterator[(Long, KddCassalesEntry)]) => {
-      val allVector: Vector[(Long, KddCassalesEntry)] = all.toVector
-      val label: String = allVector.head._2.label
-      val dataPoints = allVector.size
+  val clusters: DataSet[(String, Seq[Cluster])] = pointsTrainingSet
+    .groupBy(x => x._1)
+    .reduceGroup((all: Iterator[(String, Point)]) => {
+      val allVector: Vector[(String, Point)] = all.toVector
+      val label: String = allVector.head._1
+      val points: Seq[Point] = allVector.map(k => k._2)
+      val dataPoints = points.size
       LOG.info(s"Label '$label' contains $dataPoints data points.")
-      val points: Seq[Point] = allVector.map(k => Point(k._2.value))
       // val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
       //
       val iterations: Int = 10
@@ -83,5 +84,4 @@ object MinasKddCassales extends App {
 //  val trainingStream: DataStream[KddCassalesEntry] = streamEnv
 //    .readFile[KddCassalesEntry](KddCassalesEntry.inputFormat(inPathIni), filePath = inPathIni)
 //  trainingStream.writeAsText(outFilePath + "/stream-kdd-ini", FileSystem.WriteMode.OVERWRITE)
-
 }

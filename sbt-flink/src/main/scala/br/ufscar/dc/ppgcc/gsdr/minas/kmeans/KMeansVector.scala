@@ -1,6 +1,6 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
-import scala.util.Random
+import scala.util.{Random, Try}
 import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd.Kdd.{classes, magnitude, magnitudeOne10th}
 import org.apache.flink.api.common.functions.{RichFilterFunction, RichMapFunction}
 import org.apache.flink.api.scala._
@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import grizzled.slf4j.Logger
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
+import scala.collection.{immutable, mutable}
 
 object KMeansVector {
   val LOG = Logger(getClass)
@@ -118,9 +118,9 @@ object KMeansVector {
         })
         .toIndexedSeq
       val variance = newCentroids.map(c => c.variance).sum
-      val varianceProgress = variance / prevVariance
+      val varianceProgress = prevVariance / variance - 1.0
       LOG.info(s"Iter $i, var $prevVariance -> $variance ($varianceProgress improvement, $varianceThreshold goal).")
-      if (varianceProgress < (1.0 - varianceThreshold) || i <= 0) (newCentroids, variance)
+      if (varianceThreshold > varianceProgress || i <= 0) (newCentroids, variance)
       else iterate(newCentroids, variance, i - 1)
     }
 
@@ -169,31 +169,39 @@ object KMeansVector {
     assert(actualK == k, s"Didn't get k = $k clusters. Got $actualK.")
     centers
   }
+  /**
+   * val distances = pointsTrainingSet.map(p => (1, p._2.fromOrigin))
+   * val dSum = distances.reduce((a, b) => (a._1 + b._1, a._2 + b._2)).collect().head
+   * val avg = dSum._2 / dSum._1
+   * val variance = distances.map(p => math.pow(p._2 - avg, 2)).reduce(_+_)
+   * .map(x => (dSum, avg, x, math.sqrt(x)))
+   * .collect()
+   * println(variance)
+   * // Buffer(((48791, 97411.4263331826), 1.9965039932197044, 7106.52509237684, 84.30020813958195))
+   *            count, sum,                 avg                 var,              std-dev
+   */
   def byZeroDistance(k: Int, dataSet: Seq[Point]): Seq[Cluster] = {
-    val withOriginDistances: Seq[(Point, Double)] = dataSet.map(p => (p, p.fromOrigin)).sortBy(p => p._2)
-    val max = withOriginDistances.maxBy(x => x._2)._2
-    val min = withOriginDistances.minBy(x => x._2)._2
-    val sliceSize = (max - min) / k
-    val rangeInclusive = min.to(max, sliceSize)
-    LOG.info(s"rangeInclusive $rangeInclusive")
-    val centers = (0 until k)
-      .map(i => {
-        val slice = withOriginDistances.filter(p => {
-          rangeInclusive(i) <= p._2 && rangeInclusive(i+1) >= p._2
-        })
-      val limit = slice.size
-        if (limit == 0)
-      assert(limit > 0, s"wow, $limit")
-      val center = slice(Random.nextInt(limit))._1
-      (i, center)
-    })
-    val clusters = dataSet.map(p => centers
-      .map(c => (c._1, c, c._2.euclideanDistance(p))).minBy(d => d._3))
+    assert(dataSet.size > k, s"Dataset contains less than k. Expected $k, got ${dataSet.size}")
+    val centers: Seq[(Point, Double)] = dataSet
+      .map(p => (p, p.fromOrigin))
+      .sortBy(p => p._2)
+      .grouped(dataSet.size / k)
+      // .sliding(dataSet.size / k)
+      .map(slice => slice(Random.nextInt(slice.size)))
+      .take(k)
+      .toIndexedSeq
+    val actualKCenters = centers.map(c => c._1.id).toSet.size
+    assert(actualKCenters == k, s"Didn't get k = $k clusters. Got $actualKCenters.")
+    val clusters = dataSet
+      .map(p => centers
+        .map(c => (c._1.id, c._1, c._1.euclideanDistance(p)))
+        .minBy(d => d._3)
+      )
       .groupBy(d => d._1).values
-      .map(dset => {
-        val far = dset.reduce((a, b) => (a._1, a._2, a._3.max(b._3)))
-        Cluster(far._1, far._2._2, far._3)
-      })
+      .map(dset =>
+        dset.reduce((a, b) => (a._1, a._2, a._3.max(b._3))) match {
+          case (id: Long, p: Point, d: Double) => Cluster(id, p, d)
+        })
       .toIndexedSeq
     val actualK = clusters.map(c => c.id).toSet.size
     assert(actualK == k, s"Didn't get k = $k clusters. Got $actualK.")
@@ -203,19 +211,27 @@ object KMeansVector {
   def kmeans(labelName: String, k: Int, points: Seq[Point]): Seq[Cluster] = {
     def initialization(methodName: String, method: => Seq[Cluster]): (String, (Seq[Cluster], Double)) = {
       LOG.info(s"[$labelName] Running $methodName.")
-      (methodName, kmeansIterationRec(points, method, 10, 0.00001))
+      try {
+        (methodName, kmeansIterationRec(points, method, 10, 0.00001))
+      } catch {
+        case e: Exception => {
+          LOG.info(e.getMessage)
+          (s"$methodName (${e.getMessage})", (Seq[Cluster](), Double.MaxValue))
+        }
+      }
     }
 
     val tries = mutable.IndexedSeq[(String, (Seq[Cluster], Double))](
       initialization("kmeansInitByFarthest", kmeansInitByFarthest(k, points)),
       initialization("kmeanspp [1]", kmeanspp(k, points)),
       initialization("kmeanspp [2]", kmeanspp(k, points)),
-      initialization("kmeanspp [3]", kmeanspp(k, points)),
-      initialization("byZeroDistance [1]", byZeroDistance(k, points)),
-      initialization("byZeroDistance [2]", byZeroDistance(k, points)),
-      initialization("byZeroDistance [3]", byZeroDistance(k, points)))
+      initialization("kmeanspp [3]", kmeanspp(k, points))
+//      initialization("byZeroDistance [1]", byZeroDistance(k, points)),
+//      initialization("byZeroDistance [2]", byZeroDistance(k, points)),
+//      initialization("byZeroDistance [3]", byZeroDistance(k, points))
+      )
     val best = tries.minBy(t => t._2._2)
-    LOG.info(s"Got best result with ${best._1} algorithm with ${best._2._2} variance.")
+    LOG.info(s"[$labelName] Got best result with ${best._1} algorithm with ${best._2._2} variance.")
     best._2._1
   }
 }

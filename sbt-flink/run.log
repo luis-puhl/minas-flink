@@ -1,0 +1,116 @@
+Exception in thread "main" org.apache.flink.runtime.client.JobExecutionException: Job execution failed.
+	at org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)
+	at org.apache.flink.runtime.minicluster.MiniCluster.executeJobBlocking(MiniCluster.java:626)
+	at org.apache.flink.client.LocalExecutor.executePlan(LocalExecutor.java:222)
+	at org.apache.flink.api.java.LocalEnvironment.execute(LocalEnvironment.java:91)
+	at org.apache.flink.api.scala.ExecutionEnvironment.execute(ExecutionEnvironment.scala:539)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.delayedEndpoint$br$ufscar$dc$ppgcc$gsdr$minas$MinasKddCassales$1(MinasKddCassales.scala:82)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$delayedInit$body.apply(MinasKddCassales.scala:11)
+	at scala.Function0$class.apply$mcV$sp(Function0.scala:34)
+	at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:12)
+	at scala.App$$anonfun$main$1.apply(App.scala:76)
+	at scala.App$$anonfun$main$1.apply(App.scala:76)
+	at scala.collection.immutable.List.foreach(List.scala:392)
+	at scala.collection.generic.TraversableForwarder$class.foreach(TraversableForwarder.scala:35)
+	at scala.App$class.main(App.scala:76)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.main(MinasKddCassales.scala:11)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales.main(MinasKddCassales.scala)
+Caused by: java.lang.AssertionError: assertion failed: Didn't get k = 100 clusters. Got 14.
+	at scala.Predef$.assert(Predef.scala:170)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.byZeroDistance(KMeansVector.scala:207)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$$anonfun$47.apply(KMeansVector.scala:229)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$$anonfun$47.apply(KMeansVector.scala:229)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.initialization$1(KMeansVector.scala:215)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.kmeans(KMeansVector.scala:229)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:55)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:42)
+	at org.apache.flink.api.scala.GroupedDataSet$$anon$3.reduce(GroupedDataSet.scala:355)
+	at org.apache.flink.api.java.operators.translation.PlanUnwrappingReduceGroupOperator$TupleUnwrappingNonCombinableGroupReducer.reduce(PlanUnwrappingReduceGroupOperator.java:111)
+	at org.apache.flink.runtime.operators.GroupReduceDriver.run(GroupReduceDriver.java:131)
+	at org.apache.flink.runtime.operators.BatchTask.run(BatchTask.java:504)
+	at org.apache.flink.runtime.operators.BatchTask.invoke(BatchTask.java:369)
+	at org.apache.flink.runtime.taskmanager.Task.doRun(Task.java:705)
+	at org.apache.flink.runtime.taskmanager.Task.run(Task.java:530)
+	at java.lang.Thread.run(Thread.java:748)
+
+real	7m35.450s
+user	9m8.772s
+sys	0m5.120s
+
+00:51:19,569 INFO  br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$               - Label 'dos' contains 10825 data points.
+00:51:19,571 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [dos] Running kmeansInitByFarthest.
+00:51:19,626 INFO  br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$               - Label 'normal' contains 37966 data points.
+00:51:19,627 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running kmeansInitByFarthest.
+00:51:27,992 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 2132.027735943854 -> 4.225468139653628 (503.56604226546636 improvement, 1.0E-5 goal).
+00:51:28,151 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 4.225468139653628 -> 3.994086738784251 (0.05793099048715389 improvement, 1.0E-5 goal).
+00:51:28,312 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 3.994086738784251 -> 3.988395408624905 (0.0014269723977311521 improvement, 1.0E-5 goal).
+00:51:28,481 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 7, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+00:51:28,481 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [dos] Running kmeanspp [1].
+00:51:36,970 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 1852.121768458693 -> 3.992787564693185 (462.86684451643606 improvement, 1.0E-5 goal).
+00:51:37,138 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 3.992787564693185 -> 3.9934889020626345 (-1.7562021246320114E-4 improvement, 1.0E-5 goal).
+00:51:37,139 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [dos] Running kmeanspp [2].
+00:51:45,333 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 2132.027735943854 -> 4.225468139653628 (503.56604226546636 improvement, 1.0E-5 goal).
+00:51:45,496 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 4.225468139653628 -> 3.994086738784251 (0.05793099048715389 improvement, 1.0E-5 goal).
+00:51:45,657 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 3.994086738784251 -> 3.988395408624905 (0.0014269723977311521 improvement, 1.0E-5 goal).
+00:51:45,814 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 7, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+00:51:45,814 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [dos] Running kmeanspp [3].
+00:51:48,798 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 25029.15763096826 -> 4.037066565633861 (6198.83773466426 improvement, 1.0E-5 goal).
+00:51:49,355 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 4.037066565633861 -> 4.033839031525892 (8.001147499305805E-4 improvement, 1.0E-5 goal).
+00:51:49,927 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+00:51:49,927 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running kmeanspp [1].
+00:51:54,100 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 2132.027735943854 -> 4.225468139653628 (503.56604226546636 improvement, 1.0E-5 goal).
+00:51:54,261 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 4.225468139653628 -> 3.994086738784251 (0.05793099048715389 improvement, 1.0E-5 goal).
+00:51:54,428 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 3.994086738784251 -> 3.988395408624905 (0.0014269723977311521 improvement, 1.0E-5 goal).
+00:51:54,594 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 7, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+00:51:54,595 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [dos] Running byZeroDistance [1].
+00:52:18,382 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 24866.69144054861 -> 4.034221928264502 (6162.937404218639 improvement, 1.0E-5 goal).
+00:52:18,938 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 4.034221928264502 -> 4.033839031525892 (9.49211744984968E-5 improvement, 1.0E-5 goal).
+00:52:19,490 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+00:52:19,490 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running kmeanspp [2].
+00:52:48,222 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 24902.159050458107 -> 4.034221928264502 (6171.729089589492 improvement, 1.0E-5 goal).
+00:52:48,782 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 4.034221928264502 -> 4.033839031525892 (9.49211744984968E-5 improvement, 1.0E-5 goal).
+00:52:49,343 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+00:52:49,343 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running kmeanspp [3].
+00:53:17,516 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 24799.128962676565 -> 3.7514975502345926 (6609.461190658594 improvement, 1.0E-5 goal).
+00:53:18,078 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 3.7514975502345926 -> 4.033839031525892 (-0.06999324442167865 improvement, 1.0E-5 goal).
+00:53:18,078 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running byZeroDistance [1].
+00:54:00,482 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 4401.86063109697 -> 71.70196470462444 (60.39107413904755 improvement, 1.0E-5 goal).
+00:54:14,826 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 71.70196470462444 -> 60.183068665970595 (0.19139761886497153 improvement, 1.0E-5 goal).
+00:54:29,028 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 60.183068665970595 -> 55.965583208330166 (0.07535855459490115 improvement, 1.0E-5 goal).
+00:54:43,326 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 7, var 55.965583208330166 -> 52.77538135899024 (0.06044867449918456 improvement, 1.0E-5 goal).
+00:54:57,665 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 6, var 52.77538135899024 -> 53.872932198031734 (-0.020372955290553052 improvement, 1.0E-5 goal).
+00:54:57,665 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running byZeroDistance [2].
+00:55:39,541 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 4624.850366725467 -> 66.07210386112759 (68.99701986856847 improvement, 1.0E-5 goal).
+00:55:53,681 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 66.07210386112759 -> 53.265752065767224 (0.24042374881984885 improvement, 1.0E-5 goal).
+00:56:07,759 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 53.265752065767224 -> 50.97569262666159 (0.044924537972984346 improvement, 1.0E-5 goal).
+00:56:21,887 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 7, var 50.97569262666159 -> 50.62619085930027 (0.006903576220708585 improvement, 1.0E-5 goal).
+00:56:35,896 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 6, var 50.62619085930027 -> 50.9853724711094 (-0.007044797250675305 improvement, 1.0E-5 goal).
+00:56:35,896 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Running byZeroDistance [3].
+00:57:17,704 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 10, var 4544.763713428407 -> 77.70797623048146 (57.48516373594212 improvement, 1.0E-5 goal).
+00:57:31,886 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 9, var 77.70797623048146 -> 60.87979530557749 (0.27641651619288976 improvement, 1.0E-5 goal).
+00:57:45,918 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 8, var 60.87979530557749 -> 56.94368431828538 (0.06912287173571885 improvement, 1.0E-5 goal).
+00:58:00,051 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 7, var 56.94368431828538 -> 56.176083831087 (0.01366418651585688 improvement, 1.0E-5 goal).
+00:58:14,323 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 6, var 56.176083831087 -> 55.29252739909823 (0.015979671640099058 improvement, 1.0E-5 goal).
+00:58:28,496 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 5, var 55.29252739909823 -> 52.471282773584996 (0.053767403356365095 improvement, 1.0E-5 goal).
+00:58:42,542 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - Iter 4, var 52.471282773584996 -> 53.16842660002081 (-0.013111989032143723 improvement, 1.0E-5 goal).
+00:58:42,543 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [normal] Got best result with kmeansInitByFarthest algorithm with 4.033839031525892 variance.
+
+$ cat tmpfs/out/clusters/*
+(normal,List(
+    Cluster(100,
+        Point(33,Vector(7.19697521077339E-5, 1.3153335259715166E-6, 9.096938594320336E-4, 0.0, 0.0, 0.001476560608913155, 4.841182324305425E-5, 2.40355331586305E-5, 4.034318603587854E-4, 4.034318603587854E-5, 4.19547466730956E-5, 1.3735894293168162E-4, 1.344772867862618E-4, 5.345472149753907E-4, 0.0, 0.019482206128583084, 0.025180306146105374, 0.0010066969688819554, 9.70657056023237E-4, 2.151636588580189E-6, 5.279578279228639E-4, 0.9968448938974211, 0.005521906350017485, 0.12375971598396993, 0.5144541988819589, 0.9011215405717976, 0.9405734111508532, 0.01053199214652641, 0.07220999973105352, 0.021141174255662393, 0.001050267609800702, 3.595922648664605E-4, 0.0027616255614426747, 0.001138753664506065)),
+        2.3669208486943725
+    ),
+    Cluster(99,
+        Point(6699,Vector(0.0, 1.1453245276810346E-8, 4.0226907631246505E-7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0021239732259712664, 0.002956610617373164, 0.0, 0.0, 0.9996305732484077, 0.9738598726114651, 1.0, 0.0, 0.2297324840764331, 0.06578244036468145, 0.8222505307855628, 0.9989171974522293, 9.936305732484076E-4, 0.30315923566879016, 0.15904458598726126, 1.6560509554140127E-4, 8.789808917197456E-4, 0.976624203821656, 0.945630573248408)),
+        1.666918182831519))
+        )
+(dos,List(
+    Cluster(100,
+        Point(30,Vector(0.0, 1.4883707192252697E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9977692662641173, 0.9977589537713211, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.9997892936881303, 0.9974877324354003, 0.9975325480471171, 1.2502583178342636E-4, 0.9975325480471171, 0.0, 7.439553626782394E-5, 0.0, 0.0, 0.0))
+        ,1.6816627144864793), 
+    Cluster(99,
+        Point(3422,Vector(1.4946931740935055E-8, 6.823206984926767E-5, 0.0013941679963327069, 0.09154315605928506, 0.0, 0.05704736995059696, 0.0, 9.517253350270398E-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01994141101520666, 0.020367947013991874, 0.0040104620749782036, 0.004210985178727114, 0.03487358326068005, 0.0731473408892766, 0.9984481255448998, 0.003095030514385353, 0.07495204882301656, 0.830374207224302, 0.7997948612749372, 0.9295117698343504, 0.0037489102005231006, 0.06151700087183961, 7.236268526591107E-4, 0.003487358326068004, 0.002519616390584133, 0.03878814298169121, 0.03878814298169121))
+        ,2.3067326941384256))
+        )
+

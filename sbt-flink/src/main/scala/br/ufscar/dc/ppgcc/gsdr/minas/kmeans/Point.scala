@@ -1,17 +1,17 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
 object Point {
-  val zero = Point(Vector.fill[Double](34)(0.0))
+  val zero = Point(0, Vector.fill[Double](34)(0.0))
 }
-case class Point(value: Vector[Double]) {
-  def div(value: Long): Point = Point(this.value.map(x => x / value))
+case class Point(id: Long, value: Vector[Double]) {
+  def div(value: Long): Point = Point(this.id, this.value.map(x => x / value))
 
   def checkSize[T](other: Point, t: => T): T =
     if (this.value.size != other.value.size) {
       throw new RuntimeException(s"Mismatch dimensions. This is ${this.value.size} and other is ${other.value.size}.")
     } else t
   def add(other: Point): Point =
-    checkSize(other, Point(this.value.zip(other.value).map(x => x._1 + x._2)))
+    checkSize(other, Point(this.id, this.value.zip(other.value).map(x => x._1 + x._2)))
 
   def euclideanDistance(other: Point): Double =
     checkSize(other, Math.sqrt(
