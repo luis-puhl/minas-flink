@@ -77,7 +77,7 @@ object KMeansVector {
     for {i <- 0 to iterations} {
       val a = points
         .map(p => currentCentroids.map(c => (c.id, c, p, p.euclideanDistance(c.center))).minBy(t => t._4))
-      LOG.info(s"A size k = $k == ${a.size}??")
+      LOG.info(s"A size k = $k == ${a.size} ??")
       val b = a
         .groupBy(d => d._1)
       // assert(b.keySet.size == k, s"[Iter $i] Result centroids size is not k. Expected $k, got ${b.keySet.size}.")
@@ -208,11 +208,11 @@ object KMeansVector {
     clusters
   }
   //
-  def kmeans(labelName: String, k: Int, points: Seq[Point]): Seq[Cluster] = {
+  def kmeans(labelName: String, k: Int, points: Seq[Point], iterations: Int, varianceThreshold: Double): (Seq[Cluster], Double) = {
     def initialization(methodName: String, method: => Seq[Cluster]): (String, (Seq[Cluster], Double)) = {
       LOG.info(s"[$labelName] Running $methodName.")
       try {
-        (methodName, kmeansIterationRec(points, method, 10, 0.00001))
+        (methodName, kmeansIterationRec(points, method, iterations, varianceThreshold))
       } catch {
         case e: Exception => {
           LOG.info(e.getMessage)
@@ -226,12 +226,12 @@ object KMeansVector {
       initialization("kmeanspp [1]", kmeanspp(k, points)),
       initialization("kmeanspp [2]", kmeanspp(k, points)),
       initialization("kmeanspp [3]", kmeanspp(k, points))
-//      initialization("byZeroDistance [1]", byZeroDistance(k, points)),
-//      initialization("byZeroDistance [2]", byZeroDistance(k, points)),
-//      initialization("byZeroDistance [3]", byZeroDistance(k, points))
+      // initialization("byZeroDistance [1]", byZeroDistance(k, points)),
+      // initialization("byZeroDistance [2]", byZeroDistance(k, points)),
+      // initialization("byZeroDistance [3]", byZeroDistance(k, points))
       )
     val best = tries.minBy(t => t._2._2)
     LOG.info(s"[$labelName] Got best result with ${best._1} algorithm with ${best._2._2} variance.")
-    best._2._1
+    best._2
   }
 }

@@ -17,6 +17,8 @@ object MinasKddCassales extends App {
   val inPathOnl = "./tmpfs/KDDTe5Classes_fold1_onl.csv"
   val outFilePath = "./tmpfs/out"
   val iterations = 10
+  val k = 100
+  val varianceThreshold = 1.0E-5
 
   val trainingSet: DataSet[KddCassalesEntry] = setEnv.readCsvFile[KddCassalesEntry](inPathIni)
   trainingSet.writeAsText(outFilePath + "/kdd-ini", FileSystem.WriteMode.OVERWRITE)
@@ -25,19 +27,7 @@ object MinasKddCassales extends App {
     org.apache.flink.api.scala.utils.DataSetUtils(trainingSet).zipWithUniqueId.rebalance()
     .map(entry => (entry._2.label, Point(entry._1, entry._2.value)))
 
-//  val seedClusters = indexedTrainingSet
-//    .groupBy(x => x._2.label)
-//    .reduceGroup((all: Iterator[(Long, KddCassalesEntry)]) => {
-//      val allVector: Vector[(Long, KddCassalesEntry)] = all.toVector
-//      val label: String = allVector.head._2.label
-//      val points: Seq[Point] = allVector.map(k => Point(k._2.value))
-//      val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
-//      (label, seedPoints)
-//    })
-//  seedClusters.writeAsText(outFilePath + "/seedClusters", FileSystem.WriteMode.OVERWRITE)
-
-  // val points = seedClusters.flatMap(x => x._2.map(p => (x._1, p)))
-  val clusters: DataSet[(String, Seq[Cluster])] = pointsTrainingSet
+  val clusters = pointsTrainingSet
     .groupBy(x => x._1)
     .reduceGroup((all: Iterator[(String, Point)]) => {
       val allVector: Vector[(String, Point)] = all.toVector
@@ -45,43 +35,10 @@ object MinasKddCassales extends App {
       val points: Seq[Point] = allVector.map(k => k._2)
       val dataPoints = points.size
       LOG.info(s"Label '$label' contains $dataPoints data points.")
-      // val seedPoints: Seq[Cluster] = KMeansVector.kmeansInitByFarthest(k = 100, points)
-      //
-      val iterations: Int = 10
-      // val pointsDS: DataSet[Point] = setEnv.fromCollection(points)
-      // val centroids: DataSet[Cluster] = setEnv.fromCollection(seedPoints)
-      // val centroidsKmeans = KMeansVector.kmeansIteration(pointsDS, centroids, iterations).collect()
-      // val centroidsKmeans = KMeansVector.kmeansIteration(points, seedPoints, iterations)
-      val centroidsKmeans = KMeansVector.kmeans(label, 100, points)
-      (label, centroidsKmeans)
+      val clusters = KMeansVector.kmeans(label, k, points, iterations, varianceThreshold)
+      (label, clusters)
     })
-  clusters
-    .writeAsText(outFilePath + "/clusters", FileSystem.WriteMode.OVERWRITE)
-
-//  indexedTrainingSet.groupBy()
-//  val clusters = KMeansVector.kmeansIteration()
-//    seedClusters
-//    // .rebalance()
-//    // .groupBy(x => x._1)
-//    // .reduceGroup()
-//      KMeansVector.kmeansIteration(all, seedPoints, 10)
-//      val initClusters: Iterable[Cluster] = points
-//        // nearest
-//        .map(p => seedPoints.map(c => (p.euclideanDistance(c._2), c, c._1, p)).minBy(x => x._1))
-//        .groupBy(p => p._3)
-//        .map(item => {
-//          val center = item._2.head._2._2
-//          val variance = item._2.map(s => s._4.euclideanDistance(center)).max
-//          Cluster(item._1.toLong, label, center, variance)
-//        })
-//      val clusterDS = setEnv.fromCollection(initClusters)
-//      kmeansIteration(points, clusterDS, iterations)
-//    })
-//    .writeAsText(outFilePath + "/kmeanspp-classified", FileSystem.WriteMode.OVERWRITE)
+  clusters.writeAsText(outFilePath + "/clusters", FileSystem.WriteMode.OVERWRITE)
 
   setEnv.execute("base centroids")
-
-//  val trainingStream: DataStream[KddCassalesEntry] = streamEnv
-//    .readFile[KddCassalesEntry](KddCassalesEntry.inputFormat(inPathIni), filePath = inPathIni)
-//  trainingStream.writeAsText(outFilePath + "/stream-kdd-ini", FileSystem.WriteMode.OVERWRITE)
 }

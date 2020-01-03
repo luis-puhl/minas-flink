@@ -1,41 +1,41 @@
 Exception in thread "main" org.apache.flink.runtime.client.JobExecutionException: Job execution failed.
-	at org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)
-	at org.apache.flink.runtime.minicluster.MiniCluster.executeJobBlocking(MiniCluster.java:626)
-	at org.apache.flink.client.LocalExecutor.executePlan(LocalExecutor.java:222)
-	at org.apache.flink.api.java.LocalEnvironment.execute(LocalEnvironment.java:91)
-	at org.apache.flink.api.scala.ExecutionEnvironment.execute(ExecutionEnvironment.scala:539)
-	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.delayedEndpoint$br$ufscar$dc$ppgcc$gsdr$minas$MinasKddCassales$1(MinasKddCassales.scala:82)
-	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$delayedInit$body.apply(MinasKddCassales.scala:11)
-	at scala.Function0$class.apply$mcV$sp(Function0.scala:34)
-	at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:12)
-	at scala.App$$anonfun$main$1.apply(App.scala:76)
-	at scala.App$$anonfun$main$1.apply(App.scala:76)
-	at scala.collection.immutable.List.foreach(List.scala:392)
-	at scala.collection.generic.TraversableForwarder$class.foreach(TraversableForwarder.scala:35)
-	at scala.App$class.main(App.scala:76)
-	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.main(MinasKddCassales.scala:11)
-	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales.main(MinasKddCassales.scala)
+    at org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)
+    at org.apache.flink.runtime.minicluster.MiniCluster.executeJobBlocking(MiniCluster.java:626)
+    at org.apache.flink.client.LocalExecutor.executePlan(LocalExecutor.java:222)
+    at org.apache.flink.api.java.LocalEnvironment.execute(LocalEnvironment.java:91)
+    at org.apache.flink.api.scala.ExecutionEnvironment.execute(ExecutionEnvironment.scala:539)
+    at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.delayedEndpoint$br$ufscar$dc$ppgcc$gsdr$minas$MinasKddCassales$1(MinasKddCassales.scala:82)
+    at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$delayedInit$body.apply(MinasKddCassales.scala:11)
+    at scala.Function0$class.apply$mcV$sp(Function0.scala:34)
+    at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:12)
+    at scala.App$$anonfun$main$1.apply(App.scala:76)
+    at scala.App$$anonfun$main$1.apply(App.scala:76)
+    at scala.collection.immutable.List.foreach(List.scala:392)
+    at scala.collection.generic.TraversableForwarder$class.foreach(TraversableForwarder.scala:35)
+    at scala.App$class.main(App.scala:76)
+    at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.main(MinasKddCassales.scala:11)
+    at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales.main(MinasKddCassales.scala)
 Caused by: java.lang.AssertionError: assertion failed: Didn't get k = 100 clusters. Got 14.
-	at scala.Predef$.assert(Predef.scala:170)
-	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.byZeroDistance(KMeansVector.scala:207)
-	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$$anonfun$47.apply(KMeansVector.scala:229)
-	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$$anonfun$47.apply(KMeansVector.scala:229)
-	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.initialization$1(KMeansVector.scala:215)
-	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.kmeans(KMeansVector.scala:229)
-	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:55)
-	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:42)
-	at org.apache.flink.api.scala.GroupedDataSet$$anon$3.reduce(GroupedDataSet.scala:355)
-	at org.apache.flink.api.java.operators.translation.PlanUnwrappingReduceGroupOperator$TupleUnwrappingNonCombinableGroupReducer.reduce(PlanUnwrappingReduceGroupOperator.java:111)
-	at org.apache.flink.runtime.operators.GroupReduceDriver.run(GroupReduceDriver.java:131)
-	at org.apache.flink.runtime.operators.BatchTask.run(BatchTask.java:504)
-	at org.apache.flink.runtime.operators.BatchTask.invoke(BatchTask.java:369)
-	at org.apache.flink.runtime.taskmanager.Task.doRun(Task.java:705)
-	at org.apache.flink.runtime.taskmanager.Task.run(Task.java:530)
-	at java.lang.Thread.run(Thread.java:748)
+    at scala.Predef$.assert(Predef.scala:170)
+    at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.byZeroDistance(KMeansVector.scala:207)
+    at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$$anonfun$47.apply(KMeansVector.scala:229)
+    at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$$anonfun$47.apply(KMeansVector.scala:229)
+    at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.initialization$1(KMeansVector.scala:215)
+    at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.kmeans(KMeansVector.scala:229)
+    at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:55)
+    at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:42)
+    at org.apache.flink.api.scala.GroupedDataSet$$anon$3.reduce(GroupedDataSet.scala:355)
+    at org.apache.flink.api.java.operators.translation.PlanUnwrappingReduceGroupOperator$TupleUnwrappingNonCombinableGroupReducer.reduce(PlanUnwrappingReduceGroupOperator.java:111)
+    at org.apache.flink.runtime.operators.GroupReduceDriver.run(GroupReduceDriver.java:131)
+    at org.apache.flink.runtime.operators.BatchTask.run(BatchTask.java:504)
+    at org.apache.flink.runtime.operators.BatchTask.invoke(BatchTask.java:369)
+    at org.apache.flink.runtime.taskmanager.Task.doRun(Task.java:705)
+    at org.apache.flink.runtime.taskmanager.Task.run(Task.java:530)
+    at java.lang.Thread.run(Thread.java:748)
 
-real	7m35.450s
-user	9m8.772s
-sys	0m5.120s
+real    7m35.450s
+user    9m8.772s
+sys    0m5.120s
 
 00:51:19,569 INFO  br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$               - Label 'dos' contains 10825 data points.
 00:51:19,571 INFO  br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$            - [dos] Running kmeansInitByFarthest.
@@ -114,3 +114,67 @@ $ cat tmpfs/out/clusters/*
         ,2.3067326941384256))
         )
 
+
+$ ./run.sh
+real	1m58.852s
+user	3m18.198s
+sys	0m4.694s
+MinasKddCassales$               - Label 'dos' contains 10825 data points.
+kmeans.KMeansVector$            - [dos] Running kmeansInitByFarthest.
+MinasKddCassales$               - Label 'normal' contains 37966 data points.
+kmeans.KMeansVector$            - [normal] Running kmeansInitByFarthest.
+kmeans.KMeansVector$            - Iter 10, var 2132.0277359438555 -> 4.225468139653628 (503.56604226546665 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 4.225468139653628 -> 3.994086738784251 (0.05793099048715389 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 8, var 3.994086738784251 -> 3.988395408624905 (0.0014269723977311521 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 7, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [dos] Running kmeanspp [1].
+kmeans.KMeansVector$            - Iter 10, var 2127.7515500430272 -> 4.199920896089708 (505.61705367452225 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 4.199920896089708 -> 3.994086738784251 (0.051534723897386 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 8, var 3.994086738784251 -> 3.988395408624905 (0.0014269723977311521 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 7, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [dos] Running kmeanspp [2].
+kmeans.KMeansVector$            - Iter 10, var 1846.5575846402608 -> 3.9955989671898653 (461.1478781537874 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 3.9955989671898653 -> 3.9934889020626345 (5.28376359363536E-4 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 8, var 3.9934889020626345 -> 3.988395408624905 (0.0012770783525410945 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 7, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [dos] Running kmeanspp [3].
+kmeans.KMeansVector$            - Iter 10, var 25125.916469949545 -> 4.037066565633861 (6222.805345157721 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 4.037066565633861 -> 4.033839031525892 (8.001147499305805E-4 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 8, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [normal] Running kmeanspp [1].
+kmeans.KMeansVector$            - Iter 10, var 1875.7979906582868 -> 3.982646962817757 (469.99278649874196 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 3.982646962817757 -> 3.9939818610158087 (-0.002837994410712974 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [dos] Got best result with kmeansInitByFarthest algorithm with 3.988395408624905 variance.
+kmeans.KMeansVector$            - Iter 10, var 24877.815882947623 -> 4.033839031525892 (6166.280272841483 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [normal] Running kmeanspp [2].
+kmeans.KMeansVector$            - Iter 10, var 24931.443278816638 -> 4.034221928264503 (6178.988042834814 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 4.034221928264503 -> 4.033839031525892 (9.492117449871884E-5 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 8, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [normal] Running kmeanspp [3].
+kmeans.KMeansVector$            - Iter 10, var 24938.884288254914 -> 4.033839031525892 (6181.419301650025 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - Iter 9, var 4.033839031525892 -> 4.033839031525892 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [normal] Got best result with kmeansInitByFarthest algorithm with 4.033839031525892 variance.
+git_prompt_info:5: character not in range                                                                                           
+
+(normal,(List(Cluster(100,Point(57,Vector(7.196975210773407E-5, 1.315333525971518E-6, 9.096938594320344E-4, 0.0, 0.0, 0.0014765606089131543, 4.841182324305425E-5, 2.40355331586305E-5, 4.034318603587854E-4, 4.034318603587854E-5, 4.1954746673095605E-5, 1.3735894293168162E-4, 1.344772867862618E-4, 5.345472149753907E-4, 0.0, 0.01948220612858283, 0.025180306146105603, 0.0010066969688819559, 9.70657056023237E-4, 2.151636588580189E-6, 5.279578279228636E-4, 0.9968448938974211, 0.005521906350017485, 0.12375971598396977, 0.5144541988819579, 0.9011215405717966, 0.940573411150854, 0.010531992146526385, 0.0722099997310542, 0.021141174255662414, 0.0010502676098007053, 3.595922648664606E-4, 0.002761625561442674, 0.0011387536645060651)),2.3669208486943725), Cluster(99,Point(6678,Vector(0.0, 1.1453245276810346E-8, 4.0226907631246505E-7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0021239732259712664, 0.0029566106173731614, 0.0, 0.0, 0.9996305732484077, 0.9738598726114652, 1.0, 0.0, 0.2297324840764331, 0.06578244036468142, 0.8222505307855625, 0.9989171974522293, 9.936305732484076E-4, 0.30315923566879033, 0.1590445859872613, 1.6560509554140127E-4, 8.789808917197455E-4, 0.9766242038216562, 0.9456305732484077)),1.6669181828315187)),4.033839031525892))
+(dos,(List(Cluster(100,Point(15,Vector(0.0, 1.4883707192252697E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9977692662641173, 0.9977589537713211, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.9997892936881303, 0.9974877324354003, 0.9975325480471171, 1.250258317834264E-4, 0.9975325480471171, 0.0, 7.439553626782395E-5, 0.0, 0.0, 0.0)),1.6816627144864793), Cluster(99,Point(3407,Vector(1.4946931740935055E-8, 6.823206984926768E-5, 0.0013941679963327066, 0.09154315605928506, 0.0, 0.05704736995059695, 0.0, 9.517253350270398E-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.019941411015206665, 0.020367947013991878, 0.0040104620749782036, 0.004210985178727114, 0.03487358326068004, 0.07314734088927657, 0.9984481255448998, 0.0030950305143853532, 0.07495204882301656, 0.830374207224302, 0.799794861274937, 0.9295117698343504, 0.0037489102005231006, 0.06151700087183956, 7.236268526591106E-4, 0.003487358326068004, 0.002519616390584133, 0.03878814298169121, 0.03878814298169121)),2.3067326941384256)),3.988395408624905))
+
+(normal,(List(
+    Cluster(
+        100,Point(57,
+        Vector(7.196975210773407E-5, 1.315333525971518E-6, 9.096938594320344E-4, 0.0, 0.0, 0.0014765606089131543, 4.841182324305425E-5, 2.40355331586305E-5, 4.034318603587854E-4, 4.034318603587854E-5, 4.1954746673095605E-5, 1.3735894293168162E-4, 1.344772867862618E-4, 5.345472149753907E-4, 0.0, 0.01948220612858283, 0.025180306146105603, 0.0010066969688819559, 9.70657056023237E-4, 2.151636588580189E-6, 5.279578279228636E-4, 0.9968448938974211, 0.005521906350017485, 0.12375971598396977, 0.5144541988819579, 0.9011215405717966, 0.940573411150854, 0.010531992146526385, 0.0722099997310542, 0.021141174255662414, 0.0010502676098007053, 3.595922648664606E-4, 0.002761625561442674, 0.0011387536645060651)
+        ),2.3669208486943725),
+    Cluster(
+        99,Point(6678,
+        Vector(0.0, 1.1453245276810346E-8, 4.0226907631246505E-7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0021239732259712664, 0.0029566106173731614, 0.0, 0.0, 0.9996305732484077, 0.9738598726114652, 1.0, 0.0, 0.2297324840764331, 0.06578244036468142, 0.8222505307855625, 0.9989171974522293, 9.936305732484076E-4, 0.30315923566879033, 0.1590445859872613, 1.6560509554140127E-4, 8.789808917197455E-4, 0.9766242038216562, 0.9456305732484077)
+        ),1.6669181828315187)),4.033839031525892))
+(dos,(List(
+    Cluster(
+        100,Point(15,
+        Vector(0.0, 1.4883707192252697E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9977692662641173, 0.9977589537713211, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.9997892936881303, 0.9974877324354003, 0.9975325480471171, 1.250258317834264E-4, 0.9975325480471171, 0.0, 7.439553626782395E-5, 0.0, 0.0, 0.0)
+        ),1.6816627144864793),
+    Cluster(
+        99,Point(3407,
+        Vector(1.4946931740935055E-8, 6.823206984926768E-5, 0.0013941679963327066, 0.09154315605928506, 0.0, 0.05704736995059695, 0.0, 9.517253350270398E-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.019941411015206665, 0.020367947013991878, 0.0040104620749782036, 0.004210985178727114, 0.03487358326068004, 0.07314734088927657, 0.9984481255448998, 0.0030950305143853532, 0.07495204882301656, 0.830374207224302, 0.799794861274937, 0.9295117698343504, 0.0037489102005231006, 0.06151700087183956, 7.236268526591106E-4, 0.003487358326068004, 0.002519616390584133, 0.03878814298169121, 0.03878814298169121)
+        ),2.3067326941384256)),3.988395408624905))
