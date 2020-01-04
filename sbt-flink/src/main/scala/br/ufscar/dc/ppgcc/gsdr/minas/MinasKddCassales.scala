@@ -40,5 +40,11 @@ object MinasKddCassales extends App {
     })
   clusters.writeAsText(outFilePath + "/clusters", FileSystem.WriteMode.OVERWRITE)
 
-  setEnv.execute("base centroids")
+  // setEnv.execute("base centroids")
+
+  //
+  val ini$ = streamEnv.readTextFile(inPathIni).map(line => KddCassalesEntryFactory.fromStringLine(line))
+  ini$.writeAsCsv(outFilePath + "/stream-ini.csv", FileSystem.WriteMode.OVERWRITE)
+  ini$.writeAsText(outFilePath + "/stream-ini.txt", FileSystem.WriteMode.OVERWRITE)
+  streamEnv.execute("base centroids stream")
 }
