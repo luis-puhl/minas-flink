@@ -178,3 +178,123 @@ git_prompt_info:5: character not in range
         99,Point(3407,
         Vector(1.4946931740935055E-8, 6.823206984926768E-5, 0.0013941679963327066, 0.09154315605928506, 0.0, 0.05704736995059695, 0.0, 9.517253350270398E-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.019941411015206665, 0.020367947013991878, 0.0040104620749782036, 0.004210985178727114, 0.03487358326068004, 0.07314734088927657, 0.9984481255448998, 0.0030950305143853532, 0.07495204882301656, 0.830374207224302, 0.799794861274937, 0.9295117698343504, 0.0037489102005231006, 0.06151700087183956, 7.236268526591106E-4, 0.003487358326068004, 0.002519616390584133, 0.03878814298169121, 0.03878814298169121)
         ),2.3067326941384256)),3.988395408624905))
+
+# 2020-01-06 12:30
+
+[info] Done packaging.
+[success] Total time: 31 s, completed Jan 6, 2020 12:21:24 PM
+
+real	11m0.385s
+user	15m7.352s
+sys	0m5.580s
+MinasKddCassales$               - Label 'dos' contains 10825 data points.
+kmeans.KMeansVector$            - [dos] Running kmeansInitByFarthest.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] got 10825 points and 100 clusters.
+MinasKddCassales$               - Label 'normal' contains 37966 data points.
+kmeans.KMeansVector$            - [normal] Running kmeansInitByFarthest.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] got 37966 points and 100 clusters.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] Clusters with [10718, 107] points with variance [2.4088472971816888, 2.3518842420280968]
+kmeans.KMeansVector$            - [kmeansIterationRec] got 10825 points and 2 clusters.
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 1, var 2132.027735943855 -> 4.225468139653628 (503.5660422654666 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 2, var 4.225468139653628 -> 3.994086738784251 (0.05793099048715389 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 3, var 3.994086738784251 -> 3.988395408624905 (0.0014269723977311521 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 4, var 3.988395408624905 -> 3.988395408624905 (0.0 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [dos] Running kmeanspp [1].
+kmeans.KMeansVector$            - [kmeansIterationRec] got 10825 points and 100 clusters.
+kmeans.KMeansVector$            - assertion failed: [kmeansIterationRec] Expected k=100, got 52 on iteration 1.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] Clusters with [37071, 1] points with variance [2.290190290182646, 0.0]
+kmeans.KMeansVector$            - [kmeansIterationRec] got 37966 points and 88 clusters.
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 1, var 24339.564903450148 -> 29.399569852891855 (826.888469975557 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - assertion failed: [kmeansIterationRec] Expected k=88, got 86 on iteration 2.
+cat: 'tmpfs/out/stream-clusters.csv/*': No such file or directory
+
+# 2020-01-06 13:30
+[info] Done packaging.
+[success] Total time: 28 s, completed Jan 6, 2020 1:15:49 PM
+ 
+real	13m52.023s
+user	18m56.110s
+sys	0m11.392s
+MinasKddCassales$               - Label 'dos' contains 10825 data points.
+kmeans.KMeansVector$            - [dos] Running kmeansInitByFarthest.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] got 10825 points and 100 clusters.
+MinasKddCassales$               - Label 'normal' contains 37966 data points.
+kmeans.KMeansVector$            - [normal] Running kmeansInitByFarthest.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] got 37966 points and 100 clusters.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] Exceeded iterations.
+kmeans.KMeansVector$            - [dos] Running kmeanspp [1].
+kmeans.KMeansVector$            - [kmeansIterationRec] got 10825 points and 100 clusters.
+kmeans.KMeansVector$            - assertion failed: [kmeansIterationRec] Expected k=100, got 51 on iteration 1.
+kmeans.KMeansVector$            - [kmeansInitByFarthest] Exceeded iterations.
+kmeans.KMeansVector$            - [normal] Running kmeanspp [1].
+kmeans.KMeansVector$            - [kmeansIterationRec] got 37966 points and 100 clusters.
+kmeans.KMeansVector$            - assertion failed: [kmeansIterationRec] Expected k=100, got 97 on iteration 1.
+cat: 'tmpfs/out/stream-clusters.csv/*': No such file or directory
+
+
+# 2020-01-06 17:10
+kmeans.KMeansVector$            - [normal] i=77 farthest = (p= 13564, c= 7354, d= 0.9042669664081746), rem= 77
+kmeans.KMeansVector$            - [normal] i=78 farthest = (p= 6133, c= 32256, d= 0.8997574021056489), rem= 78
+kmeans.KMeansVector$            - [normal] i=79 farthest = (p= 8258, c= 12464, d= 0.8771781787230887), rem= 79
+kmeans.KMeansVector$            - [normal] i=80 farthest = (p= 6730, c= 24490, d= 0.8766730476346687), rem= 80
+kmeans.KMeansVector$            - [normal] i=81 farthest = (p= 43976, c= 22930, d= 0.8748401780590827), rem= 81
+kmeans.KMeansVector$            - [normal] i=82 farthest = (p= 12624, c= 20234, d= 0.8671183871787762), rem= 82
+kmeans.KMeansVector$            - [normal] i=83 farthest = (p= 40222, c= 32256, d= 0.866353884063049), rem= 83
+kmeans.KMeansVector$            - [normal] i=84 farthest = (p= 20466, c= 44, d= 0.8479901124451156), rem= 84
+kmeans.KMeansVector$            - [normal] i=85 farthest = (p= 26154, c= 15042, d= 0.8434171155155621), rem= 85
+kmeans.KMeansVector$            - [normal] i=86 farthest = (p= 21826, c= 28637, d= 0.8411123729882831), rem= 86
+kmeans.KMeansVector$            - [normal] i=87 farthest = (p= 44464, c= 21236, d= 0.8358780347341175), rem= 87
+kmeans.KMeansVector$            - [normal] i=88 farthest = (p= 4099, c= 4110, d= 0.8233698402138104), rem= 88
+kmeans.KMeansVector$            - [normal] i=89 farthest = (p= 24340, c= 18242, d= 0.8206686629454472), rem= 89
+kmeans.KMeansVector$            - [normal] i=90 farthest = (p= 8529, c= 21396, d= 0.8066709856273272), rem= 90
+kmeans.KMeansVector$            - [normal] i=91 farthest = (p= 22034, c= 18242, d= 0.8057344274096353), rem= 91
+kmeans.KMeansVector$            - [normal] i=92 farthest = (p= 41931, c= 41939, d= 0.8035971289507686), rem= 92
+kmeans.KMeansVector$            - [normal] i=93 farthest = (p= 7634, c= 24490, d= 0.7910487541788365), rem= 93
+kmeans.KMeansVector$            - [normal] i=94 farthest = (p= 43696, c= 13592, d= 0.7801982525666159), rem= 94
+kmeans.KMeansVector$            - [normal] i=95 farthest = (p= 14634, c= 26186, d= 0.7793520509866915), rem= 95
+kmeans.KMeansVector$            - [normal] i=96 farthest = (p= 12168, c= 6133, d= 0.7756246369963989), rem= 96
+kmeans.KMeansVector$            - [normal] i=97 farthest = (p= 11137, c= 32256, d= 0.7739538370651093), rem= 97
+kmeans.KMeansVector$            - [normal] i=98 farthest = (p= 8274, c= 17354, d= 0.7554398871229858), rem= 98
+kmeans.KMeansVector$            - [normal] i=99 farthest = (p= 43256, c= 8258, d= 0.7549708018470916), rem= 99
+kmeans.KMeansVector$            - [normal] [kmeansInitByFarthest] 100 Clusters with [1..16539] points with variance [0.0..0.0]
+kmeans.KMeansVector$            - [kmeansIterationRec] got 37966 points and 100 clusters.
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 1, var 14236.86003786904 -> 40.60797386976431 (349.59272062006164 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [kmeansIterationRec] Iter 2, var 40.60797386976431 -> 40.99348025135834 (-0.009404090095064821 improvement, 1.0E-5 goal).
+kmeans.KMeansVector$            - [normal] Running kmeanspp [1].
+kmeans.KMeansVector$            - [kmeansIterationRec] got 37966 points and 100 clusters.
+kmeans.KMeansVector$            - assertion failed: [kmeansIterationRec] Expected k=100, got 97 on iteration 1.
+Exception in thread "main" org.apache.flink.runtime.client.JobExecutionException: Job execution failed.
+	at org.apache.flink.runtime.jobmaster.JobResult.toJobExecutionResult(JobResult.java:146)
+	at org.apache.flink.runtime.minicluster.MiniCluster.executeJobBlocking(MiniCluster.java:626)
+	at org.apache.flink.client.LocalExecutor.executePlan(LocalExecutor.java:222)
+	at org.apache.flink.api.java.LocalEnvironment.execute(LocalEnvironment.java:91)
+	at org.apache.flink.api.scala.ExecutionEnvironment.execute(ExecutionEnvironment.scala:539)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.delayedEndpoint$br$ufscar$dc$ppgcc$gsdr$minas$MinasKddCassales$1(MinasKddCassales.scala:49)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$delayedInit$body.apply(MinasKddCassales.scala:19)
+	at scala.Function0$class.apply$mcV$sp(Function0.scala:34)
+	at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:12)
+	at scala.App$$anonfun$main$1.apply(App.scala:76)
+	at scala.App$$anonfun$main$1.apply(App.scala:76)
+	at scala.collection.immutable.List.foreach(List.scala:392)
+	at scala.collection.generic.TraversableForwarder$class.foreach(TraversableForwarder.scala:35)
+	at scala.App$class.main(App.scala:76)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$.main(MinasKddCassales.scala:19)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales.main(MinasKddCassales.scala)
+Caused by: java.lang.AssertionError: assertion failed: [kmeansIterationRec] Expected k=100, got 51 on iteration 1.
+	at scala.Predef$.assert(Predef.scala:170)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.iterate$1(KMeansVector.scala:123)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.kmeansIterationRec(KMeansVector.scala:145)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.initialization$1(KMeansVector.scala:233)
+	at br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector$.kmeans(KMeansVector.scala:248)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:45)
+	at br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales$$anonfun$3.apply(MinasKddCassales.scala:40)
+	at org.apache.flink.api.scala.GroupedDataSet$$anon$3.reduce(GroupedDataSet.scala:355)
+	at org.apache.flink.api.java.operators.translation.PlanUnwrappingReduceGroupOperator$TupleUnwrappingNonCombinableGroupReducer.reduce(PlanUnwrappingReduceGroupOperator.java:111)
+	at org.apache.flink.runtime.operators.GroupReduceDriver.run(GroupReduceDriver.java:131)
+	at org.apache.flink.runtime.operators.BatchTask.run(BatchTask.java:504)
+	at org.apache.flink.runtime.operators.BatchTask.invoke(BatchTask.java:369)
+	at org.apache.flink.runtime.taskmanager.Task.doRun(Task.java:705)
+	at org.apache.flink.runtime.taskmanager.Task.run(Task.java:530)
+	at java.lang.Thread.run(Thread.java:748)
+git_prompt_info:5: character not in range                                                                                                                                                     
+

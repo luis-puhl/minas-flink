@@ -4,6 +4,7 @@ import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector
 import grizzled.slf4j.Logger
+import org.apache.flink.api.common.functions.RichMapFunction
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment, extensions}
 import org.apache.flink.streaming.api.scala._
@@ -47,17 +48,44 @@ object MinasKddCassales extends App {
   clusters.writeAsText(outFilePath + "/clusters", FileSystem.WriteMode.OVERWRITE)
   setEnv.execute("base centroids")
 
-  //
-  val optionTrainingVector: Seq[Option[KddCassalesEntry]] = trainingSet
-    .map(p => Option(p))
-    .collect()
-    .++(Seq(Option.empty[KddCassalesEntry]))
-  // val training$: DataStream[KddCassalesEntry] = streamEnv.readTextFile(inPathIni)
-  //   .map(line => KddCassalesEntryFactory.fromStringLine(line))
-  val training$: DataStream[Option[KddCassalesEntry]] = streamEnv.fromCollection(optionTrainingVector)
+
+//  val optionTrainingVector: Seq[Option[KddCassalesEntry]] = trainingSet
+//    .map(p => Option(p))
+//    .collect()
+//    .++(Seq(Option.empty[KddCassalesEntry]))
+//  val training$: DataStream[Option[KddCassalesEntry]] = streamEnv.fromCollection(optionTrainingVector)
+  //---------
+//  val training$2: DataStream[(String, Point)] = streamEnv.readTextFile(inPathIni)
+//    .map(line => KddCassalesEntryFactory.fromStringLine(line))
+//    .keyBy(p => 0)
+//    .mapWithState[(String, Point), Long]((entry: KddCassalesEntry, counterState: Option[Long]) => {
+//      val counter = counterState match {
+//        case Some(count) => count
+//        case None => 0L
+//      }
+//      ((entry.label, Point(counter, entry.value)), Some(counter + 1L))
+//    })
+//  training$2.writeAsText(outFilePath + "/stream-ini.csv", FileSystem.WriteMode.OVERWRITE)
+//  //
+//  val clusters$ = training$2.keyBy(p => p._1)
+//      .flatMapWithState[(String, Cluster), Vector[Point]]((entry: (String, Point), state: Option[Vector[Point]]) => {
+//        val label = entry._1
+//        val point = entry._2
+//        val points: Vector[Point] = state match {
+//          case Some(points: Vector[Point]) => points.+:(point)
+//          case None => Vector(point)
+//        }
+//        if (points.size < 2*k || points.size % 2*k != 0) {
+//          (Seq[(String, Cluster)](), Some(points))
+//        } else {
+//          val clusters = KMeansVector.kmeans(label, k, points, iterations, varianceThreshold)
+//          (clusters._1.map(c => (label, c)), Some(Vector[Point]()))
+//        }
+//      })
+//  clusters$.writeAsText(outFilePath + "/stream-clusters.csv", FileSystem.WriteMode.OVERWRITE)
   // training$.writeAsCsv(outFilePath + "/stream-ini.csv", FileSystem.WriteMode.OVERWRITE)
   // training$.writeAsText(outFilePath + "/stream-ini.txt", FileSystem.WriteMode.OVERWRITE)
-
+/*
   // zipWithUniqueId
   val pointsTraining$: DataStream[Option[(String, Point)]] = training$
     .keyBy(p => 0)
@@ -130,7 +158,7 @@ object MinasKddCassales extends App {
     })
   cluster$.writeAsCsv(outFilePath + "/stream-clusters.csv", FileSystem.WriteMode.OVERWRITE)
   cluster$.writeAsText(outFilePath + "/stream-clusters.txt", FileSystem.WriteMode.OVERWRITE)
-
+*/
   streamEnv.execute("base centroids stream")
   Thread.sleep(Time.seconds(10).toMilliseconds)
 }

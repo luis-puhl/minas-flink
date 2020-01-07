@@ -1,5 +1,6 @@
-[ ! -d tmpfs/log ] && echo "Missing log dir" && exit 1
-[ ! -d tmpfs/out ] && echo "Missing out dir" && exit 1
+[ ! -f tmpfs/KDDTe5Classes_fold1_ini.csv ] && echo "Missing input files, is TMPFS complete?" && exit 1
+[ ! -d tmpfs/log ] && mkdir tmpfs/log
+[ ! -d tmpfs/out ] && mkdir tmpfs/out
 sbt assembly && \
 time java \
     -Djava.io.tmpdir=./tmpfs/ \
