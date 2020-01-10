@@ -4,7 +4,7 @@ ThisBuild / resolvers ++= Seq(
 )
 
 name := "sbt-flink"
-version := "0.1-SNAPSHOT"
+version := "0.1"
 organization := "br.ufscar.dc.ppgcc.gsdr.minas"
 
 ThisBuild / scalaVersion := "2.11.12"
@@ -25,8 +25,10 @@ val loggerDependencies = Seq(
 lazy val root = (project in file(".")).
   settings(
     libraryDependencies ++= flinkDependencies,
-    libraryDependencies ++= loggerDependencies//,
+    libraryDependencies ++= loggerDependencies,
     //libraryDependencies += "nz.ac.waikato.cms.moa" % "moa" % "2019.05.0"
+    libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % "test"
   )
 
 assembly / mainClass := Some("br.ufscar.dc.ppgcc.gsdr.minas.KMeansVector")
