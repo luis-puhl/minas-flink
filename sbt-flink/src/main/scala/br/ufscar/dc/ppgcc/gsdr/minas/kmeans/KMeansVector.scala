@@ -37,7 +37,7 @@ object KMeansVector {
         // .withForwardedFields("_1")
         .map(x => {
           val old = x._2
-          val newMeanPoint = x._3.reduce((a, b) => a.add(b)).div(x._4)
+          val newMeanPoint = x._3.reduce((a, b) => a.+(b))./(x._4)
           val newVariance = x._3.map(p => p.euclideanDistance(newMeanPoint)).max
           Cluster(old.id, newMeanPoint, newVariance)
         })
@@ -61,7 +61,7 @@ object KMeansVector {
             val cl = seq.head._2
             assert(seq.head._1 == cl.id, "Cluster id mismatch")
             val points = seq.map(x => x._3)
-            val newCenter: Point = points.reduce((a, b) => a.add(b)).div(seq.size.toLong)
+            val newCenter: Point = points.reduce((a, b) => a.+(b))./(seq.size.toLong)
             val variance = points.map(p => newCenter.euclideanDistance(p)).max
             Cluster(cl.id, newCenter, variance)
           })
@@ -87,7 +87,7 @@ object KMeansVector {
           val cl = sameCluster.head._2
           assert(sameCluster.head._1 == cl.id, "Cluster id mismatch")
           val points = sameCluster.map(x => x._3)
-          val newCenter: Point = points.reduce((a, b) => a.add(b)).div(sameCluster.size.toLong)
+          val newCenter: Point = points.reduce((a, b) => a.+(b))./(sameCluster.size.toLong)
           val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
           Cluster(cl.id, newCenter, variance)
         })
@@ -127,7 +127,7 @@ object KMeansVector {
           val cl = sameCluster.head._2
           assert(sameCluster.head._1 == cl.id, "[kmeansIterationRec] Cluster id mismatch")
           val points = sameCluster.map(x => x._3)
-          val newCenter: Point = points.reduce((a, b) => a.add(b)).div(sameCluster.size.toLong)
+          val newCenter: Point = points.reduce((a, b) => a.+(b))./(sameCluster.size.toLong)
           val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
           Cluster(cl.id, newCenter, variance)
         })

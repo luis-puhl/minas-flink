@@ -108,3 +108,18 @@ kmeans.KMeansVector$            - [normal] Running kmeanspp [3].
 kmeans.KMeansVector$            - Iter 10, var 17002.738847951303 -> 3.7476083038601304 (4535.957298989347 improvement, 1.0E-5 goal).
 kmeans.KMeansVector$            - Iter 9, var 3.7476083038601304 -> 3.7476083038601304 (0.0 improvement, 1.0E-5 goal).
 kmeans.KMeansVector$            - [normal] Got best result with kmeansInitByFarthest algorithm with 3.7476083038601304 variance.
+
+
+java -Djava.io.tmpdir=./tmpfs/ -cp 'target/scala-2.11/sbt-flink-assembly-0.1-SNAPSHOT.jar:' br.ufscar.dc.ppgcc.gsdr.minas.MinasKddCassales | sed -n -r 's;(.+)INFO  br.ufscar.dc.ppgcc.gsdr.minas.(.+);\2;p'
+MinasKddCassales$               - dos, (dos,Point(230,Vector(0.0, 1.488370719225152E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0))), 1578515782450
+MinasKddCassales$               - normal, (normal,Point(0,Vector(0.0, 3.706504601171163E-7, 9.252312302200305E-5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.003913894324853229, 0.01761252446183953, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.22, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))), 1578515782458
+MinasKddCassales$               - Taking in 100 from dos.
+MinasKddCassales$               - Taking in 100 from normal.
+MinasKddCassales$               - Reduction in clusters array. Had 2 and got 1
+MinasKddCassales$               - Taking in 100 from normal.
+MinasKddCassales$               - Taking in 100 from dos.
+MinasKddCassales$               - Reduction in clusters array. Had 2 and got 1
+MinasKddCassales$               - Taking in 100 from normal.
+MinasKddCassales$               - Reduction in clusters array. Had 2 and got 1
+MinasKddCassales$               - Taking in 100 from dos.
+[...]

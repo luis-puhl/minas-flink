@@ -298,3 +298,29 @@ Caused by: java.lang.AssertionError: assertion failed: [kmeansIterationRec] Expe
 	at java.lang.Thread.run(Thread.java:748)
 git_prompt_info:5: character not in range                                                                                                                                                     
 
+
+
+MinasKddCassales$               - kmeans c=2 p=1000 i=4 / 10, movement=0.017169794030657676 / 1.0E-4
+MinasKddCassales$               - kmeans c=2 p=1000 i=5 / 10, movement=0.011079418720269504 / 1.0E-4
+MinasKddCassales$               - kmeans c=2 p=1000 i=6 / 10, movement=0.0 / 1.0E-4
+00:49:29  puhl@pokebola  ...project/minas-flink/sbt-flink  ✹ ✚ ✭  5m10s 
+
+MinasKddCassales$               - kmeans c=2 p=1000 i=8 / 10, movement=0.0 / 1.0E-4
+java -Djava.io.tmpdir=./tmpfs/ -cp    346.92s user 3.35s system 123% cpu 4:42.72 total
+
+kmeans.Kmeans$                  - kmeans c=2 p=100 i=0 / 10, movement=0.0 / 1.0E-4
+MinasKddCassales$               - base centroids stream DONE
+java -Djava.io.tmpdir=./tmpfs/ -cp    53.26s user 1.83s system 247% cpu 22.276 total
+sed -n -r 's;(.+)INFO  (.+).gsdr.minas.(.+);\3;p'  0.12s user 0.06s system 0% cpu 22.276 total
+ 01:27:59  puhl@pokebola  ...project/minas-flink/sbt-flink  ✹ ✚ ✭  22s 
+$ wc -l tmpfs/out/consumed-points.txt/*
+    6091 tmpfs/out/consumed-points.txt/1
+    6091 tmpfs/out/consumed-points.txt/2
+       0 tmpfs/out/consumed-points.txt/3
+       0 tmpfs/out/consumed-points.txt/4
+       0 tmpfs/out/consumed-points.txt/5
+   12184 tmpfs/out/consumed-points.txt/6
+       0 tmpfs/out/consumed-points.txt/7
+   24366 tmpfs/out/consumed-points.txt/8
+   48732 total
+ 01:29:33  puhl@pokebola  ...project/minas-flink/sbt
