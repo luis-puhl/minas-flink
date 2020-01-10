@@ -23,12 +23,10 @@ class KmeansSpec extends FlatSpec with Matchers {
     Cluster(11, Point(11, Vector(9.0)), 0.0),
     Cluster(12, Point(12, Vector(13.0)), 0.0)
   )
-
-  // initialAssigned = Vector(1.3333333333333333, 12.4, 8.5) 7.0
-  it should "Have fixed values" in {
+  def doTest = {
     val initialAssignedMap = Kmeans.groupByClosest(testSet, initial)
     val initialAssigned = Kmeans.updateClustersVariance(initialAssignedMap)
-    val result = Kmeans.kmeans(testSet, initialAssigned)
+    val result = Kmeans.kmeans("Fixed values", testSet, initialAssigned)
     println(s"testSet = ${testSet.map(p => p.value.head)}")
     def printClusters(name: String, clusters: Vector[Cluster]) =
       println(s"$name = ${clusters.map(c => c.center.value.head)} ${clusters.map(c => c.variance).sum}")
@@ -39,5 +37,20 @@ class KmeansSpec extends FlatSpec with Matchers {
     val predef = Vector(1.3333333333333333, 12.4, 8.5)
     val matches = rs.forall(p => predef.contains(p))
     matches should be (true)
+  }
+
+  // initialAssigned = Vector(1.3333333333333333, 12.4, 8.5) 7.0
+  it should "Have fixed values" in doTest
+  
+  it should "Have fixed values using TaxiCabDistance" in {
+    println("TaxiCabDistance")
+    implicit val distance: Point.DistanceOperator = Point.TaxiCabDistance
+    doTest
+  }
+
+  it should "Have fixed values using CosDistance" in {
+    println("CosDistance")
+    implicit val distance: Point.DistanceOperator = Point.CosDistance
+    doTest
   }
 }

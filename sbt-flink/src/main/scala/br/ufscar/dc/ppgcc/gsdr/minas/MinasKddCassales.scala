@@ -1,23 +1,14 @@
 package br.ufscar.dc.ppgcc.gsdr.minas
 
 import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd._
-import br.ufscar.dc.ppgcc.gsdr.minas.helpers.CountOrTimeoutWindow
+import br.ufscar.dc.ppgcc.gsdr.minas.helpers.{CountOrTimeoutWindow, ToVectAggregateFunction}
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Kmeans
 import grizzled.slf4j.Logger
-import org.apache.flink.api.common.functions.RichMapFunction
-import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment, extensions}
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.core.fs.FileSystem
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction
-import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner
-import org.apache.flink.util.Collector
-
-// import scala.util.Try
-import scala.collection._
-import scala.concurrent.duration._
 
 object MinasKddCassales extends App {
   val LOG = Logger(getClass)
@@ -44,17 +35,24 @@ object MinasKddCassales extends App {
     })
   training$2.writeAsText(outFilePath + "/stream-ini.txt", FileSystem.WriteMode.OVERWRITE)
 
-  //
   val clusters$ = training$2
     // .assignAscendingTimestamps(p => p._2.id)
     .keyBy(p => p._1)
-    .process(new CountOrTimeoutWindow[String, (String, Point)](100, 100))
+    // .keyBy(p => p._2.id % training$2.parallelism)
+    // .keyBy(p => "0")
+    // .process(new CountOrTimeoutWindow[String, (String, Point)](1000, 100))
+    .timeWindow(Time.milliseconds(100)).aggregate(new ToVectAggregateFunction).flatMap(map => map.toVector)
     .map(agg => {
-      LOG.info(s"Taking in ${agg.size} ${agg.head._1}")
-      (agg.head._1, agg.head._2.id, agg.map(p => p._2))
+      val label = agg._1
+      val points = agg._2
+      LOG.info(s"Taking in ${points.size} ${label}")
+      (label, points.head.id, points)
     })
+  clusters$
+    .flatMap(p => p._3)
+    .writeAsText(outFilePath + "/CountOrTimeoutWindow", FileSystem.WriteMode.OVERWRITE)
+  val clustersFinal = clusters$
     .keyBy(p => p._1 + p._2)
-    // .rebalance "Cannot override partitioning for KeyedStream."
     .map(labelPoints => {
       val label = labelPoints._1
       val points = labelPoints._3.sortBy(p => p.fromOrigin)
@@ -62,14 +60,13 @@ object MinasKddCassales extends App {
       val c0 = Vector(points.head, points.last).map(p => Cluster(p.id, p, 0.0))
       val distancesMap = Kmeans.groupByClosest(points, c0)
       val clusters = Kmeans.updateClustersVariance(distancesMap)
-      val results = Kmeans.kmeans(points, clusters)
+      val results = Kmeans.kmeans(label, points, clusters)
       (label, results, points)
     })
-  LOG.info(s"paralelism => ${clusters$.parallelism}.")
-  clusters$.writeAsText(outFilePath + "/basic-kmeans.txt", FileSystem.WriteMode.OVERWRITE)
-  clusters$
-    .flatMap(p => p._3)
-    .keyBy(p => p.id % clusters$.parallelism)
+  clustersFinal.writeAsText(outFilePath + "/basic-kmeans.txt", FileSystem.WriteMode.OVERWRITE)
+  clustersFinal
+    .flatMap(p => p._3.map(d => (d, p._1)))
+    .keyBy(p => p._1.id % clustersFinal.parallelism)
     .writeAsText(outFilePath + "/consumed-points.txt", FileSystem.WriteMode.OVERWRITE)
   //
   streamEnv.execute("base centroids stream")
