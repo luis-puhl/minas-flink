@@ -25,7 +25,8 @@ val loggerDependencies = Seq(
 lazy val root = (project in file(".")).
   settings(
     libraryDependencies ++= flinkDependencies,
-    libraryDependencies ++= loggerDependencies
+    libraryDependencies ++= loggerDependencies//,
+    //libraryDependencies += "nz.ac.waikato.cms.moa" % "moa" % "2019.05.0"
   )
 
 assembly / mainClass := Some("br.ufscar.dc.ppgcc.gsdr.minas.KMeansVector")

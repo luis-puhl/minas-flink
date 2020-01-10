@@ -66,3 +66,6 @@ $ wc -l ../datasets/cassales/bases/*
    653457 ../datasets/cassales/bases/kyoto_multiclasse_offline_2class_fold1_onl
         0 ../datasets/cassales/bases/out_
   4401533 total
+
+Explorei a implementação do algoritmo Kmeans nas bibliotecas scikit-learn e moa
+mas não encontrei nenhuma 'sacada' interssante.

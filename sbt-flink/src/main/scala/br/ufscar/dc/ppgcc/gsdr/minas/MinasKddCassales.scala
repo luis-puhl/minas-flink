@@ -3,7 +3,9 @@ package br.ufscar.dc.ppgcc.gsdr.minas
 import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.KMeansVector
+
 import grizzled.slf4j.Logger
+
 import org.apache.flink.api.common.functions.RichMapFunction
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment, extensions}
@@ -14,7 +16,11 @@ import org.apache.flink.streaming.api.functions.KeyedProcessFunction
 import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner
 import org.apache.flink.util.Collector
 
-import scala.collection.immutable.HashMap
+// import moa.clusterers.KMeans
+// import moa.clusterers.clustream.Clustream
+
+import scala.collection._
+import scala.concurrent.duration._
 
 object MinasKddCassales extends App {
   val LOG = Logger(getClass)
@@ -46,7 +52,7 @@ object MinasKddCassales extends App {
       (label, kmeansClusters)
     })
   clusters.writeAsText(outFilePath + "/clusters", FileSystem.WriteMode.OVERWRITE)
-  setEnv.execute("base centroids")
+//  setEnv.execute("base centroids")
 
 
 //  val optionTrainingVector: Seq[Option[KddCassalesEntry]] = trainingSet
@@ -55,18 +61,119 @@ object MinasKddCassales extends App {
 //    .++(Seq(Option.empty[KddCassalesEntry]))
 //  val training$: DataStream[Option[KddCassalesEntry]] = streamEnv.fromCollection(optionTrainingVector)
   //---------
-//  val training$2: DataStream[(String, Point)] = streamEnv.readTextFile(inPathIni)
-//    .map(line => KddCassalesEntryFactory.fromStringLine(line))
-//    .keyBy(p => 0)
-//    .mapWithState[(String, Point), Long]((entry: KddCassalesEntry, counterState: Option[Long]) => {
-//      val counter = counterState match {
-//        case Some(count) => count
-//        case None => 0L
-//      }
-//      ((entry.label, Point(counter, entry.value)), Some(counter + 1L))
-//    })
-//  training$2.writeAsText(outFilePath + "/stream-ini.csv", FileSystem.WriteMode.OVERWRITE)
-//  //
+  val training$2: DataStream[(String, Point)] = streamEnv.readTextFile(inPathIni)
+    .map(line => KddCassalesEntryFactory.fromStringLine(line))
+    .keyBy(p => 0)
+    .mapWithState[(String, Point), Long]((entry: KddCassalesEntry, counterState: Option[Long]) => {
+      val counter = counterState match {
+        case Some(count) => count
+        case None => 0L
+      }
+      ((entry.label, Point(counter, entry.value)), Some(counter + 1L))
+    })
+  training$2.writeAsText(outFilePath + "/stream-ini.csv", FileSystem.WriteMode.OVERWRITE)
+  //
+  case class MicroCluster(id: Long, center: Point, contents: Option[Vector[Point]] = None, distances: Option[Vector[(Point, Double)]] = None, variance: Option[Double] = None) {
+    def withMedian: Option[MicroCluster] = {
+      val center: Option[Point] = contents.map(c => c.reduce((a, b) => a.add(b)).div(contents.size))
+      val distances: Option[Vector[(Point, Double)]] = for {
+        c <- center
+        points <- contents
+      } yield points.map(p => (p, c.euclideanDistance(p)))
+      val variance = distances.map(ds => ds.maxBy(d => d._2)._2)
+      for {
+        c <- center
+        d <- distances
+        v <- variance
+      } yield MicroCluster(id, c, contents, Some(d), Some(v))
+    }
+  }
+  case class MacroCluster(root: Cluster, children: Vector[Cluster])
+  def kmeans(points: Vector[Point], clusters: Vector[MicroCluster], target: Double = 10E-5, limit: Int = 10, i: Int = 0): Vector[MicroCluster] = {
+    if (i > limit) clusters
+    else {
+      val variance = clusters.map(c => c.variance.get).sum
+      val distances = points.map(p => clusters.map(c => (p, c, p.euclideanDistance(c.center))).minBy(d => d._3))
+      val byCluster = distances.groupBy(d => d._2.id).values
+      if (byCluster.size != clusters.size) {
+        LOG.info(s"Reduction in clusters array. Had ${clusters.size} and got ${byCluster.size}")
+      }
+      val newClusters = byCluster.map(sameCluster => {
+        val cluster = sameCluster.head._2
+        val points = sameCluster.map(d => d._1)
+        MicroCluster(cluster.id, cluster.center, Some(points)).withMedian.get
+      }).toVector
+      val newVariance = newClusters.map(c => c.variance.get).sum
+      if (newVariance / variance < target) newClusters
+      else kmeans(points, newClusters, target, limit, i + 1)
+    }
+  }
+  //
+
+  class CountWithTimeoutFunction[K, T](count: Long, time: Long) extends KeyedProcessFunction[K, T, Vector[T]] {
+    case class CountWithTimestamp(key: K, values: Vector[T], lastModified: Long)
+    lazy val state: ValueState[CountWithTimestamp] = getRuntimeContext
+      .getState(new ValueStateDescriptor[CountWithTimestamp]("CountWithTimeoutFunction", classOf[CountWithTimestamp]))
+    override def processElement(value: T, ctx: KeyedProcessFunction[K, T, Vector[T]]#Context, out: Collector[Vector[T]]): Unit = {
+      val key = ctx.getCurrentKey
+      val timestamp: Long = if (ctx != null) {
+        if (ctx.timestamp != null) ctx.timestamp
+      else if (ctx != null && ctx.timerService != null && ctx.timerService.currentProcessingTime != null) ctx.timerService.currentProcessingTime
+      else 0
+      val current: CountWithTimestamp = Option(state.value) match {
+        case Some(CountWithTimestamp(key, values, lastModified)) => {
+          val items = values :+ value
+          val remaining = if (items.size >= count) {
+            out.collect(items)
+            Vector()
+          } else items
+          CountWithTimestamp(key, remaining, timestamp)
+        }
+        case None => {
+          LOG.info(s"$key, $value, $timestamp")
+          CountWithTimestamp(key, Vector(value), timestamp)
+        }
+      }
+      state.update(current)
+      ctx.timerService.registerEventTimeTimer(current.lastModified + time)
+    }
+    override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[K, T, Vector[T]]#OnTimerContext, out: Collector[Vector[T]]): Unit = {
+      val current = state.value match {
+        case CountWithTimestamp(key, items, lastModified) if (timestamp == lastModified + time) => {
+          out.collect(items)
+          CountWithTimestamp(key, Vector(), ctx.timestamp)
+        }
+        case _ => state.value
+      }
+      state.update(current)
+    }
+  }
+  //
+  val clusters$ = training$2
+    // .map(p => (p._1, Vector(p._2)))
+    .keyBy(p => p._1)
+    .process(new CountWithTimeoutFunction[String, (String, Point)](100, 1.seconds.toMillis))
+    .map(agg => (agg.head._1, agg.map(p => p._2)))
+    //.countWindow(100)
+    //.reduce((a, b) => (a._1, a._2 ++ b._2))
+    .keyBy(p => p._1)
+    .map(p => {
+      val label = p._1
+      val points = p._2.sortBy(p => p.fromOrigin)
+      LOG.info(s"Taking in ${points.size} from $label.")
+      val c0 = Vector(points.head, points.last).map(p => MicroCluster(p.id, p))
+      val clusters = points.map(p => c0.map(c => (p, c, p.euclideanDistance(c.center))).minBy(d => d._3))
+        .groupBy(d => d._2.id).values
+        .map(sameCluster => {
+          val cluster = sameCluster.head._2
+          val points = sameCluster.map(d => d._1)
+          val distances = sameCluster.map(d => (d._1, d._3))
+          val variance = distances.maxBy(d => d._2)._2
+          MicroCluster(cluster.id, cluster.center, Some(points), Some(distances), Some(variance))
+        }).toVector
+      kmeans(points, clusters)
+    })
+  clusters$.writeAsText(outFilePath + "/basic-kmeans.txt", FileSystem.WriteMode.OVERWRITE)
 //  val clusters$ = training$2.keyBy(p => p._1)
 //      .flatMapWithState[(String, Cluster), Vector[Point]]((entry: (String, Point), state: Option[Vector[Point]]) => {
 //        val label = entry._1
