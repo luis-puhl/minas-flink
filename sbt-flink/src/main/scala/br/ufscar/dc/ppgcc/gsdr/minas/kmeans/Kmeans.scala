@@ -8,9 +8,9 @@ import scala.collection.immutable
 object Kmeans {
   val LOG = Logger(getClass)
 
-  def closestCluster(point: Point, clusters: Vector[Cluster])(implicit distance: Point.DistanceOperator): (Point, Cluster, Double) = {
-    clusters.map(c => (point, c, c.center.distance(point))).minBy(d => d._3)
-  }
+//  def closestCluster(point: Point, clusters: Vector[Cluster])(implicit distance: Point.DistanceOperator): (Point, Cluster, Double) = {
+//    clusters.map(c => (point, c, c.center.distance(point))).minBy(d => d._3)
+//  }
 
   def withFillerClusters(points: Vector[Point], clusters: Vector[Cluster], map: Map[Cluster, Vector[(Point, Double)]])
     (implicit distance: Point.DistanceOperator): Map[Cluster, Vector[(Point, Double)]] = {
@@ -81,5 +81,22 @@ object Kmeans {
       if (improvement < targetImprovement) onlyNewClusters
       else kmeans(label, points, onlyNewClusters, totalMovement, targetImprovement, limit, i + 1)
     }
+  }
+
+  def kmeansInitialRandom(k: Int, points: Vector[Point])(implicit distance: Point.DistanceOperator): Vector[Cluster] = {
+    val sorted = points.sortBy(p => p.fromOrigin)
+    val nPoints = sorted.size
+    val step = nPoints / k
+    // println(s"step => $step")
+    val choosed: Vector[Int] = 0.until(nPoints, step).toVector.tail
+    // println(s"choosed => $choosed")
+    val clusters = choosed.map(i => {
+      val p = sorted(i)
+      Cluster(p.id, p, 0.0)
+    })
+    // println(s"clusters => ${clusters.size}")
+    val result = updateClustersVariance(groupByClosest(points, clusters))
+    // println(s"result => ${result.map(p => p.center.fromOrigin)}")
+    result
   }
 }

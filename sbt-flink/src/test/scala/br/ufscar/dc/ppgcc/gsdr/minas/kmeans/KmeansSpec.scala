@@ -1,9 +1,16 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
+import br.ufscar.dc.ppgcc.gsdr.minas.datasets.kdd.KddCassalesEntryFactory
 import org.scalatest._
 import org.scalatest.matchers.should.Matchers
-
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
+
+import scala.util.Try
+// import com.opencsv._
+import java.io._
+import scala.collection.JavaConverters._
+import scala.util._
+
 
 class KmeansSpec extends FlatSpec with Matchers {
   val testSet = Vector(
@@ -52,5 +59,24 @@ class KmeansSpec extends FlatSpec with Matchers {
     println("CosDistance")
     implicit val distance: Point.DistanceOperator = Point.CosDistance
     doTest
+  }
+
+  "When read from a file" should "initialize kmeans" in {
+//    val inPathIni = "./tmpfs/KDDTe5Classes_fold1_ini.csv"
+//    val outFilePath = "./tmpfs/out"
+//    val bufferedSource = io.Source.fromFile(inPathIni)
+//    val stream = bufferedSource.getLines
+//      .map(line => KddCassalesEntryFactory.fromStringLine(line))
+//      .zipWithIndex
+//      .map(entry => (entry._1.label, Point(entry._2, entry._1.value)))
+//      .toVector
+//    val finalStream = stream.groupBy(p => p._1).mapValues(ps => {
+//      val label = ps.head._1
+//      val points = ps.map(p => p._2)
+//      val clusters = Kmeans.kmeansInitialRandom(100, points)
+//      (label, points, clusters)
+//    })
+//    writeTextFile(outFilePath.concat("/testing.txt"), finalStream.values.map(p => (p._1, p._3).toString()))
+//    bufferedSource.close
   }
 }
