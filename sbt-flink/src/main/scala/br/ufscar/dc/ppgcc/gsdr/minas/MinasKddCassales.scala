@@ -57,7 +57,7 @@ object MinasKddCassales extends App {
       val label = labelPoints._1
       val points = labelPoints._3.sortBy(p => p.fromOrigin)
       // LOG.info(s"Taking in ${points.size} from $label.")
-      val c0 = Vector(points.head, points.last).map(p => Cluster(p.id, p, 0.0))
+      val c0 = Vector(points.head, points.last).map(p => Cluster(p.id, p, 0.0, label))
       val distancesMap = Kmeans.groupByClosest(points, c0)
       val clusters = Kmeans.updateClustersVariance(distancesMap)
       val results = Kmeans.kmeans(label, points, clusters)

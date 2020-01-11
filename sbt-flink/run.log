@@ -396,3 +396,5 @@ $ wc -l tmpfs/out/testing-clusters.txt
 git_prompt_info:5: character not in range                                                                                                                                                     
 
  00:55:35  puhl@pokebola  ...project/minas-
+
+ERROR kmeans.Kmeans$ No missing clusters are allowed # => this means that clusters are still being ignored.

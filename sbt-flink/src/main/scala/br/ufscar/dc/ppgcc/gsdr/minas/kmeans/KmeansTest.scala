@@ -36,7 +36,7 @@ object KmeansTest extends App {
     val label = group.head._1
     val points = group.map(p => p._2)
     println(s"Final Stream $label -> ${points.size}")
-    val clusters = Kmeans.kmeansInitialRandom(100, points)
+    val clusters = Kmeans.kmeansInitialRandom(label, 100, points)
     println("Kmeans.kmeansInitialRandom")
     (label, points, clusters)
   })

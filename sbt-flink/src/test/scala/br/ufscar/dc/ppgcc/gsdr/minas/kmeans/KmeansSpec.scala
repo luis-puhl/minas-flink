@@ -26,9 +26,9 @@ class KmeansSpec extends FlatSpec with Matchers {
     Point(9, Vector(12.7))
   )
   val initial = Vector[Cluster](
-    Cluster(10, Point(10, Vector(4.0)), 0.0),
-    Cluster(11, Point(11, Vector(9.0)), 0.0),
-    Cluster(12, Point(12, Vector(13.0)), 0.0)
+    Cluster(10, Point(10, Vector(4.0)), 0.0, "label"),
+    Cluster(11, Point(11, Vector(9.0)), 0.0, "label"),
+    Cluster(12, Point(12, Vector(13.0)), 0.0, "label")
   )
   def doTest = {
     val initialAssignedMap = Kmeans.groupByClosest(testSet, initial)

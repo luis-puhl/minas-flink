@@ -73,6 +73,6 @@ case class Point(id: Long, value: Vector[Double]) {
     checkSize(other, (this - other).value.map(d => d.abs).sum)
   def cosDistance(other: Point): Double =
     checkSize(other, (this * other) / (this.unary_|| * other.unary_||))
-  def distance(other: Point)(implicit distance: Point.DistanceOperator): Double =
-    distance.compare(this, other)
+  def distance(other: Point)(implicit distanceOperator: Point.DistanceOperator): Double =
+    distanceOperator.compare(this, other)
 }

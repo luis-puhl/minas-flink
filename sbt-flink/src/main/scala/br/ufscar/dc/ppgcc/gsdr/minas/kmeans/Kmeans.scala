@@ -8,12 +8,12 @@ import scala.collection.immutable
 object Kmeans {
   val LOG = Logger(getClass)
 
-//  def closestCluster(point: Point, clusters: Vector[Cluster])(implicit distance: Point.DistanceOperator): (Point, Cluster, Double) = {
-//    clusters.map(c => (point, c, c.center.distance(point))).minBy(d => d._3)
-//  }
+  def closestCluster(point: Point, clusters: Vector[Cluster])(implicit distanceOperator: Point.DistanceOperator): (Point, Cluster, Double) = {
+    clusters.map(c => (point, c, c.center.distance(point))).minBy(d => d._3)
+  }
 
   def withFillerClusters(points: Vector[Point], clusters: Vector[Cluster], map: Map[Cluster, Vector[(Point, Double)]])
-    (implicit distance: Point.DistanceOperator): Map[Cluster, Vector[(Point, Double)]] = {
+    (implicit distanceOperator: Point.DistanceOperator): Map[Cluster, Vector[(Point, Double)]] = {
     val keySet = map.keySet
     val missingClusters = clusters.filter(c => !keySet.contains(c))
     val missingClustersFiller: Iterable[(Cluster, Vector[(Point, Double)])] = if (missingClusters.nonEmpty) {
@@ -25,7 +25,7 @@ object Kmeans {
     finalMap
   }
 
-  def groupByClosest(points: Vector[Point], clusters: Vector[Cluster])(implicit distance: Point.DistanceOperator): Map[Cluster, Vector[(Point, Double)]] = {
+  def groupByClosest(points: Vector[Point], clusters: Vector[Cluster])(implicit distanceOperator: Point.DistanceOperator): Map[Cluster, Vector[(Point, Double)]] = {
     val map = points.map(p => clusters.map(c => (p, c, c.center.distance(p))).minBy(d => d._3))
       .groupBy(d => d._2).map(i => i._1 -> i._2.map(d => (d._1, d._3)))
     if (clusters.size != map.keySet.size) {
@@ -44,11 +44,11 @@ object Kmeans {
     clusterDistanceMap.map(sameCluster => {
       val cluster = sameCluster._1
       val variance = sameCluster._2.map(p => p._2).max
-      Cluster(cluster.id, cluster.center, variance)
+      Cluster(cluster.id, cluster.center, variance, cluster.label)
     }).toVector
   }
 
-  def updateClustersCenters(clusterDistanceMap: Map[Cluster, Vector[(Point, Double)]])(implicit distance: Point.DistanceOperator): Vector[(Cluster, Double)] = {
+  def updateClustersCenters(clusterDistanceMap: Map[Cluster, Vector[(Point, Double)]])(implicit distanceOperator: Point.DistanceOperator): Vector[(Cluster, Double)] = {
     clusterDistanceMap.map(sameCluster => {
       val cluster = sameCluster._1
       val points = sameCluster._2.map(p => p._1)
@@ -57,7 +57,7 @@ object Kmeans {
       val movement = cluster.center.distance(center)
       // LOG.info(s"Cluster ${cluster.id} moved $movement => $center")
       // (Cluster(cluster.id, center, Some(points), Some(sameCluster._2), Some(variance)), movement)
-      (Cluster(cluster.id, center, variance), movement)
+      (Cluster(cluster.id, center, variance, cluster.label), movement)
     }).toVector
   }
 
@@ -66,7 +66,7 @@ object Kmeans {
               points: Vector[Point], clusters: Vector[Cluster],
               prevMovement: Double = 1.0, targetImprovement: Double = 10E-5,
               limit: Int = 10, i: Int = 0
-  )(implicit distance: Point.DistanceOperator): Vector[Cluster] = {
+  )(implicit distanceOperator: Point.DistanceOperator): Vector[Cluster] = {
     if (i > limit) clusters
     else {
       val distances = groupByClosest(points, clusters)
@@ -83,7 +83,7 @@ object Kmeans {
     }
   }
 
-  def kmeansInitialRandom(k: Int, points: Vector[Point])(implicit distance: Point.DistanceOperator): Vector[Cluster] = {
+  def kmeansInitialRandom(label: String, k: Int, points: Vector[Point])(implicit distanceOperator: Point.DistanceOperator): Vector[Cluster] = {
     val sorted = points.sortBy(p => p.fromOrigin)
     val nPoints = sorted.size
     val step = nPoints / k
@@ -92,7 +92,7 @@ object Kmeans {
     // println(s"choosed => $choosed")
     val clusters = choosed.map(i => {
       val p = sorted(i)
-      Cluster(p.id, p, 0.0)
+      Cluster(p.id, p, 0.0, label)
     })
     // println(s"clusters => ${clusters.size}")
     val result = updateClustersVariance(groupByClosest(points, clusters))

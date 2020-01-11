@@ -39,7 +39,7 @@ object KMeansVector {
           val old = x._2
           val newMeanPoint = x._3.reduce((a, b) => a.+(b))./(x._4)
           val newVariance = x._3.map(p => p.euclideanDistance(newMeanPoint)).max
-          Cluster(old.id, newMeanPoint, newVariance)
+          Cluster(old.id, newMeanPoint, newVariance, old.label)
         })
         // .withForwardedFields("_1->id")
     )
@@ -63,7 +63,7 @@ object KMeansVector {
             val points = seq.map(x => x._3)
             val newCenter: Point = points.reduce((a, b) => a.+(b))./(seq.size.toLong)
             val variance = points.map(p => newCenter.euclideanDistance(p)).max
-            Cluster(cl.id, newCenter, variance)
+            Cluster(cl.id, newCenter, variance, cl.label)
           })
       c
     })
@@ -89,7 +89,7 @@ object KMeansVector {
           val points = sameCluster.map(x => x._3)
           val newCenter: Point = points.reduce((a, b) => a.+(b))./(sameCluster.size.toLong)
           val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
-          Cluster(cl.id, newCenter, variance)
+          Cluster(cl.id, newCenter, variance, cl.label)
         })
         .toIndexedSeq
       // val variance = c.map(c => c.variance).sum
@@ -129,7 +129,7 @@ object KMeansVector {
           val points = sameCluster.map(x => x._3)
           val newCenter: Point = points.reduce((a, b) => a.+(b))./(sameCluster.size.toLong)
           val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
-          Cluster(cl.id, newCenter, variance)
+          Cluster(cl.id, newCenter, variance, cl.label)
         })
         .toIndexedSeq
       val variance = newCentroids.map(c => c.variance).sum
@@ -152,18 +152,18 @@ object KMeansVector {
    * @param seedFunction
    * @return
    */
-  def kmeanspp(k: Int, dataSet: Seq[Point], seedFunction: () => Double = () => Math.random()): Seq[Cluster] = {
+  def kmeanspp(label: String, k: Int, dataSet: Seq[Point], seedFunction: () => Double = () => Math.random()): Seq[Cluster] = {
     @scala.annotation.tailrec
     def reduction(i: Int, points: Seq[Point], latest: Point, workSet: Seq[Cluster]): Seq[Cluster] = {
       if (i <= 0) workSet
       else {
         val next = points.maxBy(x => seedFunction() * x.euclideanDistance(latest))
         val remainingPoints = points.filter((p: Point) => next != p)
-        reduction(i - 1, remainingPoints, next, workSet :+ Cluster(i, next, 0))
+        reduction(i - 1, remainingPoints, next, workSet :+ Cluster(i, next, 0, label))
       }
     }
     val first = dataSet.head
-    val workSet = IndexedSeq(Cluster(k, first, 0))
+    val workSet = IndexedSeq(Cluster(k, first, 0, label))
     val centers = reduction(k-1, dataSet.tail, first, workSet)
     val actualK = centers.map(c => c.id).toSet.size
     assert(actualK == k, s"[kmeanspp] Didn't get k = $k clusters. Got $actualK.")
@@ -176,25 +176,25 @@ object KMeansVector {
    * @param points
    * @return
    */
-  def kmeansInitByFarthest(k: Int, points: Seq[Point], iterLimit: Int, labelName: String): Seq[Cluster] = {
+  def kmeansInitByFarthest(k: Int, points: Seq[Point], iterLimit: Int, label: String): Seq[Cluster] = {
     val npoints = points.size
-    LOG.info(s"[$labelName] [kmeansInitByFarthest] got ${npoints} points and $k clusters.")
-    assert(k < npoints, s"[$labelName] [kmeansInitByFarthest] Can't cluster $npoints points in k = $k.")
+    LOG.info(s"[$label] [kmeansInitByFarthest] got ${npoints} points and $k clusters.")
+    assert(k < npoints, s"[$label] [kmeansInitByFarthest] Can't cluster $npoints points in k = $k.")
     @scala.annotation.tailrec
     def remaining(i: Int, points: Seq[Point], workSet: Seq[Cluster], iterLimit: Int): Seq[Cluster] = {
-      if (iterLimit <= 0) throw new RuntimeException(s"[$labelName] [kmeansInitByFarthest] Exceeded iterations. i=$i, p=${points.size}.")
+      if (iterLimit <= 0) throw new RuntimeException(s"[$label] [kmeansInitByFarthest] Exceeded iterations. i=$i, p=${points.size}.")
       if (i >= k) workSet
       else {
         val xDistance: Seq[(Point, Cluster, Double)] = crossDistance(points, workSet)
         val byPoint: Iterable[Seq[(Point, Cluster, Double)]] = xDistance.groupBy(d => d._1.id).values
         val farthest: (Point, Cluster, Double) = byPoint.map(d => d.minBy(d2 => d2._3)).maxBy(d => d._3)
-        LOG.info(s"[$labelName] i=$i farthest = (p= ${farthest._1.id}, c= ${farthest._2.id}, d= ${farthest._3}), rem= ${workSet.size}")
+        LOG.info(s"[$label] i=$i farthest = (p= ${farthest._1.id}, c= ${farthest._2.id}, d= ${farthest._3}), rem= ${workSet.size}")
         val farthestPoint: Point = farthest._1
-        val nextClusters = workSet :+ Cluster(farthestPoint.id, farthestPoint, 0)
+        val nextClusters = workSet :+ Cluster(farthestPoint.id, farthestPoint, 0, label)
         remaining(nextClusters.size, points, nextClusters, iterLimit - 1)
       }
     }
-    val workSet = IndexedSeq(Cluster(points.head.id, points.head, 0))
+    val workSet = IndexedSeq(Cluster(points.head.id, points.head, 0, label))
     val centers = remaining(1, points.tail, workSet, iterLimit)
     //
     val xDistance: Seq[(Point, Cluster, Double)] = crossDistance(points, centers)
@@ -210,14 +210,14 @@ object KMeansVector {
         val cluster = sameCluster.head._3
         val pointsCount = sameCluster.size
         val maxDistance = sameCluster.map(p => p._2).max
-        (Cluster(cluster.id, cluster.center, maxDistance), pointsCount)
+        (Cluster(cluster.id, cluster.center, maxDistance, cluster.label), pointsCount)
       })
     val count = varianceCenters.map(c => c._2)
     val vari = varianceCenters.map(c => c._1.variance)
     val finalClusters = varianceCenters.map(c => c._1).toSeq
     val actualKPoints = finalClusters.map(c => c.center.id).toSet.size
-    LOG.info(s"[$labelName] [kmeansInitByFarthest] ${finalClusters.size} Clusters with [${count.min}..${count.max}] points with variance [${vari.min}..${vari.min}]")
-    assert(actualKPoints == k, s"[$labelName] [kmeansInitByFarthest] Didn't get k = $k clusters, got $actualKPoints K-Points.")
+    LOG.info(s"[$label] [kmeansInitByFarthest] ${finalClusters.size} Clusters with [${count.min}..${count.max}] points with variance [${vari.min}..${vari.min}]")
+    assert(actualKPoints == k, s"[$label] [kmeansInitByFarthest] Didn't get k = $k clusters, got $actualKPoints K-Points.")
     finalClusters
   }
 
@@ -243,9 +243,9 @@ object KMeansVector {
 
     val tries = mutable.IndexedSeq[(String, (Seq[Cluster], Double))](
       initialization("kmeansInitByFarthest", kmeansInitByFarthest(k, points, (1.4*k).toInt, labelName)),
-      initialization("kmeanspp [1]", kmeanspp(k, points)),
-      initialization("kmeanspp [2]", kmeanspp(k, points)),
-      initialization("kmeanspp [3]", kmeanspp(k, points))
+      initialization("kmeanspp [1]", kmeanspp(labelName, k, points)),
+      initialization("kmeanspp [2]", kmeanspp(labelName, k, points)),
+      initialization("kmeanspp [3]", kmeanspp(labelName, k, points))
       // initialization("byZeroDistance [1]", byZeroDistance(k, points)),
       // initialization("byZeroDistance [2]", byZeroDistance(k, points)),
       // initialization("byZeroDistance [3]", byZeroDistance(k, points))
