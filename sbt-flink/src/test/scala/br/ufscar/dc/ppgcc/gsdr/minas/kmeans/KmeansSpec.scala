@@ -5,8 +5,6 @@ import org.scalatest._
 import org.scalatest.matchers.should.Matchers
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 
-import scala.util.Try
-// import com.opencsv._
 import java.io._
 import scala.collection.JavaConverters._
 import scala.util._

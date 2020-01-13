@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.core.fs.FileSystem
 
-object MinasKddCassales extends App {
+object MicroBatchingKmeans extends App {
   val LOG = Logger(getClass)
   val streamEnv = StreamExecutionEnvironment.getExecutionEnvironment
   val setEnv = ExecutionEnvironment.getExecutionEnvironment

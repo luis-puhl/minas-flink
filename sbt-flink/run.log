@@ -398,3 +398,18 @@ git_prompt_info:5: character not in range
  00:55:35  puhl@pokebola  ...project/minas-
 
 ERROR kmeans.Kmeans$ No missing clusters are allowed # => this means that clusters are still being ignored.
+
+
+45168, 40840, 44520, 41860) => Set(46573, 46175, 42470, 41738, 42037, 41860, 42799, 42595, 38391, 42755, 38771, 42642, 45867, 47745, 38842, 42418, 42216, 39360, 37969, 47988, 45763, 46681)
+18:12 INFO  kmeans.Kmeans$ kmeans [dos] c=100 p=10825 i=10 / 10, movement=1.1838188478456009 / 1.0E-4
+java -Djava.io.tmpdir=./tmpfs/ -cp    621.09s user 8.31s system 113% cpu 9:13.74 total
+18:17:49  puhl@pokebola  ...project/minas-flink/sbt-flink  ✖ ✹ ✭  9m13s 
+
+
+0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)),Cluster(47011,Point(37994,Vector(0.0, 1.488370719225152E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)),0.0,dos,2359,1578955667233),0.0)
+19:47 INFO  minas.MinasKdd$ afterConsumedHook (Some(dos),Point(442799,Vector(0.0, 1.488370719225152E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)),Cluster(44844,Point(37994,Vector(0.0, 1.488370719225152E-6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)),0.0,dos,2359,1578955667233),0.0)
+java -Djava.io.tmpdir=./tmpfs/ -cp  br.ufscar.dc.ppgcc.gsdr.minas.MinasKdd  646.94s user 11.00s system 112% cpu 9:44.66 total
+git_prompt_info:5: character not in range                                                                                                                                                     
+
+ 19:47:48  puhl@pokebola  ...project/minas-flink/sbt-flink  ➜ ✹ ✚  9m45s 
+$ 

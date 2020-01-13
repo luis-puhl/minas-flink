@@ -2,6 +2,7 @@ package br.ufscar.dc.ppgcc.gsdr.minas
 
 import br.ufscar.dc.ppgcc.gsdr.minas.helpers.ToVectAggregateFunction
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
+import grizzled.slf4j.Logger
 import org.apache.flink.api.common.state.{MapStateDescriptor, ValueStateDescriptor}
 import org.apache.flink.api.common.typeutils.TypeSerializer
 import org.apache.flink.api.scala._
@@ -12,11 +13,17 @@ import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.util.Collector
 
-case class Minas(config: Map[String, Int]) {
+case class Minas(config: Map[String, Int], afterConsumedHook: ((Option[String], Point, Cluster, Double)) => Unit) {
+  // val LOG = Logger(getClass)
+
   lazy val k: Int = config.getOrElse("k", 100)
   lazy val noveltyDetectionThreshold: Int = config.getOrElse("noveltyDetectionThreshold", 1000)
   lazy val representativeThreshold: Int = config.getOrElse("representativeThreshold", 10)
   lazy val noveltyIndex: Int = config.getOrElse("noveltyIndex", 0)
+
+  // def afterConsumedHook(arg: (Option[String], Point, Cluster, Double)): Unit = {
+  //   // LOG.info(s"afterConsumedHook $arg")
+  // }
 
   def offline(sourcePoints: Seq[(String, Point)]): MinasModel = {
     val model: Vector[Cluster] = sourcePoints.groupBy(p => p._1).values.flatMap(values => {
@@ -26,21 +33,21 @@ case class Minas(config: Map[String, Int]) {
       val clusters: Vector[Cluster] = Kmeans.kmeans(label, points, initialClusters)
       clusters
     }).toVector
-    MinasModel(model, sleep = Vector(), noMatch = Vector(), config, _ => Unit)
+    MinasModel(model, sleep = Vector(), noMatch = Vector(), config, e => afterConsumedHook(e))
   }
   def offline(sourcePoints: DataSet[(String, Point)]): DataSet[MinasModel] = {
     sourcePoints.groupBy(p => p._1)
-    .reduceGroup[Vector[Cluster]](items => {
+    .reduceGroup(items => {
       val values = items.toVector
       val label = values.head._1
-      val points = values.map(_._2).toVector
+      val points = values.map(_._2)
       val initialClusters = Kmeans.kmeansInitialRandom(label, k, points)
       val clusters: Vector[Cluster] = Kmeans.kmeans(label, points, initialClusters)
       clusters
     })
     .groupBy(_ => 0)
     .reduceGroup(all => all.flatten.toVector)
-    .map(model => MinasModel(model, sleep = Vector(), noMatch = Vector(), config, _ => Unit))
+    .map(model => MinasModel(model, sleep = Vector(), noMatch = Vector(), config, e => afterConsumedHook(e)))
   }
   def offline(sourcePoints: DataStream[(String, Point)]): DataStream[MinasModel] = {
     sourcePoints.keyBy(p => p._1)
@@ -64,9 +71,9 @@ case class Minas(config: Map[String, Int]) {
       .timeWindow(Time.milliseconds(100))
       .reduce((a, b) => a ++ b)
       .keyBy(_ => 0)
-      .mapWithState((values, state) => {
+      .mapWithState[MinasModel, Vector[Cluster]]((values, state) => {
         val clusters: Vector[Cluster] = values ++ state.getOrElse(Vector())
-        val model = MinasModel(clusters, sleep = Vector(), noMatch = Vector(), config, _ => Unit)
+        val model = MinasModel(clusters, sleep = Vector(), noMatch = Vector(), config, e => afterConsumedHook(e))
         (model, Some(clusters))
       })
   }
@@ -75,6 +82,7 @@ case class Minas(config: Map[String, Int]) {
     var model = minasModel
     val consumed = testPoints.map(point => {
       val (label, next) = minasModel.consume(point)
+      // LOG.info(s"afterConsumedHook $label -> $point")
       model = next
       (point, label)
     })
@@ -83,9 +91,10 @@ case class Minas(config: Map[String, Int]) {
   def online(minasModel: MinasModel, testPoints: DataStream[Point]): DataStream[(Point, Option[String])] = {
     testPoints
       .keyBy(_ => 0)
-      .mapWithState((point, state) => {
+      .mapWithState[(Point, Option[String]), MinasModel]((point, state) => {
         val modelState: MinasModel = state.getOrElse(minasModel)
         val (label, next) = modelState.consume(point)
+        // LOG.info(s"afterConsumedHook $label -> $point")
         ((point, label), Some(next))
       })
   }

@@ -22,7 +22,7 @@ object KmeansTest extends App {
           success
       }
     )
-  
+
   val inPathIni = "./tmpfs/KDDTe5Classes_fold1_ini.csv"
   val outFilePath = "./tmpfs/out"
   val bufferedSource = io.Source.fromFile(inPathIni)

@@ -78,6 +78,7 @@ object Kmeans {
       val improvement = totalMovement / prevMovement
       val onlyNewClusters = newClusters.map(c => c._1)
       LOG.info(s"kmeans [$label] c=${clusters.size} p=${points.size} i=$i / $limit, movement=$improvement / $targetImprovement")
+      if (improvement > 1.0) LOG.info(s"kmeans [$label] worst result $prevMovement -> $totalMovement = $improvement / $targetImprovement")
       if (improvement < targetImprovement) onlyNewClusters
       else kmeans(label, points, onlyNewClusters, totalMovement, targetImprovement, limit, i + 1)
     }

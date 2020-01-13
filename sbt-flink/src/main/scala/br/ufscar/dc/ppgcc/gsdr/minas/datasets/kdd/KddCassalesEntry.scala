@@ -15,8 +15,9 @@ case class KddCassalesEntry(
   f21: Double, f22: Double, f23: Double, f24: Double, f25: Double, f26: Double, f27: Double, f28: Double, f29: Double, f30: Double,
   f31: Double, f32: Double, f33: Double, f34: Double, label: String
 ) {
-  def value: Vector[Double] = Vector(
+  lazy val value: Vector[Double] = Vector(
     f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20,
     f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34
   )
+  lazy val isNormalized: Boolean = this.value.forall(v => v >= 0.0 && v <= 1.0)
 }

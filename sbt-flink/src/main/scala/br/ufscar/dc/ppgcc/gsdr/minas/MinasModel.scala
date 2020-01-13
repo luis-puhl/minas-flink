@@ -13,6 +13,7 @@ case class MinasModel(model: Vector[Cluster], sleep: Vector[Cluster], noMatch: V
     (modelCount.keySet ++ sleepCount.keySet).map(key => key -> (modelCount(key) + sleepCount(key))).toMap
   }
   lazy val allClusters: Vector[Cluster] = model ++ sleep
+  //
   lazy val k: Int = config.getOrElse("k", 100)
   lazy val noveltyDetectionThreshold: Int = config.getOrElse("noveltyDetectionThreshold", 1000)
   lazy val representativeThreshold: Int = config.getOrElse("representativeThreshold", 10)
