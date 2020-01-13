@@ -18,7 +18,7 @@ case class MinasModel(model: Vector[Cluster], sleep: Vector[Cluster], noMatch: V
   lazy val representativeThreshold: Int = config.getOrElse("representativeThreshold", 10)
   lazy val noveltyIndex: Int = config.getOrElse("noveltyIndex", 0)
 
-  def classify(point: Point, model: Vector[Cluster] = this.model, afterClassifyHook: ((Option[String], Point, Cluster, Double)) => Unit = (Tuple4 => Unit))
+  def classify(point: Point, model: Vector[Cluster] = this.model, afterClassifyHook: ((Option[String], Point, Cluster, Double)) => Unit = (_ => Unit))
     (implicit distanceOperator: Point.DistanceOperator)
   : Option[(String, Point, Cluster, Double)] = {
     val (_, cluster, distance) = Kmeans.closestCluster(point, model)
