@@ -8,7 +8,7 @@ import scala.collection.immutable
 object Kmeans {
   val LOG = Logger(getClass)
 
-  def closestCluster(point: Point, clusters: Vector[Cluster])(implicit distanceOperator: Point.DistanceOperator): (Point, Cluster, Double) = {
+  def closestCluster(point: Point, clusters: Seq[Cluster])(implicit distanceOperator: Point.DistanceOperator): (Point, Cluster, Double) = {
     clusters.map(c => (point, c, c.center.distance(point))).minBy(d => d._3)
   }
 
@@ -64,7 +64,7 @@ object Kmeans {
   @tailrec
   def kmeans(label: String,
               points: Vector[Point], clusters: Vector[Cluster],
-              prevMovement: Double = 1.0, targetImprovement: Double = 10E-5,
+              prevMovement: Double = Point.max().fromOrigin, targetImprovement: Double = 10E-5,
               limit: Int = 10, i: Int = 0
   )(implicit distanceOperator: Point.DistanceOperator): Vector[Cluster] = {
     if (i > limit) clusters
@@ -77,8 +77,8 @@ object Kmeans {
       val totalMovement = newClusters.map(c => c._2).sum
       val improvement = totalMovement / prevMovement
       val onlyNewClusters = newClusters.map(c => c._1)
-      LOG.info(s"kmeans [$label] c=${clusters.size} p=${points.size} i=$i / $limit, movement=$improvement / $targetImprovement")
-      if (improvement > 1.0) LOG.info(s"kmeans [$label] worst result $prevMovement -> $totalMovement = $improvement / $targetImprovement")
+      LOG.info(s"kmeans [$label] c=${clusters.size} p=${points.size} i=$i / $limit, improvement=$improvement / $targetImprovement")
+      if (improvement > 1.0) LOG.info(s"kmeans [$label:$i] worst result $prevMovement -> $totalMovement = $improvement / $targetImprovement")
       if (improvement < targetImprovement) onlyNewClusters
       else kmeans(label, points, onlyNewClusters, totalMovement, targetImprovement, limit, i + 1)
     }

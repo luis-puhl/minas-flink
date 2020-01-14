@@ -2,6 +2,7 @@ package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
 object Point {
   def zero(dimension: Int = 34) = Point(0, Vector.fill[Double](dimension)(0.0))
+  def max(dimension: Int = 34) = Point(Long.MaxValue, Vector.fill[Double](dimension)(1.0))
 
   trait DistanceOperator {
     def compare(x: Point, y: Point): Double
@@ -25,7 +26,7 @@ object Point {
 }
 case class Point(id: Long, value: Vector[Double]) {
   lazy val dimension: Int = this.value.size
-  lazy val fromOrigin: Double = this.distance(Point.zero(this.dimension))
+  def fromOrigin(implicit distanceOperator: Point.DistanceOperator): Double = this.distance(Point.zero(this.dimension))
 
   def +(other: Point): Point =
     checkSize(other, Point(this.id, this.value.zip(other.value).map(x => x._1 + x._2)))

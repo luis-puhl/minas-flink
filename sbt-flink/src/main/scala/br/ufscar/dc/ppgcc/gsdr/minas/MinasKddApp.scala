@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.core.fs.FileSystem
 
-object MinasKdd extends App {
+object MinasKddApp extends App {
   val LOG = Logger(getClass)
   val jobName = this.getClass.getName
   LOG.info(s"jobName = $jobName")
@@ -43,7 +43,7 @@ object MinasKdd extends App {
     LOG.info(s"afterConsumedHook $arg")
   }
 
-  val minas: Minas = Minas(config, afterConsumedHook)
+  val minas: Minas = Minas(config, afterConsumedHook, Point.EuclideanSqrDistance)
   val model: MinasModel = minas.offline(stream)
 
   val testStream: DataStream[(String, Point)] = streamEnv.readTextFile(inPathOnl)

@@ -13,13 +13,14 @@ import org.apache.flink.streaming.api.scala.DataStream
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.util.Collector
 
-case class Minas(config: Map[String, Int], afterConsumedHook: ((Option[String], Point, Cluster, Double)) => Unit) {
+case class Minas(config: Map[String, Int], afterConsumedHook: ((Option[String], Point, Cluster, Double)) => Unit, distanceOp: Point.DistanceOperator) {
   // val LOG = Logger(getClass)
 
   lazy val k: Int = config.getOrElse("k", 100)
   lazy val noveltyDetectionThreshold: Int = config.getOrElse("noveltyDetectionThreshold", 1000)
   lazy val representativeThreshold: Int = config.getOrElse("representativeThreshold", 10)
   lazy val noveltyIndex: Int = config.getOrElse("noveltyIndex", 0)
+  implicit val distanceOperator: Point.DistanceOperator = distanceOp
 
   // def afterConsumedHook(arg: (Option[String], Point, Cluster, Double)): Unit = {
   //   // LOG.info(s"afterConsumedHook $arg")
