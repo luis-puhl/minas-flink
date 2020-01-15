@@ -25,8 +25,7 @@ class MinasModelSerializer extends CaseClassSerializer[MinasModel](MinasModel.ge
       model = fields(0).asInstanceOf[Vector[Cluster]],
       sleep = fields(0).asInstanceOf[Vector[Cluster]],
       noMatch = fields(0).asInstanceOf[Vector[Point]],
-      config = fields(0).asInstanceOf[Map[String, Int]],
-      afterConsumedHook = fields(0).asInstanceOf[afterConsumedHookType]
+      config = fields(0).asInstanceOf[Map[String, Int]]
     )
   }
 }

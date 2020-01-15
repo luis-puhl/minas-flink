@@ -24,7 +24,7 @@ object Point {
       x.cosDistance(y)
   }
 }
-case class Point(id: Long, value: Vector[Double]) {
+case class Point(id: Long, value: Vector[Double], time: Long = System.currentTimeMillis()) {
   lazy val dimension: Int = this.value.size
   def fromOrigin(implicit distanceOperator: Point.DistanceOperator): Double = this.distance(Point.zero(this.dimension))
 
@@ -57,7 +57,7 @@ case class Point(id: Long, value: Vector[Double]) {
     Math.sqrt(this.unary_|)
 
   override def equals(other: Any): Boolean = other match {
-    case Point(id, value) => id == this.id && value.equals(this.value)
+    case Point(id, value, time) => id == this.id && value.equals(this.value)
     case _ => false
   }
 

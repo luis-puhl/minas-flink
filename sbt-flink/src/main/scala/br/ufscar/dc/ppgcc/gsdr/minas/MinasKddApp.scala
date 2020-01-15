@@ -43,7 +43,7 @@ object MinasKddApp extends App {
     LOG.info(s"afterConsumedHook $arg")
   }
 
-  val minas: Minas = Minas(config, afterConsumedHook, Point.EuclideanSqrDistance)
+  val minas: Minas = Minas(config, Point.EuclideanSqrDistance)
   val model: MinasModel = minas.offline(stream)
 
   val testStream: DataStream[(String, Point)] = streamEnv.readTextFile(inPathOnl)

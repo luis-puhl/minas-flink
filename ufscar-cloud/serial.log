@@ -1,0 +1,7 @@
+puhl@puhl-host:~/minas-flink/sbt-flink$ wc -l tmpfs/out/MinasKddSerialApp/evaluation 
+442800 tmpfs/out/MinasKddSerialApp/evaluation
+puhl@puhl-host:~/minas-flink/sbt-flink$ grep 'false' tmpfs/out/MinasKddSerialApp/evaluation | wc -l
+269945
+puhl@puhl-host:~/minas-flink/sbt-flink$ grep 'true' tmpfs/out/MinasKddSerialApp/evaluation | wc -l
+172855
+puhl@puhl-host:~/minas-flink/sbt-flink$ 
