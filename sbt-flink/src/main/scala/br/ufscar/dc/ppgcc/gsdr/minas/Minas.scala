@@ -48,12 +48,11 @@ case class Minas(config: Map[String, Int], distanceOp: Point.DistanceOperator) {
   protected def consume(point: Point, minasModel: MinasModel): (Option[String], MinasModel) = {
     val classified = classify(point, minasModel.model)
     val updatedMinas = classified match {
-      case Some((label, point, cluster, distance)) => {
+      case Some((label, point, cluster, distance)) =>
         val modelUpdate = minasModel.model
           .filter(c => c.id != cluster.id)
           .:+(cluster.consume(point))
         MinasModel(modelUpdate, minasModel.sleep, minasModel.noMatch, config)
-      }
       case None => MinasModel(minasModel.model, minasModel.sleep, minasModel.noMatch :+ point, config)
     }
     (classified.map(i => i._1), updatedMinas)
