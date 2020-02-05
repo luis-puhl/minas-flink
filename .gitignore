@@ -18,6 +18,8 @@ mvn-shennenigans
 datasets
 ref
 udemyexamples/kdd.ics.uci.edu/databases
+garbage
+lib
 
 **/.idea
 **/target
