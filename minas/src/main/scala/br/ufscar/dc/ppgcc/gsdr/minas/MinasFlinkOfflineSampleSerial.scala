@@ -38,7 +38,7 @@ object MinasFlinkOfflineSampleSerial {
         val lineSplit = line.split(",")
         val index = lineSplit.head.toLong
         val doubles = lineSplit.slice(1, lineSplit.length - 1).map(_.toDouble)
-        val label = lineSplit.last
+        val label: String = lineSplit.last
         (label, Point(index, doubles))
       })
     //
@@ -46,13 +46,18 @@ object MinasFlinkOfflineSampleSerial {
     training.writeAsText(s"$outDir/initial")
     //
     val serialKMeans = training
-      .groupBy(_._1)
+      .groupBy(_._1) // group by label
       .reduceGroup(datapoints => {
+        // [ 1k ] -> { azul: 500, vermelho, 500 } -> { azul: [k], vermelho: [k] }
         val dataSeq = datapoints.toSeq
+        // datapoints => somente azuis
         val label = dataSeq.head._1
-        val points = dataSeq.map(_._2)
-        val initial = Kmeans.kmeansInitialRandom(label, k, points)
+        val points = dataSeq.map(_._2) // extrair os point do iterador
+        //
+        val initial: Seq[Cluster] = Kmeans.kmeansInitialRandom(label, k, points)
+        // ponto e o centro do cluster
         val clusters = Kmeans.kmeans(label, points, initial)
+        // minimizar a variancia total, movendo os centros para o ponto medio dentro do cluster
         (label, clusters)
       })
       .flatMap(i => i._2)

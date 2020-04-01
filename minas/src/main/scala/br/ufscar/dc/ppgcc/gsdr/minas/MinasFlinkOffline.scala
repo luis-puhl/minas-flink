@@ -4,12 +4,16 @@ import java.io.{File, FileWriter}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import grizzled.slf4j.Logger
+import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
+import org.apache.flink.api.common.functions.{MapFunction, RichMapFunction}
 import org.apache.flink.api.common.typeinfo.{TypeInformation, _}
+import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields
 import org.apache.flink.api.scala._
+import org.apache.flink.configuration.Configuration
 
 import scala.collection.{AbstractIterator, Iterator}
+import scala.collection.JavaConverters._
 
 object MinasFlinkOffline {
   val LOG = Logger(getClass)
@@ -65,6 +69,38 @@ object MinasFlinkOffline {
       next.writeAsText(s"$outDir/parallelKMeans-fixedLoop-$i")
       next
     })
+
+//    val fromFlinkExamples = initialClusters.iterate(iterations) { currentCentroids =>
+//      val newCentroids = training
+//        .withForwardedFields("*->_2")
+//        .map(new RichMapFunction[Point, (Long, Point)] {
+//          private var centroids: Traversable[Cluster] = _
+//
+//          /** Reads the centroid values from a broadcast variable into a collection. */
+//          override def open(parameters: Configuration): Unit = {
+//            centroids = getRuntimeContext.getBroadcastVariable[Cluster]("centroids").asScala
+//          }
+//
+//          override def map(p: Point): (Long, Point) = {
+//            var minDistance: Double = Double.MaxValue
+//            var closestCentroidId: Long = -1
+//            for (centroid <- centroids) {
+//              val distance = p.euclideanDistance(centroid.center)
+//              if (distance < minDistance) {
+//                minDistance = distance
+//                closestCentroidId = centroid.id
+//              }
+//            }
+//            (closestCentroidId, p)
+//          }
+//        })
+//        .withBroadcastSet(currentCentroids, "centroids")
+//        .map { x => (x._1, x._2, 1L) }.withForwardedFields("_1; _2")
+//        .groupBy(0)
+//        .reduce { (p1, p2) => (p1._1, p1._2.add(p2._2), p1._3 + p2._3) }.withForwardedFields("_1")
+//        .map { x => new Centroid(x._1, x._2.div(x._3)) }.withForwardedFields("_1->id")
+//      newCentroids
+//    }
 
     initialClusters
       .iterateWithTermination(iterations)(previous => {

@@ -18,12 +18,18 @@ val flinkDependencies = Seq(
   "org.apache.flink" %% "flink-streaming-scala" % flinkVersion) // % "provided"
   // "org.apache.flink" %% "flink-connector-kafka_2.11" % flinkVersion
 
+val samoaVersion = "0.4.0-incubating"
+
 val loggerDependencies = Seq(
   "log4j" % "log4j" % "1.2.17",
   "org.slf4j" % "slf4j-log4j12" % "1.7.29")
 val minasDependencies = Seq(
   "nz.ac.waikato.cms.moa" % "moa" % "2019.05.0",
-  "nz.ac.waikato.cms.weka" % "weka-stable" % "3.8.4")
+  "nz.ac.waikato.cms.weka" % "weka-stable" % "3.8.4",
+  "org.apache.samoa" % "samoa" % samoaVersion,
+  "org.apache.samoa" % "samoa-instances" % samoaVersion,
+  "org.apache.samoa" % "samoa-api" % samoaVersion,
+)
 val testDependencies = Seq(
   "org.scalactic" %% "scalactic" % "3.1.0",
   "org.scalatest" %% "scalatest" % "3.1.0" % "test")
@@ -36,8 +42,8 @@ lazy val root = (project in file(".")).
   settings(
     libraryDependencies ++= flinkDependencies,
     libraryDependencies += "org.apache.flink" % "flink-connector-kafka_2.11" % "1.9.1",
-    libraryDependencies ++= loggerDependencies
-    // libraryDependencies ++= minasDependencies
+    libraryDependencies ++= loggerDependencies,
+    libraryDependencies ++= minasDependencies
   )
 
 assembly / mainClass := Some("br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline")
