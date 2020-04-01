@@ -1,7 +1,5 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans;
 
-import org.apache.samoa.instances.DenseInstance;
-import org.apache.samoa.instances.Instance;
 import org.apache.samoa.moa.cluster.Cluster;
 import org.apache.samoa.moa.cluster.Clustering;
 import org.apache.samoa.moa.cluster.SphereCluster;
@@ -10,7 +8,6 @@ import org.apache.samoa.moa.clusterers.KMeans;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class MoaKmeans {
     public static double[][] POINTS = {
@@ -33,76 +30,25 @@ public class MoaKmeans {
             this.b = b;
         }
     }
-//    public static final double MIN_VARIANCE = 1e-50;
-//    private final static double EPSILON = 0.00005;
-//
-//    /**
-//        micro cluster, as defined by Aggarwal et al, On Clustering Massive Data
-//        Streams: A Summarization Praradigm in the book "Data streams: models and
-//        algorithms", by Charu C Aggarwal
-//
-//        @article{
-//            title = {Data Streams: Models and Algorithms},
-//            author = {Aggarwal, Charu C.},
-//            year = {2007},
-//            publisher = {Springer Science+Business Media, LLC},
-//            url = {http://ebooks.ulb.tu-darmstadt.de/11157/},
-//            institution = {eBooks [http://ebooks.ulb.tu-darmstadt.de/perl/oai2] (Germany)},
-//        }
-//
-//        DEFINITION A micro-cluster for a set of d-dimensional points Xi,. .Xi, with
-//        timestamps ~. . .T,, is the (2-d+3)tuple (CF2", CFlX CF2t, CFlt, n), wherein
-//        CF2" and CFlX each correspond to a vector of d entries. The definition of
-//        each of these entries is as follows:
-//            - For each dimension, the sum of the squares of the data values is
-//              maintained in CF2". Thus, CF2" contains d values. The p-th entry of
-//              CF2" is equal to \sum_j=1^n(x_i_j)^2
-//            - For each dimension, the sum of the data values is maintained in C F l
-//              X . Thus, CFIX contains d values. The p-th entry of CFIX is equal to
-//              \sum_j=1^n x_i_j
-//            - The sum of the squares of the time stamps Ti,. .Tin maintained in CF2t
-//            - The sum of the time stamps Ti, . . .Tin maintained in CFlt.
-//            - The number of data points is maintained in n.
-//     */
-//    static class CFClusterImp extends CFCluster {
-//        // protected double N; // Number of points in the cluster.
-//        // public double[] LS; // Linear sum of all the points added to the cluster.
-//        // public double[] SS; // Squared sum of all the points added to the cluster.
-//        public CFClusterImp(com.yahoo.labs.samoa.instances.Instance inst, int dimensions) {
-//            super(inst, dimensions);
-//        }
-//
-//        @Override
-//        public CFCluster getCF() {
-//            return null;
-//        }
-//
-//        @Override
-//        public double getInclusionProbability(com.yahoo.labs.samoa.instances.Instance instance) {
-//            return 0;
-//        }
-//
-//        @Override
-//        public double getRadius() {
-//            return 0;
-//        }
-//    }
-//
-//    static class MinasCluster{
-//        protected double LST;
-//        protected double SST;
-//        protected String classe;
-//        protected CFClusterImp cfClusterImp;
-//        public MinasCluster(long timestamp, String classe, Instance instance) {
-//            this.classe = classe;
-//            this.LST = timestamp;
-//            this.SST = timestamp * timestamp;
-//            MinasInstance inst = new MinasInstance();
-//            this.cfClusterImp = new CFClusterImp(inst);
-//        }
-//    }
+    public static String sphereClusterToString(SphereCluster cluster) {
+        return (
+            "SphereCluster(" +
+            "id=" + (int) cluster.getId() + ", " +
+            "classSimpleName=" + cluster.getClass().getSimpleName() + ", " +
+            "weight=" + cluster.getWeight() + ", " +
+            "radius=" + cluster.getRadius() + ", " +
+            "center=" + Arrays.toString(cluster.getCenter()) +
+            ")"
+        );
+    }
+
     public static void main(String[] args) {
-        Cluster[] clusters = new Cluster[Math.min(POINTS.length / 10, 100)];
+        kmeans();
+    }
+    public static void kmeans() {
+        int k = Math.min(POINTS.length / 10, 100);
+        System.out.println("k = " + k);
+        Cluster[] clusters = new Cluster[k];
         List<Cluster> points = new LinkedList<>();
         int i = 0;
         for (; i < clusters.length; i++) {
@@ -116,12 +62,9 @@ public class MoaKmeans {
             points.add(new SphereCluster(point, 1.0));
         }
         Clustering clustering = KMeans.kMeans(clusters, points);
-        StringBuilder sb = new StringBuilder();
-        clustering.getDescription(sb, 0);
-        System.out.println(sb.toString());
         for (int j = 0; j < clustering.size(); j++) {
-            Cluster cluster = clustering.get(j);
-            System.out.println(cluster.getInfo() + " " + Arrays.toString(cluster.getCenter()));
+            SphereCluster cluster = (SphereCluster) clustering.get(j);
+            System.out.println(sphereClusterToString(cluster));
         }
     }
 }
