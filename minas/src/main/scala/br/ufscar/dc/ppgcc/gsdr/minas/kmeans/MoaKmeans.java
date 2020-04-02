@@ -1,9 +1,11 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans;
 
+import org.apache.samoa.instances.DenseInstance;
 import org.apache.samoa.moa.cluster.Cluster;
 import org.apache.samoa.moa.cluster.Clustering;
 import org.apache.samoa.moa.cluster.SphereCluster;
 import org.apache.samoa.moa.clusterers.KMeans;
+import org.apache.samoa.moa.clusterers.clustream.Clustream;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -43,25 +45,43 @@ public class MoaKmeans {
     }
 
     public static void main(String[] args) {
-        kmeans();
+        kmeans(POINTS);
+        clustream(POINTS);
     }
-    public static void kmeans() {
-        int k = Math.min(POINTS.length / 10, 100);
-        System.out.println("k = " + k);
+
+    public static void clustream(double[][] points) {
+        Clustream clustream = new Clustream();
+        clustream.prepareForUse();
+        for (double[] point: points) {
+            DenseInstance instance = new DenseInstance(1, point);
+            clustream.trainOnInstanceImpl(instance);
+        }
+        Clustering clustering = clustream.getMicroClusteringResult();
+        System.out.println("Clustream k=" + clustering.size());
+        for (int j = 0; j < clustering.size(); j++) {
+            SphereCluster cluster = (SphereCluster) clustering.get(j);
+            System.out.println(sphereClusterToString(cluster));
+        }
+        // additionally, filters clusters with less than 3 points
+    }
+
+    public static void kmeans(double[][] points) {
+        int k = Math.min(points.length / 10, 100);
+        System.out.println("k-means k=" + k);
         Cluster[] clusters = new Cluster[k];
-        List<Cluster> points = new LinkedList<>();
+        List<Cluster> dataPoints = new LinkedList<>();
         int i = 0;
-        for (; i < clusters.length; i++) {
-            double[] point = POINTS[i];
-            points.add(new SphereCluster(point, 1.0));
+        for (; i < k; i++) {
+            double[] point = points[i];
+            dataPoints.add(new SphereCluster(point, 1.0));
             //
             clusters[i] = new SphereCluster(point, Double.MAX_VALUE);
         }
-        for (; i < POINTS.length; i++) {
-            double[] point = POINTS[i];
-            points.add(new SphereCluster(point, 1.0));
+        for (; i < points.length; i++) {
+            double[] point = points[i];
+            dataPoints.add(new SphereCluster(point, 1.0));
         }
-        Clustering clustering = KMeans.kMeans(clusters, points);
+        Clustering clustering = KMeans.kMeans(clusters, dataPoints);
         for (int j = 0; j < clustering.size(); j++) {
             SphereCluster cluster = (SphereCluster) clustering.get(j);
             System.out.println(sphereClusterToString(cluster));
