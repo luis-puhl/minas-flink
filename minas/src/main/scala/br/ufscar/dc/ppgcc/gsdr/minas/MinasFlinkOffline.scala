@@ -9,6 +9,7 @@ import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import org.apache.flink.api.common.functions.{MapFunction, RichMapFunction}
 import org.apache.flink.api.common.typeinfo.{TypeInformation, _}
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields
+import org.apache.flink.api.java.operators.DataSink
 import org.apache.flink.api.scala._
 import org.apache.flink.configuration.Configuration
 
@@ -23,7 +24,7 @@ object MinasFlinkOffline {
     LOG.info(s"jobName = $jobName")
     val setEnv = ExecutionEnvironment.getExecutionEnvironment
 
-    val inPathIni = "/home/puhl/project/minas-flink/ref/KDDTe5Classes_fold1_ini.csv"
+    val inPathIni = "./datasets/KDD/KDDTe5Classes_fold1_ini.csv"
     val inPathIndexed = s"$inPathIni.indexed"
     val outDir = s"./out/$jobName/$dateString/"
     val dir = new File(outDir)
@@ -51,6 +52,12 @@ object MinasFlinkOffline {
     //
     serialKMeans(outDir, k, training)
 
+//    parallelKmeans(k, outDir, iterations, varianceThreshold, training)
+
+    setEnv.execute(jobName)
+  }
+
+  def parallelKmeans(k: Int, outDir: String, iterations: Int, varianceThreshold: Double, training: DataSet[(String, Point)]): DataSink[(String, Cluster)] = {
     val parallelKMeansInitial: DataSet[(String, Seq[Cluster], Seq[Point])] = training
       .groupBy(_._1)
       .reduceGroup(datapoints => {
@@ -70,37 +77,37 @@ object MinasFlinkOffline {
       next
     })
 
-//    val fromFlinkExamples = initialClusters.iterate(iterations) { currentCentroids =>
-//      val newCentroids = training
-//        .withForwardedFields("*->_2")
-//        .map(new RichMapFunction[Point, (Long, Point)] {
-//          private var centroids: Traversable[Cluster] = _
-//
-//          /** Reads the centroid values from a broadcast variable into a collection. */
-//          override def open(parameters: Configuration): Unit = {
-//            centroids = getRuntimeContext.getBroadcastVariable[Cluster]("centroids").asScala
-//          }
-//
-//          override def map(p: Point): (Long, Point) = {
-//            var minDistance: Double = Double.MaxValue
-//            var closestCentroidId: Long = -1
-//            for (centroid <- centroids) {
-//              val distance = p.euclideanDistance(centroid.center)
-//              if (distance < minDistance) {
-//                minDistance = distance
-//                closestCentroidId = centroid.id
-//              }
-//            }
-//            (closestCentroidId, p)
-//          }
-//        })
-//        .withBroadcastSet(currentCentroids, "centroids")
-//        .map { x => (x._1, x._2, 1L) }.withForwardedFields("_1; _2")
-//        .groupBy(0)
-//        .reduce { (p1, p2) => (p1._1, p1._2.add(p2._2), p1._3 + p2._3) }.withForwardedFields("_1")
-//        .map { x => new Centroid(x._1, x._2.div(x._3)) }.withForwardedFields("_1->id")
-//      newCentroids
-//    }
+    //    val fromFlinkExamples = initialClusters.iterate(iterations) { currentCentroids =>
+    //      val newCentroids = training
+    //        .withForwardedFields("*->_2")
+    //        .map(new RichMapFunction[Point, (Long, Point)] {
+    //          private var centroids: Traversable[Cluster] = _
+    //
+    //          /** Reads the centroid values from a broadcast variable into a collection. */
+    //          override def open(parameters: Configuration): Unit = {
+    //            centroids = getRuntimeContext.getBroadcastVariable[Cluster]("centroids").asScala
+    //          }
+    //
+    //          override def map(p: Point): (Long, Point) = {
+    //            var minDistance: Double = Double.MaxValue
+    //            var closestCentroidId: Long = -1
+    //            for (centroid <- centroids) {
+    //              val distance = p.euclideanDistance(centroid.center)
+    //              if (distance < minDistance) {
+    //                minDistance = distance
+    //                closestCentroidId = centroid.id
+    //              }
+    //            }
+    //            (closestCentroidId, p)
+    //          }
+    //        })
+    //        .withBroadcastSet(currentCentroids, "centroids")
+    //        .map { x => (x._1, x._2, 1L) }.withForwardedFields("_1; _2")
+    //        .groupBy(0)
+    //        .reduce { (p1, p2) => (p1._1, p1._2.add(p2._2), p1._3 + p2._3) }.withForwardedFields("_1")
+    //        .map { x => new Centroid(x._1, x._2.div(x._3)) }.withForwardedFields("_1->id")
+    //      newCentroids
+    //    }
 
     initialClusters
       .iterateWithTermination(iterations)(previous => {
@@ -115,8 +122,6 @@ object MinasFlinkOffline {
         (next, term)
       })
       .writeAsText(s"$outDir/parallelKMeans-finalClusters")
-
-    setEnv.execute(jobName)
   }
 
   def iterationKMeansFlink(clusters: DataSet[(String, Cluster)], points: DataSet[(String, Point)]): DataSet[(String, Cluster)] = {
@@ -150,16 +155,18 @@ object MinasFlinkOffline {
       .reduceGroup(datapoints => {
         val dataSeq = datapoints.toSeq
         val label = dataSeq.head._1
-        val points = dataSeq.map(_._2)
-        val initial = Kmeans.kmeansInitialRandom(label, k, points)
-        val clusters = Kmeans.kmeans(label, points, initial)
+        val points: Seq[Point] = dataSeq.map(_._2)
+        // val initial = Kmeans.kmeansInitialRandom(label, k, points)
+        // val clusters = Kmeans.kmeans(label, points, initial)
+        val clustersCenters: Array[Array[Double]] = MoaKmeans.kmeans(points.map(p => p.value.toArray).toArray)
+        val clusters: Array[Cluster] = clustersCenters.map(c => Cluster(0, Point(0, c), 0.0, label))
         (label, clusters)
       })
       .flatMap(i => i._2)
       .writeAsText(s"$outDir/serialKmeans")
   }
 
-  private def indexInputFile(inPathIni: String, inPathIndexed: String) = {
+  private def indexInputFile(inPathIni: String, inPathIndexed: String): Unit = {
     // adicionando uid as linhas
     val indexedFile = new File(inPathIndexed)
     if (!indexedFile.exists) {
