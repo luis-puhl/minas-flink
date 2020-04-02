@@ -24,3 +24,5 @@ lib
 **/.idea
 **/target
 **/dependency-reduced-pom.xml
+
+ufscar-cloud

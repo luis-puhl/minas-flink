@@ -31,6 +31,24 @@ lazy val root = (project in file(".")).
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % "test"
   )
 
+resourceGenerators in Compile += Def.task {
+  val hashCmd = """
+      |(find "./src" -type f -print0  | sort -z | xargs -0 sha1sum;
+      | find "./src" \( -type f -o -type d \) -print0 | sort -z | \
+      |   xargs -0 stat -c '%n %a') \
+      || sha1sum
+      |""".stripMargin
+  val hash = scala.io.Source.fromInputStream(
+    java.lang.Runtime.getRuntime.exec(hashCmd).getInputStream
+  ).getLines().reduce(_+_)
+//  "br/ufscar/dc/ppgcc/gsdr/minas/" /
+  val file = (resourceManaged in Compile).value / "app.properties"
+  println(file)
+  val contents = "name=%s\nversion=%s\nhash=%s\n".format(name.value, version.value, hash)
+  IO.write(file, contents)
+  Seq(file)
+}.taskValue
+
 assembly / mainClass := Some("br.ufscar.dc.ppgcc.gsdr.minas.KMeansVector")
 
 // make run command include the provided dependencies

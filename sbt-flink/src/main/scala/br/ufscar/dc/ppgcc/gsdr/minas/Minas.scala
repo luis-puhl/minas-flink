@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.util.Collector
 
 case class Minas(config: Map[String, Int], distanceOp: Point.DistanceOperator) {
-   val LOG = Logger(getClass)
+   val LOG: Logger = Logger(getClass)
 
   protected lazy val k: Int = config.getOrElse("k", 100)
   protected lazy val noveltyDetectionThreshold: Int = config.getOrElse("noveltyDetectionThreshold", 1000)
