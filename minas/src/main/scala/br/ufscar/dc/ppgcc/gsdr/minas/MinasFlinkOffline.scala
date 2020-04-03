@@ -3,6 +3,7 @@ package br.ufscar.dc.ppgcc.gsdr.minas
 import java.io.{File, FileWriter}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util
 
 import grizzled.slf4j.Logger
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
@@ -12,8 +13,10 @@ import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields
 import org.apache.flink.api.java.operators.DataSink
 import org.apache.flink.api.scala._
 import org.apache.flink.configuration.Configuration
+import org.apache.samoa.moa.cluster.{Cluster => MoaCluster, Clustering, SphereCluster}
+import org.apache.samoa.moa.clusterers.{KMeans => MoaKMeans}
 
-import scala.collection.{AbstractIterator, Iterator}
+import scala.collection.{AbstractIterator, Iterator, immutable}
 import scala.collection.JavaConverters._
 
 object MinasFlinkOffline {
@@ -50,7 +53,7 @@ object MinasFlinkOffline {
     LOG.info(s"training.parallelism = ${training.parallelism}")
     training.writeAsText(s"$outDir/initial")
     //
-    serialKMeans(outDir, k, training)
+    serialKMeans(setEnv, outDir, k, training)
 
 //    parallelKmeans(k, outDir, iterations, varianceThreshold, training)
 
@@ -149,8 +152,8 @@ object MinasFlinkOffline {
       })
   }
 
-  private def serialKMeans(outDir: String, k: Int, training: DataSet[(String, Point)]) = {
-    training
+  private def serialKMeans(setEnv: ExecutionEnvironment, outDir: String, k: Int, training: DataSet[(String, Point)]) = {
+    val clusters: DataSet[Cluster] = training
       .groupBy(_._1)
       .reduceGroup(datapoints => {
         val dataSeq = datapoints.toSeq
@@ -158,12 +161,71 @@ object MinasFlinkOffline {
         val points: Seq[Point] = dataSeq.map(_._2)
         // val initial = Kmeans.kmeansInitialRandom(label, k, points)
         // val clusters = Kmeans.kmeans(label, points, initial)
-        val clustersCenters: Array[Array[Double]] = MoaKmeans.kmeans(points.map(p => p.value.toArray).toArray)
-        val clusters: Array[Cluster] = clustersCenters.map(c => Cluster(0, Point(0, c), 0.0, label))
-        (label, clusters)
+        //
+        // val clustersCenters: Array[Array[Double]] = MoaKmeans.kmeans(points.map(p => p.value.toArray).toArray)
+        // val clusters: Array[Cluster] = clustersCenters.map(c => Cluster(0, Point(0, c), 0.0, label))
+        //
+        val k: Int = Math.min(points.length / 10, 100)
+        val dimension: Int = points.head.dimension
+        LOG.info("k-means k=" + k)
+        val clusters: Array[MoaCluster] = points.take(k).map(
+          p => new SphereCluster(p.value.toArray, Double.MaxValue).asInstanceOf[MoaCluster]
+        ).toArray
+        val dataPoints: util.List[MoaCluster] = points.map(
+          p => new SphereCluster(p.value.toArray, 1.0).asInstanceOf[MoaCluster]
+        ).toList.asJava
+        //
+        val clustering: Clustering = MoaKMeans.kMeans(clusters, dataPoints)
+        val clusteringVector = clustering.getClustering
+        val clustersCenters: immutable.Seq[Cluster] = (0 to clusteringVector.size())
+          .filter(i => clusteringVector.get(i) != null)
+          .map(i => {
+            val moaCluster = clusteringVector.get(i).asInstanceOf[SphereCluster]
+            val center = moaCluster.getCenter
+            val radius = moaCluster.getRadius
+            val id = (if (moaCluster.getId > 0) moaCluster.getId else i).toLong
+            val point = Point(id, center)
+            val cluster = Cluster(point.id, point, radius, label, moaCluster.getWeight.toLong)
+            cluster
+          })
+        val minDistances: Seq[(Point, Cluster, Double)] = points.map(p => {
+          val d = clustersCenters.map(c => (c, p.distance(c.center))).minBy(_._2)
+          (p, d._1, d._2)
+        })
+        val accounted = minDistances.groupBy(_._2.id).map(i => {
+          val variance = i._2.maxBy(_._3)._3
+          val count = i._2.size.toLong
+          val cluster = i._2.head._2
+          // cluster.copy(variance=variance, matches=count)
+          (cluster.id, variance, count)
+        })
+        val updatedClusters = clustersCenters.map(c =>
+          accounted.find(i => i._1 == c.id).map(i => {
+            val (id, variance, count) = i
+            c.copy(variance=variance, matches=count)
+          }).getOrElse(c)
+        )
+        (label, updatedClusters)
       })
       .flatMap(i => i._2)
-      .writeAsText(s"$outDir/serialKmeans")
+    clusters.writeAsText(s"$outDir/serialKmeans")
+    //
+    setEnv.fromElements(Cluster.CSV_HEADER)
+      .setParallelism(1)
+      .union(clusters.map(c => c.csv).setParallelism(1))
+      .map(cl => cl)
+      .setParallelism(1)
+      .writeAsText(s"$outDir/serialKmeans.csv")
+    //
+    setEnv.fromElements(Cluster.CSV_HEADER)
+      .setParallelism(1)
+      .union(clusters.filter(c => c.matches > 0 && c.variance > 0).map(c => c.csv).setParallelism(1))
+      .map(cl => cl)
+      .setParallelism(1)
+      .writeAsText(s"$outDir/serialKmeans-clean.csv")
+    //
+    // val clustersClean = clusters.filter(cl => cl.)
+    clusters
   }
 
   private def indexInputFile(inPathIni: String, inPathIndexed: String): Unit = {
