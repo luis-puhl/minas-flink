@@ -7,9 +7,8 @@ import org.apache.samoa.moa.cluster.SphereCluster;
 import org.apache.samoa.moa.clusterers.KMeans;
 import org.apache.samoa.moa.clusterers.clustream.Clustream;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.DoubleStream;
 
 public class MoaKmeans {
     public static double[][] POINTS = {
@@ -34,14 +33,7 @@ public class MoaKmeans {
         {-21.91, -49.01}, {-46.68, 46.04}, {48.52, -43.67}, {30.05, 49.25},
         {4.03, -43.56}, {-37.85, 41.72}, {38.24, -48.32}, {20.83, 57.85},
     };
-    private static class Tuple2<A, B>{
-        public A a;
-        public B b;
-        public Tuple2(A a, B b) {
-            this.a = a;
-            this.b = b;
-        }
-    }
+
     public static String sphereClusterToString(SphereCluster cluster) {
         return (
             "SphereCluster(" +
@@ -55,50 +47,82 @@ public class MoaKmeans {
     }
 
     public static void main(String[] args) {
-        kmeans(POINTS);
-        clustream(POINTS);
+        int seed = 100;
+                // (int) (Math.random() * 100);
+        Random rnd = new Random(seed);
+
+        int dimensions = Math.abs(rnd.nextInt(100));
+        int length = Math.abs(rnd.nextInt((int) 10e4));
+        System.out.println("seed=" + seed + " dimensions=" + dimensions + " length=" + length + " total=" + dimensions * length);
+        DoubleStream doubleStream = rnd.doubles(dimensions * length, 0, 1);
+        PrimitiveIterator.OfDouble doubles = doubleStream.iterator();
+
+        double[][] POINTS = new double[length][dimensions];
+        for (double[] point : POINTS) {
+            for (int j = 0; j < point.length; j++) {
+                point[j] = doubles.nextDouble();
+            }
+        }
+
+        int k = Math.min(POINTS.length / 10, 100);
+
+        Cluster[] kMeansInitByHead = kMeansInitByHead(POINTS, k);
+        System.out.println("kMeansInitByHead k=" + k);
+        System.out.println(Arrays.toString(summation(dimensions, kMeansInitByHead)));
+
+        Clustering kMeans = kMeans(POINTS, kMeansInitByHead);
+        System.out.println("kMeans k=" + kMeans.size());
+        System.out.println(Arrays.toString(summation(dimensions, kMeans)));
+
+        Clustering cluStream = cluStream(POINTS);
+        System.out.println("cluStream k=" + cluStream.size());
+        System.out.println(Arrays.toString(summation(dimensions, cluStream)));
     }
 
-    public static Clustering clustream(double[][] points) {
+    public static double[] summation(int dimensions, Cluster[] clusters) {
+        double[] sum = new double[dimensions];
+        for (Cluster cluster : clusters) {
+            double[] x = cluster.getCenter();
+            for (int i = 0; i < x.length; i++) {
+                sum[i] += x[i];
+            }
+        }
+        return sum;
+    }
+    public static double[] summation(int dimensions, Clustering clustering) {
+        double[] sum = new double[dimensions];
+        for (Cluster cluster : clustering.getClustering()) {
+            double[] x = cluster.getCenter();
+            for (int i = 0; i < x.length; i++) {
+                sum[i] += x[i];
+            }
+        }
+        return sum;
+    }
+
+    public static Clustering cluStream(double[][] points) {
         Clustream clustream = new Clustream();
         clustream.prepareForUse();
         for (double[] point: points) {
             DenseInstance instance = new DenseInstance(1, point);
             clustream.trainOnInstanceImpl(instance);
         }
-        Clustering clustering = clustream.getMicroClusteringResult();
-        System.out.println("Clustream k=" + clustering.size());
-        for (int j = 0; j < clustering.size(); j++) {
-            SphereCluster cluster = (SphereCluster) clustering.get(j);
-            System.out.println(sphereClusterToString(cluster));
-        }
         // additionally, filters clusters with less than 3 points
-        return clustering;
+        return clustream.getMicroClusteringResult();
     }
 
-    public static double[][] kmeans(double[][] points) {
-        int k = Math.min(points.length / 10, 100);
-        System.out.println("k-means k=" + k);
+    public static Cluster[] kMeansInitByHead(double[][] points, int k) {
         Cluster[] clusters = new Cluster[k];
+        for (int i = 0; i < k; i++) {
+            clusters[i] = new SphereCluster(points[i], 0);
+        }
+        return clusters;
+    }
+    public static Clustering kMeans(double[][] points, Cluster[] seed) {
         List<Cluster> dataPoints = new LinkedList<>();
-        int i = 0;
-        for (; i < k; i++) {
-            double[] point = points[i];
-            dataPoints.add(new SphereCluster(point, 1.0));
-            //
-            clusters[i] = new SphereCluster(point, Double.MAX_VALUE);
-        }
-        for (; i < points.length; i++) {
-            double[] point = points[i];
+        for (double[] point : points) {
             dataPoints.add(new SphereCluster(point, 1.0));
         }
-        Clustering clustering = KMeans.kMeans(clusters, dataPoints);
-        double[][] clustersCenters = new double[clustering.size()][points[0].length];
-        for (int j = 0; j < clustering.size(); j++) {
-            SphereCluster cluster = (SphereCluster) clustering.get(j);
-            System.out.println(sphereClusterToString(cluster));
-            clustersCenters[j] = cluster.getCenter();
-        }
-        return clustersCenters;
+        return KMeans.kMeans(seed, dataPoints);
     }
 }

@@ -61,6 +61,7 @@ object MinasFlinkOffline {
     setEnv.execute(jobName)
   }
 
+  /*
   def parallelKmeans(k: Int, outDir: String, iterations: Int, varianceThreshold: Double, training: DataSet[(String, Point)]): DataSink[(String, Cluster)] = {
     val parallelKMeansInitial: DataSet[(String, Seq[Cluster], Seq[Point])] = training
       .groupBy(_._1)
@@ -152,6 +153,7 @@ object MinasFlinkOffline {
         (label, next)
       })
   }
+  */
 
   def serialKMeans: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[Cluster] = {
     def alg(points: Seq[Point], k: Int): Clustering = {
@@ -167,7 +169,7 @@ object MinasFlinkOffline {
   }
 
   def serialClustream: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[Cluster] = {
-    def algorith(points: Seq[Point], k: Int): Clustering = MoaKmeans.clustream(points.map(_.value.toArray).toArray)
+    def algorith(points: Seq[Point], k: Int): Clustering = MoaKmeans.cluStream(points.map(_.value.toArray).toArray)
     moaClusterer("Clustream", "serialClustream", algorith)
   }
 

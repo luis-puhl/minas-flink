@@ -70,15 +70,15 @@ object Kmeans {
     else {
       val distances = groupByClosest(points, clusters)
       if (distances.keys.size != clusters.size) {
-        LOG.warn(s"kmeans [$label/$i] Reduction in clusters array. Had ${clusters.size} and got ${distances.keys.size}. i=$i, target=$targetImprovement")
+        LOG.warn(s"kMeans [$label/$i] Reduction in clusters array. Had ${clusters.size} and got ${distances.keys.size}. i=$i, target=$targetImprovement")
       }
       val newClusters = updateClustersCenters(distances)
       val totalMovement = newClusters.map(c => c._2).sum
       val improvement = totalMovement / prevMovement
       val onlyNewClusters = newClusters.map(c => c._1)
       val innerDistances = VectorStatistics.VectorStdDev(onlyNewClusters.map(_.variance))
-      LOG.info(s"kmeans [$label/$i] c=${clusters.size} p=${points.size} inner=$innerDistances / $limit, improvement=$improvement / $targetImprovement")
-      if (improvement > 1.0) LOG.info(s"kmeans [$label/$i] worst result $prevMovement -> $totalMovement = $improvement / $targetImprovement")
+      LOG.info(s"kMeans [$label/$i] c=${clusters.size} p=${points.size} inner=$innerDistances / $limit, improvement=$improvement / $targetImprovement")
+      if (improvement > 1.0) LOG.info(s"kMeans [$label/$i] worst result $prevMovement -> $totalMovement = $improvement / $targetImprovement")
       if (improvement < targetImprovement) onlyNewClusters
       else kmeans(label, points, onlyNewClusters, totalMovement, targetImprovement, limit, i + 1)
     }
