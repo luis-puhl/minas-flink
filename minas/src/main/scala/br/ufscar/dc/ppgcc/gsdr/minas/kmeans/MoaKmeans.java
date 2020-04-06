@@ -59,7 +59,7 @@ public class MoaKmeans {
         clustream(POINTS);
     }
 
-    public static void clustream(double[][] points) {
+    public static Clustering clustream(double[][] points) {
         Clustream clustream = new Clustream();
         clustream.prepareForUse();
         for (double[] point: points) {
@@ -73,6 +73,7 @@ public class MoaKmeans {
             System.out.println(sphereClusterToString(cluster));
         }
         // additionally, filters clusters with less than 3 points
+        return clustering;
     }
 
     public static double[][] kmeans(double[][] points) {

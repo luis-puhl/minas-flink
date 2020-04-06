@@ -7,16 +7,16 @@ import java.util
 
 import grizzled.slf4j.Logger
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
-import org.apache.flink.api.common.functions.{MapFunction, RichMapFunction}
+import org.apache.flink.api.common.functions.{MapFunction, RichFilterFunction, RichMapFunction}
 import org.apache.flink.api.common.typeinfo.{TypeInformation, _}
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields
 import org.apache.flink.api.java.operators.DataSink
 import org.apache.flink.api.scala._
 import org.apache.flink.configuration.Configuration
-import org.apache.samoa.moa.cluster.{Cluster => MoaCluster, Clustering, SphereCluster}
+import org.apache.samoa.moa.cluster.{Clustering, SphereCluster, Cluster => MoaCluster}
 import org.apache.samoa.moa.clusterers.{KMeans => MoaKMeans}
 
-import scala.collection.{AbstractIterator, Iterator, immutable}
+import scala.collection.{AbstractIterator, Iterator, immutable, mutable}
 import scala.collection.JavaConverters._
 
 object MinasFlinkOffline {
@@ -54,6 +54,7 @@ object MinasFlinkOffline {
     training.writeAsText(s"$outDir/initial")
     //
     serialKMeans(setEnv, outDir, k, training)
+    serialClustream(setEnv, outDir, k, training)
 
 //    parallelKmeans(k, outDir, iterations, varianceThreshold, training)
 
@@ -152,32 +153,38 @@ object MinasFlinkOffline {
       })
   }
 
-  private def serialKMeans(setEnv: ExecutionEnvironment, outDir: String, k: Int, training: DataSet[(String, Point)]) = {
+  def serialKMeans: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[Cluster] = {
+    def alg(points: Seq[Point], k: Int): Clustering = {
+      val clusters: Array[MoaCluster] = points.take(k).map(
+        p => new SphereCluster(p.value.toArray, Double.MaxValue).asInstanceOf[MoaCluster]
+      ).toArray
+      val dataPoints: util.List[MoaCluster] = points.map(
+        p => new SphereCluster(p.value.toArray, 1.0).asInstanceOf[MoaCluster]
+      ).toList.asJava
+      MoaKMeans.kMeans(clusters, dataPoints)
+    }
+    moaClusterer("k-means", "serialKmeans", alg)
+  }
+
+  def serialClustream: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[Cluster] = {
+    def algorith(points: Seq[Point], k: Int): Clustering = MoaKmeans.clustream(points.map(_.value.toArray).toArray)
+    moaClusterer("Clustream", "serialClustream", algorith)
+  }
+
+  def moaClusterer(name: String, fileName: String, algorith: (Seq[Point], Int) => Clustering)
+                  (setEnv: ExecutionEnvironment, outDir: String, k: Int, training: DataSet[(String, Point)]): DataSet[Cluster] = {
     val clusters: DataSet[Cluster] = training
       .groupBy(_._1)
-      .reduceGroup(datapoints => {
-        val dataSeq = datapoints.toSeq
+      .reduceGroup(dataPoints => {
+        val dataSeq = dataPoints.toSeq
         val label = dataSeq.head._1
         val points: Seq[Point] = dataSeq.map(_._2)
-        // val initial = Kmeans.kmeansInitialRandom(label, k, points)
-        // val clusters = Kmeans.kmeans(label, points, initial)
+        LOG.info(s"$name k=" + k)
         //
-        // val clustersCenters: Array[Array[Double]] = MoaKmeans.kmeans(points.map(p => p.value.toArray).toArray)
-        // val clusters: Array[Cluster] = clustersCenters.map(c => Cluster(0, Point(0, c), 0.0, label))
+        val clustering: Clustering = algorith(points, k)
         //
-        val k: Int = Math.min(points.length / 10, 100)
-        val dimension: Int = points.head.dimension
-        LOG.info("k-means k=" + k)
-        val clusters: Array[MoaCluster] = points.take(k).map(
-          p => new SphereCluster(p.value.toArray, Double.MaxValue).asInstanceOf[MoaCluster]
-        ).toArray
-        val dataPoints: util.List[MoaCluster] = points.map(
-          p => new SphereCluster(p.value.toArray, 1.0).asInstanceOf[MoaCluster]
-        ).toList.asJava
-        //
-        val clustering: Clustering = MoaKMeans.kMeans(clusters, dataPoints)
         val clusteringVector = clustering.getClustering
-        val clustersCenters: immutable.Seq[Cluster] = (0 to clusteringVector.size())
+        val clustersCenters: Seq[Cluster] = (0 to clusteringVector.size())
           .filter(i => clusteringVector.get(i) != null)
           .map(i => {
             val moaCluster = clusteringVector.get(i).asInstanceOf[SphereCluster]
@@ -185,7 +192,7 @@ object MinasFlinkOffline {
             val radius = moaCluster.getRadius
             val id = (if (moaCluster.getId > 0) moaCluster.getId else i).toLong
             val point = Point(id, center)
-            val cluster = Cluster(point.id, point, radius, label, moaCluster.getWeight.toLong)
+            val cluster = Cluster(point.id, point, radius, label, Cluster.CATEGORY_NORMAL, moaCluster.getWeight.toLong)
             cluster
           })
         val minDistances: Seq[(Point, Cluster, Double)] = points.map(p => {
@@ -196,7 +203,6 @@ object MinasFlinkOffline {
           val variance = i._2.maxBy(_._3)._3
           val count = i._2.size.toLong
           val cluster = i._2.head._2
-          // cluster.copy(variance=variance, matches=count)
           (cluster.id, variance, count)
         })
         val updatedClusters = clustersCenters.map(c =>
@@ -208,21 +214,38 @@ object MinasFlinkOffline {
         (label, updatedClusters)
       })
       .flatMap(i => i._2)
-    clusters.writeAsText(s"$outDir/serialKmeans")
+    clusters.writeAsText(s"$outDir/$fileName")
     //
     setEnv.fromElements(Cluster.CSV_HEADER)
       .setParallelism(1)
       .union(clusters.map(c => c.csv).setParallelism(1))
       .map(cl => cl)
       .setParallelism(1)
-      .writeAsText(s"$outDir/serialKmeans.csv")
+      .writeAsText(s"$outDir/$fileName.csv")
     //
     setEnv.fromElements(Cluster.CSV_HEADER)
       .setParallelism(1)
-      .union(clusters.filter(c => c.matches > 0 && c.variance > 0).map(c => c.csv).setParallelism(1))
+      .union(
+        clusters
+          .filter(c => c.matches > 0 && c.variance > 0)
+          .setParallelism(1)
+          .filter(new RichFilterFunction[Cluster] {
+            val seen: mutable.Set[Cluster] = mutable.Set[Cluster]()
+            override def filter(value: Cluster): Boolean = {
+              if (seen.contains(value)) {
+                false
+              } else {
+                seen += value
+                true
+              }
+            }
+          })
+          .map(c => c.csv)
+          .setParallelism(1)
+      )
       .map(cl => cl)
       .setParallelism(1)
-      .writeAsText(s"$outDir/serialKmeans-clean.csv")
+      .writeAsText(s"$outDir/$fileName-clean.csv")
     //
     // val clustersClean = clusters.filter(cl => cl.)
     clusters
