@@ -189,12 +189,12 @@ object MinasFlinkOffline {
         val clustersCenters: Seq[Cluster] = (0 to clusteringVector.size())
           .filter(i => clusteringVector.get(i) != null)
           .map(i => {
-            val moaCluster = clusteringVector.get(i).asInstanceOf[SphereCluster]
-            val center = moaCluster.getCenter
-            val radius = moaCluster.getRadius
-            val id = (if (moaCluster.getId > 0) moaCluster.getId else i).toLong
-            val point = Point(id, center)
-            val cluster = Cluster(point.id, point, radius, label, Cluster.CATEGORY_NORMAL, moaCluster.getWeight.toLong)
+            val moaCluster: SphereCluster = clusteringVector.get(i).asInstanceOf[SphereCluster]
+            val center: Array[Double] = moaCluster.getCenter
+            val radius: Double = moaCluster.getRadius
+            val id: Long = (if (moaCluster.getId > 0) moaCluster.getId else i).toLong
+            val point: Point = Point(id, center)
+            val cluster: Cluster = Cluster(point.id, point, radius, label, Cluster.CATEGORY_NORMAL, moaCluster.getWeight.toLong)
             cluster
           })
         val minDistances: Seq[(Point, Cluster, Double)] = points.map(p => {

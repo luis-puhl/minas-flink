@@ -26,3 +26,6 @@ lib
 **/dependency-reduced-pom.xml
 
 ufscar-cloud
+
+minas/datasets
+minas/out
