@@ -45,27 +45,27 @@ object MinasFlinkOfflineSample {
     LOG.info(s"training.parallelism = ${training.parallelism}")
     training.writeAsText(s"$outDir/initial")
     //
-    val parallelKMeansInitial: DataSet[(String, Seq[Cluster], Seq[Point])] = training
+    val parallelKMeansInitial: DataSet[(String, Seq[MfogCluster], Seq[Point])] = training
       .groupBy(_._1)
       .reduceGroup(datapoints => {
         val dataSeq = datapoints.toSeq
         val label = dataSeq.head._1
         val points = dataSeq.map(_._2)
-        val initial = points.take(k).map(p => Cluster(p.id, p, 0.0, label))
+        val initial = points.take(k).map(p => MfogCluster(p.id, p, 0.0, label))
         (label, initial, points)
       })
-    val initialClusters: DataSet[(String, Cluster)] = parallelKMeansInitial.flatMap(a => a._2.map(c => (c.label, c)))
+    val initialClusters: DataSet[(String, MfogCluster)] = parallelKMeansInitial.flatMap(a => a._2.map(c => (c.label, c)))
     initialClusters.writeAsText(s"$outDir/parallelKMeans-initialClusters")
     //
 
-    def extractVariance(dataset: DataSet[(String, Cluster)]): DataSet[(String, Double)] =
+    def extractVariance(dataset: DataSet[(String, MfogCluster)]): DataSet[(String, Double)] =
       dataset.groupBy(c => c._1)
         .reduceGroup(g => g.foldLeft(("", 0.0))((state, next) => (next._1, state._2 + next._2.variance)))
 
     initialClusters
       .iterateWithTermination(iterations)(previous => {
         val previousVariance: DataSet[(String, Double)] = extractVariance(previous)
-        val next: DataSet[(String, Cluster)] = iterationKMeansFlink(previous, training)
+        val next: DataSet[(String, MfogCluster)] = iterationKMeansFlink(previous, training)
         val term = extractVariance(next)
           .join(previousVariance).where(0).equalTo(0)
           .map(v => (v._1._1, v._1._2 / v._2._2))
@@ -77,7 +77,7 @@ object MinasFlinkOfflineSample {
     setEnv.execute(jobName)
   }
 
-  def iterationKMeansFlink(clusters: DataSet[(String, Cluster)], points: DataSet[(String, Point)]): DataSet[(String, Cluster)] = {
+  def iterationKMeansFlink(clusters: DataSet[(String, MfogCluster)], points: DataSet[(String, Point)]): DataSet[(String, MfogCluster)] = {
     clusters
       .crossWithHuge(points)(
         (c, p) => if (p._1 != c._1) Seq.empty else Seq((p._1, p._2.id, c._2.id, p._2, c._2, p._2.distance(c._2.center)))
@@ -92,8 +92,8 @@ object MinasFlinkOfflineSample {
       .map(group => {
         val label = group._1
         val c = group._3
-        val nextCl = Cluster(c.id, Point.zero(c.center.dimension), 0.0, c.label)
-        val next = group._4.foldLeft(nextCl)((state: Cluster, next: (Point, Double)) => {
+        val nextCl = MfogCluster(c.id, Point.zero(c.center.dimension), 0.0, c.label)
+        val next = group._4.foldLeft(nextCl)((state: MfogCluster, next: (Point, Double)) => {
           val p = next._1
           val d = next._2
           state.consumeWithDistance(p, d, group._4.size)

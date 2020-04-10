@@ -14,18 +14,18 @@ import scala.collection.{immutable, mutable}
 object KMeansVector {
   val LOG = Logger(getClass)
 
-  def kmeansIteration(points: DataSet[Point], centroids: DataSet[Cluster], iterations: Int): DataSet[Cluster] = {
+  def kmeansIteration(points: DataSet[Point], centroids: DataSet[MfogCluster], iterations: Int): DataSet[MfogCluster] = {
     centroids.iterate(iterations)(currentCentroids =>
       points
-        .map(new RichMapFunction[Point, (Long, Cluster, mutable.IndexedSeq[Point], Long)] {
-          private var centroids: Traversable[Cluster] = null
+        .map(new RichMapFunction[Point, (Long, MfogCluster, mutable.IndexedSeq[Point], Long)] {
+          private var centroids: Traversable[MfogCluster] = null
 
           override def open(parameters: Configuration): Unit = {
-            this.centroids = getRuntimeContext.getBroadcastVariable[Cluster]("centroids").asScala
+            this.centroids = getRuntimeContext.getBroadcastVariable[MfogCluster]("centroids").asScala
           }
 
-          def map(p: Point): (Long, Cluster, mutable.IndexedSeq[Point], Long) = {
-            val minDistance: (Double, Cluster) = centroids.map(c => (p.euclideanDistance(c.center), c)).minBy(_._1)
+          def map(p: Point): (Long, MfogCluster, mutable.IndexedSeq[Point], Long) = {
+            val minDistance: (Double, MfogCluster) = centroids.map(c => (p.euclideanDistance(c.center), c)).minBy(_._1)
             (minDistance._2.id, minDistance._2, mutable.IndexedSeq(p), 1L)
           }
         })
@@ -38,23 +38,23 @@ object KMeansVector {
           val old = x._2
           val newMeanPoint = x._3.reduce((a, b) => a.+(b))./(x._4)
           val newVariance = x._3.map(p => p.euclideanDistance(newMeanPoint)).max
-          Cluster(old.id, newMeanPoint, newVariance, old.label)
+          MfogCluster(old.id, newMeanPoint, newVariance, old.label)
         })
         // .withForwardedFields("_1->id")
     )
   }
-  def kmeansIteration(points: Seq[Point], centroids: DataSet[Cluster], iterations: Int): DataSet[Cluster] = {
-    centroids.iterate(iterations)((currentCentroids: DataSet[Cluster]) => {
-      val a: DataSet[(Cluster, Point, Double)] = currentCentroids
+  def kmeansIteration(points: Seq[Point], centroids: DataSet[MfogCluster], iterations: Int): DataSet[MfogCluster] = {
+    centroids.iterate(iterations)((currentCentroids: DataSet[MfogCluster]) => {
+      val a: DataSet[(MfogCluster, Point, Double)] = currentCentroids
         .flatMap(c => points.map(p => (c, p, c.center.euclideanDistance(p))))
-      val b: DataSet[(Long, Cluster, Point, Double)] = a.groupBy(d => d._2.hashCode())
+      val b: DataSet[(Long, MfogCluster, Point, Double)] = a.groupBy(d => d._2.hashCode())
           .reduceGroup(samePoint => {
             val seq = samePoint.toIndexedSeq
             val p: Point = seq.head._2
-            val nearest: (Cluster, Point, Double) = seq.minBy(p => p._3)
+            val nearest: (MfogCluster, Point, Double) = seq.minBy(p => p._3)
             (nearest._1.id, nearest._1, p, nearest._3)
           })
-      val c: DataSet[Cluster] = b.groupBy(0)
+      val c: DataSet[MfogCluster] = b.groupBy(0)
           .reduceGroup(sameCluster => {
             val seq = sameCluster.toIndexedSeq
             val cl = seq.head._2
@@ -62,14 +62,14 @@ object KMeansVector {
             val points = seq.map(x => x._3)
             val newCenter: Point = points.reduce((a, b) => a.+(b))./(seq.size.toLong)
             val variance = points.map(p => newCenter.euclideanDistance(p)).max
-            Cluster(cl.id, newCenter, variance, cl.label)
+            MfogCluster(cl.id, newCenter, variance, cl.label)
           })
       c
     })
   }
-  def kmeansIteration(points: Seq[Point], centroids: Seq[Cluster], iterations: Int): Seq[Cluster] = {
+  def kmeansIteration(points: Seq[Point], centroids: Seq[MfogCluster], iterations: Int): Seq[MfogCluster] = {
     val k = centroids.map(c => c.id).toSet.size
-    var currentCentroids: Seq[Cluster] = centroids
+    var currentCentroids: Seq[MfogCluster] = centroids
     var currentVariance: Double = points
       .map(p => centroids.map(c => p.euclideanDistance(c.center)).min).sum
     LOG.info(s"k = $k")
@@ -82,13 +82,13 @@ object KMeansVector {
       // assert(b.keySet.size == k, s"[Iter $i] Result centroids size is not k. Expected $k, got ${b.keySet.size}.")
       val c = b
         .values
-        .map((sameCluster: Seq[(Long, Cluster, Point, Double)]) => {
+        .map((sameCluster: Seq[(Long, MfogCluster, Point, Double)]) => {
           val cl = sameCluster.head._2
           assert(sameCluster.head._1 == cl.id, "Cluster id mismatch")
           val points = sameCluster.map(x => x._3)
           val newCenter: Point = points.reduce((a, b) => a.+(b))./(sameCluster.size.toLong)
           val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
-          Cluster(cl.id, newCenter, variance, cl.label)
+          MfogCluster(cl.id, newCenter, variance, cl.label)
         })
         .toIndexedSeq
       // val variance = c.map(c => c.variance).sum
@@ -107,12 +107,12 @@ object KMeansVector {
    * @param varianceThreshold
    * @return
    */
-  def kmeansIterationRec(points: Seq[Point], centroids: Seq[Cluster], iterations: Int, varianceThreshold: Double): (Seq[Cluster], Double) = {
+  def kmeansIterationRec(points: Seq[Point], centroids: Seq[MfogCluster], iterations: Int, varianceThreshold: Double): (Seq[MfogCluster], Double) = {
     assert(varianceThreshold < 1, "[kmeansIterationRec] Variance threshold is in percent between iterations and must be less than 1.")
     val k = centroids.map(c => c.id).toSet.size
     LOG.info(s"[kmeansIterationRec] got ${points.size} points and $k clusters.")
     @scala.annotation.tailrec
-    def iterate(currentCentroids: Seq[Cluster], prevVariance: Double, i: Int): (Seq[Cluster], Double) = {
+    def iterate(currentCentroids: Seq[MfogCluster], prevVariance: Double, i: Int): (Seq[MfogCluster], Double) = {
       val nearest = points.map(
         p => currentCentroids
           .map(c => (c.id, c, p, p.euclideanDistance(c.center)))
@@ -122,13 +122,13 @@ object KMeansVector {
       assert(uniqueClusters == k, s"[kmeansIterationRec] Expected k=$k, got $uniqueClusters on iteration $i.")
       val newCentroids = nearest
         .groupBy(d => d._1).values
-        .map((sameCluster: Seq[(Long, Cluster, Point, Double)]) => {
+        .map((sameCluster: Seq[(Long, MfogCluster, Point, Double)]) => {
           val cl = sameCluster.head._2
           assert(sameCluster.head._1 == cl.id, "[kmeansIterationRec] Cluster id mismatch")
           val points = sameCluster.map(x => x._3)
           val newCenter: Point = points.reduce((a, b) => a.+(b))./(sameCluster.size.toLong)
           val variance: Double = points.map(p => newCenter.euclideanDistance(p)).max
-          Cluster(cl.id, newCenter, variance, cl.label)
+          MfogCluster(cl.id, newCenter, variance, cl.label)
         })
         .toIndexedSeq
       val variance = newCentroids.map(c => c.variance).sum
@@ -151,18 +151,18 @@ object KMeansVector {
    * @param seedFunction
    * @return
    */
-  def kmeanspp(label: String, k: Int, dataSet: Seq[Point], seedFunction: () => Double = () => Math.random()): Seq[Cluster] = {
+  def kmeanspp(label: String, k: Int, dataSet: Seq[Point], seedFunction: () => Double = () => Math.random()): Seq[MfogCluster] = {
     @scala.annotation.tailrec
-    def reduction(i: Int, points: Seq[Point], latest: Point, workSet: Seq[Cluster]): Seq[Cluster] = {
+    def reduction(i: Int, points: Seq[Point], latest: Point, workSet: Seq[MfogCluster]): Seq[MfogCluster] = {
       if (i <= 0) workSet
       else {
         val next = points.maxBy(x => seedFunction() * x.euclideanDistance(latest))
         val remainingPoints = points.filter((p: Point) => next != p)
-        reduction(i - 1, remainingPoints, next, workSet :+ Cluster(i, next, 0, label))
+        reduction(i - 1, remainingPoints, next, workSet :+ MfogCluster(i, next, 0, label))
       }
     }
     val first = dataSet.head
-    val workSet = IndexedSeq(Cluster(k, first, 0, label))
+    val workSet = IndexedSeq(MfogCluster(k, first, 0, label))
     val centers = reduction(k-1, dataSet.tail, first, workSet)
     val actualK = centers.map(c => c.id).toSet.size
     assert(actualK == k, s"[kmeanspp] Didn't get k = $k clusters. Got $actualK.")
@@ -175,41 +175,41 @@ object KMeansVector {
    * @param points
    * @return
    */
-  def kmeansInitByFarthest(k: Int, points: Seq[Point], iterLimit: Int, label: String): Seq[Cluster] = {
+  def kmeansInitByFarthest(k: Int, points: Seq[Point], iterLimit: Int, label: String): Seq[MfogCluster] = {
     val npoints = points.size
     LOG.info(s"[$label] [kmeansInitByFarthest] got ${npoints} points and $k clusters.")
     assert(k < npoints, s"[$label] [kmeansInitByFarthest] Can't cluster $npoints points in k = $k.")
     @scala.annotation.tailrec
-    def remaining(i: Int, points: Seq[Point], workSet: Seq[Cluster], iterLimit: Int): Seq[Cluster] = {
+    def remaining(i: Int, points: Seq[Point], workSet: Seq[MfogCluster], iterLimit: Int): Seq[MfogCluster] = {
       if (iterLimit <= 0) throw new RuntimeException(s"[$label] [kmeansInitByFarthest] Exceeded iterations. i=$i, p=${points.size}.")
       if (i >= k) workSet
       else {
-        val xDistance: Seq[(Point, Cluster, Double)] = crossDistance(points, workSet)
-        val byPoint: Iterable[Seq[(Point, Cluster, Double)]] = xDistance.groupBy(d => d._1.id).values
-        val farthest: (Point, Cluster, Double) = byPoint.map(d => d.minBy(d2 => d2._3)).maxBy(d => d._3)
+        val xDistance: Seq[(Point, MfogCluster, Double)] = crossDistance(points, workSet)
+        val byPoint: Iterable[Seq[(Point, MfogCluster, Double)]] = xDistance.groupBy(d => d._1.id).values
+        val farthest: (Point, MfogCluster, Double) = byPoint.map(d => d.minBy(d2 => d2._3)).maxBy(d => d._3)
         LOG.info(s"[$label] i=$i farthest = (p= ${farthest._1.id}, c= ${farthest._2.id}, d= ${farthest._3}), rem= ${workSet.size}")
         val farthestPoint: Point = farthest._1
-        val nextClusters = workSet :+ Cluster(farthestPoint.id, farthestPoint, 0, label)
+        val nextClusters = workSet :+ MfogCluster(farthestPoint.id, farthestPoint, 0, label)
         remaining(nextClusters.size, points, nextClusters, iterLimit - 1)
       }
     }
-    val workSet = IndexedSeq(Cluster(points.head.id, points.head, 0, label))
+    val workSet = IndexedSeq(MfogCluster(points.head.id, points.head, 0, label))
     val centers = remaining(1, points.tail, workSet, iterLimit)
     //
-    val xDistance: Seq[(Point, Cluster, Double)] = crossDistance(points, centers)
-    val byPoint: Iterable[Seq[(Point, Cluster, Double)]] = xDistance.groupBy(d => d._1.id).values
-    val pointsWithNearest: Seq[(Long, Double, Cluster)] = points
+    val xDistance: Seq[(Point, MfogCluster, Double)] = crossDistance(points, centers)
+    val byPoint: Iterable[Seq[(Point, MfogCluster, Double)]] = xDistance.groupBy(d => d._1.id).values
+    val pointsWithNearest: Seq[(Long, Double, MfogCluster)] = points
       .map(p => {
         val closest = centers.map(c => (p.euclideanDistance(c.center), c)).minBy(d => d._1)
         (p.id, closest._1, closest._2)
       })
     val varianceCenters = pointsWithNearest
       .groupBy(i => i._3.id).values
-      .map((sameCluster: Seq[(Long, Double, Cluster)]) => {
+      .map((sameCluster: Seq[(Long, Double, MfogCluster)]) => {
         val cluster = sameCluster.head._3
         val pointsCount = sameCluster.size
         val maxDistance = sameCluster.map(p => p._2).max
-        (Cluster(cluster.id, cluster.center, maxDistance, cluster.label), pointsCount)
+        (MfogCluster(cluster.id, cluster.center, maxDistance, cluster.label), pointsCount)
       })
     val count = varianceCenters.map(c => c._2)
     val vari = varianceCenters.map(c => c._1.variance)
@@ -220,11 +220,11 @@ object KMeansVector {
     finalClusters
   }
 
-  def crossDistance(points: Seq[Point], clusters: Seq[Cluster]): Seq[(Point, Cluster, Double)] =
+  def crossDistance(points: Seq[Point], clusters: Seq[MfogCluster]): Seq[(Point, MfogCluster, Double)] =
     points.flatMap(p => clusters.map(c => (p, c, p.euclideanDistance(c.center))))
 
-  def kmeans(labelName: String, k: Int, points: Seq[Point], iterations: Int, varianceThreshold: Double): (Seq[Cluster], Double) = {
-    def initialization(methodName: String, method: => Seq[Cluster]): (String, (Seq[Cluster], Double)) = {
+  def kmeans(labelName: String, k: Int, points: Seq[Point], iterations: Int, varianceThreshold: Double): (Seq[MfogCluster], Double) = {
+    def initialization(methodName: String, method: => Seq[MfogCluster]): (String, (Seq[MfogCluster], Double)) = {
       LOG.info(s"[$labelName] Running $methodName.")
       try {
         (methodName, kmeansIterationRec(points, method, iterations, varianceThreshold))
@@ -235,12 +235,12 @@ object KMeansVector {
         }
         case e: Exception => {
           LOG.info(e.getMessage)
-          (s"$methodName (${e.getMessage})", (Seq[Cluster](), Double.MaxValue))
+          (s"$methodName (${e.getMessage})", (Seq[MfogCluster](), Double.MaxValue))
         }
       }
     }
 
-    val tries = mutable.IndexedSeq[(String, (Seq[Cluster], Double))](
+    val tries = mutable.IndexedSeq[(String, (Seq[MfogCluster], Double))](
       initialization("kmeansInitByFarthest", kmeansInitByFarthest(k, points, (1.4*k).toInt, labelName)),
       initialization("kmeanspp [1]", kmeanspp(labelName, k, points)),
       initialization("kmeanspp [2]", kmeanspp(labelName, k, points)),

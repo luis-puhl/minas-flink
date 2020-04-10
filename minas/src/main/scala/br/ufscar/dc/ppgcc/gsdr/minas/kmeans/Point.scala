@@ -3,6 +3,15 @@ package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 object Point {
   def zero(dimension: Int = 34) = Point(0, Vector.fill[Double](dimension)(0.0))
   def max(dimension: Int = 34) = Point(Long.MaxValue, Vector.fill[Double](dimension)(1.0))
+  val csv: String = s"id,value,time"
+
+  def fromCsv(csv: String): Point = {
+    val split: Array[String] = csv.split(",")
+    split match {
+      case Array(id, value, time) => Point(id.toLong, value.split(";").map(_.toDouble).toSeq, time.toLong)
+      case _ => Point.zero()
+    }
+  }
 
   trait DistanceOperator {
     def compare(x: Point, y: Point): Double
@@ -25,6 +34,8 @@ object Point {
   }
 }
 case class Point(id: Long, value: Seq[Double], time: Long = System.currentTimeMillis()) {
+  lazy val csv: String = s"$id,${value.tail.foldLeft(value.head.toString)((acc, i) => s"$acc;${i.toString}")},$time"
+
   lazy val dimension: Int = this.value.size
   def fromOrigin(implicit distanceOperator: Point.DistanceOperator): Double = this.distance(Point.zero(this.dimension))
 
