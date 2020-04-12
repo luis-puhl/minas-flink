@@ -1,5 +1,7 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
+import org.json._
+
 object Point {
   def zero(dimension: Int = 34) = Point(0, Vector.fill[Double](dimension)(0.0))
   def max(dimension: Int = 34) = Point(Long.MaxValue, Vector.fill[Double](dimension)(1.0))
@@ -32,8 +34,12 @@ object Point {
     override def compare(x: Point, y: Point): Double =
       x.cosDistance(y)
   }
+
+  class PointPOJO(val id: Long, val value: Array[Double], val time: Long) {}
 }
 case class Point(id: Long, value: Seq[Double], time: Long = System.currentTimeMillis()) {
+  def json: JSONObject = new JSONObject(Map("id"-> id, "value" -> new JSONArray(value.toArray), "time" -> time))
+
   lazy val csv: String = s"$id,${value.tail.foldLeft(value.head.toString)((acc, i) => s"$acc;${i.toString}")},$time"
 
   lazy val dimension: Int = this.value.size

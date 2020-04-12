@@ -38,12 +38,9 @@ object MfogTraining {
     val sourceSocket = new Socket(InetAddress.getByName("localhost"), 9999)
     LOG.info(s"connected = $sourceSocket")
     val influx = new BufferedSource(sourceSocket.getInputStream).getLines().toVector
-    LOG.info(s"received  total ${influx.length} => ${influx.head} ${influx.last}")
-    val in: Vector[(String, Point)] = influx.map(
-      x => x.split(">") match {
-          case Array(l, p) => (l, Point.fromCsv(p))
-      }
-    )
+    val in: Vector[(String, Point)] = influx.map(x => x.split(">") match {
+      case Array(l, p) => (l, Point.fromCsv(p))
+    })
     LOG.info(s"received  total ${in.length} => ${in.head} ${in.last}")
     sourceSocket.close()
     val trainingSet: DataSet[(String, Point)] = setEnv.fromCollection(in).setParallelism(-1)
@@ -63,8 +60,10 @@ object MfogTraining {
     val modelStoreSocket = new Socket(InetAddress.getByName("localhost"), 9998)
     LOG.info(s"connected = $modelStoreSocket")
     val outStream = new PrintStream(modelStoreSocket.getOutputStream)
-    modelSeq.foreach(x => outStream.println(x.csv))
+    modelSeq.foreach(x => outStream.println(x.json.toString))
+    outStream.flush()
     modelStoreSocket.close()
+    LOG.info(s"sent = ${modelSeq.size}")
 
 //    val flinkOut: JobExecutionResult = setEnv.execute(jobName)
 //    flinkOut.getNetRuntime

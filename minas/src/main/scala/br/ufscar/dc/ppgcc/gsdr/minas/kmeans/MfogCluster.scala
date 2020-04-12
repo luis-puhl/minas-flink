@@ -1,13 +1,8 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
-import java.util
-import java.util.{Arrays, Objects}
-
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala._
-
-import spray.json._
-import DefaultJsonProtocol._
+import org.json._
 
 object MfogCluster {
   implicit val mfogClusterTypeInfo: TypeInformation[MfogCluster] = createTypeInformation[MfogCluster]
@@ -19,19 +14,24 @@ object MfogCluster {
   val CSV_HEADER: String = "id,label,category,matches,time,variance,center"
   // size,lblClasse,category,time,meanDistance,radius,center
 
-  def fromCsv(csv: String): MfogCluster = {
-    val split: Array[String] = csv.split(",")
-    split match {
-      case Array(id, value, time) => Point(id.toLong, value.split(";").map(_.toDouble).toSeq, time.toLong)
-      case _ => Point.zero()
-    }
-  }
+//  def fromCsv(csv: String): MfogCluster = {
+//    val split: Array[String] = csv.split(",")
+//    split match {
+//      case Array(id, value, time) => Point(id.toLong, value.split(";").map(_.toDouble).toSeq, time.toLong)
+//      case _ => Point.zero()
+//    }
+//  }
+  class MfogClusterPOJO(val id: Long, val center: Point.PointPOJO, val variance: Double, val label: String, val category: String, val matches: Long, val time: Long) {}
 }
 case class MfogCluster(id: Long, center: Point, variance: Double, label: String, category: String = MfogCluster.CATEGORY_NORMAL,
                        matches: Long = 0, time: Long = System.currentTimeMillis()) {
   def csv: String = s"$id,$label,$category,$matches,$time,$variance,[${center.value.map(_.toString).reduce(_+_)}]"
   def csvTuple: (Long, String, String, Long, Long, Double, Seq[Double]) = (id, label, category, matches, time, variance, center.value)
-  def toJson = JsonParser 
+
+  def json: JSONObject = {
+    new JSONObject(Map("id" -> id, "center" -> center.json, "variance" -> variance, "label" -> label,
+      "category" -> category, "matches" -> matches, "time" -> time))
+  }
 
   override def equals(obj: Any): Boolean =
     obj match {
