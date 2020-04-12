@@ -4,6 +4,7 @@ import java.io.{File, FileWriter}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+import br.ufscar.dc.ppgcc.gsdr.mfog.Cluster
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import grizzled.slf4j.Logger
 import org.apache.flink.api.common.typeinfo.{TypeInformation, _}
@@ -54,7 +55,7 @@ object MinasFlinkOfflineSampleSerial {
         val label = dataSeq.head._1
         val points = dataSeq.map(_._2) // extrair os point do iterador
         //
-        val initial: Seq[MfogCluster] = Kmeans.kmeansInitialRandom(label, k, points)
+        val initial: Seq[Cluster] = Kmeans.kmeansInitialRandom(label, k, points)
         // ponto e o centro do cluster
         val clusters = Kmeans.kmeans(label, points, initial)
         // minimizar a variancia total, movendo os centros para o ponto medio dentro do cluster

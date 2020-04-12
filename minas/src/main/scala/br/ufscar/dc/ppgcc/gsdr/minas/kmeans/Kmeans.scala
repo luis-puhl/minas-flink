@@ -1,5 +1,7 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
+import br.ufscar.dc.ppgcc.gsdr.mfog
+import br.ufscar.dc.ppgcc.gsdr.mfog.Cluster
 import grizzled.slf4j.Logger
 
 import scala.annotation.tailrec
@@ -7,24 +9,24 @@ import scala.annotation.tailrec
 object Kmeans {
   val LOG = Logger(getClass)
 
-  def closestCluster(point: Point, clusters: Seq[MfogCluster])(implicit distanceOperator: Point.DistanceOperator): (Point, MfogCluster, Double) = {
+  def closestCluster(point: Point, clusters: Seq[Cluster])(implicit distanceOperator: Point.DistanceOperator): (Point, Cluster, Double) = {
     clusters.map(c => (point, c, c.center.distance(point))).minBy(d => d._3)
   }
 
-  def withFillerClusters(points: Seq[Point], clusters: Seq[MfogCluster], map: Map[MfogCluster, Seq[(Point, Double)]])
-    (implicit distanceOperator: Point.DistanceOperator): Map[MfogCluster, Seq[(Point, Double)]] = {
+  def withFillerClusters(points: Seq[Point], clusters: Seq[Cluster], map: Map[Cluster, Seq[(Point, Double)]])
+    (implicit distanceOperator: Point.DistanceOperator): Map[Cluster, Seq[(Point, Double)]] = {
     val keySet = map.keySet
     val missingClusters = clusters.filter(c => !keySet.contains(c))
-    val missingClustersFiller: Iterable[(MfogCluster, Seq[(Point, Double)])] = if (missingClusters.nonEmpty) {
+    val missingClustersFiller: Iterable[(Cluster, Seq[(Point, Double)])] = if (missingClusters.nonEmpty) {
       // groupByClosest(points, missingClusters)
       missingClusters.map(c => c -> Vector(points.map(p => (p, p.distance(c.center))).minBy(d => d._2)))
-    } else Map.empty[MfogCluster, Seq[(Point, Double)]]
+    } else Map.empty[Cluster, Seq[(Point, Double)]]
     val exclusivePoints: Set[Long] = missingClustersFiller.flatMap(d => d._2.map(p => p._1.id)).toSet
     val finalMap = map.map(i => i._1 -> i._2.filterNot(p => exclusivePoints.contains(p._1.id))).++(missingClustersFiller)
     finalMap
   }
 
-  def groupByClosest(points: Seq[Point], clusters: Seq[MfogCluster])(implicit distanceOperator: Point.DistanceOperator): Map[MfogCluster, Seq[(Point, Double)]] = {
+  def groupByClosest(points: Seq[Point], clusters: Seq[Cluster])(implicit distanceOperator: Point.DistanceOperator): Map[Cluster, Seq[(Point, Double)]] = {
     val map = points.map(p => clusters.map(c => (p, c, c.center.distance(p))).minBy(d => d._3))
       .groupBy(d => d._2).map(i => i._1 -> i._2.map(d => (d._1, d._3)))
     if (clusters.size != map.keySet.size) {
@@ -39,15 +41,15 @@ object Kmeans {
     // map
   }
 
-  def updateClustersVariance(clusterDistanceMap: Map[MfogCluster, Seq[(Point, Double)]]): Seq[MfogCluster] = {
+  def updateClustersVariance(clusterDistanceMap: Map[Cluster, Seq[(Point, Double)]]): Seq[Cluster] = {
     clusterDistanceMap.map(sameCluster => {
       val cluster = sameCluster._1
       val variance = sameCluster._2.map(p => p._2).max
-      MfogCluster(cluster.id, cluster.center, variance, cluster.label)
+      Cluster(cluster.id, cluster.center, variance, cluster.label)
     }).toVector
   }
 
-  def updateClustersCenters(clusterDistanceMap: Map[MfogCluster, Seq[(Point, Double)]])(implicit distanceOperator: Point.DistanceOperator): Seq[(MfogCluster, Double)] = {
+  def updateClustersCenters(clusterDistanceMap: Map[Cluster, Seq[(Point, Double)]])(implicit distanceOperator: Point.DistanceOperator): Seq[(Cluster, Double)] = {
     clusterDistanceMap.map(sameCluster => {
       val cluster = sameCluster._1
       val points = sameCluster._2.map(p => p._1)
@@ -56,16 +58,16 @@ object Kmeans {
       val movement = cluster.center.distance(center)
       // LOG.info(s"Cluster ${cluster.id} moved $movement => $center")
       // (Cluster(cluster.id, center, Some(points), Some(sameCluster._2), Some(variance)), movement)
-      (MfogCluster(cluster.id, center, variance, cluster.label), movement)
+      (mfog.Cluster(cluster.id, center, variance, cluster.label), movement)
     }).toVector
   }
 
   @tailrec
   def kmeans(label: String,
-             points: Seq[Point], clusters: Seq[MfogCluster],
+             points: Seq[Point], clusters: Seq[Cluster],
              prevMovement: Double = Point.max().fromOrigin, targetImprovement: Double = 10E-5,
              limit: Int = 10, i: Int = 0
-  )(implicit distanceOperator: Point.DistanceOperator): Seq[MfogCluster] = {
+  )(implicit distanceOperator: Point.DistanceOperator): Seq[Cluster] = {
     if (i > limit) clusters
     else {
       val distances = groupByClosest(points, clusters)
@@ -84,7 +86,7 @@ object Kmeans {
     }
   }
 
-  def kmeansInitialRandom(label: String, k: Int, points: Seq[Point])(implicit distanceOperator: Point.DistanceOperator): Seq[MfogCluster] = {
+  def kmeansInitialRandom(label: String, k: Int, points: Seq[Point])(implicit distanceOperator: Point.DistanceOperator): Seq[Cluster] = {
     val sorted = points.sortBy(p => p.fromOrigin)
     val nPoints = sorted.size
     val step = nPoints / k
@@ -93,7 +95,7 @@ object Kmeans {
     // println(s"choosed => $choosed")
     val clusters = choosed.map(i => {
       val p = sorted(i)
-      MfogCluster(p.id, p, 0.0, label)
+      mfog.Cluster(p.id, p, 0.0, label)
     })
     // println(s"clusters => ${clusters.size}")
     val result = updateClustersVariance(groupByClosest(points, clusters))

@@ -5,11 +5,11 @@ import java.net.{InetAddress, Socket}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+import br.ufscar.dc.ppgcc.gsdr.mfog.Training.getClass
 import br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline.{indexInputFile, serialClustream, serialKMeans}
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.{MfogCluster, Point}
+import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
 import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
 import br.ufscar.dc.ppgcc.gsdr.utils.FlinkUtils.RichSet
-import org.slf4j.LoggerFactory
 import grizzled.slf4j.Logger
 import org.apache.flink.api.common.JobExecutionResult
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
@@ -20,7 +20,7 @@ import org.apache.flink.util.IOUtils
 
 import scala.io.BufferedSource
 
-object MfogTraining {
+object Training {
   val LOG: Logger = Logger(getClass)
 
   def main(args: Array[String]): Unit = {
@@ -54,8 +54,8 @@ object MfogTraining {
     trainingSet.writeAsText(s"$outDir/initial")
     //
     // serialKMeans(setEnv, outDir, k, trainingSet)
-    val model: DataSet[MfogCluster] = serialClustream(setEnv, outDir, k, trainingSet)
-    val modelSeq: Seq[MfogCluster] = model.collect()
+    val model: DataSet[Cluster] = serialClustream(setEnv, outDir, k, trainingSet)
+    val modelSeq: Seq[Cluster] = model.collect()
 
     val modelStoreSocket = new Socket(InetAddress.getByName("localhost"), 9998)
     LOG.info(s"connected = $modelStoreSocket")
@@ -91,7 +91,7 @@ object MfogTraining {
 
   @SerialVersionUID(1L)
   class SocketTextStreamFunction(val hostname: InetAddress, val port: Int, val maxNumRetries: Long, val delayBetweenRetries: Long) extends SourceFunction[String] {
-    private val LOG = LoggerFactory.getLogger(classOf[SocketTextStreamFunction])
+    private val LOG: Logger = Logger(getClass)
     private var currentSocket: Socket = _
     private var isRunning = true
 

@@ -3,6 +3,14 @@ package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 import org.json._
 
 object Point {
+  def fromJson(src: JSONObject): Point = {
+    val id = src.getLong("id")
+    val valueJson = src.getJSONArray("value")
+    val value = (0 to valueJson.length()).map(i => valueJson.getDouble(i))
+    val time = src.getLong("time")
+    new Point(id, value, time)
+  }
+
   def zero(dimension: Int = 34) = Point(0, Vector.fill[Double](dimension)(0.0))
   def max(dimension: Int = 34) = Point(Long.MaxValue, Vector.fill[Double](dimension)(1.0))
   val csv: String = s"id,value,time"

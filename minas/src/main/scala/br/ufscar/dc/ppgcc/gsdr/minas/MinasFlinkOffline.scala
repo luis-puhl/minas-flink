@@ -5,6 +5,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util
 
+import br.ufscar.dc.ppgcc.gsdr.mfog
+import br.ufscar.dc.ppgcc.gsdr.mfog.Cluster
 import grizzled.slf4j.Logger
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
@@ -157,7 +159,7 @@ object MinasFlinkOffline {
   }
   */
 
-  def serialKMeans: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[MfogCluster] = {
+  def serialKMeans: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[Cluster] = {
      def alg(points: Seq[Point], k: Int): Clustering = {
       val clusters: Array[MoaCluster] = points.take(k).map(
         p => new SphereCluster(p.value.toArray, Double.MaxValue).asInstanceOf[MoaCluster]
@@ -170,14 +172,14 @@ object MinasFlinkOffline {
     moaClusterer("k-means", "serialKmeans", alg)
   }
 
-  def serialClustream: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[MfogCluster] = {
+  def serialClustream: (ExecutionEnvironment, String, Int, DataSet[(String, Point)]) => DataSet[Cluster] = {
     def algorith(points: Seq[Point], k: Int): Clustering = MoaKmeans.cluStream(points.map(_.value.toArray).toArray)
     moaClusterer("Clustream", "serialClustream", algorith)
   }
 
   def moaClusterer(name: String, fileName: String, algorith: (Seq[Point], Int) => Clustering)
-                  (setEnv: ExecutionEnvironment, outDir: String, k: Int, training: DataSet[(String, Point)]): DataSet[MfogCluster] = {
-    val clusters: DataSet[MfogCluster] = training
+                  (setEnv: ExecutionEnvironment, outDir: String, k: Int, training: DataSet[(String, Point)]): DataSet[Cluster] = {
+    val clusters: DataSet[Cluster] = training
       .groupBy(_._1)
       .reduceGroup(dataPoints => {
         val dataSeq = dataPoints.toSeq
@@ -188,7 +190,7 @@ object MinasFlinkOffline {
         val clustering: Clustering = algorith(points, k)
         //
         val clusteringVector = clustering.getClustering
-        val clustersCenters: Seq[MfogCluster] = (0 to clusteringVector.size())
+        val clustersCenters: Seq[Cluster] = (0 to clusteringVector.size())
           .filter(i => clusteringVector.get(i) != null)
           .map(i => {
             val moaCluster: SphereCluster = clusteringVector.get(i).asInstanceOf[SphereCluster]
@@ -196,10 +198,10 @@ object MinasFlinkOffline {
             val radius: Double = moaCluster.getRadius
             val id: Long = (if (moaCluster.getId > 0) moaCluster.getId else i).toLong
             val point: Point = Point(id, center)
-            val cluster: MfogCluster = MfogCluster(point.id, point, radius, label, MfogCluster.CATEGORY_NORMAL, moaCluster.getWeight.toLong)
+            val cluster: Cluster = mfog.Cluster(point.id, point, radius, label, Cluster.CATEGORY_NORMAL, moaCluster.getWeight.toLong)
             cluster
           })
-        val minDistances: Seq[(Point, MfogCluster, Double)] = points.map(p => {
+        val minDistances: Seq[(Point, Cluster, Double)] = points.map(p => {
           val d = clustersCenters.map(c => (c, p.distance(c.center))).minBy(_._2)
           (p, d._1, d._2)
         })
@@ -220,22 +222,22 @@ object MinasFlinkOffline {
       .flatMap(i => i._2)
     clusters.writeAsText(s"$outDir/$fileName")
     //
-    setEnv.fromElements(MfogCluster.CSV_HEADER)
+    setEnv.fromElements(Cluster.CSV_HEADER)
       .setParallelism(1)
       .union(clusters.map(c => c.csv).setParallelism(1))
       .map(cl => cl)
       .setParallelism(1)
       .writeAsText(s"$outDir/$fileName.csv")
     //
-    setEnv.fromElements(MfogCluster.CSV_HEADER)
+    setEnv.fromElements(Cluster.CSV_HEADER)
       .setParallelism(1)
       .union(
         clusters
           .filter(c => c.matches > 0 && c.variance > 0)
           .setParallelism(1)
-          .filter(new RichFilterFunction[MfogCluster] {
-            val seen: mutable.Set[MfogCluster] = mutable.Set[MfogCluster]()
-            override def filter(value: MfogCluster): Boolean = {
+          .filter(new RichFilterFunction[Cluster] {
+            val seen: mutable.Set[Cluster] = mutable.Set[Cluster]()
+            override def filter(value: Cluster): Boolean = {
               if (seen.contains(value)) {
                 false
               } else {

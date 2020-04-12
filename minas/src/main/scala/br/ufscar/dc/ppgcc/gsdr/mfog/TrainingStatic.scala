@@ -4,8 +4,7 @@ import java.io.{File, PrintStream}
 import java.net.{InetAddress, Socket}
 import java.nio.file.Files
 
-import br.ufscar.dc.ppgcc.gsdr.mfog.MfogSourceKyoto.MapCsvToMfogCluster
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.MfogCluster
+import br.ufscar.dc.ppgcc.gsdr.mfog.SourceKyoto.MapCsvToMfogCluster
 import grizzled.slf4j.Logger
 import org.apache.flink.api.scala.ExecutionEnvironment
 
@@ -23,11 +22,8 @@ object TrainingStatic {
     val modelStoreSocket = new Socket(InetAddress.getByName("localhost"), 9998)
     LOG.info(s"connected = $modelStoreSocket")
     val outStream = new PrintStream(modelStoreSocket.getOutputStream)
-    modelSeq.foreach(x => {
-      print(".")
-      outStream.println(x.json.toString)
-    })
-    println()
+    LOG.info(s"sending = ${modelSeq.head.json.toString}")
+    modelSeq.foreach(x => outStream.println(x.json.toString))
     outStream.flush()
     modelStoreSocket.close()
     LOG.info(s"sent = ${modelSeq.size}")

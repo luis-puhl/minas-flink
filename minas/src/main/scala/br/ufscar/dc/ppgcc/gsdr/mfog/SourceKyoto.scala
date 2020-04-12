@@ -5,7 +5,8 @@ import java.net.{InetAddress, ServerSocket, Socket}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.{MfogCluster, Point}
+import br.ufscar.dc.ppgcc.gsdr.mfog
+import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
 import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
 import br.ufscar.dc.ppgcc.gsdr.utils.FlinkUtils.RichSet
 import grizzled.slf4j.Logger
@@ -17,25 +18,22 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 
 import scala.io.BufferedSource
 
-object MfogSourceKyoto {
+object SourceKyoto {
   val LOG: Logger = Logger(getClass)
+  val doTest = true
+  val doTraining = false
 
   def main(args: Array[String]): Unit = {
     val jobName = this.getClass.getName
-    val dateString = LocalDateTime.now.format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-")
-    /*
-    val outDir = s"./out/$jobName/$dateString/"
-    val dir = new File(outDir)
-    if (!dir.exists) {
-      if (!dir.mkdirs) throw new RuntimeException(s"Output directory '$outDir'could not be created.")
-    }
-     */
     LOG.info(s"jobName = $jobName")
     val setEnv: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
-    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     //
+    if (doTraining) serveTraining(setEnv)
+    if (doTest) serveTest(setEnv)
+  }
+
+  def serveTraining(setEnv: ExecutionEnvironment): Unit = {
     val trainingSet: Seq[(String, Point)] = trainingData(setEnv)
-    //
     val server = new ServerSocket(9999)
     LOG.info("server ready")
     while (true) {
@@ -53,6 +51,24 @@ object MfogSourceKyoto {
       s.close()
       LOG.info(s"done sending ${trainingSet.size}")
     }
+    server.close()
+  }
+
+  def serveTest(setEnv: ExecutionEnvironment): Unit = {
+    val testSet: Seq[(String, Point)] = testData(setEnv)
+    val serverTest = new ServerSocket(9996)
+    LOG.info("server ready")
+    while (true) {
+      val s = serverTest.accept()
+      LOG.info("connected")
+      val out = new PrintStream(s.getOutputStream)
+      LOG.info(testSet.head._2.json.toString)
+      testSet.foreach(x => out.println(x._2.json.toString))
+      out.flush()
+      s.close()
+      LOG.info(s"done sending ${testSet.size}")
+    }
+    serverTest.close()
   }
 
   def trainingData(setEnv: ExecutionEnvironment): Seq[(String, Point)] = {
@@ -60,14 +76,14 @@ object MfogSourceKyoto {
     setEnv.readTextFile(testPath).map[(String, Point)](new MapToMinasPoints()).collect()
   }
 
-  def modelData(setEnv: ExecutionEnvironment): Seq[MfogCluster] = {
+  def modelData(setEnv: ExecutionEnvironment): Seq[Cluster] = {
     val modelPath = "datasets/models/offline-clean.csv"
     /*
     Int,String,String,Long,Long,Double,Double,Double[]
     id,label,category,matches,time,meanDistance,radius,center
     0,N,normal,502,0,0.04553028494064095,0.1736759823342961,[2.888834262948207E-4, 0.020268260292164667, 0.04161011127902189, 0.020916334661354643, 1.0, 0.0, 0.0026693227091633474, 0.516593625498008, 0.5267529880478092, 1.9920318725099602E-4, 0.0, 7.968127490039841E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
     */
-    val clustersSet = setEnv.readTextFile(modelPath).map[MfogCluster](new MapCsvToMfogCluster())
+    val clustersSet = setEnv.readTextFile(modelPath).map[Cluster](new MapCsvToMfogCluster())
     clustersSet.collect()
   }
 
@@ -113,8 +129,8 @@ object MfogSourceKyoto {
     }
   }
 
-  class MapCsvToMfogCluster extends RichMapFunction[String, MfogCluster] {
-    override def map(line: String): MfogCluster = {
+  class MapCsvToMfogCluster extends RichMapFunction[String, Cluster] {
+    override def map(line: String): Cluster = {
       val i = line.split('[')
       val cl = i.head
       val ce = i.tail.head
@@ -125,7 +141,7 @@ object MfogSourceKyoto {
         case Array(id,label,category,matches,time,meanDistance,radius) => {
           // MfogCluster(id: Long, center: Point, variance: Double, label: String, category: String = MfogCluster.CATEGORY_NORMAL,
           // matches: Long = 0, time: Long = System.currentTimeMillis()) {
-          MfogCluster(id.toInt, Point(id.toInt, center), radius.toDouble, label, category, matches.toLong)
+          mfog.Cluster(id.toInt, Point(id.toInt, center), radius.toDouble, label, category, matches.toLong)
           // (id.toInt, label, category, matches.toLong, time.toLong, meanDistance.toDouble, radius.toDouble, )
         }
       }
