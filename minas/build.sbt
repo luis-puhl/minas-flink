@@ -41,7 +41,9 @@ val testDependencies = Seq(
 lazy val root = (project in file(".")).
   settings(
     libraryDependencies ++= flinkDependencies,
-    libraryDependencies += "org.apache.flink" % "flink-connector-kafka_2.11" % "1.9.1",
+    // libraryDependencies += "org.apache.flink" % "flink-connector-kafka_2.11" % "1.9.1",
+    libraryDependencies += "com.lihaoyi" %% "upickle" % "0.7.1",
+    libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.5",
     libraryDependencies ++= loggerDependencies,
     libraryDependencies ++= minasDependencies
   )

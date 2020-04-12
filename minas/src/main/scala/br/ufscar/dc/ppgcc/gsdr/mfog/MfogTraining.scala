@@ -1,17 +1,17 @@
 package br.ufscar.dc.ppgcc.gsdr.mfog
 
-import java.io.File
+import java.io.{File, PrintStream}
 import java.net.{InetAddress, Socket}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline.{indexInputFile, serialClustream, serialKMeans}
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
+import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.{MfogCluster, Point}
 import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
 import br.ufscar.dc.ppgcc.gsdr.utils.FlinkUtils.RichSet
-
 import org.slf4j.LoggerFactory
 import grizzled.slf4j.Logger
+import org.apache.flink.api.common.JobExecutionResult
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
@@ -35,28 +35,17 @@ object MfogTraining {
     val setEnv = ExecutionEnvironment.getExecutionEnvironment
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
 
-    val s = new Socket(InetAddress.getByName("localhost"), 9999)
-    LOG.info(s"connected = $s")
-    val influx = new BufferedSource(s.getInputStream).getLines().toVector
+    val sourceSocket = new Socket(InetAddress.getByName("localhost"), 9999)
+    LOG.info(s"connected = $sourceSocket")
+    val influx = new BufferedSource(sourceSocket.getInputStream).getLines().toVector
     LOG.info(s"received  total ${influx.length} => ${influx.head} ${influx.last}")
     val in: Vector[(String, Point)] = influx.map(
-      x => try {
-        LOG.info(s"received $x")
-        x.split(">") match {
-          case Array(l, p) => {
-            val po = Point.fromCsv(p)
-            if (po.id % 100 == 0) {
-              LOG.info(s"translated $l > $po")
-            }
-            (l, po)
-          }
-        }
-      } catch {
-        case e: Throwable => (s"label $e", Point.zero())
+      x => x.split(">") match {
+          case Array(l, p) => (l, Point.fromCsv(p))
       }
     )
     LOG.info(s"received  total ${in.length} => ${in.head} ${in.last}")
-    s.close()
+    sourceSocket.close()
     val trainingSet: DataSet[(String, Point)] = setEnv.fromCollection(in).setParallelism(-1)
 
     val iterations = 10
@@ -68,9 +57,18 @@ object MfogTraining {
     trainingSet.writeAsText(s"$outDir/initial")
     //
     // serialKMeans(setEnv, outDir, k, trainingSet)
-    serialClustream(setEnv, outDir, k, trainingSet)
+    val model: DataSet[MfogCluster] = serialClustream(setEnv, outDir, k, trainingSet)
+    val modelSeq: Seq[MfogCluster] = model.collect()
 
-    setEnv.execute(jobName)
+    val modelStoreSocket = new Socket(InetAddress.getByName("localhost"), 9998)
+    LOG.info(s"connected = $modelStoreSocket")
+    val outStream = new PrintStream(modelStoreSocket.getOutputStream)
+    modelSeq.foreach(x => outStream.println(x.csv))
+    modelStoreSocket.close()
+
+//    val flinkOut: JobExecutionResult = setEnv.execute(jobName)
+//    flinkOut.getNetRuntime
+//    flinkOut.getAccumulatorResult("model")
   }
 
   @SerialVersionUID(1L)

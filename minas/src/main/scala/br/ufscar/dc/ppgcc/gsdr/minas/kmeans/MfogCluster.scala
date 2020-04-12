@@ -6,6 +6,9 @@ import java.util.{Arrays, Objects}
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala._
 
+import spray.json._
+import DefaultJsonProtocol._
+
 object MfogCluster {
   implicit val mfogClusterTypeInfo: TypeInformation[MfogCluster] = createTypeInformation[MfogCluster]
   val CATEGORY_NORMAL = "normal"
@@ -15,11 +18,20 @@ object MfogCluster {
 
   val CSV_HEADER: String = "id,label,category,matches,time,variance,center"
   // size,lblClasse,category,time,meanDistance,radius,center
+
+  def fromCsv(csv: String): MfogCluster = {
+    val split: Array[String] = csv.split(",")
+    split match {
+      case Array(id, value, time) => Point(id.toLong, value.split(";").map(_.toDouble).toSeq, time.toLong)
+      case _ => Point.zero()
+    }
+  }
 }
 case class MfogCluster(id: Long, center: Point, variance: Double, label: String, category: String = MfogCluster.CATEGORY_NORMAL,
                        matches: Long = 0, time: Long = System.currentTimeMillis()) {
   def csv: String = s"$id,$label,$category,$matches,$time,$variance,[${center.value.map(_.toString).reduce(_+_)}]"
   def csvTuple: (Long, String, String, Long, Long, Double, Seq[Double]) = (id, label, category, matches, time, variance, center.value)
+  def toJson = JsonParser 
 
   override def equals(obj: Any): Boolean =
     obj match {

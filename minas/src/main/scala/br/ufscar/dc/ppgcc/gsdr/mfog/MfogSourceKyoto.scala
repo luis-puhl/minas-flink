@@ -115,9 +115,9 @@ object MfogSourceKyoto {
 
   class MapCsvToMfogCluster extends RichMapFunction[String, MfogCluster] {
     override def map(line: String): MfogCluster = {
-      val i = line.split('[').iterator
-      val cl = i.next()
-      val ce = i.next()
+      val i = line.split('[')
+      val cl = i.head
+      val ce = i.tail.head
       //
       val center: Array[Double] = ce.take(ce.length-1).split(",").map(x => x.toDouble)
       val cluster: Array[String] = cl.take(cl.length-1).split(",")
