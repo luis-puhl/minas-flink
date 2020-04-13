@@ -1,6 +1,7 @@
-package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
+package br.ufscar.dc.ppgcc.gsdr.mfog
 
 import org.json._
+import scala.collection.JavaConverters._
 
 object Point {
   def fromJson(src: JSONObject): Point = {
@@ -19,7 +20,6 @@ object Point {
     val split: Array[String] = csv.split(",")
     split match {
       case Array(id, value, time) => Point(id.toLong, value.split(";").map(_.toDouble).toSeq, time.toLong)
-      case _ => Point.zero()
     }
   }
 
@@ -46,7 +46,7 @@ object Point {
   class PointPOJO(val id: Long, val value: Array[Double], val time: Long) {}
 }
 case class Point(id: Long, value: Seq[Double], time: Long = System.currentTimeMillis()) {
-  def json: JSONObject = new JSONObject(Map("id"-> id, "value" -> new JSONArray(value.toArray), "time" -> time))
+  def json: JSONObject = new JSONObject(Map("id"-> id, "value" -> new JSONArray(value.toArray), "time" -> time).asJava)
 
   lazy val csv: String = s"$id,${value.tail.foldLeft(value.head.toString)((acc, i) => s"$acc;${i.toString}")},$time"
 

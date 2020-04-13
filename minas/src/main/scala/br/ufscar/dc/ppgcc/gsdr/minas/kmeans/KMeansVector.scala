@@ -1,7 +1,7 @@
 package br.ufscar.dc.ppgcc.gsdr.minas.kmeans
 
 import br.ufscar.dc.ppgcc.gsdr.mfog
-import br.ufscar.dc.ppgcc.gsdr.mfog.Cluster
+import br.ufscar.dc.ppgcc.gsdr.mfog.{Cluster, Point}
 
 import scala.util.{Random, Try}
 import org.apache.flink.api.common.functions.{RichFilterFunction, RichMapFunction}

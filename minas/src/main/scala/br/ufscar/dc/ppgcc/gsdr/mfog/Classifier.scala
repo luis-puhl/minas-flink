@@ -1,20 +1,17 @@
 package br.ufscar.dc.ppgcc.gsdr.mfog
 
 import java.io.File
-import java.net.{InetAddress, Socket}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
 import grizzled.slf4j.Logger
 import org.apache.flink.api.common.functions.{MapFunction, RichMapFunction}
-import org.apache.flink.api.scala.DataSet
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.json.JSONObject
 
 import scala.collection.mutable
-import scala.io.BufferedSource
+import scala.collection.JavaConverters._
 
 object Classifier {
   val LOG: Logger = Logger(getClass)
@@ -32,27 +29,39 @@ object Classifier {
     //
     val modelSource = env.socketTextStream("localhost", 9997)
     modelSource.writeAsText(s"$outDir/classifier-model")
-//    val modelStore = modelSource
-//      .map[Seq[Cluster]](new RichMapFunction[String, Seq[Cluster]]() {
-//        var model: mutable.Buffer[Cluster] = mutable.Buffer.empty
-//        override def open(parameters: Configuration): Unit = {
-//          super.open(parameters)
-//          model = mutable.Buffer.empty
-//        }
-//        override def map(value: String): Seq[Cluster] = {
-//          val cl = Cluster.fromJson(new JSONObject(value))
-//          model.append(cl)
-//          model
-//        }
-//      })
+    val modelStore = modelSource.map[Seq[Cluster]](new RichMapFunction[String, Seq[Cluster]]() {
+        var model: mutable.Buffer[Cluster] = mutable.Buffer.empty
+        override def open(parameters: Configuration): Unit = {
+          super.open(parameters)
+          model = mutable.Buffer.empty
+        }
+        override def map(value: String): Seq[Cluster] = {
+          val cl = Cluster.fromJson(new JSONObject(value))
+          model.append(cl)
+          model
+        }
+      })
     //
     val testSrc = env.socketTextStream("localhost", 9996)
     testSrc.writeAsText(s"$outDir/classifier-test")
-//    val testStream = testSrc
-//    .map[Point](new MapFunction[String, Point]() {
-//      override def map(value: String): Point = Point.fromJson(new JSONObject(value))
-//    })
+    val testStream = testSrc.map[Point](new MapFunction[String, Point]() {
+      override def map(value: String): Point = Point.fromJson(new JSONObject(value))
+    })
     //
+//    testStream
+//      .map(new RichMapFunction[Point, (Long, Cluster, mutable.IndexedSeq[Point], Long)] {
+//        val model: mutable.Buffer[Cluster] = mutable.Buffer.empty
+//        override def open(parameters: Configuration): Unit = {
+//          super.open(parameters)
+//          model.appendAll(getRuntimeContext.getBroadcastVariable[Cluster]("centroids").asScala)
+//        }
+//
+//      def map(p: Point): (Long, Cluster, mutable.IndexedSeq[Point], Long) = {
+//        val minDistance: (Double, Cluster) = model.map(c => (p.euclideanDistance(c.center), c)).minBy(_._1)
+//        (minDistance._2.id, minDistance._2, mutable.IndexedSeq(p), 1L)
+//      }
+//    })
+      // .withBroadcastSet(currentCentroids, "centroids")
     env.execute(jobName)
   }
 }

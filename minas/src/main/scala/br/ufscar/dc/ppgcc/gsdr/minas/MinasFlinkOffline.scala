@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util
 
 import br.ufscar.dc.ppgcc.gsdr.mfog
-import br.ufscar.dc.ppgcc.gsdr.mfog.Cluster
+import br.ufscar.dc.ppgcc.gsdr.mfog.{Cluster, Point}
 import grizzled.slf4j.Logger
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator

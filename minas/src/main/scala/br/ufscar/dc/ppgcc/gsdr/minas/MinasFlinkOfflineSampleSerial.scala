@@ -4,7 +4,7 @@ import java.io.{File, FileWriter}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import br.ufscar.dc.ppgcc.gsdr.mfog.Cluster
+import br.ufscar.dc.ppgcc.gsdr.mfog.{Cluster, Point}
 import br.ufscar.dc.ppgcc.gsdr.minas.kmeans._
 import grizzled.slf4j.Logger
 import org.apache.flink.api.common.typeinfo.{TypeInformation, _}

@@ -3,7 +3,6 @@ package br.ufscar.dc.ppgcc.gsdr.mfog
 import java.io.PrintStream
 import java.net.ServerSocket
 
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
 import grizzled.slf4j.Logger
 
 import scala.collection.mutable

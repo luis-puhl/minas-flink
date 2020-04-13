@@ -1,9 +1,9 @@
 package br.ufscar.dc.ppgcc.gsdr.mfog
 
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala._
 import org.json._
+import scala.collection.JavaConverters._
 
 object Cluster {
   implicit val mfogClusterTypeInfo: TypeInformation[Cluster] = createTypeInformation[Cluster]
@@ -26,6 +26,17 @@ object Cluster {
     val center = Point.fromJson(centerSrc)
     new Cluster(id, center, variance, label, category, matches, time)
   }
+
+  def fromMinasCsv(line: String): Cluster =
+    line.replaceAll("[\\[\\]]", "").split(",").toList match {
+    case idString :: label :: category :: matches :: timeString :: meanDistance :: radius :: center => {
+      val id = idString.toLong
+      val time = timeString.toLong
+      val cl = new Point(id, value = center.map(x => x.toDouble), time)
+      Cluster(id, cl, variance = radius.toDouble, label, category, matches.toLong, time)
+    }
+
+  }
 }
 case class Cluster(id: Long, center: Point, variance: Double, label: String, category: String = Cluster.CATEGORY_NORMAL,
                    matches: Long = 0, time: Long = System.currentTimeMillis()) {
@@ -34,7 +45,7 @@ case class Cluster(id: Long, center: Point, variance: Double, label: String, cat
 
   def json: JSONObject = {
     new JSONObject(Map("id" -> id, "center" -> center.json, "variance" -> variance, "label" -> label,
-      "category" -> category, "matches" -> matches, "time" -> time))
+      "category" -> category, "matches" -> matches, "time" -> time).asJava)
   }
 
   override def equals(obj: Any): Boolean =

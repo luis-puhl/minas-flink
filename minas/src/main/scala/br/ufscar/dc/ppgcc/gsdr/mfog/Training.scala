@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter
 
 import br.ufscar.dc.ppgcc.gsdr.mfog.Training.getClass
 import br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline.{indexInputFile, serialClustream, serialKMeans}
-import br.ufscar.dc.ppgcc.gsdr.minas.kmeans.Point
 import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
 import br.ufscar.dc.ppgcc.gsdr.utils.FlinkUtils.RichSet
 import grizzled.slf4j.Logger
