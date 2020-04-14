@@ -16,6 +16,7 @@ object Cluster {
   val CSV_HEADER: String = "id,label,category,matches,time,variance,center"
   // size,lblClasse,category,time,meanDistance,radius,center
 
+  def fromJson(src: String): Cluster = fromJson(new JSONObject(src))
   def fromJson(json: JSONObject): Cluster = {
     val id = json.getLong("id")
     val variance = json.getDouble("variance")

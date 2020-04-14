@@ -1,6 +1,7 @@
 package br.ufscar.dc.ppgcc.gsdr.utils
 
 import org.apache.flink.api.scala.DataSet
+import org.apache.flink.streaming.api.scala.DataStream
 
 object FlinkUtils {
 

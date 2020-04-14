@@ -20,18 +20,20 @@ object ModelStore {
     receiver()
   }
 
-  def sender() = {
+  def sender(): Unit = {
     val senderServer = new ServerSocket(9997)
     val LOG: Logger = Logger(getClass)
     LOG.info("Sender ready")
     while (true) {
       val socket = senderServer.accept()
+      val start = System.currentTimeMillis()
       LOG.info("sender connected")
       val out = new PrintStream(socket.getOutputStream)
       LOG.info(s"sending ${model.head}")
       model.foreach(x => out.println(x))
       out.flush()
       socket.close()
+      LOG.info(s"sent ${model.size} items in ${(System.currentTimeMillis() - start) * 10e-4}s")
     }
     senderServer.close()
   }

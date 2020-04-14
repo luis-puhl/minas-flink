@@ -9,6 +9,7 @@ import org.apache.flink.api.common.functions.RichMapFunction
 import org.apache.flink.api.scala.{ExecutionEnvironment, _}
 import org.apache.flink.configuration.Configuration
 
+import scala.collection.parallel.immutable.ParVector
 import scala.io.BufferedSource
 
 object SourceKyoto {
@@ -47,19 +48,30 @@ object SourceKyoto {
   }
 
   def serveTest(setEnv: ExecutionEnvironment): Unit = {
-    val testSet: Seq[String] = testData(setEnv).map(_._2.json.toString)
+    val testSet: ParVector[Point] = testData(setEnv).map(_._2).toVector.par
+    val start = System.currentTimeMillis()
+    var size: Long = 0
+    testSet.foreach(x => {
+      size = size + 1
+      x.copy(time=System.currentTimeMillis()).json.toString
+    })
+    LOG.info(s"can loop $size items in ${(System.currentTimeMillis() - start) * 10e-4}s")
     val serverTest = new ServerSocket(9996)
     LOG.info("server ready")
     while (true) {
       val s = serverTest.accept()
+      Thread.sleep(10)
+      val start = System.currentTimeMillis()
       LOG.info("connected")
       val out = new PrintStream(s.getOutputStream)
-      val sample = testSet.head
-      LOG.info(s"data => $sample")
-      testSet.foreach(x => out.println(x))
+      var size: Long = 0
+      testSet.foreach(x => {
+        size = size + 1
+        out.println(x.copy(time=System.currentTimeMillis()).json.toString)
+      })
       out.flush()
       s.close()
-      LOG.info(s"done sending ${testSet.size}")
+      LOG.info(s"sent $size items in ${(System.currentTimeMillis() - start) * 10e-4}s")
     }
     serverTest.close()
   }
@@ -85,7 +97,7 @@ object SourceKyoto {
     setEnv.readTextFile(testPath).map[(String, Point)](new MapToMinasPoints()).collect()
   }
 
-  def simpleServer() = {
+  def simpleServer(): Unit = {
     val server = new ServerSocket(9999)
     while (true) {
       val s = server.accept()
@@ -97,7 +109,7 @@ object SourceKyoto {
       s.close()
     }
   }
-  def simpleClient() = {
+  def simpleClient(): Unit = {
     val s = new Socket(InetAddress.getByName("localhost"), 9999)
     lazy val in = new BufferedSource(s.getInputStream).getLines()
     val out = new PrintStream(s.getOutputStream)
