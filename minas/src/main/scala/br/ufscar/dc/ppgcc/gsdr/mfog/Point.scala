@@ -1,13 +1,15 @@
 package br.ufscar.dc.ppgcc.gsdr.mfog
 
 import org.json._
+
 import scala.collection.JavaConverters._
 
 object Point {
+  def fromJson(src: String): Point = fromJson(new JSONObject(src))
   def fromJson(src: JSONObject): Point = {
     val id = src.getLong("id")
     val valueJson = src.getJSONArray("value")
-    val value = (0 to valueJson.length()).map(i => valueJson.getDouble(i))
+    val value = (0 until valueJson.length()).map(i => valueJson.getDouble(i))
     val time = src.getLong("time")
     new Point(id, value, time)
   }
@@ -15,13 +17,6 @@ object Point {
   def zero(dimension: Int = 34) = Point(0, Vector.fill[Double](dimension)(0.0))
   def max(dimension: Int = 34) = Point(Long.MaxValue, Vector.fill[Double](dimension)(1.0))
   val csv: String = s"id,value,time"
-
-  def fromCsv(csv: String): Point = {
-    val split: Array[String] = csv.split(",")
-    split match {
-      case Array(id, value, time) => Point(id.toLong, value.split(";").map(_.toDouble).toSeq, time.toLong)
-    }
-  }
 
   trait DistanceOperator {
     def compare(x: Point, y: Point): Double

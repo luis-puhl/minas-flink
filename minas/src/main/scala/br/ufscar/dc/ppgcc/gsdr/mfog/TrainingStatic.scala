@@ -3,9 +3,7 @@ package br.ufscar.dc.ppgcc.gsdr.mfog
 import java.io.{File, PrintStream}
 import java.net.{InetAddress, Socket}
 
-import br.ufscar.dc.ppgcc.gsdr.mfog.SourceKyoto.MapCsvToMfogCluster
 import grizzled.slf4j.Logger
-import org.apache.flink.api.scala.ExecutionEnvironment
 
 import scala.io.BufferedSource
 import scala.reflect.io.Path

@@ -9,18 +9,16 @@ import scala.collection.mutable
 import scala.io.BufferedSource
 
 object ModelStore {
-  def main(args: Array[String]): Unit = {
-    val modelStore = new ModelStore
-    new Thread(new Runnable {
-      override def run(): Unit = modelStore.sender()
-    }).start()
-    modelStore.receiver()
-  }
-}
-class ModelStore {
   val LOG: Logger = Logger(getClass)
   val model: mutable.Buffer[String] = mutable.Buffer.empty
-  var running: Boolean = true;
+  var running: Boolean = true
+
+  def main(args: Array[String]): Unit = {
+    new Thread(new Runnable {
+      override def run(): Unit = sender()
+    }).start()
+    receiver()
+  }
 
   def sender() = {
     val senderServer = new ServerSocket(9997)

@@ -11,7 +11,7 @@ organization := "br.ufscar.dc.ppgcc.gsdr.minas"
 
 ThisBuild / scalaVersion := "2.11.12"
 
-val flinkVersion = "1.9.1"
+val flinkVersion = "1.9.2"
 
 // https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka_2.11/1.9.1/flink-connector-kafka_2.11-1.9.1.pom
 // https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/1.9.1/flink-connector-kafka-1.9.1.pom

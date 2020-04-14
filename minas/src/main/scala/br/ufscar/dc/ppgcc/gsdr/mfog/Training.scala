@@ -5,14 +5,10 @@ import java.net.{InetAddress, Socket}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import br.ufscar.dc.ppgcc.gsdr.mfog.Training.getClass
-import br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline.{indexInputFile, serialClustream, serialKMeans}
-import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
+import br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline.serialClustream
 import br.ufscar.dc.ppgcc.gsdr.utils.FlinkUtils.RichSet
 import grizzled.slf4j.Logger
-import org.apache.flink.api.common.JobExecutionResult
-import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
-import org.apache.flink.api.scala._
+import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment, _}
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.util.IOUtils
@@ -37,8 +33,9 @@ object Training {
     val sourceSocket = new Socket(InetAddress.getByName("localhost"), 9999)
     LOG.info(s"connected = $sourceSocket")
     val influx = new BufferedSource(sourceSocket.getInputStream).getLines().toVector
+    //1.3719999999999999e-05,0.02,0.03482758620689655,0.047619047619047616,1.0,0.0,0.0,0.55,0.55,0.0,0.0,0.0,0,0,1,0,0,0,0,1,0,0,N
     val in: Vector[(String, Point)] = influx.map(x => x.split(">") match {
-      case Array(l, p) => (l, Point.fromCsv(p))
+      case Array(l, p) => (l, Point.fromJson(p))
     })
     LOG.info(s"received  total ${in.length} => ${in.head} ${in.last}")
     sourceSocket.close()

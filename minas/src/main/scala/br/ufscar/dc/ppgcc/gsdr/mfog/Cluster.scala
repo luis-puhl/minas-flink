@@ -3,6 +3,7 @@ package br.ufscar.dc.ppgcc.gsdr.mfog
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala._
 import org.json._
+
 import scala.collection.JavaConverters._
 
 object Cluster {
@@ -22,7 +23,7 @@ object Cluster {
     val category = json.getString("category")
     val matches = json.getLong("matches")
     val time = json.getLong("time")
-    val centerSrc = json.getJSONObject("time")
+    val centerSrc = json.getJSONObject("center")
     val center = Point.fromJson(centerSrc)
     new Cluster(id, center, variance, label, category, matches, time)
   }

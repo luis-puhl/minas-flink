@@ -2,18 +2,12 @@ package br.ufscar.dc.ppgcc.gsdr.mfog
 
 import java.io.PrintStream
 import java.net.{InetAddress, ServerSocket, Socket}
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 import br.ufscar.dc.ppgcc.gsdr.mfog
-import br.ufscar.dc.ppgcc.gsdr.utils.CollectionsUtils.RichIterator
-import br.ufscar.dc.ppgcc.gsdr.utils.FlinkUtils.RichSet
 import grizzled.slf4j.Logger
 import org.apache.flink.api.common.functions.RichMapFunction
-import org.apache.flink.api.scala.ExecutionEnvironment
-import org.apache.flink.api.scala._
+import org.apache.flink.api.scala.{ExecutionEnvironment, _}
 import org.apache.flink.configuration.Configuration
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 
 import scala.io.BufferedSource
 
@@ -33,6 +27,9 @@ object SourceKyoto {
 
   def serveTraining(setEnv: ExecutionEnvironment): Unit = {
     val trainingSet: Seq[(String, Point)] = trainingData(setEnv)
+    val trainingSetCsv = trainingSet.map {
+      case (l, p) => s"$l>${p.json.toString}"
+    }
     val server = new ServerSocket(9999)
     LOG.info("server ready")
     while (true) {
@@ -40,12 +37,8 @@ object SourceKyoto {
       LOG.info("connected")
       // val in = new BufferedSource(s.getInputStream).getLines()
       val out = new PrintStream(s.getOutputStream)
-      def toMsg(x: (String, Point)): String = {
-        val (l, p) = x
-        s"$l>${p.csv}"
-      }
-      LOG.info(s"sending ${toMsg(trainingSet.head)}")
-      trainingSet.foreach(x => out.println(toMsg(x)))
+      LOG.info(s"sending ${trainingSetCsv.head}")
+      trainingSetCsv.foreach(x => out.println(x))
       out.flush()
       s.close()
       LOG.info(s"done sending ${trainingSet.size}")
@@ -54,15 +47,16 @@ object SourceKyoto {
   }
 
   def serveTest(setEnv: ExecutionEnvironment): Unit = {
-    val testSet: Seq[(String, Point)] = testData(setEnv)
+    val testSet: Seq[String] = testData(setEnv).map(_._2.json.toString)
     val serverTest = new ServerSocket(9996)
     LOG.info("server ready")
     while (true) {
       val s = serverTest.accept()
       LOG.info("connected")
       val out = new PrintStream(s.getOutputStream)
-      LOG.info(testSet.head._2.json.toString)
-      testSet.foreach(x => out.println(x._2.json.toString))
+      val sample = testSet.head
+      LOG.info(s"data => $sample")
+      testSet.foreach(x => out.println(x))
       out.flush()
       s.close()
       LOG.info(s"done sending ${testSet.size}")
@@ -122,7 +116,7 @@ object SourceKyoto {
       currentId = currentId + 1
       // 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,1,0,0,A
       val lineSplit = line.split(",")
-      val doubles = lineSplit.slice(1, lineSplit.length - 1).map(_.toDouble)
+      val doubles = lineSplit.take(lineSplit.size -1).map(i => i.toDouble)
       val label = lineSplit.last
       (label, Point(currentId, doubles))
     }
