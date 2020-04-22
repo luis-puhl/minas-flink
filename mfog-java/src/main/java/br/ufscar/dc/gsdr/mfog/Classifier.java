@@ -17,9 +17,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Classifier {
-    static java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(ModelStoreAkka.class.getName());
+    static Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
     public static void main(String[] args) throws Exception {
         String jobName = ModelStoreAkka.class.getName();
         String dateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-");
