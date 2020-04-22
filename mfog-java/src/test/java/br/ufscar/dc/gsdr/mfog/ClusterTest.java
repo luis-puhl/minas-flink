@@ -53,10 +53,10 @@ class ClusterTest {
         for (int i = 0; i < centerStrings.length; i++) {
             center[i] = Double.parseDouble(centerStrings[i]);
         }
-        double[] expectedCenter = {2.888834262948207E-4, 0.020268260292164667, 0.04161011127902189, 0.020916334661354643, 1.0, 0.0, 0.0026693227091633474, 0.516593625498008, 0.5267529880478092, 1.9920318725099602E-4, 0.0, 7.968127490039841E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0 };
-        assertArrayEquals(expectedCenter, center);
         //
         assertEquals(22, centerStrings.length, "Split center should be 22. " + centerString);
+        double[] expectedCenter = {2.888834262948207E-4, 0.020268260292164667, 0.04161011127902189, 0.020916334661354643, 1.0, 0.0, 0.0026693227091633474, 0.516593625498008, 0.5267529880478092, 1.9920318725099602E-4, 0.0, 7.968127490039841E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0 };
+        assertArrayEquals(expectedCenter, center);
         //
         Cluster c = Cluster.fromMinasCsv(line);
         assertEquals("N", c.label, "Expect cluster to have same class from csv");

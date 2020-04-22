@@ -20,15 +20,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Classifier {
-    static Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
+    static final Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
     public static void main(String[] args) throws Exception {
         String jobName = ModelStoreAkka.class.getName();
-        String dateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-");
-        String outDir = "./out/" + jobName + "/" + dateString + "/";
-        File dir = new File(outDir);
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) throw new RuntimeException("Output directory '" + outDir +"'could not be created.");
-        }
         //
 
         baseline(jobName);

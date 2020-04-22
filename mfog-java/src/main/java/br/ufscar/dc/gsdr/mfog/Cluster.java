@@ -30,15 +30,27 @@ public class Cluster {
         return new Cluster(id, center, variance, label, category, matches, time);
     }
 
-//    def fromMinasCsv(line: String): Cluster =
-//                                                    line.replaceAll("[\\[\\]]", "").split(",").toList match {
-//        case idString :: label :: category :: matches :: timeString :: meanDistance :: radius :: center => {
-//            val id = idString.toLong
-//            val time = timeString.toLong
-//            val cl = new Point(id, value = center.map(x => x.toDouble), time)
-//            Cluster(id, cl, variance = radius.toDouble, label, category, matches.toLong, time)
-//        }
-//    }
+    public static Cluster fromMinasCsv(String line) {
+        String[] metaAndCenter = line.split(",\\[");
+        String meta = metaAndCenter[0];
+        String centerString = metaAndCenter[1].replaceAll("[ \\]]", "");
+        String[] split = meta.split(",");
+        //
+        long id                = Long.parseLong(split[0]);
+        String label           = split[1];
+        String category        = split[2];
+        long matches           = Long.parseLong(split[3]);
+        long time              = Long.parseLong(split[4]);
+        double meanDistance    = Double.parseDouble(split[5]);
+        double radius          = Double.parseDouble(split[6]);
+        String[] centerStrings = centerString.split(",");
+        //
+        double[] center        = new double[centerStrings.length +1];
+        for (int i = 0; i < centerStrings.length; i++) {
+            center[i] = Double.parseDouble(centerStrings[i]);
+        }
+        return new Cluster(id, new Point(id, center, time), radius, label, category, matches, time);
+    }
 
     public static Cluster apply(long id, Point center, double variance, String label){
         return apply(id, center, variance, label, Cluster.CATEGORY_NORMAL);

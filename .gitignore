@@ -15,7 +15,8 @@ Project1-master*
 audioscrobbler-dataset*
 
 mvn-shennenigans
-datasets
+**/datasets
+**/out
 ref
 ref-git
 udemyexamples/kdd.ics.uci.edu/databases
@@ -28,5 +29,3 @@ lib
 
 ufscar-cloud
 
-minas/datasets
-minas/out
