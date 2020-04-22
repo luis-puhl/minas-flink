@@ -1,5 +1,9 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.structs.Cluster;
+import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.util.MfogManager;
+import br.ufscar.dc.gsdr.mfog.util.ModelStoreAkka;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.serialization.SerializationSchema;
@@ -12,9 +16,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
 import org.apache.flink.util.Collector;
 
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;

@@ -1,13 +1,13 @@
-package br.ufscar.dc.gsdr.mfog;
-
-interface Tryable<T> {
-    T apply() throws Exception;
-}
-interface TryableVoid {
-    void apply() throws Exception;
-}
+package br.ufscar.dc.gsdr.mfog.util;
 
 public class Try<T> {
+    interface Tryable<T> {
+        T apply() throws Exception;
+    }
+    interface TryableVoid {
+        void apply() throws Exception;
+    }
+
     public static <U> Try<U> apply(Tryable<U> tryable) {
         return new Try<U>(tryable);
     }

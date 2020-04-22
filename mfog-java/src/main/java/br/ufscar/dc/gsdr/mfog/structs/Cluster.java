@@ -1,10 +1,6 @@
-package br.ufscar.dc.gsdr.mfog;
+package br.ufscar.dc.gsdr.mfog.structs;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Cluster {
     public static String CATEGORY_NORMAL = "normal";

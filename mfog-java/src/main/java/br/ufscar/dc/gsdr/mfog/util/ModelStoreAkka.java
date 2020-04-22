@@ -1,4 +1,4 @@
-package br.ufscar.dc.gsdr.mfog;
+package br.ufscar.dc.gsdr.mfog.util;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;

@@ -1,10 +1,8 @@
-package br.ufscar.dc.gsdr.mfog;
+package br.ufscar.dc.gsdr.mfog.structs;
 
 import org.json.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Point {
   public static Point fromJson(String src) {

@@ -1,11 +1,11 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.structs.Cluster;
+import br.ufscar.dc.gsdr.mfog.util.ModelStoreAkka;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
