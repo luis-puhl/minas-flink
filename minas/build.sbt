@@ -4,48 +4,28 @@ ThisBuild / resolvers ++= Seq(
 )
 
 name := "Minas"
-
-version := "0.1"
-
+version := "0.2"
 organization := "br.ufscar.dc.ppgcc.gsdr.minas"
 
 ThisBuild / scalaVersion := "2.11.12"
 
 val flinkVersion = "1.9.2"
-
-// https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka_2.11/1.9.1/flink-connector-kafka_2.11-1.9.1.pom
-// https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/1.9.1/flink-connector-kafka-1.9.1.pom
-// https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/1.9.1/flink-connector-kafka-1.9.1.pom
-val flinkDependencies = Seq(
-  "org.apache.flink" %% "flink-scala" % flinkVersion, // % "provided",
-  "org.apache.flink" %% "flink-streaming-scala" % flinkVersion, // % "provided"
-  "org.apache.flink" %% "flink-connector-kafka" % flinkVersion)
-
 val samoaVersion = "0.4.0-incubating"
-
-val loggerDependencies = Seq(
-  "log4j" % "log4j" % "1.2.17",
-  "org.slf4j" % "slf4j-log4j12" % "1.7.29")
-val minasDependencies = Seq(
-  "nz.ac.waikato.cms.moa" % "moa" % "2019.05.0",
-  "nz.ac.waikato.cms.weka" % "weka-stable" % "3.8.4",
-  "org.apache.samoa" % "samoa" % samoaVersion,
-  "org.apache.samoa" % "samoa-instances" % samoaVersion,
-  "org.apache.samoa" % "samoa-api" % samoaVersion,
-)
-val testDependencies = Seq(
-  "org.scalactic" %% "scalactic" % "3.1.0",
-  "org.scalatest" %% "scalatest" % "3.1.0" % "test")
 
 lazy val root = (project in file(".")).
   settings(
-    libraryDependencies ++= flinkDependencies,
+    libraryDependencies += "org.apache.flink" %% "flink-scala" % flinkVersion, // % "provided",
+    libraryDependencies += "org.apache.flink" %% "flink-streaming-scala" % flinkVersion, // % "provided"
+    libraryDependencies += "org.apache.flink" %% "flink-connector-kafka" % flinkVersion,
     libraryDependencies += "org.json" % "json" % "20190722",
-    libraryDependencies ++= loggerDependencies,
-    libraryDependencies ++= minasDependencies
+    libraryDependencies += "log4j" % "log4j" % "1.2.17",
+    libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.29",
+    libraryDependencies += "org.apache.samoa" % "samoa" % samoaVersion,
+    libraryDependencies += "org.apache.samoa" % "samoa-instances" % samoaVersion,
+    libraryDependencies += "org.apache.samoa" % "samoa-api" % samoaVersion,
   )
 
-assembly / mainClass := Some("br.ufscar.dc.ppgcc.gsdr.minas.MinasFlinkOffline")
+assembly / mainClass := Some("br.ufscar.dc.ppgcc.gsdr.mfog.ModelStore")
 
 // make run command include the provided dependencies
 Compile / run  := Defaults.runTask(Compile / fullClasspath,

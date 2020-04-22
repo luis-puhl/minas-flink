@@ -68,8 +68,8 @@ object SourceKyoto {
       testSet.foreach(x => {
         size = size + 1
         out.println(x.copy(time=System.currentTimeMillis()).json.toString)
+        out.flush()
       })
-      out.flush()
       s.close()
       LOG.info(s"sent $size items in ${(System.currentTimeMillis() - start) * 10e-4}s")
     }
