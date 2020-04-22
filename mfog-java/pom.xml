@@ -20,13 +20,13 @@ under the License.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.example</groupId>
-	<artifactId>flink-quick</artifactId>
+	<groupId>br.ufscar.dc.gsdr</groupId>
+	<artifactId>mfog</artifactId>
 	<version>0.2</version>
 	<packaging>jar</packaging>
 
-	<name>Flink Quick</name>
-	<url>http://www.myorganization.org</url>
+	<name>Mfog</name>
+	<url>http://www.gsdr.ufscar.br/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,6 +67,13 @@ under the License.
 			<version>${flink.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20190722</version>
+		</dependency>
+
 
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
 

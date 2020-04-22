@@ -17,6 +17,7 @@ audioscrobbler-dataset*
 mvn-shennenigans
 datasets
 ref
+ref-git
 udemyexamples/kdd.ics.uci.edu/databases
 garbage
 lib

@@ -1,6 +1,10 @@
 package br.ufscar.dc.gsdr.mfog;
 
-import akka.actor.*;
+import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.Terminated;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.io.Tcp;
@@ -19,10 +23,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
-public class ModelStore {
-    static Logger LOG = Logger.getLogger(ModelStore.class.getName());
+public class ModelStoreAkka {
+    static Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
     public static void main(String[] args) {
-        String jobName = ModelStore.class.getName();
+        String jobName = ModelStoreAkka.class.getName();
         String dateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-");
         String outDir = "./out/" + jobName + "/" + dateString + "/";
         File dir = new File(outDir);
