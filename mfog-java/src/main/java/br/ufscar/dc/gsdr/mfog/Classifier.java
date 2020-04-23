@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Classifier {
-    static final Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
+    static final Logger LOG = Logger.getLogger(Classifier.class.getName());
     public static void main(String[] args) throws Exception {
         String jobName = ModelStoreAkka.class.getName();
         //
@@ -64,7 +64,7 @@ public class Classifier {
         DataStream<List<Cluster>> clusters = modelStringSource.map(new ModelString2ClustersMap()).broadcast();
 
         DataStreamSource<String> examplesStringSource;
-        examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_MODULE_TEST_PORT);
+        examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT);
         SingleOutputStreamOperator<Tuple2<Long, Long>> out = examplesStringSource
            .map((MapFunction<String, Point>) Point::fromJson)
            .connect(clusters)

@@ -1,6 +1,7 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
+import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.ModelStoreAkka;
 
 import java.io.*;
@@ -17,7 +18,8 @@ public class TrainingStatic {
         String path = "datasets" + File.separator + "models" + File.separator + "offline.csv";
         BufferedReader in = new BufferedReader(new FileReader(path));
         Stream<Cluster> model = in.lines().skip(1).map(Cluster::fromMinasCsv);
-        Socket modelStoreSocket = new Socket(InetAddress.getByName("localhost"), 9998);
+        //
+        Socket modelStoreSocket = new Socket(InetAddress.getByName(MfogManager.SERVICES_HOSTNAME), MfogManager.MODEL_STORE_INTAKE_PORT);
         LOG.info("connected");
         PrintStream outStream = new PrintStream(modelStoreSocket.getOutputStream());
         int i = 0;

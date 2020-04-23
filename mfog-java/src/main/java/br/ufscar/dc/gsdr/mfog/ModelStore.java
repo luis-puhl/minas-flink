@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.ModelStoreAkka;
 import br.ufscar.dc.gsdr.mfog.util.Try;
 
@@ -27,7 +28,7 @@ public class ModelStore {
 
     static void sender() {
         ServerSocket senderServer;
-        if ((senderServer = Try.apply(() -> new ServerSocket(9997)).get) == null) return;
+        if ((senderServer = Try.apply(() -> new ServerSocket(MfogManager.MODEL_STORE_PORT)).get) == null) return;
         //
         final Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
         LOG.info("Sender ready");
@@ -53,7 +54,7 @@ public class ModelStore {
 
     static void receiver() {
         ServerSocket receiverServer;
-        if ((receiverServer = Try.apply(() -> new ServerSocket(9998)).get) == null) return;
+        if ((receiverServer = Try.apply(() -> new ServerSocket(MfogManager.MODEL_STORE_INTAKE_PORT)).get) == null) return;
         LOG.info("Receiver ready");
         for (int i = 0; i < 3; i++) {
             Socket socket;

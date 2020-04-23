@@ -1,10 +1,10 @@
 package br.ufscar.dc.gsdr.mfog.util;
 
 public class Try<T> {
-    interface Tryable<T> {
+    public interface Tryable<T> {
         T apply() throws Exception;
     }
-    interface TryableVoid {
+    public interface TryableVoid {
         void apply() throws Exception;
     }
 
@@ -17,10 +17,11 @@ public class Try<T> {
             return 1;
         });
     }
-    Tryable<T> tryable;
-    Exception error;
-    T get;
-    boolean failed;
+
+    public Tryable<T> tryable;
+    public Exception error;
+    public T get;
+    public boolean failed;
     private Try(Tryable<T> tryable) {
         this.tryable = tryable;
         try {
