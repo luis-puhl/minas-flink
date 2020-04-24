@@ -2,12 +2,16 @@ package br.ufscar.dc.gsdr.mfog.structs;
 
 import org.json.*;
 
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 
-public class Point {
+public class Point implements Serializable {
+
   public static Point fromJson(String src) {
     return fromJson(new JSONObject(src));
   }
+
   public static Point fromJson(JSONObject src) {
     long id = src.getLong("id");
     JSONArray valueJson = src.getJSONArray("value");
@@ -39,6 +43,8 @@ public class Point {
   public long id;
   public double[] value;
   public long time;
+
+  public Point() {}
   public Point(long id, double[] value, long time) {
     this.id = id;
     this.value = value;
@@ -46,12 +52,16 @@ public class Point {
   }
 
   public JSONObject json() {
+    return new JSONObject(this);
+    /*
     JSONObject obj = new JSONObject();
     obj.append("id", id);
     obj.append("value", new JSONArray(value));
     obj.append("time", time);
     return obj;
+     */
   }
+  /*
   public String csv() {
     StringBuilder val = new StringBuilder();
     val.append("\"");
@@ -61,6 +71,7 @@ public class Point {
     val.append("\"");
     return id + "," + val + "," + time;
   }
+   */
   public int dimension() {
     return this.value.length;
   }
@@ -149,5 +160,46 @@ public class Point {
 //    def distance(other: Point)(implicit distanceOperator: Point.DistanceOperator): Double =
 //                                                                                           distanceOperator.compare(this, other)
 //  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public double[] getValue() {
+    return value;
+  }
+
+  public void setValue(double[] value) {
+    this.value = value;
+  }
+
+  public long getTime() {
+    return time;
+  }
+
+  public void setTime(long time) {
+    this.time = time;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Point)) return false;
+    Point point = (Point) o;
+    return getId() == point.getId() &&
+                   getTime() == point.getTime() &&
+                   Arrays.equals(getValue(), point.getValue());
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(getId(), getTime());
+    result = 31 * result + Arrays.hashCode(getValue());
+    return result;
+  }
 }
 

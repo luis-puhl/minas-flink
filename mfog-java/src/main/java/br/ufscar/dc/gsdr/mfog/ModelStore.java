@@ -1,36 +1,35 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.ModelStoreAkka;
-import br.ufscar.dc.gsdr.mfog.util.Try;
+import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
 
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ModelStore {
-    static Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
     static List<String> model = new ArrayList<>(100);
 
-    public static void main(String[] args) throws InterruptedException {
-        Thread senderTread = new Thread(ModelStore::sender);
-        senderTread.start();
-
-        Thread receiverTread = new Thread(ModelStore::receiver);
-        receiverTread.start();
-
-        senderTread.join();
-        receiverTread.join();
+    public static void main(String[] args) {
+        Logger LOG = Logger.getLogger("ModelStore");
+        TcpUtil<String> server = new TcpUtil<>("ModelStore", MfogManager.MODEL_STORE_PORT, () -> {
+            LOG.info("current model size =" + model.size());
+            return model.stream();
+        }, (s) -> {
+            model.stream().limit(1).forEach((i) -> {
+                if (i.equals(s)) LOG.info("current model size =" + model.size());
+            });
+            return s;
+        }, model);
+        server.server();
     }
 
+    /*
     static void sender() {
         ServerSocket senderServer;
         if ((senderServer = Try.apply(() -> new ServerSocket(MfogManager.MODEL_STORE_PORT)).get) == null) return;
         //
-        final Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
+        final Logger LOG = LoggerFactory.getLogger(className);
         LOG.info("Sender ready");
         for (int i = 0; i < 3; i++) {
             Socket socket;
@@ -72,5 +71,6 @@ public class ModelStore {
         }
         Try.apply(receiverServer::close);
   }
+     */
 
 }

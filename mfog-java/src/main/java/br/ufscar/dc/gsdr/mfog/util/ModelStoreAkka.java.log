@@ -21,10 +21,12 @@ import java.io.File;
 import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ModelStoreAkka {
-    static final Logger LOG = Logger.getLogger(ModelStoreAkka.class.getName());
+    static final Logger LOG = LogManager.getLogger(ModelStoreAkka.class.getName());
     public static void main(String[] args) {
         String jobName = ModelStoreAkka.class.getName();
         String dateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-");

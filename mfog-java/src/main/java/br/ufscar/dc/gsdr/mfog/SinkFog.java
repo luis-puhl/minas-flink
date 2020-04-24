@@ -1,22 +1,62 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.Try;
+import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
 
-import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
+import java.io.IOException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SinkFog {
-    static final Logger LOG = Logger.getLogger(SinkFog.class.getName());
-    public static void main(String[] args) {
+    static Logger LOG = Logger.getLogger("SinkFog");
+
+    static class LabeledExample {
+        public Point point;
+        public String label;
+
+        public static LabeledExample fromClassifier(String s) {
+            return new LabeledExample("label", Point.zero(22));
+        }
+        public static LabeledExample fromSource(String s) {
+            return new LabeledExample("label", Point.zero(22));
+        }
+
+        public LabeledExample(String label, Point point) {
+            this.point = point;
+            this.label = label;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        Queue<LabeledExample> fromClassifier = new ConcurrentLinkedQueue<>();
+        TcpUtil<LabeledExample> fromClassifierTcp = new TcpUtil<>(
+                "sink from classifier",
+                MfogManager.SINK_MODULE_TEST_PORT,
+                null,
+                LabeledExample::fromClassifier,
+                fromClassifier
+        );
+        fromClassifierTcp.waitBeforeRcv = 129987;
+        fromClassifierTcp.waitBetweenRcv = 129987 / 653457;
+        fromClassifierTcp.server();
+        LOG.info("fromClassifier.size()=" + fromClassifier.size());
+        //
+        Queue<LabeledExample> fromSource = new ConcurrentLinkedQueue<>();
+        TcpUtil<LabeledExample> fromSourceTcp = new TcpUtil<>(
+                "sink from classifier",
+                MfogManager.SOURCE_EVALUATE_DATA_PORT,
+                null,
+                LabeledExample::fromSource,
+                fromSource
+        );
+        fromSourceTcp.client();
+        //
+    }
+
+    /*
+    void any() {
         ServerSocket senderServer;
         if ((senderServer = Try.apply(() -> new ServerSocket(MfogManager.SINK_MODULE_TEST_PORT)).get) == null) return;
         //
@@ -25,7 +65,7 @@ public class SinkFog {
             Socket socket;
             if ((socket = Try.apply(senderServer::accept).get) == null) break;
             long start = System.currentTimeMillis();
-            List<Point> toBeEvaluated = new ArrayList<>(100);
+
             LOG.info("Test receiver connected ");
             //
             InetAddress addr;
@@ -65,4 +105,5 @@ public class SinkFog {
         }
         Try.apply(senderServer::close);
     }
+     */
 }

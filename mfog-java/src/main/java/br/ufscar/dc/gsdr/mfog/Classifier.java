@@ -2,8 +2,8 @@ package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.ModelStoreAkka;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.serialization.SerializationSchema;
@@ -18,14 +18,12 @@ import org.apache.flink.util.Collector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Classifier {
-    static final Logger LOG = Logger.getLogger(Classifier.class.getName());
+    static Logger LOG = Logger.getLogger("Classifier");
     public static void main(String[] args) throws Exception {
-        String jobName = ModelStoreAkka.class.getName();
+        String jobName = Classifier.class.getName();
         //
-
         baseline(jobName);
     }
 
@@ -66,7 +64,7 @@ public class Classifier {
         DataStreamSource<String> examplesStringSource;
         examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT);
         SingleOutputStreamOperator<Tuple2<Long, Long>> out = examplesStringSource
-           .map((MapFunction<String, Point>) Point::fromJson)
+           .map((MapFunction<String, Point>) (value) -> Point.fromJson(value))
            .connect(clusters)
            .process(new ClustersExamplesConnect());
         //

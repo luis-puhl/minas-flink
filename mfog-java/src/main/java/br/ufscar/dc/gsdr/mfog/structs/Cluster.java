@@ -2,7 +2,10 @@ package br.ufscar.dc.gsdr.mfog.structs;
 
 import org.json.JSONObject;
 
-public class Cluster {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Cluster implements Serializable {
     public static String CATEGORY_NORMAL = "normal";
     public static String CATEGORY_EXTENSION = "extension";
     public static String CATEGORY_NOVELTY = "novelty";
@@ -70,6 +73,7 @@ public class Cluster {
     public String category;
     public long matches;
     public long time;
+    public Cluster() {}
     private Cluster(long id, Point center, double variance, String label, String category, long matches, long time) {
         this.id = id;
         this.center = center;
@@ -81,6 +85,8 @@ public class Cluster {
     }
 
     public JSONObject json() {
+        return new JSONObject(this);
+        /*
         JSONObject obj = new JSONObject();
         obj.append("id", id);
         obj.append("center", center.json());
@@ -90,5 +96,76 @@ public class Cluster {
         obj.append("matches", matches);
         obj.append("time", time);
         return obj;
+         */
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Point getCenter() {
+        return center;
+    }
+
+    public void setCenter(Point center) {
+        this.center = center;
+    }
+
+    public double getVariance() {
+        return variance;
+    }
+
+    public void setVariance(double variance) {
+        this.variance = variance;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public long getMatches() {
+        return matches;
+    }
+
+    public void setMatches(long matches) {
+        this.matches = matches;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cluster)) return false;
+        Cluster cluster = (Cluster) o;
+        return getCenter().equals(cluster.getCenter()) &&
+                       getLabel().equals(cluster.getLabel());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCenter(), getLabel());
     }
 }
