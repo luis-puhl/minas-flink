@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
@@ -17,8 +18,10 @@ public class SourceKyoto {
         return new TcpUtil<>(
                 serviceName,
                 port,
-                () -> new BufferedReader(new FileReader(basePath + file)).lines()
-                               .map(line -> transform(sendLabel, new IdGenerator(), line)),
+                () -> new BufferedReader(new FileReader(basePath + file))
+                    .lines()
+                    .limit(1000)
+                    .map(line -> transform(sendLabel, new IdGenerator(), line)),
                 null,
                 null
         );
@@ -57,9 +60,11 @@ public class SourceKyoto {
     }
 
     public static String transform(boolean sendLabel, Iterator<Integer> idGenerator, String line) {
-        LabeledPoint labeledPoint = new LabeledPoint(idGenerator, line).invoke();
-        String prefix = sendLabel ? labeledPoint.label + ">" : "";
-        return prefix + labeledPoint.point.json().toString();
+        LabeledExample labeledPoint = LabeledExample.fromKyotoCSV(idGenerator.next(), line);
+        if (sendLabel) {
+            return labeledPoint.json().toString() + "\n";
+        }
+        return labeledPoint.point.json().toString() + "\n";
     }
 
     static class IdGenerator implements Iterator<Integer> {
@@ -72,29 +77,6 @@ public class SourceKyoto {
         @Override
         public Integer next() {
             return id++;
-        }
-    }
-
-    static class LabeledPoint {
-        private Iterator<Integer> idGenerator;
-        private String line;
-        public String label;
-        public Point point;
-
-        public LabeledPoint(Iterator<Integer> idGenerator, String line) {
-            this.idGenerator = idGenerator;
-            this.line = line;
-        }
-        public LabeledPoint invoke() {
-            // 0.0,0.0,0.0,0.0,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,1,0,N
-            String[] lineSplit = line.split(",");
-            double[] doubles = new double[lineSplit.length -1];
-            for (int j = 0; j < doubles.length -1; j++) {
-                doubles[j] = Double.parseDouble(lineSplit[j]);
-            }
-            label = lineSplit[lineSplit.length - 1];
-            point = Point.apply(idGenerator.next(), doubles);
-            return this;
         }
     }
 }

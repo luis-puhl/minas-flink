@@ -31,7 +31,7 @@ public class Point implements Serializable {
     Arrays.fill(val, 1.0);
     return apply(Long.MAX_VALUE, val);
   }
-  public String csv = "id,value,time";
+  public static String csv = "id,value,time";
 
   public static Point apply(long id, double[] value) {
     return apply(id, value, System.currentTimeMillis());
@@ -200,6 +200,11 @@ public class Point implements Serializable {
     int result = Objects.hash(getId(), getTime());
     result = 31 * result + Arrays.hashCode(getValue());
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "Point{id=" + id +", value=" + Arrays.toString(value) +", time=" + time + '}';
   }
 }
 

@@ -31,7 +31,7 @@ public class TcpUtil<T> {
         this.port = port;
         this.toSend     = toSend    == null ? Stream::empty : toSend;
         this.toReceive  = toReceive == null ? (s) -> null : toReceive;
-        this.received   = toReceive == null ? new ArrayList<>(100) : received;
+        this.received   = received  == null ? new ArrayList<>(100) : received;
     }
 
     public int client() throws IOException {
