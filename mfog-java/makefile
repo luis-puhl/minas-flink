@@ -1,4 +1,4 @@
 watch:
-	while true; do inotifywait -qre close_write src; mvn clean package; echo "done"; done
+	while true; do mvn clean package; echo "done"; inotifywait -qre close_write src; done
 build:
 	mvn clean package

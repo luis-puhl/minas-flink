@@ -1,0 +1,39 @@
+2020-04-27T01:31:44.401 INFO  ModelStore total 100 items in 0.016s
+
+2020-04-27T01:04:29.384 INFO  Classifier Ready to run baseline
+Job has been submitted with JobID 7841f5569dd7da943af7c5cd628fa529
+Program execution finished
+Job with JobID 7841f5569dd7da943af7c5cd628fa529 has finished.
+Job Runtime: 182343 ms
+
+2020-04-27T01:07:33.230 INFO  Classifier Ran baseline in 183.846s
+
+2020-04-27T01:07:28.555 INFO  SinkFog i=640620 cls=100 src=12819 3587 i/s
+2020-04-27T01:07:29.560 INFO  SinkFog i=643733 cls=100 src=9706 3584 i/s
+2020-04-27T01:07:30.562 INFO  SinkFog i=647072 cls=100 src=6367 3583 i/s
+2020-04-27T01:07:31.563 INFO  SinkFog i=650787 cls=100 src=2652 3584 i/s
+2020-04-27T01:07:32.564 INFO  SinkFog i=653439 cls=117 src=0 3579 i/s
+
+
+2020-04-27T01:31:43.650 INFO  Classifier Ready to run baseline
+Job has been submitted with JobID 3354bd0a105fa56dcb45d4fc5a65366b
+Program execution finished
+Job with JobID 3354bd0a105fa56dcb45d4fc5a65366b has finished.
+Job Runtime: 194625 ms
+2020-04-27T01:34:59.753 INFO  Classifier Ran baseline in 196.101s
+
+Não está atingindo 100% de todas CPUs, tenho que voltar e encontrar o caso que
+deu certo com scala.
+
+pi@hermes-pi-1:~/project $ ./flink-1.10.0/bin/flink run mfog-0.4.jar br.ufscar.dc.gsdr.mfog.Classifier
+2020-04-27T14:37:03.958 INFO  Classifier Ready to run baseline
+Job has been submitted with JobID d4990214cdc995d1118a09f8bed65224
+Program execution finished
+Job with JobID d4990214cdc995d1118a09f8bed65224 has finished.
+Job Runtime: 1403666 ms
+
+2020-04-27T15:00:32.782 INFO  Classifier Ran baseline in 1408.8210000000001s
+2020-04-27T12:00:29.711 INFO  SinkFog i=652179 cls=100 src=1214 466 i/s
+2020-04-27T12:00:30.712 INFO  SinkFog i=652661 cls=100 src=732 466 i/s
+2020-04-27T12:00:31.713 INFO  SinkFog i=653153 cls=100 src=240 466 i/s
+2020-04-27T12:00:32.714 INFO  SinkFog i=653393 cls=164 src=0 466 i/s

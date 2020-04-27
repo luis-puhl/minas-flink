@@ -69,6 +69,7 @@ public class Classifier {
         examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT);
         SingleOutputStreamOperator<LabeledExample> out = examplesStringSource
            .map((MapFunction<String, Point>) (value) -> Point.fromJson(value))
+           // .keyBy(x -> x.id) // this keyby had no effect 183s vs 196s
            .connect(clusters)
            .process(new ClustersExamplesConnect());
         //

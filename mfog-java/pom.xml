@@ -22,7 +22,7 @@ under the License.
 
 	<groupId>br.ufscar.dc.gsdr</groupId>
 	<artifactId>mfog</artifactId>
-	<version>0.3</version>
+	<version>0.4</version>
 	<packaging>jar</packaging>
 
 	<name>Mfog</name>
@@ -212,7 +212,7 @@ under the License.
 		<pluginManagement>
 			<plugins>
 
-				<!-- This improves the out-of-the-box experience in Eclipse by resolving some warnings. 
+				<!-- This improves the out-of-the-box experience in Eclipse by resolving some warnings.
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
