@@ -17,121 +17,74 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SinkFog {
     static Logger LOG = Logger.getLogger("SinkFog");
-    static Queue<LabeledExample> fromClassifier = new ConcurrentLinkedQueue<>();
-    static Queue<LabeledExample> fromSource = new ConcurrentLinkedQueue<>();
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ServerSocket serverSocket = new ServerSocket(MfogManager.SINK_MODULE_TEST_PORT);
         LOG.info("server ready on " + serverSocket.getInetAddress() + ":" + serverSocket.getLocalPort());
-        /*Thread threadFromClassifier = new Thread(() -> {
-            class Rcv implements Runnable{
-                int i = 0;
-                boolean done = false;
-                Socket socket;
-                Thread thread;
-                @Override
-                public void run() {
-                    i += handleClassifier(socket, fromClassifier);
-                    done = true;
-                }
-            }
-            List<Rcv> threadPool = new ArrayList<>(10);
-            int i = 0;
-            while (i < 100 || fromSource.size() > 0 || fromClassifier.size() > 0) {
-                try {
-                    Rcv rcv = new Rcv();
-                    rcv.socket = serverSocket.accept();
-                    rcv.thread = new Thread(rcv);
-                    rcv.thread.start();
-                    threadPool.add(rcv);
-                } catch (IOException e) {
-                    LOG.info(e.getMessage());
-                }
-                for (Rcv rcv : threadPool) {
-                    if (rcv.done) {
-                        try {
-                            rcv.thread.join();
-                        } catch (InterruptedException e) {
-                            LOG.info(e.getMessage());
-                        }
-                        i += rcv.i;
-                        threadPool.remove(rcv);
-                    }
-                }
-            }
-            for (Rcv rcv : threadPool) {
-                try {
-                    rcv.thread.join();
-                } catch (InterruptedException e) {
-                    LOG.info(e.getMessage());
-                }
-            }
-        });*/
-        Socket socket = serverSocket.accept();
-        Thread threadFromClassifier = new Thread(() -> handleClassifier("classifier", socket, fromClassifier));
-        threadFromClassifier.start();
+        //
+        Socket classifierSocket = serverSocket.accept();
+        classifierSocket.shutdownOutput();
+        InputStream classifierStream = classifierSocket.getInputStream();
+        LOG.info("connected to classifier");
+        long startReceive = System.currentTimeMillis();
         //
         LOG.info("connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.SOURCE_EVALUATE_DATA_PORT);
-        Socket socketSource = new Socket(InetAddress.getByName(MfogManager.SERVICES_HOSTNAME), MfogManager.SOURCE_EVALUATE_DATA_PORT);
-        Thread threadFromSource = new Thread(() -> handleClassifier("source", socketSource, fromSource));
-        threadFromSource.start();
+        Socket sourceSocket = new Socket(InetAddress.getByName(MfogManager.SERVICES_HOSTNAME), MfogManager.SOURCE_EVALUATE_DATA_PORT);
+        LOG.info("connected to source");
+        InputStream sourceStream = sourceSocket.getInputStream();
         //
+        // {"label":"model latency=0","point":{"time":1587927915123,"id":0,"value":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}}
+        Iterator<String> classifierIterator = new BufferedReader(new InputStreamReader(classifierStream)).lines().iterator();
+        Iterator<String> sourceIterator = new BufferedReader(new InputStreamReader(sourceStream)).lines().iterator();
+        List<LabeledExample> classifierBuffer = new ArrayList<>(100);
+        List<LabeledExample> sourceBuffer = new ArrayList<>(100);
         long i = 0;
         long matches = 0;
-        while (i < 100 || fromSource.size() > 0 || fromClassifier.size() > 0) {
-            LabeledExample peek = fromClassifier.peek();
-            if (peek == null) continue;
-            for (LabeledExample source : fromSource) {
-                if (peek.point.id == source.point.id) {
-                    if (peek.label.equals(source.label)) {
-                        matches++;
+        long lastCheck = 0;
+        long sentTime = System.currentTimeMillis();
+        while (classifierIterator.hasNext() || sourceIterator.hasNext() || classifierBuffer.size() > 0 || sourceBuffer.size() > 0) {
+            while (classifierStream.available() > 10 && classifierIterator.hasNext()) {
+                // LOG.info("classifier RCV");
+                classifierBuffer.add(LabeledExample.fromJson(classifierIterator.next()));
+            }
+            while (sourceStream.available() > 10 && sourceIterator.hasNext()) {
+                // LOG.info("source RCV");
+                sourceBuffer.add(LabeledExample.fromJson(sourceIterator.next()));
+            }
+            for (LabeledExample classified : classifierBuffer) {
+                for (LabeledExample source : sourceBuffer) {
+                    if (classified.point.id == source.point.id) {
+                        if (classified.label.equals(source.label)) {
+                            matches++;
+                        }
+                        i++;
+                        source.point.id = -1;
+                        classified.point.id = -1;
+                        break;
                     }
-                    i++;
-                    fromClassifier.poll();
-                    break;
                 }
             }
-            Thread.sleep(10);
+            classifierBuffer.removeIf(l -> l.point.id == -1);
+            sourceBuffer.removeIf(l -> l.point.id == -1);
+            if (System.currentTimeMillis() - sentTime > 1000) {
+                if (lastCheck == i || i == 0) {
+                    LOG.info("Strike");
+                    Thread.sleep(5000);
+                    continue;
+                }
+                lastCheck = i;
+                sentTime = System.currentTimeMillis();
+                String speed = ((int) (i / ((System.currentTimeMillis() - startReceive) * 10e-4))) + " i/s";
+                LOG.info("i=" + i + " cls=" + classifierBuffer.size() + " src=" + sourceBuffer.size() + " " + speed);
+            }
+            // Thread.sleep(10);
         }
-        LOG.info("i=" + i + " matches=" + matches + " misses=" + (i - matches));
-        //
-        try {
-            threadFromClassifier.join();
-            threadFromSource.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        LOG.info("received " + i + " items in " + (System.currentTimeMillis() - startReceive) * 10e-4 + "s");
+        if (i != 0) {
+            LOG.info("i=" + i + " matches=" + matches + " misses=" + (100 * (i - matches) / i) + "%");
         }
+        classifierSocket.close();
+        sourceSocket.close();
         serverSocket.close();
-    }
-
-    static public int handleClassifier(String name, Socket socket, Queue<LabeledExample> queue) {
-        LOG.info("connected " + name);
-        Try.apply(socket::shutdownOutput);
-        long startReceive = System.currentTimeMillis();
-        InputStream inputStream;
-        if ((inputStream = Try.apply(socket::getInputStream).get) == null) {
-            Try.apply(socket::close);
-            return 0;
-        }
-        Try.apply(() -> Thread.sleep(1000));
-        int rec = 0;
-        while (queue.size() < 1000 || Try.apply(inputStream::available).get > 0) {
-            Iterator<String> iterator = new BufferedReader(new InputStreamReader(inputStream)).lines().iterator();
-            while (iterator.hasNext()) {
-                String next = iterator.next();
-                try {
-                    LabeledExample labeledExample = LabeledExample.fromJson(next);
-                    queue.add(labeledExample);
-                    rec++;
-                } catch (Exception e) {
-                    LOG.info(next + " => " + e.getMessage());
-                }
-                Try.apply(() -> Thread.sleep(10));
-            }
-        }
-        Try.apply(socket::shutdownInput);
-        Try.apply(socket::close);
-        LOG.info(name + " received " + rec + " items in " + (System.currentTimeMillis() - startReceive) * 10e-4 + "s");
-        return rec;
     }
 }

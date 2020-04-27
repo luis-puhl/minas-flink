@@ -4,19 +4,16 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class TcpUtil<T> {
-    public interface ToSendStream<T> {
-        Stream<T> get() throws Exception;
+    public interface ToSend<T> {
+        Iterator<T> get() throws Exception;
     }
 
-    ToSendStream<T> toSend;
+    ToSend<T> toSend;
     Function<String, T> toReceive;
     Collection<T> received;
     int port;
@@ -25,11 +22,11 @@ public class TcpUtil<T> {
     public long waitBeforeRcv = 10;
     public long waitBetweenRcv = 10;
 
-    public TcpUtil(String serviceName, int port, ToSendStream<T> toSend, Function<String, T> toReceive, Collection<T> received) {
+    public TcpUtil(String serviceName, int port, ToSend<T> toSend, Function<String, T> toReceive, Collection<T> received) {
         this.serviceName = serviceName;
         LOG = Logger.getLogger(serviceName);
         this.port = port;
-        this.toSend     = toSend    == null ? Stream::empty : toSend;
+        this.toSend     = toSend    == null ? Collections::emptyIterator : toSend;
         this.toReceive  = toReceive == null ? (s) -> null : toReceive;
         this.received   = received  == null ? new ArrayList<>(100) : received;
     }
@@ -51,18 +48,23 @@ public class TcpUtil<T> {
         }
         PrintStream out = new PrintStream(outputStream);
         //
-        Stream<T> toSendStream;
-        if ((toSendStream = Try.apply(toSend::get).get) == null) {
+        Iterator<T> iterator;
+        if ((iterator = Try.apply(toSend::get).get) == null) {
             Try.apply(socket::close);
             return -1;
         }
-        Iterator<T> iterator = toSendStream.iterator();
         int sent = 0;
+        long sentTime = System.currentTimeMillis();
         while (iterator.hasNext()) {
             T next = iterator.next();
             out.println(next);
             out.flush();
             sent++;
+            if (System.currentTimeMillis() - sentTime > 1000) {
+                String speed = ((int) (sent / ((System.currentTimeMillis() - sentTime) * 10e-4))) + " i/s";
+                sentTime = System.currentTimeMillis();
+                LOG.info("sent=" + sent + " " + speed);
+            }
         }
         out.flush();
         final int sentFinal = sent;
@@ -77,6 +79,7 @@ public class TcpUtil<T> {
         }
         Try.apply(() -> Thread.sleep(waitBeforeRcv));
         int rec = 0;
+        sentTime = System.currentTimeMillis();
         if (Try.apply(inputStream::available).get > 0) {
             BufferedReader read = new BufferedReader(new InputStreamReader(inputStream));
             iterator = read.lines().map(toReceive).iterator();
@@ -85,6 +88,11 @@ public class TcpUtil<T> {
                 received.add(next);
                 rec++;
                 Try.apply(() -> Thread.sleep(waitBetweenRcv));
+                if (System.currentTimeMillis() - sentTime > 1000) {
+                    String speed = ((int) (rec / ((System.currentTimeMillis() - sentTime) * 10e-4))) + " i/s";
+                    sentTime = System.currentTimeMillis();
+                    LOG.info("rec=" + rec + " " + speed);
+                }
             }
             Try.apply(socket::shutdownInput);
         }

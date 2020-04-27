@@ -13,7 +13,7 @@ public class TrainingStatic {
         BufferedReader in = new BufferedReader(new FileReader(path));
         Stream<String> model = in.lines().skip(1).map(Cluster::fromMinasCsv).map(c -> c.json().toString());
         //
-        TcpUtil<String> tcp = new TcpUtil<>("TrainingStatic", MfogManager.MODEL_STORE_PORT, () -> model, null, null);
+        TcpUtil<String> tcp = new TcpUtil<>("TrainingStatic", MfogManager.MODEL_STORE_PORT, model::iterator, null, null);
         tcp.client();
     }
 }

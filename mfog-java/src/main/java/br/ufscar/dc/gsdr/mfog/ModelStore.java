@@ -14,7 +14,7 @@ public class ModelStore {
         Logger LOG = Logger.getLogger("ModelStore");
         TcpUtil<String> server = new TcpUtil<>("ModelStore", MfogManager.MODEL_STORE_PORT, () -> {
             LOG.info("current model size =" + model.size());
-            return model.stream();
+            return model.iterator();
         }, (s) -> {
             model.stream().limit(1).forEach((i) -> {
                 if (i.equals(s)) LOG.info("current model size =" + model.size());
