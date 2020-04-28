@@ -42,6 +42,7 @@ public class SinkFog {
         long matches = 0;
         long lastCheck = 0;
         long sentTime = System.currentTimeMillis();
+        int strikes = 3;
         while (classifierIterator.hasNext() || sourceIterator.hasNext() || classifierBuffer.size() > 0 || sourceBuffer.size() > 0) {
             while (classifierStream.available() > 10 && classifierIterator.hasNext()) {
                 // LOG.info("classifier RCV");
@@ -67,12 +68,17 @@ public class SinkFog {
             classifierBuffer.removeIf(l -> l.point.id == -1);
             sourceBuffer.removeIf(l -> l.point.id == -1);
             if (System.currentTimeMillis() - sentTime > 1000) {
+                if (strikes == 0) {
+                    break;
+                }
                 if (lastCheck == i || i == 0) {
                     LOG.info("Strike");
                     Thread.sleep(5000);
+                    strikes--;
                     continue;
                 }
                 lastCheck = i;
+                strikes = 3;
                 sentTime = System.currentTimeMillis();
                 String speed = ((int) (i / ((System.currentTimeMillis() - startReceive) * 10e-4))) + " i/s";
                 LOG.info("i=" + i + " cls=" + classifierBuffer.size() + " src=" + sourceBuffer.size() + " " + speed);
