@@ -13,10 +13,10 @@ public class Point implements Serializable {
     public static Point fromJson(String src) {
         return fromJson(new JSONObject(src));
     }
-    public Point fromBytes(byte[] bytes) {
+    public static Point fromBytes(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
     }
-    public Point fromBytes(InputStream stream) {
+    public static Point fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
 

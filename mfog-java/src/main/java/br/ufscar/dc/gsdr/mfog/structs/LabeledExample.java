@@ -18,10 +18,10 @@ public class LabeledExample implements Serializable {
         l.point = Point.fromJson(src.getJSONObject("point"));
         return l;
     }
-    public LabeledExample fromBytes(byte[] bytes) {
+    public static LabeledExample fromBytes(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
     }
-    public LabeledExample fromBytes(InputStream stream) {
+    public static LabeledExample fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
 

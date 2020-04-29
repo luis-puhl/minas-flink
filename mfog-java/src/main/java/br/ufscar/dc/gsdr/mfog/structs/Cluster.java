@@ -31,10 +31,10 @@ public class Cluster implements Serializable {
         return new Cluster(id, center, variance, label, category, matches, time);
     }
 
-    public Cluster fromBytes(byte[] bytes) {
+    public static Cluster fromBytes(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
     }
-    public Cluster fromBytes(InputStream stream) {
+    public static Cluster fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
 
