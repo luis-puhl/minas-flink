@@ -73,7 +73,8 @@ public class Classifier {
         //
 
         SerializationSchema<LabeledExample> serializationSchema = element -> (element.json().toString() + "\n").getBytes();
-        out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
+        // out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
+        out.print();
         LOG.info("Ready to run baseline");
         long start = System.currentTimeMillis();
         env.execute("Classifier Baseline");

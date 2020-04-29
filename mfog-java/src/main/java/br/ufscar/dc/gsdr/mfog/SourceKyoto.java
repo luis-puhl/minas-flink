@@ -35,13 +35,13 @@ public class SourceKyoto {
         trainingThread.start();
 
         ServerSocket classifierServerSocket = new ServerSocket(MfogManager.SOURCE_TEST_DATA_PORT);
-        ServerSocket sinkServerSocket = new ServerSocket(MfogManager.SOURCE_EVALUATE_DATA_PORT);
+        // ServerSocket sinkServerSocket = new ServerSocket(MfogManager.SOURCE_EVALUATE_DATA_PORT);
         LOG.info("Test/Eval ready");
         List<Thread> evaluationThreads = new ArrayList<>(10);
         for (int i = 0; i < 10; i++) {
             final Socket classifierSocket = classifierServerSocket.accept();
             LOG.info("Test connected, waiting for sink");
-            final Socket sinkSocket = sinkServerSocket.accept();
+            // final Socket sinkSocket = sinkServerSocket.accept();
             LOG.info("Eval connected");
             Thread evaluationThread = new Thread(() -> {
                 long startTime = System.currentTimeMillis();
@@ -54,9 +54,9 @@ public class SourceKyoto {
                     //
                     OutputStream classifierStream = classifierSocket.getOutputStream();
                     classifierSocket.shutdownInput();
-                    OutputStream sinkStream = sinkSocket.getOutputStream();
+                    // OutputStream sinkStream = sinkSocket.getOutputStream();
                     PrintStream classifier = new PrintStream(classifierStream);
-                    PrintStream sink = new PrintStream(sinkStream);
+                    // PrintStream sink = new PrintStream(sinkStream);
                     //
                     long sentTime = System.currentTimeMillis();
                     Iterator<LabeledExample> iterator = labeledExampleStream.iterator();
@@ -65,8 +65,8 @@ public class SourceKyoto {
                         LabeledExample labeledExample = iterator.next();
                         classifier.println(labeledExample.point.json());
                         classifier.flush();
-                        sink.println(labeledExample.json());
-                        sink.flush();
+                        // sink.println(labeledExample.json());
+                        // sink.flush();
                         sent++;
                         if (System.currentTimeMillis() - sentTime > TcpUtil.REPORT_INTERVAL) {
                             String speed = ((int) (sent / ((System.currentTimeMillis() - startTime) * 10e-4))) + " i/s";
@@ -75,13 +75,13 @@ public class SourceKyoto {
                         }
                     }
                     classifier.flush();
-                    sink.flush();
+                    // sink.flush();
                 } catch (IOException e) {
                     LOG.error(e);
                 } finally {
                     try {
                         classifierSocket.close();
-                        sinkSocket.close();
+                        // sinkSocket.close();
                     } catch (IOException e) {
                         LOG.error(e);
                     }
