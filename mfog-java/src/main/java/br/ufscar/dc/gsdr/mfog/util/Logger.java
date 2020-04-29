@@ -6,6 +6,9 @@ public class Logger {
     static public Logger getLogger(String serviceName) {
         return new Logger(serviceName);
     }
+    static public Logger getLogger(Class<?> kls) {
+        return new Logger(kls.getSimpleName());
+    }
 
     Logger(String serviceName) {
         this.serviceName = serviceName;
@@ -17,9 +20,24 @@ public class Logger {
     public void error(String msg) {
         this.log("ERR", msg);
     }
+    public void warn(String msg) {
+        this.log("WARN", msg);
+    }
     public void error(Exception exp) {
-        StackTraceElement trace = exp.getStackTrace()[0];
+        StackTraceElement[] stackTrace = exp.getStackTrace();
+        StackTraceElement trace = stackTrace[0];
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement traceI : stackTrace) {
+            if (traceI.getClassName().startsWith("br.ufscar.dc.gsdr.mfog")){
+                if (trace == null) {
+                    trace = traceI;
+                }
+                sb.append(traceI.getClassName()).append(":").append(traceI.getLineNumber()).append("\n");
+            }
+        }
         this.log("ERR", trace.getClassName() + ":" + trace.getLineNumber() + " " + exp.getMessage());
+        this.log("ERR", sb.toString());
+        // exp.printStackTrace();
     }
     private void log(String level, String msg) {
         System.out.println(format(level, msg));

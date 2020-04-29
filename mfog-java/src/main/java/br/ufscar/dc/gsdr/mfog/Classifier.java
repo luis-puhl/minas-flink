@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.flink.SocketStreamFunction;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
@@ -14,27 +15,13 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
+import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.util.Collector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Classifier {
-    static class ModelString2ClustersMap extends RichMapFunction<String, List<Cluster>> {
-        List<Cluster> model;
-        @Override
-        public List<Cluster> map(String value) {
-            Cluster cl = Cluster.fromJson(value);
-            model.add(cl);
-            return model;
-        }
-        @Override
-        public void open(Configuration parameters) throws Exception {
-            super.open(parameters);
-            model = new ArrayList<>(100);
-        }
-    }
-
     static class ClustersExamplesConnect extends CoProcessFunction<Point, List<Cluster>, LabeledExample> {
         @Override
         public void processElement1(Point value, Context ctx, Collector<LabeledExample> out) {
@@ -59,16 +46,30 @@ public class Classifier {
     void baseline() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStreamSource<String> modelStringSource;
-        modelStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
-        DataStream<List<Cluster>> clusters = modelStringSource.map(new ModelString2ClustersMap()).broadcast();
+        DataStream<List<Cluster>> model = env.addSource(
+            new SocketStreamFunction<Cluster>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT)
+        ).returns(Cluster.class).map(new RichMapFunction<Cluster, List<Cluster>>() {
+            List<Cluster> model;
+            @Override
+            public List<Cluster> map(Cluster value) {
+                model.add(value);
+                return model;
+            }
+            @Override
+            public void open(Configuration parameters) throws Exception {
+                super.open(parameters);
+                model = new ArrayList<>(100);
+            }
+        }).broadcast();
 
-        DataStreamSource<String> examplesStringSource;
-        examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT);
+        //
+        DataStream<Point> examplesStringSource = env.addSource(
+                new SocketStreamFunction<Point>(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT)
+        ).returns(Point.class);
+        // examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT).map((MapFunction<String, Point>) (value) -> Point.fromJson(value));
         SingleOutputStreamOperator<LabeledExample> out = examplesStringSource
-           .map((MapFunction<String, Point>) (value) -> Point.fromJson(value))
            // .keyBy(x -> x.id) // this keyby had no effect 183s vs 196s
-           .connect(clusters)
+           .connect(model)
            .process(new ClustersExamplesConnect());
         //
 

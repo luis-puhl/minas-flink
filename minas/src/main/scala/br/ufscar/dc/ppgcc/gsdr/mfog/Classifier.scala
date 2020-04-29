@@ -265,6 +265,7 @@ object Classifier {
 
             override def map(value: String): Seq[Cluster] = {
               val cl = Cluster.fromJson(new JSONObject(value))
+              val ds = model.map(c => c.center.distance(cl.center)).min
               model.append(cl)
               model
             }

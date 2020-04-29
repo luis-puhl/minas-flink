@@ -4,6 +4,7 @@ import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -20,15 +21,14 @@ public class SourceKyoto {
     static final Logger LOG = Logger.getLogger("SourceKyoto");
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        TcpUtil<String> tcpTraining = new TcpUtil<>(
+        TcpUtil<LabeledExample> tcpTraining = new TcpUtil<>(
                 "Source Kyoto Training",
                 MfogManager.SOURCE_TRAINING_DATA_PORT,
                 () -> {
                     IdGenerator idGenerator = new IdGenerator();
                     return new BufferedReader(new FileReader(basePath + training)).lines()
-                                   .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line).json().toString()).iterator();
+                                   .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
                 },
-                null,
                 null
         );
         Thread trainingThread = new Thread(tcpTraining::server);
@@ -52,20 +52,29 @@ public class SourceKyoto {
                             line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)
                     );
                     //
-                    OutputStream classifierStream = classifierSocket.getOutputStream();
+                    OutputStream classifier = classifierSocket.getOutputStream();
                     classifierSocket.shutdownInput();
-                    // OutputStream sinkStream = sinkSocket.getOutputStream();
-                    PrintStream classifier = new PrintStream(classifierStream);
+                    // PrintStream classifier = new PrintStream(classifierStream);
+                    //
+                    // OutputStream sink = sinkSocket.getOutputStream();
                     // PrintStream sink = new PrintStream(sinkStream);
                     //
                     long sentTime = System.currentTimeMillis();
                     Iterator<LabeledExample> iterator = labeledExampleStream.iterator();
                     long sent = 0;
-                    while (iterator.hasNext()) {
+                    while (iterator.hasNext() && classifierSocket.isConnected()) {
                         LabeledExample labeledExample = iterator.next();
-                        classifier.println(labeledExample.point.json());
+                        try {
+                            byte[] bytes = SerializationUtils.serialize(labeledExample.point);
+                            classifier.write(bytes);
+                        } catch (Exception e) {
+                            LOG.error(e);
+                            LOG.error("error on " + labeledExample);
+                            break;
+                        }
                         classifier.flush();
                         // sink.println(labeledExample.json());
+                        // sink.write(labeledExample.toBytes());
                         // sink.flush();
                         sent++;
                         if (System.currentTimeMillis() - sentTime > TcpUtil.REPORT_INTERVAL) {

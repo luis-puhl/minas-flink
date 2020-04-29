@@ -1,5 +1,7 @@
 package br.ufscar.dc.gsdr.mfog.util;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -7,7 +9,7 @@ import java.net.Socket;
 import java.util.*;
 import java.util.function.Function;
 
-public class TcpUtil<T> {
+public class TcpUtil<T extends Serializable> {
 
     public static final int REPORT_INTERVAL = 5000;
 
@@ -16,7 +18,6 @@ public class TcpUtil<T> {
     }
 
     ToSend<T> toSend;
-    Function<String, T> toReceive;
     Collection<T> received;
     int port;
     String serviceName;
@@ -24,12 +25,11 @@ public class TcpUtil<T> {
     public long waitBeforeRcv = 10;
     public long waitBetweenRcv = 10;
 
-    public TcpUtil(String serviceName, int port, ToSend<T> toSend, Function<String, T> toReceive, Collection<T> received) {
+    public TcpUtil(String serviceName, int port, ToSend<T> toSend, Collection<T> received) {
         this.serviceName = serviceName;
         LOG = Logger.getLogger(serviceName);
         this.port = port;
         this.toSend     = toSend    == null ? Collections::emptyIterator : toSend;
-        this.toReceive  = toReceive == null ? (s) -> null : toReceive;
         this.received   = received  == null ? new ArrayList<>(100) : received;
     }
 
@@ -48,7 +48,6 @@ public class TcpUtil<T> {
             Try.apply(socket::close);
             return -1;
         }
-        PrintStream out = new PrintStream(outputStream);
         //
         Iterator<T> iterator;
         if ((iterator = Try.apply(toSend::get).get) == null) {
@@ -57,10 +56,17 @@ public class TcpUtil<T> {
         }
         int sent = 0;
         long sentTime = System.currentTimeMillis();
-        while (iterator.hasNext()) {
-            T next = iterator.next();
-            out.println(next);
-            out.flush();
+        while (iterator.hasNext() && socket.isConnected()) {
+            final T next = iterator.next();
+            try {
+                byte[] bytes = SerializationUtils.serialize(next);
+                outputStream.write(bytes);
+                outputStream.flush();
+            } catch (Exception e) {
+                LOG.error(e);
+                LOG.error("error on " + next);
+                break;
+            }
             sent++;
             if (System.currentTimeMillis() - sentTime > REPORT_INTERVAL) {
                 int speed = ((int) (sent / ((System.currentTimeMillis() - sentTime) * 10e-4)));
@@ -68,7 +74,6 @@ public class TcpUtil<T> {
                 LOG.info("sent=" + sent + " " + speed + " i/s");
             }
         }
-        out.flush();
         final int sentFinal = sent;
         LOG.info("sent " + sentFinal + " items in " + (System.currentTimeMillis() - start) * 10e-4 + "s");
         Try.apply(socket::shutdownOutput);
@@ -82,22 +87,24 @@ public class TcpUtil<T> {
         Try.apply(() -> Thread.sleep(waitBeforeRcv));
         int rec = 0;
         sentTime = System.currentTimeMillis();
-        if (Try.apply(inputStream::available).get > 0) {
-            BufferedReader read = new BufferedReader(new InputStreamReader(inputStream));
-            iterator = read.lines().map(toReceive).iterator();
-            while (iterator.hasNext()) {
-                T next = iterator.next();
-                received.add(next);
-                rec++;
-                Try.apply(() -> Thread.sleep(waitBetweenRcv));
-                if (System.currentTimeMillis() - sentTime > REPORT_INTERVAL) {
-                    int speed = ((int) (rec / ((System.currentTimeMillis() - sentTime) * 10e-4)));
-                    sentTime = System.currentTimeMillis();
-                    LOG.info("rec=" + rec + " " + speed + " i/s");
-                }
+        while (true) {
+            try {
+                if (inputStream.available() == 0) break;
+            } catch (IOException e) {
+                LOG.error(e);
+                break;
             }
-            Try.apply(socket::shutdownInput);
+            T next = SerializationUtils.deserialize(inputStream);
+            received.add(next);
+            rec++;
+            Try.apply(() -> Thread.sleep(waitBetweenRcv));
+            if (System.currentTimeMillis() - sentTime > REPORT_INTERVAL) {
+                int speed = ((int) (rec / ((System.currentTimeMillis() - sentTime) * 10e-4)));
+                sentTime = System.currentTimeMillis();
+                LOG.info("rec=" + rec + " " + speed + " i/s");
+            }
         }
+        Try.apply(socket::shutdownInput);
         //
         Try.apply(socket::close);
         final int recFinal = rec;

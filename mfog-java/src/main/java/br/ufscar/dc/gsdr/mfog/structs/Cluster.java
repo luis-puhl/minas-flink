@@ -3,6 +3,7 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -28,6 +29,13 @@ public class Cluster implements Serializable {
         JSONObject centerSrc = json.getJSONObject("center");
         Point center = Point.fromJson(centerSrc);
         return new Cluster(id, center, variance, label, category, matches, time);
+    }
+
+    public Cluster fromBytes(byte[] bytes) {
+        return SerializationUtils.deserialize(bytes);
+    }
+    public Cluster fromBytes(InputStream stream) {
+        return SerializationUtils.deserialize(stream);
     }
 
     public static Cluster fromMinasCsv(String line) {
@@ -159,5 +167,12 @@ public class Cluster implements Serializable {
 
     public byte[] toBytes() {
         return SerializationUtils.serialize(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Cluster{id=" + id + ", center=" + center + ", variance=" + variance +
+                       ", label='" + label + '\'' + ", category='" + category + '\'' +
+                       ", matches=" + matches + ", time=" + time +'}';
     }
 }

@@ -3,6 +3,7 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.*;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -11,6 +12,12 @@ public class Point implements Serializable {
 
     public static Point fromJson(String src) {
         return fromJson(new JSONObject(src));
+    }
+    public Point fromBytes(byte[] bytes) {
+        return SerializationUtils.deserialize(bytes);
+    }
+    public Point fromBytes(InputStream stream) {
+        return SerializationUtils.deserialize(stream);
     }
 
     public static Point fromJson(JSONObject src) {
