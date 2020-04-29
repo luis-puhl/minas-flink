@@ -68,7 +68,7 @@ public class SourceKyoto {
                         sink.println(labeledExample.json());
                         sink.flush();
                         sent++;
-                        if (System.currentTimeMillis() - sentTime > 1000) {
+                        if (System.currentTimeMillis() - sentTime > TcpUtil.REPORT_INTERVAL) {
                             String speed = ((int) (sent / ((System.currentTimeMillis() - startTime) * 10e-4))) + " i/s";
                             sentTime = System.currentTimeMillis();
                             LOG.info("sent=" + sent + " " + speed);
@@ -94,6 +94,7 @@ public class SourceKyoto {
             evaluationThread.join();
         }
         trainingThread.join();
+        LOG.info("done");
     }
 
     static class IdGenerator implements Iterator<Integer> {

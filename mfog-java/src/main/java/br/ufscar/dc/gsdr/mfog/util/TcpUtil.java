@@ -6,9 +6,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class TcpUtil<T> {
+
+    public static final int REPORT_INTERVAL = 5000;
+
     public interface ToSend<T> {
         Iterator<T> get() throws Exception;
     }
@@ -60,10 +62,10 @@ public class TcpUtil<T> {
             out.println(next);
             out.flush();
             sent++;
-            if (System.currentTimeMillis() - sentTime > 1000) {
-                String speed = ((int) (sent / ((System.currentTimeMillis() - sentTime) * 10e-4))) + " i/s";
+            if (System.currentTimeMillis() - sentTime > REPORT_INTERVAL) {
+                int speed = ((int) (sent / ((System.currentTimeMillis() - sentTime) * 10e-4)));
                 sentTime = System.currentTimeMillis();
-                LOG.info("sent=" + sent + " " + speed);
+                LOG.info("sent=" + sent + " " + speed + " i/s");
             }
         }
         out.flush();
@@ -88,10 +90,10 @@ public class TcpUtil<T> {
                 received.add(next);
                 rec++;
                 Try.apply(() -> Thread.sleep(waitBetweenRcv));
-                if (System.currentTimeMillis() - sentTime > 1000) {
-                    String speed = ((int) (rec / ((System.currentTimeMillis() - sentTime) * 10e-4))) + " i/s";
+                if (System.currentTimeMillis() - sentTime > REPORT_INTERVAL) {
+                    int speed = ((int) (rec / ((System.currentTimeMillis() - sentTime) * 10e-4)));
                     sentTime = System.currentTimeMillis();
-                    LOG.info("rec=" + rec + " " + speed);
+                    LOG.info("rec=" + rec + " " + speed + " i/s");
                 }
             }
             Try.apply(socket::shutdownInput);
@@ -106,12 +108,15 @@ public class TcpUtil<T> {
     }
 
     public void server() {
+        server(1);
+    }
+    public void server(int services) {
         ServerSocket serverSocket;
         if ((serverSocket = Try.apply(() -> new ServerSocket(port)).get) == null) return;
         //
         LOG.info("server ready on " + serverSocket.getInetAddress() + ":" + serverSocket.getLocalPort());
         List<Thread> threadPool = new ArrayList<>(3);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < services; i++) {
             Socket socket;
             if ((socket = Try.apply(serverSocket::accept).get) == null) break;
             Thread commThread = new Thread(() -> communicate(socket));

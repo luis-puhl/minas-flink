@@ -13,7 +13,7 @@ class SourceKyotoTest {
         SourceKyoto.IdGenerator idGenerator = new SourceKyoto.IdGenerator();
         LabeledExample labeledPoint = LabeledExample.fromKyotoCSV(idGenerator.next(), fromKyoto);
         assertEquals("N", labeledPoint.label, "Label should match");
-        double[] fixed = {0.0,0.0,0.0,0.0,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,1,0};
+        float[] fixed = new float[]{0, 0, 0, 0, 0, 0, 0.4f, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0};
         assertArrayEquals(fixed, labeledPoint.point.value, "point value should match");
         assertTrue(1.4697 > labeledPoint.point.fromOrigin(), "Distance should match gt");
         assertTrue(1.4696 < labeledPoint.point.fromOrigin(), "Distance should match lt");

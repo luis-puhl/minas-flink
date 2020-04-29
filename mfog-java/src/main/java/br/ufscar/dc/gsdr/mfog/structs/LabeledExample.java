@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.json.*;
 
 import java.io.Serializable;
@@ -20,12 +21,12 @@ public class LabeledExample implements Serializable {
     static public LabeledExample fromKyotoCSV(int id, String line) {
         // 0.0,0.0,0.0,0.0,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,1,0,N
         String[] lineSplit = line.split(",");
-        double[] doubles = new double[lineSplit.length -1];
-        for (int j = 0; j < doubles.length -1; j++) {
-            doubles[j] = Double.parseDouble(lineSplit[j]);
+        float[] floats = new float[lineSplit.length -1];
+        for (int j = 0; j < floats.length -1; j++) {
+            floats[j] = Float.parseFloat(lineSplit[j]);
         }
         String label = lineSplit[lineSplit.length - 1];
-        Point point = Point.apply(id, doubles);
+        Point point = Point.apply(id, floats);
         return new LabeledExample(label, point);
     }
 
@@ -76,8 +77,7 @@ public class LabeledExample implements Serializable {
         return new JSONObject(this);
     }
 
-    //    public Byte[] toBytes() {
-//        byte[] labelBytes = label.getBytes();
-//        byte[] labelBytes = label.getBytes();
-//    }
+    public byte[] toBytes() {
+        return SerializationUtils.serialize(this);
+    }
 }

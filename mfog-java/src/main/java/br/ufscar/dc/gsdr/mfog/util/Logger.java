@@ -18,7 +18,8 @@ public class Logger {
         this.log("ERR", msg);
     }
     public void error(Exception exp) {
-        this.log("ERR", exp.getMessage());
+        StackTraceElement trace = exp.getStackTrace()[0];
+        this.log("ERR", trace.getClassName() + ":" + trace.getLineNumber() + " " + exp.getMessage());
     }
     private void log(String level, String msg) {
         System.out.println(format(level, msg));

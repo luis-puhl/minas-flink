@@ -3,6 +3,7 @@ package br.ufscar.dc.gsdr.mfog;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
+import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
 import br.ufscar.dc.gsdr.mfog.util.Try;
 
 import java.io.*;
@@ -67,7 +68,7 @@ public class SinkFog {
             }
             classifierBuffer.removeIf(l -> l.point.id == -1);
             sourceBuffer.removeIf(l -> l.point.id == -1);
-            if (System.currentTimeMillis() - sentTime > 1000) {
+            if (System.currentTimeMillis() - sentTime > TcpUtil.REPORT_INTERVAL) {
                 if (strikes == 0) {
                     break;
                 }
@@ -92,5 +93,6 @@ public class SinkFog {
         classifierSocket.close();
         sourceSocket.close();
         serverSocket.close();
+        LOG.info("done");
     }
 }

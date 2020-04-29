@@ -20,15 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Classifier {
-    static Logger LOG = Logger.getLogger("Classifier");
-    public static void main(String[] args) throws Exception {
-        String jobName = Classifier.class.getName();
-        //
-        baseline(jobName);
-    }
-
     static class ModelString2ClustersMap extends RichMapFunction<String, List<Cluster>> {
-        // new BroadcastProcessFunction[Point, Seq[Cluster], (Long, Long)]() {
         List<Cluster> model;
         @Override
         public List<Cluster> map(String value) {
@@ -58,7 +50,13 @@ public class Classifier {
         }
     }
 
-    static void baseline(String jobName) throws Exception {
+    public static void main(String[] args) throws Exception {
+        new Classifier().baseline();
+    }
+
+    Logger LOG = Logger.getLogger("Classifier");
+
+    void baseline() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStreamSource<String> modelStringSource;
@@ -78,8 +76,9 @@ public class Classifier {
         out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
         LOG.info("Ready to run baseline");
         long start = System.currentTimeMillis();
-        env.execute(jobName);
+        env.execute("Classifier Baseline");
         long elapsed = System.currentTimeMillis() - start;
         LOG.info("Ran baseline in " + elapsed * 10e-4 + "s");
+        LOG.info("done");
     }
 }

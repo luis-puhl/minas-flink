@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -19,7 +20,7 @@ public class Cluster implements Serializable {
     }
     public static Cluster fromJson(JSONObject json) {
         long id = json.getLong("id");
-        double variance = json.getDouble("variance");
+        float variance = json.getFloat("variance");
         String label = json.getString("label");
         String category = json.getString("category");
         long matches = json.getLong("matches");
@@ -40,41 +41,39 @@ public class Cluster implements Serializable {
         String category        = split[2];
         long matches           = Long.parseLong(split[3]);
         long time              = Long.parseLong(split[4]);
-        double meanDistance    = Double.parseDouble(split[5]);
-        double radius          = Double.parseDouble(split[6]);
+        float meanDistance    = Float.parseFloat(split[5]);
+        float radius          = Float.parseFloat(split[6]);
         String[] centerStrings = centerString.split(",");
         //
-        double[] center        = new double[centerStrings.length +1];
+        float[] center        = new float[centerStrings.length +1];
         for (int i = 0; i < centerStrings.length; i++) {
-            center[i] = Double.parseDouble(centerStrings[i]);
+            center[i] = Float.parseFloat(centerStrings[i]);
         }
         return new Cluster(id, new Point(id, center, time), radius, label, category, matches, time);
     }
 
-    public static Cluster apply(long id, Point center, double variance, String label){
+    public static Cluster apply(long id, Point center, float variance, String label){
         return apply(id, center, variance, label, Cluster.CATEGORY_NORMAL);
     }
-    public static Cluster apply(long id, Point center, double variance, String label, String category){
+    public static Cluster apply(long id, Point center, float variance, String label, String category){
         return apply(id, center, variance, label, category, 0);
-        // matches: Long = 0
     }
-    public static Cluster apply(long id, Point center, double variance, String label, String category, long matches){
+    public static Cluster apply(long id, Point center, float variance, String label, String category, long matches){
         return apply(id, center, variance, label, category, matches, System.currentTimeMillis());
-        // time: Long = System.currentTimeMillis()
     }
-    public static Cluster apply(long id, Point center, double variance, String label, String category, long matches, long time){
+    public static Cluster apply(long id, Point center, float variance, String label, String category, long matches, long time){
         return new Cluster(id, center, variance, label, category, matches, time);
     }
 
     public long id;
     public Point center;
-    public double variance;
+    public float variance;
     public String label;
     public String category;
     public long matches;
     public long time;
     public Cluster() {}
-    private Cluster(long id, Point center, double variance, String label, String category, long matches, long time) {
+    private Cluster(long id, Point center, float variance, String label, String category, long matches, long time) {
         this.id = id;
         this.center = center;
         this.variance = variance;
@@ -86,17 +85,6 @@ public class Cluster implements Serializable {
 
     public JSONObject json() {
         return new JSONObject(this);
-        /*
-        JSONObject obj = new JSONObject();
-        obj.append("id", id);
-        obj.append("center", center.json());
-        obj.append("variance", variance);
-        obj.append("label", label);
-        obj.append("category", category);
-        obj.append("matches", matches);
-        obj.append("time", time);
-        return obj;
-         */
     }
 
     public long getId() {
@@ -115,11 +103,11 @@ public class Cluster implements Serializable {
         this.center = center;
     }
 
-    public double getVariance() {
+    public float getVariance() {
         return variance;
     }
 
-    public void setVariance(double variance) {
+    public void setVariance(float variance) {
         this.variance = variance;
     }
 
@@ -167,5 +155,9 @@ public class Cluster implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getCenter(), getLabel());
+    }
+
+    public byte[] toBytes() {
+        return SerializationUtils.serialize(this);
     }
 }
