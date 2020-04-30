@@ -26,7 +26,7 @@ public class Logger {
     public void error(Exception exp) {
         StackTraceElement[] stackTrace = exp.getStackTrace();
         StackTraceElement trace = stackTrace[0];
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("\n");
         for (StackTraceElement traceI : stackTrace) {
             if (traceI.getClassName().startsWith("br.ufscar.dc.gsdr.mfog")){
                 if (trace == null) {
@@ -35,8 +35,7 @@ public class Logger {
                 sb.append(traceI.getClassName()).append(":").append(traceI.getLineNumber()).append("\n");
             }
         }
-        this.log("ERR", trace.getClassName() + ":" + trace.getLineNumber() + " " + exp.getMessage());
-        this.log("ERR", sb.toString());
+        this.log("ERR", trace.getClassName() + ":" + trace.getLineNumber() + " " + exp.getMessage() + sb.toString());
         // exp.printStackTrace();
     }
     private void log(String level, String msg) {

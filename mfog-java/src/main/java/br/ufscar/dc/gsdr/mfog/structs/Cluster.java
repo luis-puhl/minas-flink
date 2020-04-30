@@ -3,9 +3,10 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Objects;
+import java.util.PrimitiveIterator;
+import java.util.stream.IntStream;
 
 public class Cluster implements Serializable {
     public static String CATEGORY_NORMAL = "normal";
@@ -174,5 +175,25 @@ public class Cluster implements Serializable {
         return "Cluster{id=" + id + ", center=" + center + ", variance=" + variance +
                        ", label='" + label + '\'' + ", category='" + category + '\'' +
                        ", matches=" + matches + ", time=" + time +'}';
+    }
+
+    public void toDataOutputStream(DataOutputStream out) throws IOException {
+        out.writeLong(id);
+        out.writeFloat(variance);
+        out.writeUTF(label);
+        out.writeUTF(category);
+        out.writeLong(matches);
+        out.writeLong(time);
+        center.toDataOutputStream(out);
+    }
+    public static Cluster fromDataInputStream(DataInputStream in) throws IOException {
+        long id = in.readLong();
+        float variance = in.readFloat();
+        String label = in.readUTF();
+        String category = in.readUTF();
+        long matches = in.readLong();
+        long time = in.readLong();
+        Point center = Point.fromDataInputStream(in);
+        return new Cluster(id, center, variance, label, category, matches, time);
     }
 }

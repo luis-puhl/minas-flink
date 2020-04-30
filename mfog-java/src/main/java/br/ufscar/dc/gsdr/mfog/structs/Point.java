@@ -3,8 +3,7 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.*;
 
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -57,6 +56,18 @@ public class Point implements Serializable {
         this.id = id;
         this.value = value;
         this.time = time;
+    }
+
+    public static Point fromDataInputStream(DataInputStream in) throws IOException {
+        long id = in.readLong();
+        //
+        int floatsLength = in.readInt();
+        float[] floats = new float[floatsLength];
+        for (int i = 0; i < floatsLength; i++) {
+            floats[i] = in.readFloat();
+        }
+        long time = in.readLong();
+        return Point.apply(id, floats, time);
     }
 
     public JSONObject json() {
@@ -210,6 +221,15 @@ public class Point implements Serializable {
 
     public byte[] toBytes() {
         return SerializationUtils.serialize(this);
+    }
+
+    public void toDataOutputStream(DataOutputStream out) throws IOException {
+        out.writeLong(id);
+        out.writeInt(value.length);
+        for (float v : value) {
+            out.writeFloat(v);
+        }
+        out.writeLong(time);
     }
 }
 

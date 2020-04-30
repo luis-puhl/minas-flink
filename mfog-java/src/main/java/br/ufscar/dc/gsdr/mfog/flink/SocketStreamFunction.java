@@ -1,11 +1,12 @@
 package br.ufscar.dc.gsdr.mfog.flink;
 
-import br.ufscar.dc.gsdr.mfog.util.Logger;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.flink.streaming.api.functions.source.SocketTextStreamFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.util.IOUtils;
 
+import java.io.DataInputStream;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -18,7 +19,8 @@ public class SocketStreamFunction<T> implements SourceFunction<T> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(SocketStreamFunction.class);
+    private static final br.ufscar.dc.gsdr.mfog.util.Logger LOG = br.ufscar.dc.gsdr.mfog.util.Logger.getLogger(SocketStreamFunction.class);
+    // private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SocketTextStreamFunction.class);
 
     /** Default delay between successive connection attempts. */
     private static final int DEFAULT_CONNECTION_RETRY_SLEEP = 500;
@@ -57,6 +59,7 @@ public class SocketStreamFunction<T> implements SourceFunction<T> {
     @Override
     public void run(SourceContext<T> ctx) throws Exception {
         long attempt = 0;
+        LOG.info("SocketStreamFunction attempt " + attempt + ':' + isRunning);
 
         while (isRunning) {
 
@@ -66,11 +69,21 @@ public class SocketStreamFunction<T> implements SourceFunction<T> {
                 LOG.info("Connecting to server socket " + hostname + ':' + port);
                 socket.connect(new InetSocketAddress(hostname, port), CONNECTION_TIMEOUT_TIME);
                 try (InputStream reader = socket.getInputStream()) {
+                    DataInputStream dataInputStream = new DataInputStream(reader);
                     T next;
                     do {
                         next = null;
                         try {
-                            next = SerializationUtils.deserialize(reader);
+                            int length;
+                            try {
+                                length = dataInputStream.readInt();
+                            } catch (Exception e) {
+                                break;
+                            }
+                            if (length <= 0) continue;
+                            byte[] message = new byte[length];
+                            dataInputStream.readFully(message, 0, message.length);
+                            next = SerializationUtils.deserialize(message);
                             ctx.collect(next);
                         } catch (SerializationException e) {
                             LOG.error(e);

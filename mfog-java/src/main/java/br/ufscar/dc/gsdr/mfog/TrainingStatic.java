@@ -13,7 +13,10 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class TrainingStatic {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
+        new TrainingStatic().ns();
+    }
+    public void ns()  throws IOException {
         final Logger LOG = Logger.getLogger("TrainingStatic");
         String path = "datasets" + File.separator + "models" + File.separator + "offline.csv";
         BufferedReader in = new BufferedReader(new FileReader(path));
@@ -21,8 +24,8 @@ public class TrainingStatic {
         //
         LOG.info("connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.MODEL_STORE_PORT);
         Socket socket = new Socket(InetAddress.getByName(MfogManager.SERVICES_HOSTNAME), MfogManager.MODEL_STORE_PORT);
-        OutputStream outputStream = socket.getOutputStream();
-        Thread.sleep(1000);
+        DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        DataInputStream reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         LOG.info("Sending");
         long sndTime =  System.currentTimeMillis();
         int snd = 0;
@@ -30,8 +33,7 @@ public class TrainingStatic {
         while (socket.isConnected() && iterator.hasNext()) {
             Cluster next = iterator.next();
             try {
-                byte[] bytes = SerializationUtils.serialize(next);
-                outputStream.write(bytes);
+                next.toDataOutputStream(writer);
             } catch (Exception e) {
                 LOG.error(e);
                 break;
@@ -43,6 +45,16 @@ public class TrainingStatic {
             }
         }
         socket.close();
+        LOG.info("done");
+    }
+    public void og() throws IOException {
+        final Logger LOG = Logger.getLogger("TrainingStatic");
+        String path = "datasets" + File.separator + "models" + File.separator + "offline.csv";
+        BufferedReader in = new BufferedReader(new FileReader(path));
+        Stream<String> model = in.lines().skip(1).map(Cluster::fromMinasCsv).map(c -> c.json().toString());
+        //
+        TcpUtil<String> tcp = new TcpUtil<>("TrainingStatic", MfogManager.MODEL_STORE_PORT, model::iterator, null);
+        tcp.client();
         LOG.info("done");
     }
 }

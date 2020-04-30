@@ -21,18 +21,31 @@ public class SourceKyoto {
     static final Logger LOG = Logger.getLogger("SourceKyoto");
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        TcpUtil<LabeledExample> tcpTraining = new TcpUtil<>(
-                "Source Kyoto Training",
-                MfogManager.SOURCE_TRAINING_DATA_PORT,
-                () -> {
-                    IdGenerator idGenerator = new IdGenerator();
-                    return new BufferedReader(new FileReader(basePath + training)).lines()
-                                   .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
-                },
-                null
-        );
-        Thread trainingThread = new Thread(tcpTraining::server);
-        trainingThread.start();
+        Thread trainingServer = new Thread(() -> {
+            try {
+                IdGenerator idGenerator = new IdGenerator();
+                ServerSocket ss = new ServerSocket(MfogManager.SOURCE_TRAINING_DATA_PORT);
+                LOG.info("ServerSocket ready");
+                Socket s = ss.accept();
+                LOG.info("ServerSocket accepted");
+                DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
+                BufferedInputStream reader = new BufferedInputStream(s.getInputStream());
+                Iterator<LabeledExample> iterator = new BufferedReader(
+                        new FileReader(basePath + training)
+                ).lines().map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
+                while (iterator.hasNext()) {
+                    byte[] message = iterator.next().toBytes();
+                    writer.writeInt(message.length);
+                    writer.write(message);
+                }
+                writer.flush();
+                s.close();
+                ss.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        trainingServer.start();
 
         ServerSocket classifierServerSocket = new ServerSocket(MfogManager.SOURCE_TEST_DATA_PORT);
         // ServerSocket sinkServerSocket = new ServerSocket(MfogManager.SOURCE_EVALUATE_DATA_PORT);
@@ -46,9 +59,10 @@ public class SourceKyoto {
             Thread evaluationThread = new Thread(() -> {
                 long startTime = System.currentTimeMillis();
                 try {
-                    BufferedReader testReader = new BufferedReader(new FileReader(basePath + test));
                     IdGenerator idGenerator = new IdGenerator();
-                    Stream<LabeledExample> labeledExampleStream = testReader.lines().map(
+                    Stream<LabeledExample> labeledExampleStream = new BufferedReader(
+                            new FileReader(basePath + test)
+                    ).lines().limit(100).map(
                             line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)
                     );
                     //
@@ -102,7 +116,7 @@ public class SourceKyoto {
         for (Thread evaluationThread : evaluationThreads) {
             evaluationThread.join();
         }
-        trainingThread.join();
+        trainingServer.join();
         LOG.info("done");
     }
 

@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.flink.AggregatorRichMap;
 import br.ufscar.dc.gsdr.mfog.flink.SocketStreamFunction;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
@@ -9,6 +10,7 @@ import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.serialization.SerializationSchema;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -46,23 +48,17 @@ public class Classifier {
     void baseline() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStream<List<Cluster>> model = env.addSource(
-            new SocketStreamFunction<Cluster>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT)
-        ).returns(Cluster.class).map(new RichMapFunction<Cluster, List<Cluster>>() {
-            List<Cluster> model;
-            @Override
-            public List<Cluster> map(Cluster value) {
-                model.add(value);
-                return model;
-            }
-            @Override
-            public void open(Configuration parameters) throws Exception {
-                super.open(parameters);
-                model = new ArrayList<>(100);
-            }
-        }).broadcast();
+        SocketStreamFunction<Cluster> clusterSocket = new SocketStreamFunction<>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
+        DataStreamSource<Cluster> clusterSocketSource = env.addSource(
+                clusterSocket,
+                "clusterSocketSource",
+                TypeInformation.of(Cluster.class)
+        );
+        DataStream<List<Cluster>> model = clusterSocketSource.map(
+                new AggregatorRichMap<Cluster>()
+        ).broadcast();
 
-        //
+        /*
         DataStream<Point> examplesStringSource = env.addSource(
                 new SocketStreamFunction<Point>(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT)
         ).returns(Point.class);
@@ -71,11 +67,10 @@ public class Classifier {
            // .keyBy(x -> x.id) // this keyby had no effect 183s vs 196s
            .connect(model)
            .process(new ClustersExamplesConnect());
-        //
-
         SerializationSchema<LabeledExample> serializationSchema = element -> (element.json().toString() + "\n").getBytes();
-        // out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
-        out.print();
+        out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
+         */
+
         LOG.info("Ready to run baseline");
         long start = System.currentTimeMillis();
         env.execute("Classifier Baseline");
