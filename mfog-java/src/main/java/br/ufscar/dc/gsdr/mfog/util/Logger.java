@@ -14,14 +14,16 @@ public class Logger {
         this.serviceName = serviceName;
     }
 
-    public void info(String msg) {
-        this.log("INFO", msg);
+    public void info(Object msg) {
+        this.log("INFO", msg.toString());
     }
-    public void error(String msg) {
-        this.log("ERR", msg);
+
+    public void warn(Object msg) {
+        this.log("WARN", msg.toString());
     }
-    public void warn(String msg) {
-        this.log("WARN", msg);
+
+    public void error(Object msg) {
+        this.log("ERR", msg.toString());
     }
     public void error(Exception exp) {
         StackTraceElement[] stackTrace = exp.getStackTrace();
@@ -38,6 +40,7 @@ public class Logger {
         this.log("ERR", trace.getClassName() + ":" + trace.getLineNumber() + " " + exp.getMessage() + sb.toString());
         // exp.printStackTrace();
     }
+
     private void log(String level, String msg) {
         System.out.println(format(level, msg));
         System.out.flush();
