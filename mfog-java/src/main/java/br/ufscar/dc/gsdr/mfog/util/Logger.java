@@ -1,15 +1,50 @@
 package br.ufscar.dc.gsdr.mfog.util;
 
-public class Logger {
-    String serviceName;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
+public class Logger {
+    static Set<String> filterServices = new HashSet<>();
+
+    static class NoLogger extends Logger {
+        NoLogger(String serviceName) {
+            super(serviceName);
+        }
+        public void info(Object msg) {}
+        public void warn(Object msg) {}
+        public void error(Object msg) {}
+        public void error(Exception exp) {}
+    }
+
+    @Deprecated
     static public Logger getLogger(String serviceName) {
+        if (filterServices.contains(serviceName)) {
+            return new NoLogger(serviceName);
+        }
         return new Logger(serviceName);
     }
+    public static Logger getLogger(Class<?> kls, Class<?>... parameterTypes) {
+        String serviceName = kls.getSimpleName();
+        if (filterServices.contains(serviceName)) {
+            return new NoLogger(serviceName);
+        }
+        StringBuilder sb = new StringBuilder(serviceName);
+        sb.append("<");
+        for (int i = 0; i < parameterTypes.length; i++) {
+            if (i != 0) {
+                sb.append(", ");
+            }
+            sb.append(parameterTypes[i].getSimpleName());
+        }
+        sb.append(">");
+        return getLogger(sb.toString());
+    }
     static public Logger getLogger(Class<?> kls) {
-        return new Logger(kls.getSimpleName());
+        return getLogger(kls.getSimpleName());
     }
 
+    String serviceName;
     Logger(String serviceName) {
         this.serviceName = serviceName;
     }
