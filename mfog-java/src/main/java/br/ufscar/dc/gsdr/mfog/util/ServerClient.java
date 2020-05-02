@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class ServerClient {
 
@@ -21,28 +23,41 @@ public class ServerClient {
                 log.info("inputStream");
                 InputStream inputStream = socket.getInputStream();
                 //
-                log.info("new reader");
-                ObjectInputStream reader = new ObjectInputStream(new BufferedInputStream(inputStream));
-                // ObjectOutputStream writer = new ObjectOutputStream(new BufferedOutputStream(outputStream)); // causes deadlock
-                for (int j = 0; j < 3; j++) {
-                    log.info("readObject");
-                    Object fromBytes = reader.readObject();
-                    log.info(fromBytes);
-                }
+                receive(log, inputStream);
                 //
-                log.info("new writer");
-                ObjectOutputStream writer = new ObjectOutputStream(new BufferedOutputStream(outputStream));
-                for (int j = 0; j < 3; j++) {
-                    log.info("writeObject");
-                    writer.writeObject(Point.zero(22));
-                    log.info("flush");
-                    writer.flush();
-                }
+                send(log, outputStream);
 
                 // Let user know you wrote to socket
                 log.info("[Client] Hello " + nbrTry++ + " !! ");
             }
         }
+    }
+
+    private static void receive(Logger log, InputStream inputStream) throws IOException {
+        log.info("new reader");
+        DataInputStream reader = new DataInputStream(new GZIPInputStream(new BufferedInputStream(inputStream)));
+        // ObjectOutputStream writer = new ObjectOutputStream(new BufferedOutputStream(outputStream)); // causes deadlock
+        for (int j = 0; j < 3; j++) {
+            log.info("readObject");
+            Point fromBytes = Point.fromDataInputStream(reader);
+            // Point fromBytes = reader.readObject();
+            log.info(fromBytes);
+        }
+    }
+
+    private static void send(Logger log, OutputStream outputStream) throws IOException {
+        log.info("new writer");
+        GZIPOutputStream gzipOut = new GZIPOutputStream(new BufferedOutputStream(outputStream));
+        DataOutputStream writer = new DataOutputStream(gzipOut);
+        for (int j = 0; j < 3; j++) {
+            log.info("writeObject");
+            Point.zero(22).toDataOutputStream(writer);
+        }
+        log.info("flush");
+        writer.flush();
+        gzipOut.finish();
+        gzipOut.flush();
+        outputStream.flush();
     }
 
     static class MyServer {
@@ -57,25 +72,9 @@ public class ServerClient {
                 log.info("inputStream");
                 InputStream inputStream = socket.getInputStream();
                 //
-                log.info("new writer");
-                ObjectOutputStream writer = new ObjectOutputStream(new BufferedOutputStream(outputStream));
+                send(log, outputStream);
+                receive(log, inputStream);
                 //
-                for (int j = 0; j < 3; j++) {
-                    log.info("write");
-                    writer.writeObject(Point.zero(22));
-                    log.info("flush");
-                    writer.flush();
-                }
-                //
-                log.info("new reader");
-                ObjectInputStream reader = new ObjectInputStream(new BufferedInputStream(inputStream));
-                for (int j = 0; j < 3; j++) {
-                    log.info("readObject");
-                    Point fromBytes = (Point) reader.readObject();
-                    log.info(fromBytes);
-                }
-
-                reader.close();
                 socket.close();
             }
         }
