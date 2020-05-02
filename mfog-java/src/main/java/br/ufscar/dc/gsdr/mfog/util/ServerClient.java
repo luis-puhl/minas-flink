@@ -3,7 +3,6 @@ package br.ufscar.dc.gsdr.mfog.util;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class ServerClient {
+public class ServerClient<T extends ServerClient.SendReceive> {
     interface SendReceive {
         void receive(InputStream inputStream) throws IOException;
         void send(OutputStream outputStream) throws IOException;
@@ -106,119 +105,94 @@ public class ServerClient {
         }
     }
 
-    static abstract class Base<T extends SendReceive> {
-        protected Logger log;
-        protected T sendReceive;
-        protected final Class<T> typeParameterClass;
-        Base(T sendReceive, Class<T> typeParameterClass) {
-            this.typeParameterClass = typeParameterClass;
-            this.sendReceive = sendReceive;
-            log = Logger.getLogger(this.getClass(), typeParameterClass);
-        }
-        abstract void main() throws IOException;
-        void timeIt() throws IOException {
-            Logger log = Logger.getLogger(Base.class);
-            long millis = System.currentTimeMillis();
-            long nano = System.nanoTime();
-            main();
-            long millisDiff = System.currentTimeMillis() - millis;
-            long nanoDiff = System.nanoTime() - nano;
-            log.info("millisDiff=" + millisDiff + " nanoDiff=" + nanoDiff);
-        }
-    }
-    static class Server<T extends SendReceive> extends Base<T> {
-        ServerSocket server;
-        Server(Class<T> sendReceive) throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-            super(sendReceive.getDeclaredConstructor().newInstance(), sendReceive);
-            server = new ServerSocket(15243, 0, InetAddress.getByName("localhost"));
-        }
-
-        public void main() throws IOException {
-            for (int i = 0; i < 3; i++) {
-                log.info("accept");
-                Socket socket = server.accept();
-                log.info("outputStream");
-                OutputStream outputStream = socket.getOutputStream();
-                log.info("inputStream");
-                InputStream inputStream = socket.getInputStream();
-                //
-                sendReceive.send(outputStream);
-                sendReceive.receive(inputStream);
-                //
-                socket.close();
-            }
-            server.close();
-        }
+    protected Logger log;
+    protected T sendReceive;
+    protected final Class<T> typeParameterClass;
+    ServerClient(Class<T> typeParameterClass) throws Exception {
+        this.typeParameterClass = typeParameterClass;
+        this.sendReceive = typeParameterClass.getDeclaredConstructor().newInstance();
+        this.log = Logger.getLogger(this.getClass(), typeParameterClass);
     }
 
-    static class Client<T extends SendReceive> extends Base<T> {
-        Socket socket;
-        Client(Class<T> sendReceive) throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-            super(sendReceive.getDeclaredConstructor().newInstance(), sendReceive);
-        }
-
-        public void main() throws IOException {
-            for (int i = 0; i < 3; i++) {
-                log.info("socket");
-                socket = new Socket(InetAddress.getByName("localhost"), 15243);
-                log.info("outputStream");
-                OutputStream outputStream = socket.getOutputStream();
-                log.info("inputStream");
-                InputStream inputStream = socket.getInputStream();
-                sendReceive.receive(inputStream);
-                sendReceive.send(outputStream);
-                // Let user know you wrote to socket
-                log.info("Hello " + i);
-                log.info("socket.close()");
-                socket.close();
-            }
+    void symmetric(Socket socket) throws IOException {
+        log.info("outputStream");
+        OutputStream outputStream = socket.getOutputStream();
+        log.info("inputStream");
+        InputStream inputStream = socket.getInputStream();
+        if (inputStream.available() > 1){
+            sendReceive.receive(inputStream);
+            sendReceive.send(outputStream);
+        } else {
+            sendReceive.send(outputStream);
+            sendReceive.receive(inputStream);
         }
     }
-
-    void serverRunner() throws Exception {
-        for (Class<? extends SendReceive> transmitter : transmitters) {
-            Server<? extends SendReceive> server = new Server<>(transmitter);
-            waitSync();
-            server.timeIt();
-        }
+    ServerSocket server;
+    public void server() throws IOException {
+        server = new ServerSocket(15243, 0, InetAddress.getByName("localhost"));
     }
-    void clientRunner() throws Exception {
-        for (Class<? extends SendReceive> transmitter : transmitters) {
-            waitSync();
-            Client<? extends SendReceive> client = new Client<>(transmitter);
-            client.timeIt();
+    public void serverAccept() throws IOException {
+        for (int i = 0; i < 3; i++) {
+            log.info("accept");
+            Socket socket = server.accept();
+            symmetric(socket);
+            log.info("Server Hello " + i);
+            socket.close();
         }
+        server.close();
     }
-    void waitSync() {
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < 1000) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    public void client() throws IOException {
+        for (int i = 0; i < 3; i++) {
+            log.info("socket");
+            Socket socket = new Socket(InetAddress.getByName("localhost"), 15243);
+            symmetric(socket);
+            log.info("Client Hello " + i);
+            socket.close();
         }
-    }
-    List<Class<? extends SendReceive>> transmitters;
-    void init() {
-        Logger.filterServices.add(GzipSendReceive.class.getSimpleName());
-        Logger.filterServices.add(ObjectSendReceive.class.getSimpleName());
-        Logger.filterServices.add(JsonSendReceive.class.getSimpleName());
-        Logger.filterServices.add(Client.class.getSimpleName());
-        Logger.filterServices.add(Server.class.getSimpleName());
-        transmitters = new ArrayList<>(3);
-        transmitters.add(JsonSendReceive.class);
-        transmitters.add(ObjectSendReceive.class);
-        transmitters.add(GzipSendReceive.class);
     }
 
     public static void main(String[] args) throws Exception {
-        ServerClient serverClient = new ServerClient();
-        serverClient.init();
-        if (args.length > 0) {
-            serverClient.serverRunner();
-        } else {
-            serverClient.clientRunner();
+        boolean isServer = args.length > 0;
+        String kind = "client";
+        if (isServer) {
+            kind = "server";
+        }
+
+        Logger.filterServices.add(GzipSendReceive.class.getSimpleName());
+        Logger.filterServices.add(ObjectSendReceive.class.getSimpleName());
+        Logger.filterServices.add(JsonSendReceive.class.getSimpleName());
+        Logger log = Logger.getLogger(ServerClient.class);
+        Logger.filterServices.add(ServerClient.class.getSimpleName());
+
+        List<Class<? extends SendReceive>> transmitters = new ArrayList<>(3);
+        transmitters.add(JsonSendReceive.class);
+        transmitters.add(ObjectSendReceive.class);
+        transmitters.add(GzipSendReceive.class);
+
+        for (Class<? extends SendReceive> transmitter : transmitters) {
+            ServerClient<? extends SendReceive> serverClient = new ServerClient<>(transmitter);
+            if (isServer) {
+                serverClient.server();
+            }
+            log.info("Will run with " + transmitter.getSimpleName());
+            long start = System.currentTimeMillis();
+            long diff;
+            do {
+                diff = System.currentTimeMillis() - start;
+                Thread.sleep(diff / 2);
+            } while (diff < 1000 );
+            if (!isServer) Thread.sleep(100);
+
+            long millis = System.currentTimeMillis();
+            long nano = System.nanoTime();
+            if (isServer) {
+                serverClient.serverAccept();
+            } else {
+                serverClient.client();
+            }
+            long millisDiff = System.currentTimeMillis() - millis;
+            long nanoDiff = System.nanoTime() - nano;
+            log.info(kind + " millisDiff=" + millisDiff + " nanoDiff=" + nanoDiff);
         }
     }
 }
