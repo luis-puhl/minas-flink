@@ -10,6 +10,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -19,36 +21,32 @@ public class ServerClientNIO {
 
     static class MyClient {
         public void main() throws IOException, ClassNotFoundException {
-            int nbrTry = 0;
             Logger log = Logger.getLogger("Client");
+            log.info("new Compressor");
+            Compressor compressor = new Compressor(256);
+            //
+            log.info("new messages");
+            Iterator<Point> messages = Arrays.asList((new Point[]{
+                    Point.zero(22), Point.zero(22), Point.zero(22)
+            })).iterator();
+            //
             for (int i = 0; i < 3; i++) {
-                log.info("socket");
-                Socket socket = new Socket(InetAddress.getByName("localhost"), 15243);
-                log.info("outputStream");
-                OutputStream outputStream = socket.getOutputStream();
-                log.info("inputStream");
-                InputStream inputStream = socket.getInputStream();
-                //
-                log.info("new reader");
-                ObjectInputStream reader = new ObjectInputStream(new GZIPInputStream(inputStream));
-                // ObjectOutputStream writer = new ObjectOutputStream(new GZIPOutputStream(outputStream)); // causes deadlock
+                log.info("Connecting to Server on port 1111...");
+                SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress("localhost", 1111));
+                while (messages.hasNext()) {
+                    Point next = messages.next();
+                    compressor.encode(next);
+                    socketChannel.write(compressor.byteBuffer);
+                }
+                compressor.byteBuffer.clear();
                 for (int j = 0; j < 3; j++) {
-                    log.info("readObject");
-                    Object fromBytes = reader.readObject();
-                    log.info(fromBytes);
+                    socketChannel.read(compressor.byteBuffer);
+                    Point message = (Point) compressor.decode();
+                    log.info("Message received: " + message);
                 }
                 //
-                log.info("new writer");
-                ObjectOutputStream writer = new ObjectOutputStream(new GZIPOutputStream(outputStream));
-                for (int j = 0; j < 3; j++) {
-                    log.info("writeObject");
-                    writer.writeObject(Point.zero(22));
-                    log.info("flush");
-                    writer.flush();
-                }
-
-                // Let user know you wrote to socket
-                log.info("[Client] Hello " + nbrTry++ + " !! ");
+                socketChannel.close();
+                log.info("[Client] Hello " + i++ + " !! ");
             }
         }
     }
@@ -56,20 +54,26 @@ public class ServerClientNIO {
     static class MyServer {
         public void main() throws IOException, ClassNotFoundException {
             Logger log = Logger.getLogger("Server");
+            log.info("new Compressor");
+            Compressor compressor = new Compressor(256);
+            //
+            log.info("Selector.open");
             Selector selector = Selector.open();
+            log.info("ServerSocketChannel.open");
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            log.info("serverSocketChannel.bind");
             serverSocketChannel.bind(new InetSocketAddress("localhost", 1111));
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, serverSocketChannel.validOps(), null);
             //
-            // ServerSocket server = new ServerSocket(15243, 0, InetAddress.getByName("localhost"));
-            Compressor compressor = new Compressor(256);
-            log.info("select");
-            selector.select();
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+            Iterator<Point> messages = Arrays.asList((new Point[]{
+                    Point.zero(22), Point.zero(22), Point.zero(22)
+            })).iterator();
             for (int i = 0; i < 3; i++) {
-
+                log.info("select");
+                selector.select();
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
                 while (keyIterator.hasNext()) {
                     SelectionKey myKey = keyIterator.next();
                     if (myKey.isAcceptable()) {
@@ -85,38 +89,15 @@ public class ServerClientNIO {
                         Point message = (Point) compressor.decode();
                         log.info("Message received: " + message);
                     }
-                    if (myKey.isWritable()) {
+                    if (myKey.isWritable() && messages.hasNext()) {
                         SocketChannel socketChannel = (SocketChannel) myKey.channel();
-                        Point message = Point.zero(22);
+                        Point message = messages.next();
                         compressor.encode(message);
                         socketChannel.write(compressor.byteBuffer);
                         log.info("Message sent: " + message);
                     }
                     keyIterator.remove();
                 }
-                //
-                log.info("new writer");
-                GZIPOutputStream writerGzip = new GZIPOutputStream(socket.getOutputStream());
-                ObjectOutputStream writer = new ObjectOutputStream(writerGzip);
-                log.info("new reader");
-                ObjectInputStream reader = new ObjectInputStream(new GZIPInputStream(socket.getInputStream()));
-                //
-                for (int j = 0; j < 3; j++) {
-                    log.info("write");
-                    writer.writeObject(Point.zero(22));
-                }
-                log.info("flush");
-                writerGzip.flush();
-                writerGzip.close();
-                //
-                for (int j = 0; j < 3; j++) {
-                    log.info("readObject");
-                    Point fromBytes = (Point) reader.readObject();
-                    log.info(fromBytes);
-                }
-
-                reader.close();
-                socket.close();
             }
         }
     }

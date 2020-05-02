@@ -10,11 +10,16 @@ public class Compressor {
         PipedInputStream pipeIn;
         PipedOutputStream pipeOut;
         ObjectOutputStream objectOutputStream;
+        Logger log = Logger.getLogger(Encoder.class);
         Encoder() throws IOException {
+            log.info("new PipedInputStream");
             pipeIn = new PipedInputStream();
-            pipeOut = new PipedOutputStream();
-            objectOutputStream = new ObjectOutputStream(new GZIPOutputStream(pipeOut));
-            pipeOut.connect(pipeIn);
+            log.info("new PipedOutputStream");
+            pipeOut = new PipedOutputStream(pipeIn);
+            log.info("new GZIPOutputStream");
+            GZIPOutputStream gzipOutputStream = new GZIPOutputStream(pipeOut);
+            log.info("new ObjectOutputStream");
+            objectOutputStream = new ObjectOutputStream(gzipOutputStream);
         }
         public ByteBuffer encode(Serializable object, ByteBuffer byteBuffer) throws IOException {
             objectOutputStream.writeObject(object);
@@ -31,11 +36,14 @@ public class Compressor {
         PipedInputStream pipeIn;
         PipedOutputStream pipeOut;
         ObjectInputStream objectInputStream;
+        Logger log = Logger.getLogger(Decoder.class);
         Decoder() throws IOException {
-            pipeIn = new PipedInputStream();
+            log.info("new PipedOutputStream");
             pipeOut = new PipedOutputStream();
+            log.info("new PipedInputStream");
+            pipeIn = new PipedInputStream(pipeOut);
+            log.info("new ObjectInputStream");
             objectInputStream = new ObjectInputStream(new GZIPInputStream(pipeIn));
-            pipeIn.connect(pipeOut);
         }
         public Object decode(ByteBuffer byteBuffer) throws IOException, ClassNotFoundException {
             pipeOut.write(byteBuffer.array());
@@ -46,10 +54,15 @@ public class Compressor {
     ByteBuffer byteBuffer;
     Encoder encoder;
     Decoder decoder;
+    Logger log = Logger.getLogger(Decoder.class);
     public Compressor(int bufferSize) throws IOException {
+        log.info("new Encoder");
         encoder = new Encoder();
+        log.info("new Decoder");
         decoder = new Decoder();
+        log.info("ByteBuffer.allocate");
         byteBuffer = ByteBuffer.allocate(bufferSize);
+        log.info("Compressor initialized");
     }
     public byte[] encode(Serializable object) throws IOException {
         byteBuffer.clear();
