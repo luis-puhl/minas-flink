@@ -5,34 +5,45 @@ import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
 
 import java.io.*;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class ServerClient<T extends WithSerializable<T>> {
-    public static final int PORT = 9999;
     protected Logger log;
-    protected GzipSendReceive<T> sendReceive;
     protected final Class<T> typeParameterClass;
-    T reusableObject;
-    ServerClient(Class<T> typeParameterClass) throws Exception {
+    protected T reusableObject;
+    protected int port;
+    protected boolean withGzip;
+    ServerClient(Class<T> typeParameterClass, int port) throws Exception {
+        this(typeParameterClass, port, false);
+    }
+    ServerClient(Class<T> typeParameterClass, int port, boolean withGzip) throws Exception {
         this.reusableObject = typeParameterClass.getDeclaredConstructor().newInstance();
         this.typeParameterClass = typeParameterClass;
-        this.sendReceive = new GzipSendReceive<>();
         this.log = Logger.getLogger(this.getClass(), typeParameterClass);
+        this.port = port;
+        this.withGzip = withGzip;
     }
 
     ServerSocket serverSocket;
     Socket socket;
     OutputStream outputStream;
     InputStream inputStream;
+    DataInputStream reader;
+    DataOutputStream writer;
+    GZIPOutputStream gzipOut = null;
     public void server() throws IOException {
-        serverSocket = new ServerSocket(PORT, 0, InetAddress.getByName("localhost"));
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            serverSocket.close();
+        }
+        serverSocket = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
     }
     public void serverAccept() throws IOException {
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+        }
         log.info("accept");
         socket = serverSocket.accept();
         log.info("outputStream");
@@ -44,7 +55,7 @@ public class ServerClient<T extends WithSerializable<T>> {
         log.info("socket");
         do {
             try {
-                socket = new Socket("localhost", PORT);
+                socket = new Socket("localhost", port);
             } catch (Exception e) {
                 log.error(e);
                 log.error(e.getClass());
@@ -57,17 +68,67 @@ public class ServerClient<T extends WithSerializable<T>> {
         log.info("inputStream");
         inputStream = socket.getInputStream();
     }
-    int sender(Iterator<WithSerializable<T>> toSend) throws IOException {
-        return sendReceive.send(outputStream, toSend);
+
+    public void send(T toSend) throws IOException {
+        if (writer == null) {
+            log.info("new writer");
+            if (withGzip) {
+                gzipOut = new GZIPOutputStream(new BufferedOutputStream(outputStream));
+                writer = new DataOutputStream(gzipOut);
+            } else {
+                writer = new DataOutputStream(new BufferedOutputStream(outputStream));
+            }
+        }
+        toSend.toDataOutputStream(writer);
     }
-    T receive(T reusableObject) throws IOException {
-        return sendReceive.receive(inputStream, reusableObject);
+    public void flush() throws IOException {
+        log.info("flush");
+        writer.flush();
+        if (gzipOut != null) {
+            gzipOut.finish();
+            gzipOut.flush();
+        }
+        outputStream.flush();
     }
 
+    public T receive(T reusableObject) throws IOException {
+        if (reader == null) {
+            if (withGzip) {
+                reader = new DataInputStream(new GZIPInputStream(new BufferedInputStream(inputStream)));
+            } else {
+                reader = new DataInputStream(new BufferedInputStream(inputStream));
+            }
+        }
+        return reusableObject.reuseFromDataInputStream(reader);
+    }
+    protected boolean hasNext = true;
+    public boolean hasNext() {
+        return hasNext && socket.isConnected() && !socket.isInputShutdown();
+    }
+    public T next() throws IOException {
+        try {
+            reusableObject = receive(reusableObject);
+            return reusableObject;
+        } catch (java.io.EOFException e) {
+            hasNext = false;
+            return null;
+        }
+    }
+
+    public void close() throws IOException {
+        log.info("socket.close()");
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
+        }
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            serverSocket.close();
+        }
+        socket = null;
+        serverSocket = null;
+    }
 
     public static void main(String[] args) throws Exception {
         Logger log = Logger.getLogger(ServerClient.class);
-        Logger.filterServices.add(GzipSendReceive.class.getSimpleName());
         boolean isServer = args.length > 0;
         String kind = "client";
         if (isServer) {
@@ -75,45 +136,32 @@ public class ServerClient<T extends WithSerializable<T>> {
         }
         log.info("Self test >" + kind);
 
-        List<WithSerializable<Point>> points = new ArrayList<>(653457);
-        for (int i = 0; i < 653457; i++) {
-            Point zero = Point.zero(22);
-            zero.id = i;
-            points.add(zero);
-        }
         log.info("Point List full ");
-        ServerClient<Point> serverClient = new ServerClient<>(Point.class);
+        ServerClient<Point> serverClient = new ServerClient<>(Point.class, 9999);
+        //
         if (isServer) {
             serverClient.server();
+            serverClient.serverAccept();
+        } else {
+            serverClient.client();
         }
-        //
         int i = 0;
         long millis = System.currentTimeMillis();
         long nano = System.nanoTime();
         if (isServer) {
-            serverClient.serverAccept();
-            i = serverClient.sender(points.iterator());
-            log.info(kind + " socket.close()");
-            serverClient.socket.close();
-            serverClient.serverSocket.close();
-        } else {
-            serverClient.client();
-            Thread.sleep(1000);
-            Point reuse = new Point();
-            while (serverClient.socket.isConnected() && !serverClient.socket.isInputShutdown()){
-                try {
-                    reuse = serverClient.receive(reuse);
-                } catch (java.io.EOFException e) {
-                    break;
-                }
-                i++;
-//                if (i % 1000 == 0) {
-//                    System.out.print(".");
-//                }
+            Point zero = Point.zero(22);
+            for (; i < 653457; i++) {
+                zero.id = i;
+                serverClient.send(zero);
             }
-            log.info(kind + " socket.close()");
-            serverClient.socket.close();
+            serverClient.flush();
+        } else {
+            while (serverClient.hasNext()){
+                serverClient.next();
+                i++;
+            }
         }
+        serverClient.close();
         long millisDiff = System.currentTimeMillis() - millis;
         long nanoDiff = System.nanoTime() - nano;
         log.info(kind + " millisDiff=" + millisDiff + " nanoDiff=" + nanoDiff);
