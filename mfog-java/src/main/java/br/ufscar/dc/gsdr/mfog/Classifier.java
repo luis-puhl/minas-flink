@@ -17,17 +17,15 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.flink.AggregatorRichMap;
-import br.ufscar.dc.gsdr.mfog.flink.SocketStreamFunction;
+import br.ufscar.dc.gsdr.mfog.flink.SocketGenericStreamFunction;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.structs.Serializers;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -36,56 +34,71 @@ import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.util.Collector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Classifier {
-    static class ClustersExamplesConnect extends CoProcessFunction<Point, List<Cluster>, LabeledExample> {
-        @Override
-        public void processElement1(Point value, Context ctx, Collector<LabeledExample> out) {
-            long latency = System.currentTimeMillis() - value.time;
-            LabeledExample example = new LabeledExample("latency=" + latency, value);
-            out.collect(example);
-        }
-        @Override
-        public void processElement2(List<Cluster> value, Context ctx, Collector<LabeledExample> out) {
-            long latency = System.currentTimeMillis() - System.currentTimeMillis() - value.get(value.size() -1).time;
-            LabeledExample example = new LabeledExample("model latency=" + latency, Point.zero(22));
-            out.collect(example);
-        }
-    }
+
+    public static final int DELAY_BETWEEN_RETRIES = 1000;
+    public static final int MAX_NUM_RETRIES = 10;
 
     public static void main(String[] args) throws Exception {
         new Classifier().baseline();
     }
 
-    Logger LOG = Logger.getLogger("Classifier");
+    Logger LOG = Logger.getLogger(Classifier.class);
 
     void baseline() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.getConfig().registerTypeWithKryoSerializer(Cluster.class, Serializers.ClusterSerializer.class);
+        env.getConfig().registerTypeWithKryoSerializer(Point.class, Serializers.PointSerializer.class);
+        env.getConfig().registerTypeWithKryoSerializer(LabeledExample.class, Serializers.LabeledExampleSerializer.class);
 
-        SocketStreamFunction<Cluster> clusterSocket = new SocketStreamFunction<>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
+        SourceFunction<Cluster> clusterSocket = new SocketGenericStreamFunction<>(
+                MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT,
+                MAX_NUM_RETRIES, DELAY_BETWEEN_RETRIES,
+                new Cluster(), false
+        );
         DataStreamSource<Cluster> clusterSocketSource = env.addSource(
                 clusterSocket,
-                "clusterSocketSource",
+                "model socket source",
                 TypeInformation.of(Cluster.class)
         );
-        DataStream<List<Cluster>> model = clusterSocketSource.map(
-                new AggregatorRichMap<Cluster>()
-        ).broadcast();
+        DataStream<List<Cluster>> model = clusterSocketSource.map(new AggregatorRichMap<>()).broadcast();
 
-        /*
-        DataStream<Point> examplesStringSource = env.addSource(
-                new SocketStreamFunction<Point>(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT)
-        ).returns(Point.class);
-        // examplesStringSource = env.socketTextStream(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT).map((MapFunction<String, Point>) (value) -> Point.fromJson(value));
-        SingleOutputStreamOperator<LabeledExample> out = examplesStringSource
+        SourceFunction<Point> examplesSource = new SocketGenericStreamFunction<>(
+                MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT,
+                MAX_NUM_RETRIES, DELAY_BETWEEN_RETRIES,
+                new Point(), false
+        );
+        DataStreamSource<Point> examples = env.addSource(
+                examplesSource,
+                "test examples source",
+                TypeInformation.of(Point.class)
+        );
+
+        CoProcessFunction<Point, List<Cluster>, LabeledExample> merge = new CoProcessFunction<Point, List<Cluster>, LabeledExample>() {
+            @Override
+            public void processElement1(Point value, CoProcessFunction<Point, List<Cluster>, LabeledExample>.Context ctx, Collector<LabeledExample> out) {
+                long latency = System.currentTimeMillis() - value.time;
+                LabeledExample example = new LabeledExample("latency=" + latency, value);
+                out.collect(example);
+            }
+
+            @Override
+            public void processElement2(List<Cluster> value, CoProcessFunction<Point, List<Cluster>, LabeledExample>.Context ctx, Collector<LabeledExample> out) {
+                long latency = System.currentTimeMillis() - System.currentTimeMillis() - value.get(value.size() - 1).time;
+                LabeledExample example = new LabeledExample("model latency=" + latency, Point.zero(22));
+                out.collect(example);
+            }
+        };
+
+        SingleOutputStreamOperator<LabeledExample> out = examples
            // .keyBy(x -> x.id) // this keyby had no effect 183s vs 196s
            .connect(model)
-           .process(new ClustersExamplesConnect());
-        SerializationSchema<LabeledExample> serializationSchema = element -> (element.json().toString() + "\n").getBytes();
-        out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
-         */
+           .process(merge);
+        // SerializationSchema<LabeledExample> serializationSchema = element -> (element.json().toString() + "\n").getBytes();
+        // out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, serializationSchema);
+        out.print();
 
         LOG.info("Ready to run baseline");
         long start = System.currentTimeMillis();

@@ -1,5 +1,7 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONObject;
 
@@ -185,6 +187,15 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         out.writeLong(time);
         center.toDataOutputStream(out);
     }
+    public void toDataOutputStream(Output out) {
+        out.writeLong(id);
+        out.writeFloat(variance);
+        out.writeString(label);
+        out.writeString(category);
+        out.writeLong(matches);
+        out.writeLong(time);
+        center.toDataOutputStream(out);
+    }
     public static Cluster fromDataInputStream(DataInputStream in) throws IOException {
         return new Cluster().reuseFromDataInputStream(in);
     }
@@ -194,6 +205,19 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         variance = in.readFloat();
         label = in.readUTF();
         category = in.readUTF();
+        matches = in.readLong();
+        time = in.readLong();
+        if (this.center == null) {
+            this.center = new Point();
+        }
+        this.center = this.center.reuseFromDataInputStream(in);
+        return this;
+    }
+    public Cluster reuseFromDataInputStream(Input in) {
+        id = in.readLong();
+        variance = in.readFloat();
+        label = in.readString();
+        category = in.readString();
         matches = in.readLong();
         time = in.readLong();
         if (this.center == null) {

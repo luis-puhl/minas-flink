@@ -4,41 +4,52 @@ import br.ufscar.dc.gsdr.mfog.structs.Point;
 import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class ServerClient<T extends WithSerializable<T>> {
-    protected Logger log;
+public class ServerClient<T extends WithSerializable<T>> implements Closeable{
+    protected final Logger log;
     protected final Class<T> typeParameterClass;
-    protected T reusableObject;
-    protected int port;
     protected boolean withGzip;
-    ServerClient(Class<T> typeParameterClass, int port) throws Exception {
-        this(typeParameterClass, port, false);
+    @Deprecated
+    public ServerClient(Class<T> typeParameterClass) throws Exception {
+        this(typeParameterClass, false);
     }
-    ServerClient(Class<T> typeParameterClass, int port, boolean withGzip) throws Exception {
-        this.reusableObject = typeParameterClass.getDeclaredConstructor().newInstance();
+    @Deprecated
+    public ServerClient(Class<T> typeParameterClass, boolean withGzip) throws Exception {
+        this(typeParameterClass, typeParameterClass.getDeclaredConstructor().newInstance(), withGzip);
+    }
+    @Deprecated
+    public ServerClient(Class<T> typeParameterClass, T reusableObject) {
+        this(typeParameterClass, reusableObject, false);
+    }
+    @Deprecated
+    public ServerClient(Class<T> typeParameterClass, T reusableObject, boolean withGzip) {
+        this(typeParameterClass, reusableObject, withGzip, Object.class);
+    }
+    public ServerClient(Class<T> typeParameterClass, T reusableObject, boolean withGzip, Class<?> caller) {
+        this.reusableObject = reusableObject;
         this.typeParameterClass = typeParameterClass;
-        this.log = Logger.getLogger(this.getClass(), typeParameterClass);
-        this.port = port;
         this.withGzip = withGzip;
+        this.log = Logger.getLogger(this.getClass(), typeParameterClass, caller);
     }
 
-    ServerSocket serverSocket;
-    Socket socket;
-    OutputStream outputStream;
-    InputStream inputStream;
-    DataInputStream reader;
-    DataOutputStream writer;
-    GZIPOutputStream gzipOut = null;
-    public void server() throws IOException {
+    public T reusableObject;
+    public ServerSocket serverSocket;
+    public Socket socket;
+    public OutputStream outputStream;
+    public InputStream inputStream;
+    public DataInputStream reader;
+    public DataOutputStream writer;
+    public GZIPOutputStream gzipOut = null;
+    public void server(int port) throws IOException {
         if (serverSocket != null && !serverSocket.isClosed()) {
             serverSocket.close();
         }
-        serverSocket = new ServerSocket(port, 0, InetAddress.getByName("localhost"));
+        serverSocket = new ServerSocket(port);
     }
     public void serverAccept() throws IOException {
         if (socket != null && !socket.isClosed()) {
@@ -51,22 +62,30 @@ public class ServerClient<T extends WithSerializable<T>> {
         log.info("inputStream");
         inputStream = socket.getInputStream();
     }
-    public void client() throws IOException, InterruptedException {
+    public void client(String host, int port) throws IOException, InterruptedException {
+        client(host, port, 3, 500);
+    }
+    public ServerClient<T> client(String host, int port, int maxNumRetries, long delayBetweenRetries) throws IOException, InterruptedException {
         log.info("socket");
-        do {
+        socket = null;
+        Exception lastEx = null;
+        while (maxNumRetries > 0 || maxNumRetries == -1) {
             try {
-                socket = new Socket("localhost", port);
+                socket = new Socket(host, port);
+                log.info("outputStream");
+                outputStream = socket.getOutputStream();
+                log.info("inputStream");
+                inputStream = socket.getInputStream();
+                return this;
             } catch (Exception e) {
+                lastEx = e;
                 log.error(e);
                 log.error(e.getClass());
-                log.error("Connection failed, will retry in 1sec");
-                Thread.sleep(1000);
+                Thread.sleep(delayBetweenRetries);
             }
-        } while (socket == null);
-        log.info("outputStream");
-        outputStream = socket.getOutputStream();
-        log.info("inputStream");
-        inputStream = socket.getInputStream();
+            if (maxNumRetries != -1) maxNumRetries --;
+        }
+        throw new IOException(ServerClient.class.getSimpleName() + " could not connect.", lastEx);
     }
 
     public void send(T toSend) throws IOException {
@@ -90,6 +109,9 @@ public class ServerClient<T extends WithSerializable<T>> {
         }
         outputStream.flush();
     }
+    public boolean isConnected() {
+        return socket != null && socket.isConnected();
+    }
 
     public T receive(T reusableObject) throws IOException {
         if (reader == null) {
@@ -103,7 +125,7 @@ public class ServerClient<T extends WithSerializable<T>> {
     }
     protected boolean hasNext = true;
     public boolean hasNext() {
-        return hasNext && socket.isConnected() && !socket.isInputShutdown();
+        return hasNext && socket.isConnected();
     }
     public T next() throws IOException {
         try {
@@ -130,6 +152,7 @@ public class ServerClient<T extends WithSerializable<T>> {
     public static void main(String[] args) throws Exception {
         Logger log = Logger.getLogger(ServerClient.class);
         boolean isServer = args.length > 0;
+        int port = 9999;
         String kind = "client";
         if (isServer) {
             kind = "server";
@@ -137,13 +160,13 @@ public class ServerClient<T extends WithSerializable<T>> {
         log.info("Self test >" + kind);
 
         log.info("Point List full ");
-        ServerClient<Point> serverClient = new ServerClient<>(Point.class, 9999);
+        ServerClient<Point> serverClient = new ServerClient<>(Point.class);
         //
         if (isServer) {
-            serverClient.server();
+            serverClient.server(port);
             serverClient.serverAccept();
         } else {
-            serverClient.client();
+            serverClient.client("localhost", port);
         }
         int i = 0;
         long millis = System.currentTimeMillis();

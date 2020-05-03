@@ -1,5 +1,7 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.*;
 
@@ -222,14 +224,28 @@ public class Point implements Serializable, WithSerializable<Point> {
         }
         out.writeLong(time);
     }
+    public void toDataOutputStream(Output out) {
+        out.writeLong(id);
+        out.writeInt(value.length);
+        out.writeFloats(value);
+        out.writeLong(time);
+    }
     public Point reuseFromDataInputStream(DataInputStream in) throws IOException {
         this.id = in.readLong();
         //
-        int floatsLength = in.readInt();
-        this.value = new float[floatsLength];
-        for (int i = 0; i < floatsLength; i++) {
+        int dimensions = in.readInt();
+        this.value = new float[dimensions];
+        for (int i = 0; i < dimensions; i++) {
             this.value[i] = in.readFloat();
         }
+        this.time = in.readLong();
+        return this;
+    }
+
+    public Point reuseFromDataInputStream(Input in) {
+        this.id = in.readLong();
+        int dimensions = in.readInt();
+        this.value = in.readFloats(dimensions);
         this.time = in.readLong();
         return this;
     }

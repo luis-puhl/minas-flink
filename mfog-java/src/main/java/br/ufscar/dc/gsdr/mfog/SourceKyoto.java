@@ -1,122 +1,119 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
+import br.ufscar.dc.gsdr.mfog.structs.Point;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
+import br.ufscar.dc.gsdr.mfog.util.ServerClient;
 import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SourceKyoto {
     static final String training = "kyoto_binario_binarized_offline_1class_fold1_ini";
     static final String test = "kyoto_binario_binarized_offline_1class_fold1_onl";
     static final String basePath = "datasets" + File.separator + "kyoto-bin" + File.separator;
-    static final Logger LOG = Logger.getLogger("SourceKyoto");
+    static final Logger LOG = Logger.getLogger(SourceKyoto.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
         Thread trainingServer = new Thread(() -> {
             try {
                 IdGenerator idGenerator = new IdGenerator();
-                ServerSocket ss = new ServerSocket(MfogManager.SOURCE_TRAINING_DATA_PORT);
-                LOG.info("ServerSocket ready");
-                Socket s = ss.accept();
-                LOG.info("ServerSocket accepted");
-                DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
-                BufferedInputStream reader = new BufferedInputStream(s.getInputStream());
                 Iterator<LabeledExample> iterator = new BufferedReader(
                         new FileReader(basePath + training)
                 ).lines().map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
-                while (iterator.hasNext()) {
-                    byte[] message = iterator.next().toBytes();
-                    writer.writeInt(message.length);
-                    writer.write(message);
+                //
+                ServerClient<LabeledExample> server = new ServerClient<>(LabeledExample.class, new LabeledExample(), false, SourceKyoto.class);
+                server.server(MfogManager.SOURCE_TRAINING_DATA_PORT);
+                server.serverAccept();
+                while (server.isConnected() && iterator.hasNext()) {
+                    server.send(iterator.next());
                 }
-                writer.flush();
-                s.close();
-                ss.close();
+                server.flush();
+                server.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
         trainingServer.start();
 
-        ServerSocket classifierServerSocket = new ServerSocket(MfogManager.SOURCE_TEST_DATA_PORT);
-        // ServerSocket sinkServerSocket = new ServerSocket(MfogManager.SOURCE_EVALUATE_DATA_PORT);
-        LOG.info("Test/Eval ready");
-        List<Thread> evaluationThreads = new ArrayList<>(10);
-        for (int i = 0; i < 10; i++) {
-            final Socket classifierSocket = classifierServerSocket.accept();
-            LOG.info("Test connected, waiting for sink");
-            // final Socket sinkSocket = sinkServerSocket.accept();
-            LOG.info("Eval connected");
-            Thread evaluationThread = new Thread(() -> {
-                long startTime = System.currentTimeMillis();
+        IdGenerator idGenerator = new IdGenerator();
+        Iterator<LabeledExample> iterator = new BufferedReader(new FileReader(basePath + test)).lines()
+            // .limit(100)
+            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line))
+            .collect(Collectors.toList()).iterator();
+
+        Queue<LabeledExample> testQueue = new LinkedList<>();
+        Queue<LabeledExample> evaluationQueue = new LinkedList<>();
+
+        //
+        class EvaluatorRunnable implements Runnable {
+            volatile boolean isRunning = true;
+            @Override
+            public void run() {
+                final Logger log = Logger.getLogger(EvaluatorRunnable.class);
                 try {
-                    IdGenerator idGenerator = new IdGenerator();
-                    Stream<LabeledExample> labeledExampleStream = new BufferedReader(
-                            new FileReader(basePath + test)
-                    ).lines().limit(100).map(
-                            line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)
-                    );
-                    //
-                    OutputStream classifier = classifierSocket.getOutputStream();
-                    classifierSocket.shutdownInput();
-                    // PrintStream classifier = new PrintStream(classifierStream);
-                    //
-                    // OutputStream sink = sinkSocket.getOutputStream();
-                    // PrintStream sink = new PrintStream(sinkStream);
-                    //
-                    long sentTime = System.currentTimeMillis();
-                    Iterator<LabeledExample> iterator = labeledExampleStream.iterator();
-                    long sent = 0;
-                    while (iterator.hasNext() && classifierSocket.isConnected()) {
-                        LabeledExample labeledExample = iterator.next();
-                        try {
-                            byte[] bytes = SerializationUtils.serialize(labeledExample.point);
-                            classifier.write(bytes);
-                        } catch (Exception e) {
-                            LOG.error(e);
-                            LOG.error("error on " + labeledExample);
-                            break;
-                        }
-                        classifier.flush();
-                        // sink.println(labeledExample.json());
-                        // sink.write(labeledExample.toBytes());
-                        // sink.flush();
-                        sent++;
-                        if (System.currentTimeMillis() - sentTime > TcpUtil.REPORT_INTERVAL) {
-                            String speed = ((int) (sent / ((System.currentTimeMillis() - startTime) * 10e-4))) + " i/s";
-                            sentTime = System.currentTimeMillis();
-                            LOG.info("sent=" + sent + " " + speed);
+                    ServerClient<LabeledExample> evaluator = new ServerClient<>(LabeledExample.class, new LabeledExample(), false, EvaluatorRunnable.class);
+                    evaluator.server(MfogManager.SOURCE_EVALUATE_DATA_PORT);
+                    log.info("Evaluator ready");
+                    while (isRunning && iterator.hasNext() || !evaluationQueue.isEmpty()) {
+                        if (evaluator.isConnected()) {
+                            if (!testQueue.isEmpty()) {
+                                evaluator.send(testQueue.poll());
+                            } else if (iterator.hasNext()) {
+                                LabeledExample next = iterator.next();
+                                evaluator.send(next);
+                                evaluationQueue.add(next);
+                            }
+                        } else if (isRunning) {
+                            log.info("Evaluator Accept");
+                            evaluator.serverAccept();
                         }
                     }
-                    classifier.flush();
-                    // sink.flush();
+                    evaluator.flush();
+                    evaluator.close();
                 } catch (IOException e) {
-                    LOG.error(e);
-                } finally {
-                    try {
-                        classifierSocket.close();
-                        // sinkSocket.close();
-                    } catch (IOException e) {
-                        LOG.error(e);
-                    }
+                    e.printStackTrace();
                 }
-            });
-            evaluationThread.start();
-            evaluationThreads.add(evaluationThread);
+            }
+            public void cancel() {
+                isRunning = false;
+            }
         }
-        for (Thread evaluationThread : evaluationThreads) {
-            evaluationThread.join();
+        EvaluatorRunnable evaluatorRunnable = new EvaluatorRunnable();
+        Thread evaluatorThread = new Thread(evaluatorRunnable);
+        evaluatorThread.start();
+        //
+        ServerClient<Point> classifier = new ServerClient<>(Point.class, new Point(), false, SourceKyoto.class);
+        classifier.server(MfogManager.SOURCE_TEST_DATA_PORT);
+        LOG.info("Classifier Ready");
+        while (iterator.hasNext() || !testQueue.isEmpty()){
+            if (classifier.isConnected()) {
+                if (!testQueue.isEmpty()) {
+                    classifier.send(testQueue.poll().point);
+                } else if (iterator.hasNext()) {
+                    LabeledExample next = iterator.next();
+                    classifier.send(next.point);
+                    evaluationQueue.add(next);
+                }
+            } else {
+                LOG.info("Classifier Accept");
+                classifier.serverAccept();
+            }
         }
-        trainingServer.join();
+        classifier.flush();
+        classifier.close();
+
+        evaluatorRunnable.cancel();
+        evaluatorThread.interrupt();
+        evaluatorThread.join();
         LOG.info("done");
     }
 

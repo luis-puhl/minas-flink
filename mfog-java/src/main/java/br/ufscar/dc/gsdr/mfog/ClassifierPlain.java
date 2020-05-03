@@ -11,13 +11,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClassifierPlain {
     public static void main(String[] args) {
-        final Logger LOG = Logger.getLogger("ClassifierPlain");
+        final Logger LOG = Logger.getLogger(ClassifierPlain.class);
         List<Cluster> model = new ArrayList<>(100);
         List<Point> exampleBuffer = new ArrayList<>(100);
         int clusterMinLength = Cluster.apply(0, Point.zero(22), 0, "").toBytes().length;

@@ -1,4 +1,4 @@
-all: build run kill
+all: kill build run kill
 
 watch:
 	while true; do mvn clean package; echo "done"; inotifywait -qre close_write src; done
@@ -14,11 +14,13 @@ runPlain: runMfog
 	java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.ClassifierPlain
 
 run: runMfog
-	../ref-git/flink-1.10.0/bin/flink run target/mfog-0.4.jar --class br.ufscar.dc.gsdr.mfog.Classifier
+	-../ref-git/flink-1.10.0/bin/flink run target/mfog-0.4.jar --class br.ufscar.dc.gsdr.mfog.Classifier
+	-@echo done
 
 kill:
-	ps -o "%p|%a" | grep "[j]ava -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog" | awk -F "|" '{print $$1}'
-	ps -o "%p|%a" | grep "[j]ava -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog" | awk -F "|" '{print $$1}' | xargs kill
+	@ps -o "%p|%a" | grep "[j]ava -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog" | tee /dev/tty | awk -F "|" '{print $$1}' > tokill.ps
+	@while read p; do [ $$p ] && kill $$p; done < tokill.ps
+	@rm tokill.ps
 
 # Job Runtime: 191963 ms
 # 2020-04-28T12:28:39.431 INFO  Classifier Ran baseline in 194.661s

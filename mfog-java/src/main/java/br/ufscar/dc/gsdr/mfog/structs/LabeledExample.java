@@ -1,5 +1,7 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.*;
 
@@ -96,10 +98,23 @@ public class LabeledExample implements Serializable, WithSerializable<LabeledExa
         this.point = this.point.reuseFromDataInputStream(in);
         return this;
     }
+    public LabeledExample reuseFromDataInputStream(Input in) {
+        this.label = in.readString();
+        if (this.point == null) {
+            this.point = new Point();
+        }
+        this.point = this.point.reuseFromDataInputStream(in);
+        return this;
+    }
 
     @Override
     public void toDataOutputStream(DataOutputStream out) throws IOException {
         out.writeUTF(label);
         point.toDataOutputStream(out);
     }
+    public void toDataOutputStream(Output out) {
+        out.writeString(label);
+        point.toDataOutputStream(out);
+    }
+
 }

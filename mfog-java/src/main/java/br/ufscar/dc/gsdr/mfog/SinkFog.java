@@ -4,7 +4,6 @@ import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
-import br.ufscar.dc.gsdr.mfog.util.Try;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -13,11 +12,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SinkFog {
-    static Logger LOG = Logger.getLogger("SinkFog");
+    static Logger LOG = Logger.getLogger(SinkFog.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
         ServerSocket serverSocket = new ServerSocket(MfogManager.SINK_MODULE_TEST_PORT);
