@@ -3,11 +3,10 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import org.apache.commons.lang3.SerializationUtils;
 import org.json.*;
 
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Objects;
 
-public class LabeledExample implements Serializable {
+public class LabeledExample implements Serializable, WithSerializable<LabeledExample> {
 
     public static LabeledExample fromJson(String src) {
         return fromJson(new JSONObject(src));
@@ -24,7 +23,6 @@ public class LabeledExample implements Serializable {
     public static LabeledExample fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
-
 
     static public LabeledExample fromKyotoCSV(int id, String line) {
         // 0.0,0.0,0.0,0.0,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,1,0,N
@@ -87,5 +85,21 @@ public class LabeledExample implements Serializable {
 
     public byte[] toBytes() {
         return SerializationUtils.serialize(this);
+    }
+
+    @Override
+    public LabeledExample reuseFromDataInputStream(DataInputStream in) throws IOException {
+        this.label = in.readUTF();
+        if (this.point == null) {
+            this.point = new Point();
+        }
+        this.point = this.point.reuseFromDataInputStream(in);
+        return this;
+    }
+
+    @Override
+    public void toDataOutputStream(DataOutputStream out) throws IOException {
+        out.writeUTF(label);
+        point.toDataOutputStream(out);
     }
 }

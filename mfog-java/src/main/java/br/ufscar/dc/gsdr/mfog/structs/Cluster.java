@@ -5,16 +5,15 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.util.Objects;
-import java.util.PrimitiveIterator;
-import java.util.stream.IntStream;
 
-public class Cluster implements Serializable {
+public class Cluster implements Serializable, WithSerializable<Cluster> {
     public static String CATEGORY_NORMAL = "normal";
     public static String CATEGORY_EXTENSION = "extension";
     public static String CATEGORY_NOVELTY = "novelty";
     public static String CATEGORY_NOVELTY_EXTENSION = "novelty extension";
 
     public static String CSV_HEADER = "id,label,category,matches,time,variance,center";
+
     // size,lblClasse,category,time,meanDistance,radius,center
 
     public static Cluster fromJson(String src) {
@@ -187,13 +186,20 @@ public class Cluster implements Serializable {
         center.toDataOutputStream(out);
     }
     public static Cluster fromDataInputStream(DataInputStream in) throws IOException {
-        long id = in.readLong();
-        float variance = in.readFloat();
-        String label = in.readUTF();
-        String category = in.readUTF();
-        long matches = in.readLong();
-        long time = in.readLong();
-        Point center = Point.fromDataInputStream(in);
-        return new Cluster(id, center, variance, label, category, matches, time);
+        return new Cluster().reuseFromDataInputStream(in);
+    }
+    @Override
+    public Cluster reuseFromDataInputStream(DataInputStream in) throws IOException {
+        id = in.readLong();
+        variance = in.readFloat();
+        label = in.readUTF();
+        category = in.readUTF();
+        matches = in.readLong();
+        time = in.readLong();
+        if (this.center == null) {
+            this.center = new Point();
+        }
+        this.center = this.center.reuseFromDataInputStream(in);
+        return this;
     }
 }

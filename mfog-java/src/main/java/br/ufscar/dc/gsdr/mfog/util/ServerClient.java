@@ -1,198 +1,122 @@
 package br.ufscar.dc.gsdr.mfog.util;
 
 import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
-public class ServerClient<T extends ServerClient.SendReceive> {
-    interface SendReceive {
-        void receive(InputStream inputStream) throws IOException;
-        void send(OutputStream outputStream) throws IOException;
-    }
-    static class GzipSendReceive implements SendReceive {
-        Logger log = Logger.getLogger(GzipSendReceive.class);
-        public void receive(InputStream inputStream) throws IOException {
-            log.info("new reader");
-            DataInputStream reader = new DataInputStream(new GZIPInputStream(new BufferedInputStream(inputStream)));
-            for (int j = 0; j < 3; j++) {
-                log.info("readObject");
-                Point fromBytes = Point.fromDataInputStream(reader);
-                log.info("read: " + fromBytes);
-            }
-        }
-
-        public void send(OutputStream outputStream) throws IOException {
-            log.info("new writer");
-            GZIPOutputStream gzipOut = new GZIPOutputStream(new BufferedOutputStream(outputStream));
-            DataOutputStream writer = new DataOutputStream(gzipOut);
-            for (int j = 0; j < 3; j++) {
-                log.info("writeObject");
-                Point.zero(22).toDataOutputStream(writer);
-            }
-            log.info("flush");
-            writer.flush();
-            gzipOut.finish();
-            gzipOut.flush();
-            outputStream.flush();
-        }
-    }
-
-    static class ObjectSendReceive implements SendReceive {
-        Logger log = Logger.getLogger(ObjectSendReceive.class);
-        public void receive(InputStream inputStream) throws IOException {
-            log.info("new reader");
-            ObjectInputStream reader = new ObjectInputStream(new BufferedInputStream(inputStream));
-            for (int j = 0; j < 3; j++) {
-                log.info("readObject");
-                try {
-                    Point fromBytes = (Point) reader.readObject();
-                    log.info("read: " + fromBytes);
-                } catch (ClassNotFoundException e) {
-                    log.error(e);
-                }
-            }
-        }
-
-        public void send(OutputStream outputStream) throws IOException {
-            log.info("new writer");
-            ObjectOutputStream writer = new ObjectOutputStream(new BufferedOutputStream(outputStream));
-            //
-            for (int j = 0; j < 3; j++) {
-                log.info("write");
-                writer.writeObject(Point.zero(22));
-            }
-            log.info("flush");
-            writer.flush();
-            outputStream.flush();
-        }
-    }
-
-    static class JsonSendReceive implements SendReceive {
-        Logger log = Logger.getLogger(JsonSendReceive.class);
-        public void receive(InputStream inputStream) throws IOException {
-            log.info("new reader");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            for (int j = 0; j < 3; j++) {
-                log.info("readJson");
-                String line;
-                do {
-                    line = reader.readLine() ;
-                } while (line == null);
-                Point fromBytes = Point.fromJson(line);
-                log.info("read: " + fromBytes);
-            }
-        }
-
-        public void send(OutputStream outputStream) throws IOException {
-            log.info("new writer");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-            //
-            for (int j = 0; j < 3; j++) {
-                log.info("writeObject");
-                writer.write(Point.zero(22).json().toString());
-                writer.newLine();
-            }
-            log.info("flush");
-            writer.flush();
-            outputStream.flush();
-        }
-    }
-
+public class ServerClient<T extends WithSerializable<T>> {
+    public static final int PORT = 9999;
     protected Logger log;
-    protected T sendReceive;
+    protected GzipSendReceive<T> sendReceive;
     protected final Class<T> typeParameterClass;
+    T reusableObject;
     ServerClient(Class<T> typeParameterClass) throws Exception {
+        this.reusableObject = typeParameterClass.getDeclaredConstructor().newInstance();
         this.typeParameterClass = typeParameterClass;
-        this.sendReceive = typeParameterClass.getDeclaredConstructor().newInstance();
+        this.sendReceive = new GzipSendReceive<>();
         this.log = Logger.getLogger(this.getClass(), typeParameterClass);
     }
 
-    void symmetric(Socket socket) throws IOException {
-        log.info("outputStream");
-        OutputStream outputStream = socket.getOutputStream();
-        log.info("inputStream");
-        InputStream inputStream = socket.getInputStream();
-        if (inputStream.available() > 1){
-            sendReceive.receive(inputStream);
-            sendReceive.send(outputStream);
-        } else {
-            sendReceive.send(outputStream);
-            sendReceive.receive(inputStream);
-        }
-    }
-    ServerSocket server;
+    ServerSocket serverSocket;
+    Socket socket;
+    OutputStream outputStream;
+    InputStream inputStream;
     public void server() throws IOException {
-        server = new ServerSocket(15243, 0, InetAddress.getByName("localhost"));
+        serverSocket = new ServerSocket(PORT, 0, InetAddress.getByName("localhost"));
     }
     public void serverAccept() throws IOException {
-        for (int i = 0; i < 3; i++) {
-            log.info("accept");
-            Socket socket = server.accept();
-            symmetric(socket);
-            log.info("Server Hello " + i);
-            socket.close();
-        }
-        server.close();
+        log.info("accept");
+        socket = serverSocket.accept();
+        log.info("outputStream");
+        outputStream = socket.getOutputStream();
+        log.info("inputStream");
+        inputStream = socket.getInputStream();
     }
-    public void client() throws IOException {
-        for (int i = 0; i < 3; i++) {
-            log.info("socket");
-            Socket socket = new Socket(InetAddress.getByName("localhost"), 15243);
-            symmetric(socket);
-            log.info("Client Hello " + i);
-            socket.close();
-        }
+    public void client() throws IOException, InterruptedException {
+        log.info("socket");
+        do {
+            try {
+                socket = new Socket("localhost", PORT);
+            } catch (Exception e) {
+                log.error(e);
+                log.error(e.getClass());
+                log.error("Connection failed, will retry in 1sec");
+                Thread.sleep(1000);
+            }
+        } while (socket == null);
+        log.info("outputStream");
+        outputStream = socket.getOutputStream();
+        log.info("inputStream");
+        inputStream = socket.getInputStream();
+    }
+    int sender(Iterator<WithSerializable<T>> toSend) throws IOException {
+        return sendReceive.send(outputStream, toSend);
+    }
+    T receive(T reusableObject) throws IOException {
+        return sendReceive.receive(inputStream, reusableObject);
     }
 
+
     public static void main(String[] args) throws Exception {
+        Logger log = Logger.getLogger(ServerClient.class);
+        Logger.filterServices.add(GzipSendReceive.class.getSimpleName());
         boolean isServer = args.length > 0;
         String kind = "client";
         if (isServer) {
             kind = "server";
         }
+        log.info("Self test >" + kind);
 
-        Logger.filterServices.add(GzipSendReceive.class.getSimpleName());
-        Logger.filterServices.add(ObjectSendReceive.class.getSimpleName());
-        Logger.filterServices.add(JsonSendReceive.class.getSimpleName());
-        Logger log = Logger.getLogger(ServerClient.class);
-        Logger.filterServices.add(ServerClient.class.getSimpleName());
-
-        List<Class<? extends SendReceive>> transmitters = new ArrayList<>(3);
-        transmitters.add(JsonSendReceive.class);
-        transmitters.add(ObjectSendReceive.class);
-        transmitters.add(GzipSendReceive.class);
-
-        for (Class<? extends SendReceive> transmitter : transmitters) {
-            ServerClient<? extends SendReceive> serverClient = new ServerClient<>(transmitter);
-            if (isServer) {
-                serverClient.server();
-            }
-            log.info("Will run with " + transmitter.getSimpleName());
-            long start = System.currentTimeMillis();
-            long diff;
-            do {
-                diff = System.currentTimeMillis() - start;
-                Thread.sleep(diff / 2);
-            } while (diff < 1000 );
-            if (!isServer) Thread.sleep(100);
-
-            long millis = System.currentTimeMillis();
-            long nano = System.nanoTime();
-            if (isServer) {
-                serverClient.serverAccept();
-            } else {
-                serverClient.client();
-            }
-            long millisDiff = System.currentTimeMillis() - millis;
-            long nanoDiff = System.nanoTime() - nano;
-            log.info(kind + " millisDiff=" + millisDiff + " nanoDiff=" + nanoDiff);
+        List<WithSerializable<Point>> points = new ArrayList<>(653457);
+        for (int i = 0; i < 653457; i++) {
+            Point zero = Point.zero(22);
+            zero.id = i;
+            points.add(zero);
         }
+        log.info("Point List full ");
+        ServerClient<Point> serverClient = new ServerClient<>(Point.class);
+        if (isServer) {
+            serverClient.server();
+        }
+        //
+        int i = 0;
+        long millis = System.currentTimeMillis();
+        long nano = System.nanoTime();
+        if (isServer) {
+            serverClient.serverAccept();
+            i = serverClient.sender(points.iterator());
+            log.info(kind + " socket.close()");
+            serverClient.socket.close();
+            serverClient.serverSocket.close();
+        } else {
+            serverClient.client();
+            Thread.sleep(1000);
+            Point reuse = new Point();
+            while (serverClient.socket.isConnected() && !serverClient.socket.isInputShutdown()){
+                try {
+                    reuse = serverClient.receive(reuse);
+                } catch (java.io.EOFException e) {
+                    break;
+                }
+                i++;
+//                if (i % 1000 == 0) {
+//                    System.out.print(".");
+//                }
+            }
+            log.info(kind + " socket.close()");
+            serverClient.socket.close();
+        }
+        long millisDiff = System.currentTimeMillis() - millis;
+        long nanoDiff = System.nanoTime() - nano;
+        log.info(kind + " millisDiff=" + millisDiff + " nanoDiff=" + nanoDiff);
+        log.info(kind + " item=" + i + " item/s=" + ((i *10^4)/ millisDiff));
     }
 }

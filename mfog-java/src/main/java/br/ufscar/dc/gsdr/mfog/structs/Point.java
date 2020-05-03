@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Point implements Serializable {
+public class Point implements Serializable, WithSerializable<Point> {
 
     public static Point fromJson(String src) {
         return fromJson(new JSONObject(src));
@@ -58,16 +58,9 @@ public class Point implements Serializable {
         this.time = time;
     }
 
+    @Deprecated
     public static Point fromDataInputStream(DataInputStream in) throws IOException {
-        long id = in.readLong();
-        //
-        int floatsLength = in.readInt();
-        float[] floats = new float[floatsLength];
-        for (int i = 0; i < floatsLength; i++) {
-            floats[i] = in.readFloat();
-        }
-        long time = in.readLong();
-        return Point.apply(id, floats, time);
+        return new Point().reuseFromDataInputStream(in);
     }
 
     public JSONObject json() {
@@ -202,9 +195,7 @@ public class Point implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Point)) return false;
         Point point = (Point) o;
-        return getId() == point.getId() &&
-                                     getTime() == point.getTime() &&
-                                     Arrays.equals(getValue(), point.getValue());
+        return getId() == point.getId() && getTime() == point.getTime() && Arrays.equals(getValue(), point.getValue());
     }
 
     @Override
@@ -230,6 +221,17 @@ public class Point implements Serializable {
             out.writeFloat(v);
         }
         out.writeLong(time);
+    }
+    public Point reuseFromDataInputStream(DataInputStream in) throws IOException {
+        this.id = in.readLong();
+        //
+        int floatsLength = in.readInt();
+        this.value = new float[floatsLength];
+        for (int i = 0; i < floatsLength; i++) {
+            this.value[i] = in.readFloat();
+        }
+        this.time = in.readLong();
+        return this;
     }
 }
 

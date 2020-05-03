@@ -3,25 +3,20 @@ package br.ufscar.dc.gsdr.mfog.util;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 public class ServerClientNIO {
 
-    static class MyClient {
+    static class Client {
         public void main() throws IOException, ClassNotFoundException {
-            Logger log = Logger.getLogger("Client");
+            Logger log = Logger.getLogger(Client.class);
             log.info("new Compressor");
             Compressor compressor = new Compressor(256);
             //
@@ -51,9 +46,9 @@ public class ServerClientNIO {
         }
     }
 
-    static class MyServer {
+    public static class Server {
         public void main() throws IOException, ClassNotFoundException {
-            Logger log = Logger.getLogger("Server");
+            Logger log = Logger.getLogger(Server.class);
             log.info("new Compressor");
             Compressor compressor = new Compressor(256);
             //
@@ -105,7 +100,7 @@ public class ServerClientNIO {
     public static void main(String[] args) throws InterruptedException {
         Thread server = new Thread(() -> {
             try {
-                new MyServer().main();
+                new Server().main();
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -113,7 +108,7 @@ public class ServerClientNIO {
         server.start();
         Thread client = new Thread(() -> {
             try {
-                new MyClient().main();
+                new Client().main();
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
