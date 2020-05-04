@@ -94,7 +94,7 @@ public class SocketStreamFunction<T extends WithSerializable<T>> implements Sour
                     break;
                 }
             }
-            currentSocket.close();
+            currentSocket.closeSocket();
         }
     }
 
@@ -102,7 +102,7 @@ public class SocketStreamFunction<T extends WithSerializable<T>> implements Sour
     public void cancel() {
         isRunning = false;
         try {
-            this.currentSocket.close();
+            this.currentSocket.closeSocket();
         } catch (IOException e) {
             LOG.error(e.toString());
         }

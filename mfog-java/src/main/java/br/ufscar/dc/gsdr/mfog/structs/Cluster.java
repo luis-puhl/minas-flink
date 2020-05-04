@@ -54,9 +54,13 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         float meanDistance    = Float.parseFloat(split[5]);
         float radius          = Float.parseFloat(split[6]);
         String[] centerStrings = centerString.split(",");
+        int dimensions = centerStrings.length;
+        if (dimensions != 22) {
+            throw new NumberFormatException("Minas model for KDD has 22 dimensions");
+        }
         //
-        float[] center        = new float[centerStrings.length +1];
-        for (int i = 0; i < centerStrings.length; i++) {
+        float[] center        = new float[dimensions];
+        for (int i = 0; i < dimensions; i++) {
             center[i] = Float.parseFloat(centerStrings[i]);
         }
         return new Cluster(id, new Point(id, center, time), radius, label, category, matches, time);

@@ -10,10 +10,11 @@ import java.util.concurrent.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class ServerClient<T extends WithSerializable<T>> implements Closeable{
+public class ServerClient<T extends WithSerializable<T>> {
     protected final Logger log;
     protected final Class<T> typeParameterClass;
     protected boolean withGzip;
+
     @Deprecated
     public ServerClient(Class<T> typeParameterClass) throws Exception {
         this(typeParameterClass, false);
@@ -45,6 +46,9 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
     public DataInputStream reader;
     public DataOutputStream writer;
     public GZIPOutputStream gzipOut = null;
+    public long millis;
+    public long nano;
+    public long i = 0;
     public void server(int port) throws IOException {
         if (serverSocket != null && !serverSocket.isClosed()) {
             serverSocket.close();
@@ -61,6 +65,8 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
         outputStream = socket.getOutputStream();
         log.info("inputStream");
         inputStream = socket.getInputStream();
+        millis = System.currentTimeMillis();
+        nano = System.nanoTime();
     }
     public void client(String host, int port) throws IOException, InterruptedException {
         client(host, port, 3, 500);
@@ -76,6 +82,8 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
                 outputStream = socket.getOutputStream();
                 log.info("inputStream");
                 inputStream = socket.getInputStream();
+                millis = System.currentTimeMillis();
+                nano = System.nanoTime();
                 return this;
             } catch (Exception e) {
                 lastEx = e;
@@ -99,6 +107,7 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
             }
         }
         toSend.toDataOutputStream(writer);
+        i++;
     }
     public void flush() throws IOException {
         log.info("flush");
@@ -121,7 +130,9 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
                 reader = new DataInputStream(new BufferedInputStream(inputStream));
             }
         }
-        return reusableObject.reuseFromDataInputStream(reader);
+        T t = reusableObject.reuseFromDataInputStream(reader);
+        i++;
+        return t;
     }
     protected boolean hasNext = true;
     public boolean hasNext() {
@@ -137,15 +148,21 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
         }
     }
 
-    public void close() throws IOException {
-        log.info("socket.close()");
+    public void closeSocket() throws IOException {
+        log.debug("socket.close()");
         if (socket != null && !socket.isClosed()) {
             socket.close();
         }
+        socket = null;
+        long millisDiff = System.currentTimeMillis() - millis;
+        long nanoDiff = System.nanoTime() - nano;
+        long speed = ((i *10^4)/ millisDiff);
+        log.info(i + " items, " + millisDiff + " ms, " + nanoDiff + " ns, " + speed + " i/s");
+    }
+    public void closeServer() throws IOException {
         if (serverSocket != null && !serverSocket.isClosed()) {
             serverSocket.close();
         }
-        socket = null;
         serverSocket = null;
     }
 
@@ -169,8 +186,6 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
             serverClient.client("localhost", port);
         }
         int i = 0;
-        long millis = System.currentTimeMillis();
-        long nano = System.nanoTime();
         if (isServer) {
             Point zero = Point.zero(22);
             for (; i < 653457; i++) {
@@ -184,10 +199,7 @@ public class ServerClient<T extends WithSerializable<T>> implements Closeable{
                 i++;
             }
         }
-        serverClient.close();
-        long millisDiff = System.currentTimeMillis() - millis;
-        long nanoDiff = System.nanoTime() - nano;
-        log.info(kind + " millisDiff=" + millisDiff + " nanoDiff=" + nanoDiff);
-        log.info(kind + " item=" + i + " item/s=" + ((i *10^4)/ millisDiff));
+        serverClient.closeSocket();
+        serverClient.closeServer();
     }
 }

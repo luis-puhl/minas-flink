@@ -37,7 +37,8 @@ public class SourceKyoto {
                     server.send(iterator.next());
                 }
                 server.flush();
-                server.close();
+                server.closeSocket();
+                server.closeServer();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -46,7 +47,7 @@ public class SourceKyoto {
 
         IdGenerator idGenerator = new IdGenerator();
         Iterator<LabeledExample> iterator = new BufferedReader(new FileReader(basePath + test)).lines()
-            // .limit(100)
+            .limit(1000)
             .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line))
             .collect(Collectors.toList()).iterator();
 
@@ -78,7 +79,8 @@ public class SourceKyoto {
                         }
                     }
                     evaluator.flush();
-                    evaluator.close();
+                    evaluator.closeSocket();
+                    evaluator.closeServer();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -109,7 +111,8 @@ public class SourceKyoto {
             }
         }
         classifier.flush();
-        classifier.close();
+        classifier.closeSocket();
+        classifier.closeServer();
 
         evaluatorRunnable.cancel();
         evaluatorThread.interrupt();

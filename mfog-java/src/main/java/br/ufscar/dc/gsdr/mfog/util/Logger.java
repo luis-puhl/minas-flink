@@ -7,6 +7,8 @@ import java.util.Set;
 public class Logger {
     static Set<String> filterServices = new HashSet<>();
 
+    public void debug(String s) {}
+
     static class NoLogger extends Logger {
         NoLogger(String serviceName) {
             super(serviceName);
@@ -15,6 +17,7 @@ public class Logger {
         public void warn(Object msg) {}
         public void error(Object msg) {}
         public void error(Exception exp) {}
+        public void debug(String s) {}
     }
 
     @Deprecated
