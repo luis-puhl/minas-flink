@@ -39,4 +39,24 @@ public class Serializers {
             return new LabeledExample().reuseFromDataInputStream(input);
         }
     }
+    static public class ModelSerializer extends Serializer<Model> {
+        @Override
+        public void write(Kryo kryo, Output output, Model object) {
+            output.writeInt(object.model.size());
+            for (Cluster cluster : object.model) {
+                cluster.toDataOutputStream(output);
+            }
+        }
+
+        @Override
+        public Model read(Kryo kryo, Input input, Class<Model> type) {
+            Model model = new Model();
+            model.size = input.readInt();
+            for (int i = 0; i < model.size; i++) {
+                model.model.add(new Cluster().reuseFromDataInputStream(input));
+            }
+            return model;
+        }
+    }
+
 }
