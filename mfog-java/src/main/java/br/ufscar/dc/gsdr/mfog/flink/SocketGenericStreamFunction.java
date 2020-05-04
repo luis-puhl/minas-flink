@@ -17,6 +17,9 @@
 package br.ufscar.dc.gsdr.mfog.flink;
 
 import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 
 import org.slf4j.Logger;
@@ -32,31 +35,34 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 public class SocketGenericStreamFunction<T extends WithSerializable<T>> implements SourceFunction<T> {
-
     protected static final long serialVersionUID = 1L;
+    public static int DEFAULT_DELAY_BETWEEN_RETRIES = 1000;
+    public static int DEFAULT_MAX_RETRIES = 10;
+    public static int DEFAULT_TIMEOUT = 10;
+    public static boolean DEFAULT_GZIP = false;
 
-    protected static final Logger LOG = LoggerFactory.getLogger(SocketGenericStreamFunction.class);
-
-    /** Default delay between successive connection attempts. */
-    protected static final int DEFAULT_CONNECTION_RETRY_SLEEP = 500;
-
-    /** Default connection timeout when connecting to the server socket (infinite). */
-    protected static final int CONNECTION_TIMEOUT_TIME = 0;
-
-
+    protected transient Logger log;
     protected final String hostname;
     protected final int port;
     protected final long maxNumRetries;
     protected final long delayBetweenRetries;
+    protected final int connectionTimeout;
+    protected final Class<T> typeInfo;
+    protected final String sourceName;
 
     protected transient Socket currentSocket;
     protected transient DataInputStream reader;
-
     protected volatile boolean isRunning = true;
-    protected boolean withGzip;
-    private T reusableObject;
+    protected final boolean withGzip;
+    protected T reusableObject;
 
-    public SocketGenericStreamFunction(String hostname, int port, long maxNumRetries, long delayBetweenRetries, T reusableObject, boolean withGzip) {
+    public SocketGenericStreamFunction(String hostname, int port, T reusableObject, Class<T> typeInfo, String sourceName) {
+        this(hostname, port, DEFAULT_MAX_RETRIES, DEFAULT_DELAY_BETWEEN_RETRIES, DEFAULT_TIMEOUT, reusableObject, typeInfo, sourceName, DEFAULT_GZIP);
+    }
+    public SocketGenericStreamFunction(
+            String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout,
+            T reusableObject, Class<T> typeInfo, String sourceName, boolean withGzip
+    ) {
         checkArgument(isValidClientPort(port), "port is out of range");
         checkArgument(maxNumRetries >= -1, "maxNumRetries must be zero or larger (num retries), or -1 (infinite retries)");
         checkArgument(delayBetweenRetries >= 0, "delayBetweenRetries must be zero or positive");
@@ -64,23 +70,32 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
         this.hostname = checkNotNull(hostname, "hostname must not be null");
         this.port = port;
         this.maxNumRetries = maxNumRetries;
+        this.typeInfo = typeInfo;
+        this.sourceName = sourceName;
         this.delayBetweenRetries = delayBetweenRetries;
         this.withGzip = withGzip;
         this.reusableObject = reusableObject;
+        this.connectionTimeout = connectionTimeout;
+        this.getLog().info("constructor {}", port);
+    }
+
+    Logger getLog() {
+        if (log == null) {
+            this.log = LoggerFactory.getLogger(br.ufscar.dc.gsdr.mfog.util.Logger.getLoggerMame(SocketGenericStreamFunction.class, typeInfo));
+        }
+        return this.log;
     }
 
     @Override
     public void run(SourceContext<T> ctx) throws Exception {
         long attempt = 0;
-
+        getLog();
         while (isRunning) {
-
             try (Socket socket = new Socket()) {
                 currentSocket = socket;
-
-                LOG.info("Connecting to server socket " + hostname + ':' + port);
+                log.info("Connecting to server socket {}:{}", hostname, port);
                 try {
-                    socket.connect(new InetSocketAddress(hostname, port), CONNECTION_TIMEOUT_TIME);
+                    socket.connect(new InetSocketAddress(hostname, port), connectionTimeout);
                     if (withGzip) {
                         reader = new DataInputStream(new GZIPInputStream(new BufferedInputStream(socket.getInputStream())));
                     } else {
@@ -94,13 +109,13 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
                             reader.close();
                             socket.close();
                             isRunning = false;
-                            LOG.warn("EOF.");
+                            log.warn("EOF.");
                             return;
                         }
                     }
                     reader.close();
                 } catch (java.net.ConnectException e) {
-                    LOG.warn(e.getMessage());
+                    log.warn(e.getMessage());
                 }
             }
 
@@ -108,10 +123,9 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
             if (isRunning) {
                 attempt++;
                 if (maxNumRetries == -1 || attempt < maxNumRetries) {
-                    LOG.warn("Lost connection to server socket. Retrying in " + delayBetweenRetries + " msecs...");
+                    log.warn("Lost connection to server socket. Retrying in " + delayBetweenRetries + " msecs...");
                     Thread.sleep(delayBetweenRetries);
-                }
-                else {
+                } else {
                     // this should probably be here, but some examples expect simple exists of the stream source
                     // throw new EOFException("Reached end of stream and reconnects are not enabled.");
                     break;
@@ -131,7 +145,7 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
             try {
                 theSocket.close();
             } catch (IOException e) {
-                LOG.error(e.getMessage());
+                log.error(e.getMessage());
             }
         }
     }

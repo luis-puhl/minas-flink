@@ -47,7 +47,7 @@ public class SourceKyoto {
 
         IdGenerator idGenerator = new IdGenerator();
         Iterator<LabeledExample> iterator = new BufferedReader(new FileReader(basePath + test)).lines()
-            .limit(1000)
+            // .limit(1000)
             .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line))
             .collect(Collectors.toList()).iterator();
 

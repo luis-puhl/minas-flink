@@ -27,11 +27,8 @@ public class Logger {
         }
         return new Logger(serviceName);
     }
-    public static Logger getLogger(Class<?> kls, Class<?>... parameterTypes) {
+    public static String getLoggerMame(Class<?> kls, Class<?>... parameterTypes) {
         String serviceName = kls.getSimpleName();
-        if (filterServices.contains(serviceName)) {
-            return new NoLogger(serviceName);
-        }
         StringBuilder sb = new StringBuilder(serviceName);
         sb.append("<");
         for (int i = 0; i < parameterTypes.length; i++) {
@@ -41,7 +38,14 @@ public class Logger {
             sb.append(parameterTypes[i].getSimpleName());
         }
         sb.append(">");
-        return getLogger(sb.toString());
+        return sb.toString();
+    }
+    public static Logger getLogger(Class<?> kls, Class<?>... parameterTypes) {
+        String serviceName = kls.getSimpleName();
+        if (filterServices.contains(serviceName)) {
+            return new NoLogger(serviceName);
+        }
+        return getLogger(getLoggerMame(kls, parameterTypes));
     }
     static public Logger getLogger(Class<?> kls) {
         return getLogger(kls.getSimpleName());

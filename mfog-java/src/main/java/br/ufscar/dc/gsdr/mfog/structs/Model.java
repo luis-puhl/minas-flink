@@ -27,4 +27,9 @@ public class Model implements Serializable {
         }
         return new LabeledExample(minLabel, example);
     }
+
+    @Override
+    public String toString() {
+        return "Model{model=" + model.size() +"}";
+    }
 }
