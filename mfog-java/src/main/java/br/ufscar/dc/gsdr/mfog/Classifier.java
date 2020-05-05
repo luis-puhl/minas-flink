@@ -18,12 +18,13 @@ package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.flink.MinasClassify;
 import br.ufscar.dc.gsdr.mfog.flink.ModelAggregate;
-import br.ufscar.dc.gsdr.mfog.flink.SocketGenericStreamFunction;
+import br.ufscar.dc.gsdr.mfog.flink.SocketGenericSource;
 import br.ufscar.dc.gsdr.mfog.structs.*;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.functions.RichMapFunction;
+import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -43,14 +44,14 @@ public class Classifier {
         config.addDefaultKryoSerializer(Point.class, Serializers.PointSerializer.class);
         config.addDefaultKryoSerializer(LabeledExample.class, Serializers.LabeledExampleSerializer.class);
         config.addDefaultKryoSerializer(Model.class, Serializers.ModelSerializer.class);
-        SocketGenericStreamFunction.DEFAULT_GZIP = MfogManager.USE_GZIP;
+        SocketGenericSource.DEFAULT_GZIP = MfogManager.USE_GZIP;
 
         DataStream<Cluster> modelSocket = env.addSource(
-            new SocketGenericStreamFunction<>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT,
+            new SocketGenericSource<>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT,
                 new Cluster(), Cluster.class, "Model Socket"
             ), "Model Socket", TypeInformation.of(Cluster.class));
         DataStreamSource<Point> examples = env.addSource(
-            new SocketGenericStreamFunction<>(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT,
+            new SocketGenericSource<>(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT,
                 new Point(), Point.class, "Examples Socket"
             ), "Examples Socket", TypeInformation.of(Point.class));
 
@@ -74,6 +75,8 @@ public class Classifier {
                 return map;
             }
         }).print("aggregated");
+
+        out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, new Serializers.LabeledExampleSerializer());
 
         LOG.info("Ready to run baseline");
         long start = System.currentTimeMillis();

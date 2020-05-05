@@ -32,7 +32,7 @@ import static org.apache.flink.util.NetUtils.isValidClientPort;
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-public class SocketGenericStreamFunction<T extends WithSerializable<T>> implements SourceFunction<T> {
+public class SocketGenericSource<T extends WithSerializable<T>> implements SourceFunction<T> {
     protected static final long serialVersionUID = 1L;
     public static int DEFAULT_DELAY_BETWEEN_RETRIES = 1000;
     public static int DEFAULT_MAX_RETRIES = 10;
@@ -52,14 +52,14 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
     protected volatile boolean isRunning = true;
     protected T reusableObject;
 
-    public SocketGenericStreamFunction(String hostname, int port, T reusableObject, Class<T> typeInfo, String sourceName) {
+    public SocketGenericSource(String hostname, int port, T reusableObject, Class<T> typeInfo, String sourceName) {
         this(
             hostname, port, DEFAULT_MAX_RETRIES, DEFAULT_DELAY_BETWEEN_RETRIES, DEFAULT_TIMEOUT, reusableObject,
             typeInfo, sourceName, DEFAULT_GZIP
         );
     }
 
-    public SocketGenericStreamFunction(
+    public SocketGenericSource(
         String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout, T reusableObject, Class<T> typeInfo, String sourceName, boolean withGzip
     ) {
         checkArgument(isValidClientPort(port), "port is out of range");
@@ -82,7 +82,7 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
     Logger getLog() {
         if (log == null) {
             this.log = LoggerFactory.getLogger(
-                br.ufscar.dc.gsdr.mfog.util.Logger.getLoggerMame(SocketGenericStreamFunction.class, typeInfo));
+                br.ufscar.dc.gsdr.mfog.util.Logger.getLoggerMame(SocketGenericSource.class, typeInfo));
         }
         return this.log;
     }

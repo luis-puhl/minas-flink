@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import org.apache.flink.api.common.serialization.SerializationSchema;
 
 public class Serializers {
     static public class ClusterSerializer extends Serializer<Cluster> {
@@ -30,7 +31,9 @@ public class Serializers {
         }
     }
 
-    static public class LabeledExampleSerializer extends Serializer<LabeledExample> {
+    static public class LabeledExampleSerializer extends Serializer<LabeledExample> implements SerializationSchema<LabeledExample> {
+        transient Output o;
+
         @Override
         public void write(Kryo kryo, Output output, LabeledExample object) {
             object.toDataOutputStream(output);
@@ -39,6 +42,18 @@ public class Serializers {
         @Override
         public LabeledExample read(Kryo kryo, Input input, Class<LabeledExample> type) {
             return new LabeledExample().reuseFromDataInputStream(input);
+        }
+
+        @Override
+        public byte[] serialize(LabeledExample element) {
+            if (o == null) {
+                o  = new Output(1024);
+            }
+            element.toDataOutputStream(o);
+            o.flush();
+            byte[] bytes = o.toBytes();
+            o.clear();
+            return bytes;
         }
     }
 
