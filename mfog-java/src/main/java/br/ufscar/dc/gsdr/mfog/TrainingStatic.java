@@ -19,7 +19,7 @@ public class TrainingStatic {
         List<Cluster> model = in.lines().skip(1).limit(100).map(Cluster::fromMinasCsv).collect(Collectors.toList());
         //
         LOG.info("connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.MODEL_STORE_PORT);
-        TCP<Cluster> socket = new TCP<>(Cluster.class, new Cluster(), false, TrainingStatic.class);
+        TCP<Cluster> socket = new TCP<>(Cluster.class, new Cluster(), TrainingStatic.class);
         socket.client(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
         LOG.info("Sending");
         for (Cluster cluster : model) {

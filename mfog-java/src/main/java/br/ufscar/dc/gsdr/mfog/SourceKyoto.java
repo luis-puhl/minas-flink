@@ -24,7 +24,7 @@ public class SourceKyoto {
                         new FileReader(basePath + training)
                 ).lines().map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
                 //
-                TCP<LabeledExample> server = new TCP<>(LabeledExample.class, new LabeledExample(), false, SourceKyoto.class);
+                TCP<LabeledExample> server = new TCP<>(LabeledExample.class, new LabeledExample(), SourceKyoto.class);
                 server.server(MfogManager.SOURCE_TRAINING_DATA_PORT);
                 server.serverAccept();
                 while (server.isConnected() && iterator.hasNext()) {
@@ -55,7 +55,7 @@ public class SourceKyoto {
             public void run() {
                 final Logger log = Logger.getLogger(EvaluatorRunnable.class);
                 try {
-                    TCP<LabeledExample> evaluator = new TCP<>(LabeledExample.class, new LabeledExample(), false, EvaluatorRunnable.class);
+                    TCP<LabeledExample> evaluator = new TCP<>(LabeledExample.class, new LabeledExample(), EvaluatorRunnable.class);
                     evaluator.server(MfogManager.SOURCE_EVALUATE_DATA_PORT);
                     log.info("Evaluator ready");
                     while (isRunning && iterator.hasNext() || !evaluationQueue.isEmpty()) {
@@ -87,7 +87,7 @@ public class SourceKyoto {
         Thread evaluatorThread = new Thread(evaluatorRunnable);
         evaluatorThread.start();
         //
-        TCP<Point> classifier = new TCP<>(Point.class, new Point(), false, SourceKyoto.class);
+        TCP<Point> classifier = new TCP<>(Point.class, new Point(), SourceKyoto.class);
         classifier.server(MfogManager.SOURCE_TEST_DATA_PORT);
         LOG.info("Classifier Ready");
         while (iterator.hasNext() || !testQueue.isEmpty()){

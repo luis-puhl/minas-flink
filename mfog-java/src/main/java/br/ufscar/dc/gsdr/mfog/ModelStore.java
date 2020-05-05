@@ -15,7 +15,7 @@ public class ModelStore {
         Logger log = Logger.getLogger(ModelStore.class);
         List<Cluster> model = new ArrayList<>(100);
         //
-        TCP<Cluster> util = new TCP<>(Cluster.class, new Cluster(), false, ModelStore.class);
+        TCP<Cluster> util = new TCP<>(Cluster.class, new Cluster(), ModelStore.class);
         util.server(MfogManager.MODEL_STORE_PORT);
         log.info("server ready on " + util.serverSocket.getInetAddress() + ":" + util.serverSocket.getLocalPort());
         //

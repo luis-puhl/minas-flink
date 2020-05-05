@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MfogManager {
-    public static final String SERVICES_HOSTNAME = "192.168.15.11";
+    public static final String SERVICES_HOSTNAME = "192.168.15.13";
     public static final int SOURCE_TRAINING_DATA_PORT = 9999;
     public static final int MODEL_STORE_INTAKE_PORT = 9998;
     public static final int MODEL_STORE_PORT = 9997;

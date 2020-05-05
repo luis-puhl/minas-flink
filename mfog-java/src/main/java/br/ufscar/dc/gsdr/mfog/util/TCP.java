@@ -12,31 +12,6 @@ import java.util.zip.GZIPOutputStream;
 public class TCP<T extends WithSerializable<T>> {
     protected final Logger log;
     protected final Class<T> typeParameterClass;
-    protected boolean withGzip;
-
-    @Deprecated
-    public TCP(Class<T> typeParameterClass) throws Exception {
-        this(typeParameterClass, false);
-    }
-    @Deprecated
-    public TCP(Class<T> typeParameterClass, boolean withGzip) throws Exception {
-        this(typeParameterClass, typeParameterClass.getDeclaredConstructor().newInstance(), withGzip);
-    }
-    @Deprecated
-    public TCP(Class<T> typeParameterClass, T reusableObject) {
-        this(typeParameterClass, reusableObject, false);
-    }
-    @Deprecated
-    public TCP(Class<T> typeParameterClass, T reusableObject, boolean withGzip) {
-        this(typeParameterClass, reusableObject, withGzip, Object.class);
-    }
-    public TCP(Class<T> typeParameterClass, T reusableObject, boolean withGzip, Class<?> caller) {
-        this.reusableObject = reusableObject;
-        this.typeParameterClass = typeParameterClass;
-        this.withGzip = withGzip;
-        this.log = Logger.getLogger(this.getClass(), typeParameterClass, caller);
-    }
-
     public T reusableObject;
     public ServerSocket serverSocket;
     public Socket socket;
@@ -48,12 +23,59 @@ public class TCP<T extends WithSerializable<T>> {
     public long millis;
     public long nano;
     public long i = 0;
+    protected boolean withGzip = MfogManager.USE_GZIP;
+    protected boolean hasNext = true;
+
+    public TCP(Class<T> typeParameterClass, T reusableObject, Class<?> caller) {
+        this.reusableObject = reusableObject;
+        this.typeParameterClass = typeParameterClass;
+        this.log = Logger.getLogger(this.getClass(), typeParameterClass, caller);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Logger log = Logger.getLogger(TCP.class);
+        boolean isServer = args.length > 0;
+        int port = 9999;
+        String kind = "client";
+        if (isServer) {
+            kind = "server";
+        }
+        log.info("Self test >" + kind);
+
+        log.info("Point List full ");
+        TCP<Point> tcp = new TCP<>(Point.class, new Point(), TCP.class);
+        //
+        if (isServer) {
+            tcp.server(port);
+            tcp.serverAccept();
+        } else {
+            tcp.client("localhost", port);
+        }
+        int i = 0;
+        if (isServer) {
+            Point zero = Point.zero(22);
+            for (; i < 653457; i++) {
+                zero.id = i;
+                tcp.send(zero);
+            }
+            tcp.flush();
+        } else {
+            while (tcp.hasNext()) {
+                tcp.next();
+                i++;
+            }
+        }
+        tcp.closeSocket();
+        tcp.closeServer();
+    }
+
     public void server(int port) throws IOException {
         if (serverSocket != null && !serverSocket.isClosed()) {
             serverSocket.close();
         }
         serverSocket = new ServerSocket(port);
     }
+
     public void serverAccept() throws IOException {
         if (socket != null && !socket.isClosed()) {
             socket.close();
@@ -67,9 +89,11 @@ public class TCP<T extends WithSerializable<T>> {
         millis = System.currentTimeMillis();
         nano = System.nanoTime();
     }
+
     public void client(String host, int port) throws IOException, InterruptedException {
         client(host, port, 3, 500);
     }
+
     public TCP<T> client(String host, int port, int maxNumRetries, long delayBetweenRetries) throws IOException, InterruptedException {
         log.info("socket");
         socket = null;
@@ -90,7 +114,7 @@ public class TCP<T extends WithSerializable<T>> {
                 log.error(e.getClass());
                 Thread.sleep(delayBetweenRetries);
             }
-            if (maxNumRetries != -1) maxNumRetries --;
+            if (maxNumRetries != -1) maxNumRetries--;
         }
         throw new IOException(TCP.class.getSimpleName() + " could not connect.", lastEx);
     }
@@ -108,6 +132,7 @@ public class TCP<T extends WithSerializable<T>> {
         toSend.toDataOutputStream(writer);
         i++;
     }
+
     public void flush() throws IOException {
         log.info("flush");
         writer.flush();
@@ -117,6 +142,7 @@ public class TCP<T extends WithSerializable<T>> {
         }
         outputStream.flush();
     }
+
     public boolean isConnected() {
         return socket != null && socket.isConnected();
     }
@@ -133,10 +159,11 @@ public class TCP<T extends WithSerializable<T>> {
         i++;
         return t;
     }
-    protected boolean hasNext = true;
+
     public boolean hasNext() {
         return hasNext && socket.isConnected();
     }
+
     public T next() throws IOException {
         try {
             reusableObject = receive(reusableObject);
@@ -155,50 +182,14 @@ public class TCP<T extends WithSerializable<T>> {
         socket = null;
         long millisDiff = System.currentTimeMillis() - millis;
         long nanoDiff = System.nanoTime() - nano;
-        long speed = ((i *10^4)/ millisDiff);
+        long speed = ((i * 10 ^ 4) / millisDiff);
         log.info(i + " items, " + millisDiff + " ms, " + nanoDiff + " ns, " + speed + " i/s");
     }
+
     public void closeServer() throws IOException {
         if (serverSocket != null && !serverSocket.isClosed()) {
             serverSocket.close();
         }
         serverSocket = null;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Logger log = Logger.getLogger(TCP.class);
-        boolean isServer = args.length > 0;
-        int port = 9999;
-        String kind = "client";
-        if (isServer) {
-            kind = "server";
-        }
-        log.info("Self test >" + kind);
-
-        log.info("Point List full ");
-        TCP<Point> tcp = new TCP<>(Point.class);
-        //
-        if (isServer) {
-            tcp.server(port);
-            tcp.serverAccept();
-        } else {
-            tcp.client("localhost", port);
-        }
-        int i = 0;
-        if (isServer) {
-            Point zero = Point.zero(22);
-            for (; i < 653457; i++) {
-                zero.id = i;
-                tcp.send(zero);
-            }
-            tcp.flush();
-        } else {
-            while (tcp.hasNext()){
-                tcp.next();
-                i++;
-            }
-        }
-        tcp.closeSocket();
-        tcp.closeServer();
     }
 }

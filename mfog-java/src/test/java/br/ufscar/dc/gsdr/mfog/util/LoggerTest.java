@@ -8,9 +8,9 @@ class LoggerTest {
 
     @Test
     void format() {
-        Logger lg = Logger.getLogger("service");
+        Logger lg = Logger.getLogger(LoggerTest.class);
         String format = lg.format("LVL", "message", 0);
-        String expected = "1969-12-31T21:00:00.000 LVL   service message";
+        String expected = "1969-12-31T21:00:00.000 LVL   LoggerTest message";
         assertEquals(expected, format, "Format error");
     }
 }

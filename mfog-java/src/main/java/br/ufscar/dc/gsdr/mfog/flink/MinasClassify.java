@@ -21,6 +21,7 @@ public class MinasClassify extends CoProcessFunction<Point, Model, LabeledExampl
             buffer.add(value);
         } else {
             out.collect(model.classify(value));
+            model.putToSleep();
         }
     }
 
@@ -32,6 +33,7 @@ public class MinasClassify extends CoProcessFunction<Point, Model, LabeledExampl
             for (Point point : buffer) {
                 out.collect(model.classify(point));
             }
+            model.putToSleep();
             buffer.clear();
         }
     }

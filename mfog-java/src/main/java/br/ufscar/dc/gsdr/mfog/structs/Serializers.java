@@ -54,8 +54,8 @@ public class Serializers {
         @Override
         public Model read(Kryo kryo, Input input, Class<Model> type) {
             Model model = new Model();
-            model.size = input.readInt();
-            for (int i = 0; i < model.size; i++) {
+            int modelSize = input.readInt();
+            for (int i = 0; i < modelSize; i++) {
                 model.model.add(new Cluster().reuseFromDataInputStream(input));
             }
             return model;

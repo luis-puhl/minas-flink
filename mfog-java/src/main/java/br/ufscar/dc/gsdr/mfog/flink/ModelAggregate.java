@@ -45,7 +45,6 @@ public class ModelAggregate extends RichMapFunction<Cluster, Model> {
             model.model = new ArrayList<>(100);
         }
         model.model.add(value);
-        model.size++;
         modelState.update(model);
         return model;
     }
