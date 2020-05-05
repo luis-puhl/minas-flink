@@ -1,23 +1,14 @@
 package br.ufscar.dc.gsdr.mfog.util;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Logger {
     static Set<String> filterServices = new HashSet<>();
+    String serviceName;
 
-    public void debug(String s) {}
-
-    static class NoLogger extends Logger {
-        NoLogger(String serviceName) {
-            super(serviceName);
-        }
-        public void info(Object msg) {}
-        public void warn(Object msg) {}
-        public void error(Object msg) {}
-        public void error(Exception exp) {}
-        public void debug(String s) {}
+    Logger(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     @Deprecated
@@ -27,6 +18,7 @@ public class Logger {
         }
         return new Logger(serviceName);
     }
+
     public static String getLoggerMame(Class<?> kls, Class<?>... parameterTypes) {
         String serviceName = kls.getSimpleName();
         StringBuilder sb = new StringBuilder(serviceName);
@@ -40,6 +32,7 @@ public class Logger {
         sb.append(">");
         return sb.toString();
     }
+
     public static Logger getLogger(Class<?> kls, Class<?>... parameterTypes) {
         String serviceName = kls.getSimpleName();
         if (filterServices.contains(serviceName)) {
@@ -47,13 +40,12 @@ public class Logger {
         }
         return getLogger(getLoggerMame(kls, parameterTypes));
     }
+
     static public Logger getLogger(Class<?> kls) {
         return getLogger(kls.getSimpleName());
     }
 
-    String serviceName;
-    Logger(String serviceName) {
-        this.serviceName = serviceName;
+    public void debug(String s) {
     }
 
     public void info(Object msg) {
@@ -67,12 +59,13 @@ public class Logger {
     public void error(Object msg) {
         this.log("ERR", msg.toString());
     }
+
     public void error(Exception exp) {
         StackTraceElement[] stackTrace = exp.getStackTrace();
         StackTraceElement trace = stackTrace[0];
         StringBuilder sb = new StringBuilder("\n");
         for (StackTraceElement traceI : stackTrace) {
-            if (traceI.getClassName().startsWith("br.ufscar.dc.gsdr.mfog")){
+            if (traceI.getClassName().startsWith("br.ufscar.dc.gsdr.mfog")) {
                 if (trace == null) {
                     trace = traceI;
                 }
@@ -87,11 +80,34 @@ public class Logger {
         System.out.println(format(level, msg));
         System.out.flush();
     }
+
     public String format(String level, String msg) {
         return format(level, msg, System.currentTimeMillis());
     }
+
     public String format(String level, String msg, long now) {
         // 1969-12-31T21:00:00.000 LVL   service message
         return String.format("%1$tFT%1$tT.%1$tL %2$-5s %3$s %4$s", now, level, serviceName, msg);
+    }
+
+    public static class NoLogger extends Logger {
+        NoLogger(String serviceName) {
+            super(serviceName);
+        }
+
+        public void info(Object msg) {
+        }
+
+        public void warn(Object msg) {
+        }
+
+        public void error(Object msg) {
+        }
+
+        public void error(Exception exp) {
+        }
+
+        public void debug(String s) {
+        }
     }
 }

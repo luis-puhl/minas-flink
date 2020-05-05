@@ -14,6 +14,8 @@ public class MfogManager {
     public static final int SOURCE_EVALUATE_DATA_PORT = 9994;
     public static final String dateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-");
 
+    public static final boolean USE_GZIP = true;
+
     public static void createDir(String jobName) {
         String outDir = "./out/" + jobName + "/" + dateString + "/";
         File dir = new File(outDir);

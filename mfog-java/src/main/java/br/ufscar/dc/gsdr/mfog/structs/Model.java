@@ -11,6 +11,7 @@ public class Model implements Serializable {
     public int size() {
         return size;
     }
+
     public boolean isEmpty() {
         return this.model.isEmpty();
     }
@@ -30,6 +31,6 @@ public class Model implements Serializable {
 
     @Override
     public String toString() {
-        return "Model{model=" + model.size() +"}";
+        return "Model{model=" + model.size() + "}";
     }
 }

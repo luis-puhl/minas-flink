@@ -17,6 +17,7 @@ public class Serializers {
             return new Cluster().reuseFromDataInputStream(input);
         }
     }
+
     static public class PointSerializer extends Serializer<Point> {
         @Override
         public void write(Kryo kryo, Output output, Point object) {
@@ -28,6 +29,7 @@ public class Serializers {
             return new Point().reuseFromDataInputStream(input);
         }
     }
+
     static public class LabeledExampleSerializer extends Serializer<LabeledExample> {
         @Override
         public void write(Kryo kryo, Output output, LabeledExample object) {
@@ -39,6 +41,7 @@ public class Serializers {
             return new LabeledExample().reuseFromDataInputStream(input);
         }
     }
+
     static public class ModelSerializer extends Serializer<Model> {
         @Override
         public void write(Kryo kryo, Output output, Model object) {

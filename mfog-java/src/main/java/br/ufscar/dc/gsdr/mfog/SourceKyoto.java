@@ -4,17 +4,11 @@ import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.ServerClient;
-import br.ufscar.dc.gsdr.mfog.util.TcpUtil;
-import org.apache.commons.lang3.SerializationUtils;
+import br.ufscar.dc.gsdr.mfog.util.TCP;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SourceKyoto {
     static final String training = "kyoto_binario_binarized_offline_1class_fold1_ini";
@@ -30,7 +24,7 @@ public class SourceKyoto {
                         new FileReader(basePath + training)
                 ).lines().map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
                 //
-                ServerClient<LabeledExample> server = new ServerClient<>(LabeledExample.class, new LabeledExample(), false, SourceKyoto.class);
+                TCP<LabeledExample> server = new TCP<>(LabeledExample.class, new LabeledExample(), false, SourceKyoto.class);
                 server.server(MfogManager.SOURCE_TRAINING_DATA_PORT);
                 server.serverAccept();
                 while (server.isConnected() && iterator.hasNext()) {
@@ -61,7 +55,7 @@ public class SourceKyoto {
             public void run() {
                 final Logger log = Logger.getLogger(EvaluatorRunnable.class);
                 try {
-                    ServerClient<LabeledExample> evaluator = new ServerClient<>(LabeledExample.class, new LabeledExample(), false, EvaluatorRunnable.class);
+                    TCP<LabeledExample> evaluator = new TCP<>(LabeledExample.class, new LabeledExample(), false, EvaluatorRunnable.class);
                     evaluator.server(MfogManager.SOURCE_EVALUATE_DATA_PORT);
                     log.info("Evaluator ready");
                     while (isRunning && iterator.hasNext() || !evaluationQueue.isEmpty()) {
@@ -93,7 +87,7 @@ public class SourceKyoto {
         Thread evaluatorThread = new Thread(evaluatorRunnable);
         evaluatorThread.start();
         //
-        ServerClient<Point> classifier = new ServerClient<>(Point.class, new Point(), false, SourceKyoto.class);
+        TCP<Point> classifier = new TCP<>(Point.class, new Point(), false, SourceKyoto.class);
         classifier.server(MfogManager.SOURCE_TEST_DATA_PORT);
         LOG.info("Classifier Ready");
         while (iterator.hasNext() || !testQueue.isEmpty()){

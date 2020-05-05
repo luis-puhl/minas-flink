@@ -6,32 +6,31 @@ import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class ServerClient<T extends WithSerializable<T>> {
+public class TCP<T extends WithSerializable<T>> {
     protected final Logger log;
     protected final Class<T> typeParameterClass;
     protected boolean withGzip;
 
     @Deprecated
-    public ServerClient(Class<T> typeParameterClass) throws Exception {
+    public TCP(Class<T> typeParameterClass) throws Exception {
         this(typeParameterClass, false);
     }
     @Deprecated
-    public ServerClient(Class<T> typeParameterClass, boolean withGzip) throws Exception {
+    public TCP(Class<T> typeParameterClass, boolean withGzip) throws Exception {
         this(typeParameterClass, typeParameterClass.getDeclaredConstructor().newInstance(), withGzip);
     }
     @Deprecated
-    public ServerClient(Class<T> typeParameterClass, T reusableObject) {
+    public TCP(Class<T> typeParameterClass, T reusableObject) {
         this(typeParameterClass, reusableObject, false);
     }
     @Deprecated
-    public ServerClient(Class<T> typeParameterClass, T reusableObject, boolean withGzip) {
+    public TCP(Class<T> typeParameterClass, T reusableObject, boolean withGzip) {
         this(typeParameterClass, reusableObject, withGzip, Object.class);
     }
-    public ServerClient(Class<T> typeParameterClass, T reusableObject, boolean withGzip, Class<?> caller) {
+    public TCP(Class<T> typeParameterClass, T reusableObject, boolean withGzip, Class<?> caller) {
         this.reusableObject = reusableObject;
         this.typeParameterClass = typeParameterClass;
         this.withGzip = withGzip;
@@ -71,7 +70,7 @@ public class ServerClient<T extends WithSerializable<T>> {
     public void client(String host, int port) throws IOException, InterruptedException {
         client(host, port, 3, 500);
     }
-    public ServerClient<T> client(String host, int port, int maxNumRetries, long delayBetweenRetries) throws IOException, InterruptedException {
+    public TCP<T> client(String host, int port, int maxNumRetries, long delayBetweenRetries) throws IOException, InterruptedException {
         log.info("socket");
         socket = null;
         Exception lastEx = null;
@@ -93,7 +92,7 @@ public class ServerClient<T extends WithSerializable<T>> {
             }
             if (maxNumRetries != -1) maxNumRetries --;
         }
-        throw new IOException(ServerClient.class.getSimpleName() + " could not connect.", lastEx);
+        throw new IOException(TCP.class.getSimpleName() + " could not connect.", lastEx);
     }
 
     public void send(T toSend) throws IOException {
@@ -167,7 +166,7 @@ public class ServerClient<T extends WithSerializable<T>> {
     }
 
     public static void main(String[] args) throws Exception {
-        Logger log = Logger.getLogger(ServerClient.class);
+        Logger log = Logger.getLogger(TCP.class);
         boolean isServer = args.length > 0;
         int port = 9999;
         String kind = "client";
@@ -177,29 +176,29 @@ public class ServerClient<T extends WithSerializable<T>> {
         log.info("Self test >" + kind);
 
         log.info("Point List full ");
-        ServerClient<Point> serverClient = new ServerClient<>(Point.class);
+        TCP<Point> tcp = new TCP<>(Point.class);
         //
         if (isServer) {
-            serverClient.server(port);
-            serverClient.serverAccept();
+            tcp.server(port);
+            tcp.serverAccept();
         } else {
-            serverClient.client("localhost", port);
+            tcp.client("localhost", port);
         }
         int i = 0;
         if (isServer) {
             Point zero = Point.zero(22);
             for (; i < 653457; i++) {
                 zero.id = i;
-                serverClient.send(zero);
+                tcp.send(zero);
             }
-            serverClient.flush();
+            tcp.flush();
         } else {
-            while (serverClient.hasNext()){
-                serverClient.next();
+            while (tcp.hasNext()){
+                tcp.next();
                 i++;
             }
         }
-        serverClient.closeSocket();
-        serverClient.closeServer();
+        tcp.closeSocket();
+        tcp.closeServer();
     }
 }

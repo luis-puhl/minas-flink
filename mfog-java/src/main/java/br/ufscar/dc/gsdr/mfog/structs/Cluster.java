@@ -17,10 +17,31 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
     public static String CSV_HEADER = "id,label,category,matches,time,variance,center";
 
     // size,lblClasse,category,time,meanDistance,radius,center
+    public long id;
+    public Point center;
+    public float variance;
+    public String label;
+    public String category;
+    public long matches;
+    public long time;
+
+    public Cluster() {
+    }
+
+    private Cluster(long id, Point center, float variance, String label, String category, long matches, long time) {
+        this.id = id;
+        this.center = center;
+        this.variance = variance;
+        this.label = label;
+        this.category = category;
+        this.matches = matches;
+        this.time = time;
+    }
 
     public static Cluster fromJson(String src) {
         return fromJson(new JSONObject(src));
     }
+
     public static Cluster fromJson(JSONObject json) {
         long id = json.getLong("id");
         float variance = json.getFloat("variance");
@@ -36,6 +57,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
     public static Cluster fromBytes(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
     }
+
     public static Cluster fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
@@ -46,55 +68,44 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         String centerString = metaAndCenter[1].replaceAll("[ \\]]", "");
         String[] split = meta.split(",");
         //
-        long id                = Long.parseLong(split[0]);
-        String label           = split[1];
-        String category        = split[2];
-        long matches           = Long.parseLong(split[3]);
-        long time              = Long.parseLong(split[4]);
-        float meanDistance    = Float.parseFloat(split[5]);
-        float radius          = Float.parseFloat(split[6]);
+        long id = Long.parseLong(split[0]);
+        String label = split[1];
+        String category = split[2];
+        long matches = Long.parseLong(split[3]);
+        long time = Long.parseLong(split[4]);
+        float meanDistance = Float.parseFloat(split[5]);
+        float radius = Float.parseFloat(split[6]);
         String[] centerStrings = centerString.split(",");
         int dimensions = centerStrings.length;
         if (dimensions != 22) {
             throw new NumberFormatException("Minas model for KDD has 22 dimensions");
         }
         //
-        float[] center        = new float[dimensions];
+        float[] center = new float[dimensions];
         for (int i = 0; i < dimensions; i++) {
             center[i] = Float.parseFloat(centerStrings[i]);
         }
         return new Cluster(id, new Point(id, center, time), radius, label, category, matches, time);
     }
 
-    public static Cluster apply(long id, Point center, float variance, String label){
+    public static Cluster apply(long id, Point center, float variance, String label) {
         return apply(id, center, variance, label, Cluster.CATEGORY_NORMAL);
     }
-    public static Cluster apply(long id, Point center, float variance, String label, String category){
+
+    public static Cluster apply(long id, Point center, float variance, String label, String category) {
         return apply(id, center, variance, label, category, 0);
     }
-    public static Cluster apply(long id, Point center, float variance, String label, String category, long matches){
+
+    public static Cluster apply(long id, Point center, float variance, String label, String category, long matches) {
         return apply(id, center, variance, label, category, matches, System.currentTimeMillis());
     }
-    public static Cluster apply(long id, Point center, float variance, String label, String category, long matches, long time){
+
+    public static Cluster apply(long id, Point center, float variance, String label, String category, long matches, long time) {
         return new Cluster(id, center, variance, label, category, matches, time);
     }
 
-    public long id;
-    public Point center;
-    public float variance;
-    public String label;
-    public String category;
-    public long matches;
-    public long time;
-    public Cluster() {}
-    private Cluster(long id, Point center, float variance, String label, String category, long matches, long time) {
-        this.id = id;
-        this.center = center;
-        this.variance = variance;
-        this.label = label;
-        this.category = category;
-        this.matches = matches;
-        this.time = time;
+    public static Cluster fromDataInputStream(DataInputStream in) throws IOException {
+        return new Cluster().reuseFromDataInputStream(in);
     }
 
     public JSONObject json() {
@@ -162,8 +173,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         if (this == o) return true;
         if (!(o instanceof Cluster)) return false;
         Cluster cluster = (Cluster) o;
-        return getCenter().equals(cluster.getCenter()) &&
-                       getLabel().equals(cluster.getLabel());
+        return getCenter().equals(cluster.getCenter()) && getLabel().equals(cluster.getLabel());
     }
 
     @Override
@@ -177,9 +187,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
 
     @Override
     public String toString() {
-        return "Cluster{id=" + id + ", center=" + center + ", variance=" + variance +
-                       ", label='" + label + '\'' + ", category='" + category + '\'' +
-                       ", matches=" + matches + ", time=" + time +'}';
+        return "Cluster{id=" + id + ", center=" + center + ", variance=" + variance + ", label='" + label + '\'' + ", category='" + category + '\'' + ", matches=" + matches + ", time=" + time + '}';
     }
 
     public void toDataOutputStream(DataOutputStream out) throws IOException {
@@ -191,6 +199,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         out.writeLong(time);
         center.toDataOutputStream(out);
     }
+
     public void toDataOutputStream(Output out) {
         out.writeLong(id);
         out.writeFloat(variance);
@@ -200,9 +209,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         out.writeLong(time);
         center.toDataOutputStream(out);
     }
-    public static Cluster fromDataInputStream(DataInputStream in) throws IOException {
-        return new Cluster().reuseFromDataInputStream(in);
-    }
+
     @Override
     public Cluster reuseFromDataInputStream(DataInputStream in) throws IOException {
         id = in.readLong();
@@ -217,6 +224,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         this.center = this.center.reuseFromDataInputStream(in);
         return this;
     }
+
     public Cluster reuseFromDataInputStream(Input in) {
         id = in.readLong();
         variance = in.readFloat();

@@ -3,7 +3,7 @@ package br.ufscar.dc.gsdr.mfog;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.ServerClient;
+import br.ufscar.dc.gsdr.mfog.util.TCP;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +19,7 @@ public class TrainingStatic {
         List<Cluster> model = in.lines().skip(1).limit(100).map(Cluster::fromMinasCsv).collect(Collectors.toList());
         //
         LOG.info("connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.MODEL_STORE_PORT);
-        ServerClient<Cluster> socket = new ServerClient<>(Cluster.class, new Cluster(), false, TrainingStatic.class);
+        TCP<Cluster> socket = new TCP<>(Cluster.class, new Cluster(), false, TrainingStatic.class);
         socket.client(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
         LOG.info("Sending");
         for (Cluster cluster : model) {

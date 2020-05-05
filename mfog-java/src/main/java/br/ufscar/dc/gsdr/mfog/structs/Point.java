@@ -3,7 +3,8 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.Arrays;
@@ -11,12 +12,28 @@ import java.util.Objects;
 
 public class Point implements Serializable, WithSerializable<Point> {
 
+    public static String csv = "id,value,time";
+    public long id;
+    public float[] value;
+    public long time;
+
+    public Point() {
+    }
+
+    public Point(long id, float[] value, long time) {
+        this.id = id;
+        this.value = value;
+        this.time = time;
+    }
+
     public static Point fromJson(String src) {
         return fromJson(new JSONObject(src));
     }
+
     public static Point fromBytes(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
     }
+
     public static Point fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
@@ -31,33 +48,24 @@ public class Point implements Serializable, WithSerializable<Point> {
         long time = src.getLong("time");
         return new Point(id, value, time);
     }
-    public static Point zero(int dimension){
+
+    public static Point zero(int dimension) {
         float[] val = new float[dimension];
         return apply(0, val);
     }
+
     public static Point max(int dimension) {
         float[] val = new float[dimension];
         Arrays.fill(val, (float) 1.0);
         return apply(Long.MAX_VALUE, val);
     }
-    public static String csv = "id,value,time";
 
     public static Point apply(long id, float[] value) {
         return apply(id, value, System.currentTimeMillis());
     }
+
     public static Point apply(long id, float[] value, long time) {
         return new Point(id, value, time);
-    }
-
-    public long id;
-    public float[] value;
-    public long time;
-
-    public Point() {}
-    public Point(long id, float[] value, long time) {
-        this.id = id;
-        this.value = value;
-        this.time = time;
     }
 
     @Deprecated
@@ -68,6 +76,7 @@ public class Point implements Serializable, WithSerializable<Point> {
     public JSONObject json() {
         return new JSONObject(this);
     }
+
     /*
     public String csv() {
         StringBuilder val = new StringBuilder();
@@ -82,13 +91,16 @@ public class Point implements Serializable, WithSerializable<Point> {
     public int dimension() {
         return this.value.length;
     }
+
     // public float fromOrigin(implicit distanceOperator: Point.DistanceOperator): Float = this.distance(Point.zero(this.dimension))
     public double fromOrigin() {
         return this.distance(Point.zero(this.dimension()));
     }
+
     public double distance(Point other) {
         return this.euclideanDistance(other);
     }
+
     public Point plus(Point other) {
         checkSize(other);
         float[] val = new float[dimension()];
@@ -98,7 +110,7 @@ public class Point implements Serializable, WithSerializable<Point> {
         return apply(this.id, val);
     }
 
-//        /**
+    //        /**
 //         * @param other
 //         * @return Internal Product = a * b = [a_i * b_i, ...]
 //         */
@@ -108,29 +120,31 @@ public class Point implements Serializable, WithSerializable<Point> {
 //                                                                     Point(this.id, this.value.map(x => x * scalar))
 //        def /(scalar: Float): Point =
 //                                                                     this * (1/scalar)
-        public Point scalarMul(float x) {
-            float[] val = new float[dimension()];
-            for (int i = 0; i < value.length; i++) {
-                val[i] = this.value[i] * x;
-            }
-            return apply(this.id, val);
+    public Point scalarMul(float x) {
+        float[] val = new float[dimension()];
+        for (int i = 0; i < value.length; i++) {
+            val[i] = this.value[i] * x;
         }
-        public Point neg() {
-            return this.scalarMul(-1);
-        }
-        public Point minus(Point other) {
-            checkSize(other);
-            float[] val = new float[dimension()];
-            for (int i = 0; i < value.length; i++) {
-                val[i] = this.value[i] - other.value[i];
-            }
-            return apply(this.id, val);
-        }
+        return apply(this.id, val);
+    }
 
-        /**
-         * @return ∑(aᵢ²)
-         * def unary_| : Float = this.value.map(x => Math.pow(x, 2)).sum
-         */
+    public Point neg() {
+        return this.scalarMul(-1);
+    }
+
+    public Point minus(Point other) {
+        checkSize(other);
+        float[] val = new float[dimension()];
+        for (int i = 0; i < value.length; i++) {
+            val[i] = this.value[i] - other.value[i];
+        }
+        return apply(this.id, val);
+    }
+
+    /**
+     * @return ∑(aᵢ²)
+     * def unary_| : Float = this.value.map(x => Math.pow(x, 2)).sum
+     */
 
 //        /**
 //         * @return ||point|| = √(|a|)
@@ -143,21 +157,22 @@ public class Point implements Serializable, WithSerializable<Point> {
 //            case _ => false
 //        }
 //
-        public void checkSize(Point other) {
-            if (this.dimension() != other.dimension()) {
-                throw new RuntimeException("Mismatch dimensions. This is " + this.dimension() + " and other is " + other.dimension() + ".");
-            }
+    public void checkSize(Point other) {
+        if (this.dimension() != other.dimension()) {
+            throw new RuntimeException(
+                "Mismatch dimensions. This is " + this.dimension() + " and other is " + other.dimension() + ".");
         }
+    }
 
-        public double euclideanDistance(Point other) {
-            checkSize(other);
-            float val = (float) 0.0;
-            for (int i = 0; i < value.length; i++) {
-                float diff = this.value[i] - other.value[i];
-                val += diff * diff;
-            }
-            return Math.sqrt(val);
+    public double euclideanDistance(Point other) {
+        checkSize(other);
+        float val = (float) 0.0;
+        for (int i = 0; i < value.length; i++) {
+            float diff = this.value[i] - other.value[i];
+            val += diff * diff;
         }
+        return Math.sqrt(val);
+    }
 //        def euclideanSqrDistance(other: Point): Float =
 //                                                                                                        checkSize(other, (this - other).unary_|)
 //        def taxiCabDistance(other: Point): Float =
@@ -209,7 +224,7 @@ public class Point implements Serializable, WithSerializable<Point> {
 
     @Override
     public String toString() {
-        return "Point{id=" + id +", value=" + Arrays.toString(value) +", time=" + time + '}';
+        return "Point{id=" + id + ", value=" + Arrays.toString(value) + ", time=" + time + '}';
     }
 
     public byte[] toBytes() {
@@ -224,12 +239,14 @@ public class Point implements Serializable, WithSerializable<Point> {
         }
         out.writeLong(time);
     }
+
     public void toDataOutputStream(Output out) {
         out.writeLong(id);
         out.writeInt(value.length);
         out.writeFloats(value);
         out.writeLong(time);
     }
+
     public Point reuseFromDataInputStream(DataInputStream in) throws IOException {
         this.id = in.readLong();
         //

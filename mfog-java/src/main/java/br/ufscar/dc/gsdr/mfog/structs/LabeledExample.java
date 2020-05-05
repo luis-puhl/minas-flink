@@ -3,25 +3,39 @@ package br.ufscar.dc.gsdr.mfog.structs;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
-import org.json.*;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.util.Objects;
 
 public class LabeledExample implements Serializable, WithSerializable<LabeledExample> {
 
+    public Point point;
+    public String label;
+
+    public LabeledExample() {
+    }
+
+    public LabeledExample(String label, Point point) {
+        this.point = point;
+        this.label = label;
+    }
+
     public static LabeledExample fromJson(String src) {
         return fromJson(new JSONObject(src));
     }
+
     public static LabeledExample fromJson(JSONObject src) {
         LabeledExample l = new LabeledExample();
         l.label = src.getString("label");
         l.point = Point.fromJson(src.getJSONObject("point"));
         return l;
     }
+
     public static LabeledExample fromBytes(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
     }
+
     public static LabeledExample fromBytes(InputStream stream) {
         return SerializationUtils.deserialize(stream);
     }
@@ -29,22 +43,13 @@ public class LabeledExample implements Serializable, WithSerializable<LabeledExa
     static public LabeledExample fromKyotoCSV(int id, String line) {
         // 0.0,0.0,0.0,0.0,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,1,0,N
         String[] lineSplit = line.split(",");
-        float[] floats = new float[lineSplit.length -1];
-        for (int j = 0; j < floats.length -1; j++) {
+        float[] floats = new float[lineSplit.length - 1];
+        for (int j = 0; j < floats.length - 1; j++) {
             floats[j] = Float.parseFloat(lineSplit[j]);
         }
         String label = lineSplit[lineSplit.length - 1];
         Point point = Point.apply(id, floats);
         return new LabeledExample(label, point);
-    }
-
-    public Point point;
-    public String label;
-
-    public LabeledExample() {}
-    public LabeledExample(String label, Point point) {
-        this.point = point;
-        this.label = label;
     }
 
     @Override
@@ -98,6 +103,7 @@ public class LabeledExample implements Serializable, WithSerializable<LabeledExa
         this.point = this.point.reuseFromDataInputStream(in);
         return this;
     }
+
     public LabeledExample reuseFromDataInputStream(Input in) {
         this.label = in.readString();
         if (this.point == null) {
@@ -112,6 +118,7 @@ public class LabeledExample implements Serializable, WithSerializable<LabeledExa
         out.writeUTF(label);
         point.toDataOutputStream(out);
     }
+
     public void toDataOutputStream(Output out) {
         out.writeString(label);
         point.toDataOutputStream(out);

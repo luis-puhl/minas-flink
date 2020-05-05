@@ -1,12 +1,12 @@
 /**
  * Copyright 2020 Luis Puhl
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,15 +17,13 @@
 package br.ufscar.dc.gsdr.mfog.flink;
 
 import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.zip.GZIPInputStream;
@@ -40,8 +38,6 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
     public static int DEFAULT_MAX_RETRIES = 10;
     public static int DEFAULT_TIMEOUT = 10;
     public static boolean DEFAULT_GZIP = false;
-
-    protected transient Logger log;
     protected final String hostname;
     protected final int port;
     protected final long maxNumRetries;
@@ -49,22 +45,26 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
     protected final int connectionTimeout;
     protected final Class<T> typeInfo;
     protected final String sourceName;
-
+    protected final boolean withGzip;
+    protected transient Logger log;
     protected transient Socket currentSocket;
     protected transient DataInputStream reader;
     protected volatile boolean isRunning = true;
-    protected final boolean withGzip;
     protected T reusableObject;
 
     public SocketGenericStreamFunction(String hostname, int port, T reusableObject, Class<T> typeInfo, String sourceName) {
-        this(hostname, port, DEFAULT_MAX_RETRIES, DEFAULT_DELAY_BETWEEN_RETRIES, DEFAULT_TIMEOUT, reusableObject, typeInfo, sourceName, DEFAULT_GZIP);
+        this(
+            hostname, port, DEFAULT_MAX_RETRIES, DEFAULT_DELAY_BETWEEN_RETRIES, DEFAULT_TIMEOUT, reusableObject,
+            typeInfo, sourceName, DEFAULT_GZIP
+        );
     }
+
     public SocketGenericStreamFunction(
-            String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout,
-            T reusableObject, Class<T> typeInfo, String sourceName, boolean withGzip
+        String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout, T reusableObject, Class<T> typeInfo, String sourceName, boolean withGzip
     ) {
         checkArgument(isValidClientPort(port), "port is out of range");
-        checkArgument(maxNumRetries >= -1, "maxNumRetries must be zero or larger (num retries), or -1 (infinite retries)");
+        checkArgument(
+            maxNumRetries >= -1, "maxNumRetries must be zero or larger (num retries), or -1 (infinite retries)");
         checkArgument(delayBetweenRetries >= 0, "delayBetweenRetries must be zero or positive");
 
         this.hostname = checkNotNull(hostname, "hostname must not be null");
@@ -81,7 +81,8 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
 
     Logger getLog() {
         if (log == null) {
-            this.log = LoggerFactory.getLogger(br.ufscar.dc.gsdr.mfog.util.Logger.getLoggerMame(SocketGenericStreamFunction.class, typeInfo));
+            this.log = LoggerFactory.getLogger(
+                br.ufscar.dc.gsdr.mfog.util.Logger.getLoggerMame(SocketGenericStreamFunction.class, typeInfo));
         }
         return this.log;
     }
@@ -97,7 +98,8 @@ public class SocketGenericStreamFunction<T extends WithSerializable<T>> implemen
                 try {
                     socket.connect(new InetSocketAddress(hostname, port), connectionTimeout);
                     if (withGzip) {
-                        reader = new DataInputStream(new GZIPInputStream(new BufferedInputStream(socket.getInputStream())));
+                        reader = new DataInputStream(
+                            new GZIPInputStream(new BufferedInputStream(socket.getInputStream())));
                     } else {
                         reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                     }
