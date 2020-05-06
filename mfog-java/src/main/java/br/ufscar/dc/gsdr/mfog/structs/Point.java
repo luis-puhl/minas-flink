@@ -1,16 +1,13 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import org.apache.commons.lang3.SerializationUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Point implements Serializable, WithSerializable<Point> {
+public class Point implements Serializable {
 
     public static String csv = "id,value,time";
     public long id;
@@ -28,14 +25,6 @@ public class Point implements Serializable, WithSerializable<Point> {
 
     public static Point fromJson(String src) {
         return fromJson(new JSONObject(src));
-    }
-
-    public static Point fromBytes(byte[] bytes) {
-        return SerializationUtils.deserialize(bytes);
-    }
-
-    public static Point fromBytes(InputStream stream) {
-        return SerializationUtils.deserialize(stream);
     }
 
     public static Point fromJson(JSONObject src) {
@@ -66,11 +55,6 @@ public class Point implements Serializable, WithSerializable<Point> {
 
     public static Point apply(long id, float[] value, long time) {
         return new Point(id, value, time);
-    }
-
-    @Deprecated
-    public static Point fromDataInputStream(DataInputStream in) throws IOException {
-        return new Point().reuseFromDataInputStream(in);
     }
 
     public JSONObject json() {
@@ -227,44 +211,5 @@ public class Point implements Serializable, WithSerializable<Point> {
         return "Point{id=" + id + ", value=" + Arrays.toString(value) + ", time=" + time + '}';
     }
 
-    public byte[] toBytes() {
-        return SerializationUtils.serialize(this);
-    }
-
-    public void toDataOutputStream(DataOutputStream out) throws IOException {
-        out.writeLong(id);
-        out.writeInt(value.length);
-        for (float v : value) {
-            out.writeFloat(v);
-        }
-        out.writeLong(time);
-    }
-
-    public void toDataOutputStream(Output out) {
-        out.writeLong(id);
-        out.writeInt(value.length);
-        out.writeFloats(value);
-        out.writeLong(time);
-    }
-
-    public Point reuseFromDataInputStream(DataInputStream in) throws IOException {
-        this.id = in.readLong();
-        //
-        int dimensions = in.readInt();
-        this.value = new float[dimensions];
-        for (int i = 0; i < dimensions; i++) {
-            this.value[i] = in.readFloat();
-        }
-        this.time = in.readLong();
-        return this;
-    }
-
-    public Point reuseFromDataInputStream(Input in) {
-        this.id = in.readLong();
-        int dimensions = in.readInt();
-        this.value = in.readFloats(dimensions);
-        this.time = in.readLong();
-        return this;
-    }
 }
 

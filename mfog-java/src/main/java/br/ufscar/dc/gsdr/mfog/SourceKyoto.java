@@ -31,7 +31,7 @@ public class SourceKyoto {
                     server.send(iterator.next());
                 }
                 server.flush();
-                server.closeSocket();
+                server.close();
                 server.closeServer();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -73,7 +73,7 @@ public class SourceKyoto {
                         }
                     }
                     evaluator.flush();
-                    evaluator.closeSocket();
+                    evaluator.close();
                     evaluator.closeServer();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -105,7 +105,7 @@ public class SourceKyoto {
             }
         }
         classifier.flush();
-        classifier.closeSocket();
+        classifier.close();
         classifier.closeServer();
 
         evaluatorRunnable.cancel();

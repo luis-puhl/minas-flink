@@ -64,13 +64,13 @@ under the License.
 			<artifactId>flink-java</artifactId>
 			<version>${flink.version}</version>
 			<classifier>sources</classifier>
-			<scope>provided</scope>
+<!--			<scope>provided</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
-			<scope>provided</scope>
+<!--			<scope>provided</scope>-->
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
@@ -78,7 +78,11 @@ under the License.
 			<artifactId>json</artifactId>
 			<version>20190722</version>
 		</dependency>
-
+<!--		<dependency>-->
+<!--			<groupId>com.esotericsoftware</groupId>-->
+<!--			<artifactId>kryo</artifactId>-->
+<!--			<version>4.0.2</version>-->
+<!--		</dependency>-->
 
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
 		<!-- Example:
@@ -95,19 +99,7 @@ under the License.
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
-<!--			<scope>runtime</scope>-->
-<!--			<scope>provided</scope>-->
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.apache.logging.log4j</groupId>-->
-<!--			<artifactId>log4j-api</artifactId>-->
-<!--			<version>2.13.1</version>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>org.apache.logging.log4j</groupId>-->
-<!--			<artifactId>log4j-core</artifactId>-->
-<!--			<version>2.13.1</version>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -120,32 +112,6 @@ under the License.
 			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>${junit.jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-			<version>${junit.vintage.version}</version>
-			<scope>test</scope>
-		</dependency>
-		-->
 	</dependencies>
 
 	<build>
@@ -184,12 +150,34 @@ under the License.
 									</excludes>
 								</filter>
 							</filters>
+							<!--
+Action "run" compiles and runs a program.
+  Syntax: run [OPTIONS] <jar-file> <arguments>
+  "run" action options:
+     -c, - - class <classname>               Class with the program entry point
+                                          ("main()" method). Only needed if the
+                                          JAR file does not specify the class in
+                                          its manifest.
+							-->
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>br.ufscar.dc.gsdr.mfog.Classifier</mainClass>
-									<!-- <mainClass>org.example.StreamingJob</mainClass> -->
 								</transformer>
 							</transformers>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build-classifier</id>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>br.ufscar.dc.gsdr.mfog.Classifier</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<finalName>classifier.jar</finalName>
 						</configuration>
 					</execution>
 				</executions>

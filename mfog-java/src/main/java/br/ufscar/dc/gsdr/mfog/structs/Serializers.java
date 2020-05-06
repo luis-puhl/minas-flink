@@ -4,56 +4,67 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.apache.flink.api.common.serialization.SerializationSchema;
 
 public class Serializers {
     static public class ClusterSerializer extends Serializer<Cluster> {
         @Override
         public void write(Kryo kryo, Output output, Cluster object) {
-            object.toDataOutputStream(output);
+            output.writeLong(object.id);
+            output.writeFloat(object.variance);
+            output.writeString(object.label);
+            output.writeString(object.category);
+            output.writeLong(object.matches);
+            output.writeLong(object.time);
+            new PointSerializer().write(kryo, output, object.center);
         }
 
         @Override
         public Cluster read(Kryo kryo, Input input, Class<Cluster> type) {
-            return new Cluster().reuseFromDataInputStream(input);
+            Cluster cluster = new Cluster();
+            cluster.id = input.readLong();
+            cluster.variance = input.readFloat();
+            cluster.label = input.readString();
+            cluster.category = input.readString();
+            cluster.matches = input.readLong();
+            cluster.time = input.readLong();
+            cluster.center = new PointSerializer().read(kryo, input, Point.class);
+            return cluster;
         }
     }
 
     static public class PointSerializer extends Serializer<Point> {
         @Override
         public void write(Kryo kryo, Output output, Point object) {
-            object.toDataOutputStream(output);
+            output.writeLong(object.id);
+            output.writeInt(object.value.length);
+            output.writeFloats(object.value);
+            output.writeLong(object.time);
         }
 
         @Override
         public Point read(Kryo kryo, Input input, Class<Point> type) {
-            return new Point().reuseFromDataInputStream(input);
+            Point object = new Point();
+            object.id = input.readLong();
+            int dimensions = input.readInt();
+            object.value = input.readFloats(dimensions);
+            object.time = input.readLong();
+            return object;
         }
     }
 
-    static public class LabeledExampleSerializer extends Serializer<LabeledExample> implements SerializationSchema<LabeledExample> {
-        transient Output o;
-
+    static public class LabeledExampleSerializer extends Serializer<LabeledExample>  {
         @Override
         public void write(Kryo kryo, Output output, LabeledExample object) {
-            object.toDataOutputStream(output);
+            output.writeString(object.label);
+            new PointSerializer().write(kryo, output, object.point);
         }
 
         @Override
         public LabeledExample read(Kryo kryo, Input input, Class<LabeledExample> type) {
-            return new LabeledExample().reuseFromDataInputStream(input);
-        }
-
-        @Override
-        public byte[] serialize(LabeledExample element) {
-            if (o == null) {
-                o  = new Output(1024);
-            }
-            element.toDataOutputStream(o);
-            o.flush();
-            byte[] bytes = o.toBytes();
-            o.clear();
-            return bytes;
+            LabeledExample labeledExample = new LabeledExample();
+            labeledExample.label = input.readString();
+            labeledExample.point = new PointSerializer().read(kryo, input, Point.class);
+            return labeledExample;
         }
     }
 
@@ -61,8 +72,9 @@ public class Serializers {
         @Override
         public void write(Kryo kryo, Output output, Model object) {
             output.writeInt(object.model.size());
+            ClusterSerializer clusterSerializer = new ClusterSerializer();
             for (Cluster cluster : object.model) {
-                cluster.toDataOutputStream(output);
+                clusterSerializer.write(kryo, output, cluster);
             }
         }
 
@@ -70,10 +82,41 @@ public class Serializers {
         public Model read(Kryo kryo, Input input, Class<Model> type) {
             Model model = new Model();
             int modelSize = input.readInt();
+            ClusterSerializer clusterSerializer = new ClusterSerializer();
             for (int i = 0; i < modelSize; i++) {
-                model.model.add(new Cluster().reuseFromDataInputStream(input));
+                model.model.add(clusterSerializer.read(kryo, input, Cluster.class));
             }
             return model;
+        }
+    }
+
+    static public Kryo getKryo() {
+        Kryo kryo = new Kryo();
+        kryo.register(Cluster.class, new ClusterSerializer());
+        kryo.register(Point.class, new PointSerializer());
+        kryo.register(LabeledExample.class, new LabeledExampleSerializer());
+        kryo.register(Model.class, new ModelSerializer());
+        kryo.setRegistrationRequired(true);
+        return kryo;
+    }
+
+    static public void main(String[] args) throws Exception {
+        Kryo kryo = getKryo();
+        Cluster a = new Cluster();
+        a.label = "Hello Kryo!";
+        a.center = Point.zero(22);
+        System.out.println(a);
+
+        Output output = new Output(1024, -1);
+        kryo.writeObject(output, a);
+
+        Input input = new Input(output.getBuffer(), 0, output.position());
+        Cluster b = kryo.readObject(input, Cluster.class);
+        input.close();
+        System.out.println(b);
+
+        if (!b.equals(a)) {
+            throw new AssertionError("Serialization round trip failed, cluster differ.");
         }
     }
 

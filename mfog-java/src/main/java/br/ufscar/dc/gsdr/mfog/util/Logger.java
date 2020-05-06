@@ -63,16 +63,22 @@ public class Logger {
     public void error(Exception exp) {
         StackTraceElement[] stackTrace = exp.getStackTrace();
         StackTraceElement trace = stackTrace[0];
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder(exp.getMessage());
+        sb.append("\n        at ")
+            .append(trace.getClassName())
+            .append(".").append(trace.getMethodName())
+            .append("(").append(trace.getFileName())
+            .append(":").append(trace.getLineNumber()).append(")\n");
         for (StackTraceElement traceI : stackTrace) {
             if (traceI.getClassName().startsWith("br.ufscar.dc.gsdr.mfog")) {
-                if (trace == null) {
-                    trace = traceI;
-                }
-                sb.append(traceI.getClassName()).append(":").append(traceI.getLineNumber()).append("\n");
+                sb.append("        at ")
+                    .append(traceI.getClassName())
+                    .append(".").append(traceI.getMethodName())
+                    .append("(").append(traceI.getFileName())
+                    .append(":").append(traceI.getLineNumber()).append(")\n");
             }
         }
-        this.log("ERR", trace.getClassName() + ":" + trace.getLineNumber() + " " + exp.getMessage() + sb.toString());
+        this.log("ERR", sb.toString());
         // exp.printStackTrace();
     }
 

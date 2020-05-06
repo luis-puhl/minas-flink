@@ -16,7 +16,7 @@
 
 package br.ufscar.dc.gsdr.mfog.flink;
 
-import br.ufscar.dc.gsdr.mfog.structs.WithSerializable;
+import br.ufscar.dc.gsdr.mfog.util.TCP;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.zip.GZIPInputStream;
@@ -32,7 +33,7 @@ import static org.apache.flink.util.NetUtils.isValidClientPort;
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-public class SocketGenericSource<T extends WithSerializable<T>> implements SourceFunction<T> {
+public class SocketGenericSource<T> implements SourceFunction<T> {
     protected static final long serialVersionUID = 1L;
     public static int DEFAULT_DELAY_BETWEEN_RETRIES = 1000;
     public static int DEFAULT_MAX_RETRIES = 10;
@@ -47,8 +48,7 @@ public class SocketGenericSource<T extends WithSerializable<T>> implements Sourc
     protected final String sourceName;
     protected final boolean withGzip;
     protected transient Logger log;
-    protected transient Socket currentSocket;
-    protected transient DataInputStream reader;
+    protected transient TCP<T> currentSocket;
     protected volatile boolean isRunning = true;
     protected T reusableObject;
 
@@ -92,31 +92,17 @@ public class SocketGenericSource<T extends WithSerializable<T>> implements Sourc
         long attempt = 0;
         getLog();
         while (isRunning) {
-            try (Socket socket = new Socket()) {
+
+            try (TCP<T> socket = new TCP<T>(typeInfo, reusableObject, SocketGenericSource.class)) {
+                socket.withGzip = withGzip;
                 currentSocket = socket;
                 log.info("Connecting to server socket {}:{}", hostname, port);
                 try {
-                    socket.connect(new InetSocketAddress(hostname, port), connectionTimeout);
-                    if (withGzip) {
-                        reader = new DataInputStream(
-                            new GZIPInputStream(new BufferedInputStream(socket.getInputStream())));
-                    } else {
-                        reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+                    socket.client(hostname, port, maxNumRetries, delayBetweenRetries, connectionTimeout);
+                    while (isRunning && socket.hasNext()) {
+                        ctx.collect(socket.next());
                     }
-                    while (isRunning) {
-                        try {
-                            reusableObject.reuseFromDataInputStream(reader);
-                            ctx.collect(reusableObject);
-                        } catch (java.io.EOFException e) {
-                            reader.close();
-                            socket.close();
-                            isRunning = false;
-                            log.warn("EOF.");
-                            return;
-                        }
-                    }
-                    reader.close();
-                } catch (java.net.ConnectException e) {
+                } catch (IOException e) {
                     log.warn(e.getMessage());
                 }
             }
@@ -142,7 +128,7 @@ public class SocketGenericSource<T extends WithSerializable<T>> implements Sourc
 
         // we need to close the socket as well, because the Thread.interrupt() function will
         // not wake the thread in the socketStream.read() method when blocked.
-        Socket theSocket = this.currentSocket;
+        TCP<T> theSocket = this.currentSocket;
         if (theSocket != null) {
             try {
                 theSocket.close();

@@ -22,14 +22,10 @@ public class ModelStore {
         util.serverAccept();
         log.info("Receiving");
         while (util.hasNext()) {
-            try {
-                Cluster cluster = util.receive(new Cluster());
-                model.add(cluster);
-            } catch (java.io.EOFException e) {
-                break;
-            }
+            Cluster cluster = util.next();
+            model.add(cluster);
         }
-        util.closeSocket();
+        util.close();
         //
         util.serverAccept();
         log.info("Sending to classifier");
@@ -41,7 +37,7 @@ public class ModelStore {
             util.send(cluster);
         }
         util.flush();
-        util.closeSocket();
+        util.close();
         util.closeServer();
         log.info("done");
     }

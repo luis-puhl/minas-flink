@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.Objects;
 
-public class LabeledExample implements Serializable, WithSerializable<LabeledExample> {
+public class LabeledExample implements Serializable {
 
     public Point point;
     public String label;
@@ -92,36 +92,6 @@ public class LabeledExample implements Serializable, WithSerializable<LabeledExa
 
     public byte[] toBytes() {
         return SerializationUtils.serialize(this);
-    }
-
-    @Override
-    public LabeledExample reuseFromDataInputStream(DataInputStream in) throws IOException {
-        this.label = in.readUTF();
-        if (this.point == null) {
-            this.point = new Point();
-        }
-        this.point = this.point.reuseFromDataInputStream(in);
-        return this;
-    }
-
-    public LabeledExample reuseFromDataInputStream(Input in) {
-        this.label = in.readString();
-        if (this.point == null) {
-            this.point = new Point();
-        }
-        this.point = this.point.reuseFromDataInputStream(in);
-        return this;
-    }
-
-    @Override
-    public void toDataOutputStream(DataOutputStream out) throws IOException {
-        out.writeUTF(label);
-        point.toDataOutputStream(out);
-    }
-
-    public void toDataOutputStream(Output out) {
-        out.writeString(label);
-        point.toDataOutputStream(out);
     }
 
 }

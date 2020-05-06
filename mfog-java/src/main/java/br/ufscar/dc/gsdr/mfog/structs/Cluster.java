@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.Objects;
 
-public class Cluster implements Serializable, WithSerializable<Cluster> {
+public class Cluster implements Serializable {
     public static String CATEGORY_NORMAL = "normal";
     public static String CATEGORY_EXTENSION = "extension";
     public static String CATEGORY_NOVELTY = "novelty";
@@ -104,10 +104,6 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         return new Cluster(id, center, variance, label, category, matches, time);
     }
 
-    public static Cluster fromDataInputStream(DataInputStream in) throws IOException {
-        return new Cluster().reuseFromDataInputStream(in);
-    }
-
     public JSONObject json() {
         return new JSONObject(this);
     }
@@ -173,7 +169,7 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         if (this == o) return true;
         if (!(o instanceof Cluster)) return false;
         Cluster cluster = (Cluster) o;
-        return getCenter().equals(cluster.getCenter()) && getLabel().equals(cluster.getLabel());
+        return getLabel().equals(cluster.getLabel()) && getCenter().equals(cluster.getCenter());
     }
 
     @Override
@@ -190,52 +186,4 @@ public class Cluster implements Serializable, WithSerializable<Cluster> {
         return "Cluster{id=" + id + ", center=" + center + ", variance=" + variance + ", label='" + label + '\'' + ", category='" + category + '\'' + ", matches=" + matches + ", time=" + time + '}';
     }
 
-    public void toDataOutputStream(DataOutputStream out) throws IOException {
-        out.writeLong(id);
-        out.writeFloat(variance);
-        out.writeUTF(label);
-        out.writeUTF(category);
-        out.writeLong(matches);
-        out.writeLong(time);
-        center.toDataOutputStream(out);
-    }
-
-    public void toDataOutputStream(Output out) {
-        out.writeLong(id);
-        out.writeFloat(variance);
-        out.writeString(label);
-        out.writeString(category);
-        out.writeLong(matches);
-        out.writeLong(time);
-        center.toDataOutputStream(out);
-    }
-
-    @Override
-    public Cluster reuseFromDataInputStream(DataInputStream in) throws IOException {
-        id = in.readLong();
-        variance = in.readFloat();
-        label = in.readUTF();
-        category = in.readUTF();
-        matches = in.readLong();
-        time = in.readLong();
-        if (this.center == null) {
-            this.center = new Point();
-        }
-        this.center = this.center.reuseFromDataInputStream(in);
-        return this;
-    }
-
-    public Cluster reuseFromDataInputStream(Input in) {
-        id = in.readLong();
-        variance = in.readFloat();
-        label = in.readString();
-        category = in.readString();
-        matches = in.readLong();
-        time = in.readLong();
-        if (this.center == null) {
-            this.center = new Point();
-        }
-        this.center = this.center.reuseFromDataInputStream(in);
-        return this;
-    }
 }

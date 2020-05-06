@@ -27,10 +27,17 @@ public class TrainingStatic {
                 LOG.warn("Reconnecting");
                 socket.client(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
             }
-            socket.send(cluster);
+            try {
+                if (!socket.send(cluster)) {
+                    break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
         }
         socket.flush();
-        socket.closeSocket();
+        socket.close();
         LOG.info("done");
     }
 }

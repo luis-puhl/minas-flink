@@ -58,9 +58,9 @@ public class SinkFog {
         if (i != 0) {
             LOG.info("i=" + i + " matches=" + matches + " misses=" + (100 * (i - matches) / i) + "%");
         }
-        classifier.closeSocket();
+        classifier.close();
         classifier.closeServer();
-        source.closeSocket();
+        source.close();
         LOG.info("done");
     }
 }

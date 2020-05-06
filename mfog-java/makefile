@@ -4,21 +4,25 @@ watch:
 	while true; do mvn clean package; echo "done"; inotifywait -qre close_write src; done
 build:
 	mvn clean package
-runMfog:
-	@java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.ModelStore     &\
-	java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.SinkFog         &\
-	java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.SourceKyoto     &\
-	java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.TrainingStatic
 
-runPlain: runMfog
-	java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.ClassifierPlain
+TCP:
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar br.ufscar.dc.gsdr.mfog.util.TCP server &
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar br.ufscar.dc.gsdr.mfog.util.TCP
+ModelStore:
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar	br.ufscar.dc.gsdr.mfog.ModelStore &
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar		br.ufscar.dc.gsdr.mfog.TrainingStatic
+runMfog:
+	@java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar	br.ufscar.dc.gsdr.mfog.ModelStore     &\
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar		br.ufscar.dc.gsdr.mfog.SinkFog         &\
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar		br.ufscar.dc.gsdr.mfog.SourceKyoto     &\
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar		br.ufscar.dc.gsdr.mfog.TrainingStatic
 
 run: runMfog
 	-../ref-git/flink-1.10.0/bin/flink run target/mfog-0.4.jar --class br.ufscar.dc.gsdr.mfog.Classifier
 	-@echo done
 
 kill:
-	@ps -o "%p|%a" | grep "[j]ava -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog" | tee /dev/tty | awk -F "|" '{print $$1}' > tokill.ps
+	@ps -o "%p|%a" | grep "[j]ava -cp target/mfog" | tee /dev/tty | awk -F "|" '{print $$1}' > tokill.ps
 	@while read p; do [ $$p ] && kill $$p; done < tokill.ps
 	@rm tokill.ps
 

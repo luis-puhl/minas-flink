@@ -20,7 +20,6 @@ public class ClassifierPlain {
         List<Cluster> model = new ArrayList<>(100);
         List<Point> exampleBuffer = new ArrayList<>(100);
         int clusterMinLength = Cluster.apply(0, Point.zero(22), 0, "").toBytes().length;
-        int exampleMinLength = Point.zero(22).toBytes().length;
         try {
             InetAddress serviceHostname = InetAddress.getByName(MfogManager.SERVICES_HOSTNAME);
             Socket testSocket = new Socket(serviceHostname, MfogManager.SOURCE_TEST_DATA_PORT);
@@ -33,12 +32,12 @@ public class ClassifierPlain {
                     if (testAvailable < 0) {
                         break;
                     }
-                    if (testAvailable >= exampleMinLength) {
+                    if (testAvailable >= 22) {
                         int length = testReader.readInt();
                         if (length > 0) {
                             byte[] message = new byte[length];
                             testReader.readFully(message, 0, message.length);
-                            Point example = Point.fromBytes(message);
+                            Point example = Point.zero(22);
                             exampleBuffer.add(example);
                             //
                             if (model.size() != 0) {
