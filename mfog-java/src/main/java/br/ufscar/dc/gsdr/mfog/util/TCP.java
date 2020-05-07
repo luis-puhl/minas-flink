@@ -1,51 +1,39 @@
 package br.ufscar.dc.gsdr.mfog.util;
 
+import br.ufscar.dc.gsdr.mfog.structs.SelfDataStreamSerializable;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
-import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
 
 import java.io.*;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
-public class TCP<T> implements Closeable {
+public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
     protected final Logger log;
     protected final Class<T> typeParameterClass;
-    protected final Kryo kryo;
+    // protected final Kryo kryo;
     public T reusableObject;
     public ServerSocket serverSocket;
     public Socket socket;
     public OutputStream outputStream;
     public InputStream inputStream;
-    public Input reader;
-    public Output writer;
-    public GZIPOutputStream gzipOut = null;
+    public DataInputStream reader;
+    public DataOutputStream writer;
+    // public GZIPOutputStream gzipOut = null;
     public long millis;
     public long nano;
     public long i = 0;
-    public boolean withGzip = MfogManager.USE_GZIP;
+    // public boolean withGzip = MfogManager.USE_GZIP;
     protected boolean hasNext;
-    protected Serializer<T> serializer;
-    T next;
+    protected T next;
 
     @SuppressWarnings("unchecked")
     public TCP(Class<T> typeParameterClass, T reusableObject, Class<?> caller) {
         this.reusableObject = reusableObject;
         this.typeParameterClass = typeParameterClass;
         this.log = Logger.getLogger(this.getClass(), typeParameterClass, caller);
-        this.kryo = Serializers.getKryo();
-        try {
-            serializer = this.kryo.getRegistration(typeParameterClass).getSerializer();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("No serializer for class " + typeParameterClass, e);
-        }
+        // this.kryo = Serializers.getKryo();
     }
 
     public static void main(String[] args) throws Exception {
@@ -105,6 +93,7 @@ public class TCP<T> implements Closeable {
             serverSocket.close();
         }
         serverSocket = new ServerSocket(port);
+        log.info("server ready on " + serverSocket.getInetAddress() + ":" + serverSocket.getLocalPort());
     }
 
     public void serverAccept() throws IOException {
@@ -115,6 +104,7 @@ public class TCP<T> implements Closeable {
         socket = serverSocket.accept();
         outputStream = socket.getOutputStream();
         inputStream = socket.getInputStream();
+        hasNext = true;
         millis = System.currentTimeMillis();
         nano = System.nanoTime();
     }
@@ -148,43 +138,30 @@ public class TCP<T> implements Closeable {
         throw new IOException(TCP.class.getSimpleName() + " could not connect.", lastEx);
     }
 
-    // FileOutputStream snd;
     public boolean send(T toSend) throws IOException {
         if (writer == null) {
             log.info("new writer");
-            if (withGzip) {
-                gzipOut = new GZIPOutputStream(new BufferedOutputStream(outputStream));
-                writer = new Output(gzipOut);
-            } else {
-                writer = new Output(new BufferedOutputStream(outputStream));
-            }
-            // snd = new FileOutputStream("snd.bin");
+            // if (withGzip) {
+            //     gzipOut = new GZIPOutputStream(new BufferedOutputStream(outputStream));
+            //     writer = new DataOutputStream(gzipOut);
+            // } else {
+            writer = new DataOutputStream(new BufferedOutputStream(outputStream));
+            // }
         }
-        try {
-            serializer.write(kryo, writer, toSend);
-            // snd.write(writer.getBuffer());
-            i++;
-            return true;
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            throw e;
-            // return false;
-        }
+        // toSend.toDataOutputStream(writer);
+        // serializer.write(kryo, writer, toSend);
+        toSend.write(writer, toSend);
+        i++;
+        return true;
     }
 
     public void flush() throws IOException {
         log.info("flush");
-        if (writer != null) {
-            try {
-                writer.flush();
-            } catch (Exception e) {
-                log.warn(e.getMessage());
-            }
-        }
-        if (gzipOut != null) {
-            gzipOut.finish();
-            gzipOut.flush();
-        }
+        writer.flush();
+        // if (gzipOut != null) {
+        //     gzipOut.finish();
+        //     gzipOut.flush();
+        // }
         outputStream.flush();
     }
 
@@ -192,32 +169,27 @@ public class TCP<T> implements Closeable {
         return socket != null && socket.isConnected();
     }
 
-    // FileOutputStream rcv;
-    public boolean hasNext() {
-        if (!hasNext || !socket.isConnected()) {
+    public boolean hasNext() throws IOException {
+        if (this.next != null) {
+            return true;
+        }
+        if (!(hasNext && socket != null && socket.isConnected())) {
             hasNext = false;
             return false;
         }
         if (reader == null) {
-            if (withGzip) {
-                try {
-                    reader = new Input(new GZIPInputStream(new BufferedInputStream(inputStream)));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.exit(20);
-                }
-            } else {
-                reader = new Input(new BufferedInputStream(inputStream));
-            }
-            // rcv = new FileOutputStream("rcv.bin");
+            // if (withGzip) {
+            //     reader = new DataInputStream(new GZIPInputStream(new BufferedInputStream(inputStream)));
+            // } else {
+            reader = new DataInputStream(new BufferedInputStream(inputStream));
+            // }
         }
-        // System.out.println(reader.getBuffer().length);
-        // rcv.write(reader.getBuffer());
+        // next = serializer.read(kryo, reader, typeParameterClass);
         try {
-            next = serializer.read(kryo, reader, typeParameterClass);
+            next = reusableObject.read(reader, reusableObject);
             i++;
             return true;
-        } catch (Exception e) {
+        } catch (EOFException e) {
             hasNext = false;
             next = null;
         }

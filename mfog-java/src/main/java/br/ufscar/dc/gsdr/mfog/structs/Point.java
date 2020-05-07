@@ -1,13 +1,20 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Point implements Serializable {
+public class Point extends Serializer<Point>  implements Serializable, SelfDataStreamSerializable<Point> {
 
     public static String csv = "id,value,time";
     public long id;
@@ -211,5 +218,42 @@ public class Point implements Serializable {
         return "Point{id=" + id + ", value=" + Arrays.toString(value) + ", time=" + time + '}';
     }
 
-}
+    @Override
+    public void write(Kryo kryo, Output output, Point point) {
+        output.writeLong(point.id);
+        output.writeInt(point.value.length);
+        output.writeFloats(point.value);
+        output.writeLong(point.time);
+    }
 
+    @Override
+    public Point read(Kryo kryo, Input input, Class<Point> type) {
+        Point object = new Point();
+        object.id = input.readLong();
+        int dimensions = input.readInt();
+        object.value = input.readFloats(dimensions);
+        object.time = input.readLong();
+        return object;
+    }
+
+    public void write(DataOutputStream out, Point p) throws IOException {
+        out.writeLong(p.id);
+        out.writeInt(p.value.length);
+        for (float v : p.value) {
+            out.writeFloat(v);
+        }
+        out.writeLong(p.time);
+    }
+
+    public Point read(DataInputStream in, Point p) throws IOException {
+        p.id = in.readLong();
+        //
+        int dimensions = in.readInt();
+        p.value = new float[dimensions];
+        for (int i = 0; i < dimensions; i++) {
+            p.value[i] = in.readFloat();
+        }
+        p.time = in.readLong();
+        return p;
+    }
+}

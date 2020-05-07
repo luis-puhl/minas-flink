@@ -15,31 +15,29 @@ public class SinkFog {
     public static void main(String[] args) throws IOException, InterruptedException {
         TCP<LabeledExample> classifier = new TCP<>(LabeledExample.class, new LabeledExample(), SinkFog.class);
         classifier.server(MfogManager.SINK_MODULE_TEST_PORT);
-        LOG.info(
-            "classifier ready on " + classifier.serverSocket.getInetAddress() + ":" + classifier.serverSocket.getLocalPort());
         classifier.serverAccept();
+
+        List<LabeledExample> fromClassifier = new LinkedList<>();
+        List<LabeledExample> fromSource = new LinkedList<>();
+        List<LabeledExample> toRemove = new LinkedList<>();
+
+        while (classifier.hasNext()) {
+            fromClassifier.add(classifier.next());
+        }
+
         LOG.info(
             "connected to classifier, connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.SOURCE_EVALUATE_DATA_PORT);
         TCP<LabeledExample> source = new TCP<>(LabeledExample.class, new LabeledExample(), SinkFog.class);
         source.client(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_EVALUATE_DATA_PORT);
         LOG.info("connected to source");
 
-        List<LabeledExample> fromClassifier = new LinkedList<>();
-        List<LabeledExample> fromSource = new LinkedList<>();
-        List<LabeledExample> toRemove = new LinkedList<>();
+        while (source.hasNext()) {
+            fromSource.add(source.next());
+        }
 
         long i = 0;
         long matches = 0;
-        while (classifier.hasNext() || source.hasNext()) {
-            if (classifier.hasNext()) {
-                fromClassifier.add(classifier.next());
-            }
-            if (source.hasNext()) {
-                fromSource.add(source.next());
-            }
-            if (fromClassifier.isEmpty() || fromSource.isEmpty()) {
-                continue;
-            }
+        while (!fromClassifier.isEmpty() && !fromSource.isEmpty()) {
             for (LabeledExample a : fromClassifier) {
                 for (LabeledExample b : fromSource) {
                     if (a.point.id == b.point.id) {

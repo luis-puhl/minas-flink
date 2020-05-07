@@ -2,6 +2,7 @@ package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.structs.Serializers;
 import br.ufscar.dc.gsdr.mfog.util.Logger;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TCP;
@@ -17,28 +18,6 @@ public class SourceKyoto {
     static final Logger LOG = Logger.getLogger(SourceKyoto.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        Thread trainingServer = new Thread(() -> {
-            try {
-                IdGenerator idGenerator = new IdGenerator();
-                Iterator<LabeledExample> iterator = new BufferedReader(
-                        new FileReader(basePath + training)
-                ).lines().map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).iterator();
-                //
-                TCP<LabeledExample> server = new TCP<>(LabeledExample.class, new LabeledExample(), SourceKyoto.class);
-                server.server(MfogManager.SOURCE_TRAINING_DATA_PORT);
-                server.serverAccept();
-                while (server.isConnected() && iterator.hasNext()) {
-                    server.send(iterator.next());
-                }
-                server.flush();
-                server.close();
-                server.closeServer();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        trainingServer.start();
-
         IdGenerator idGenerator = new IdGenerator();
         Iterator<LabeledExample> iterator = new BufferedReader(new FileReader(basePath + test)).lines()
             // .limit(1000)

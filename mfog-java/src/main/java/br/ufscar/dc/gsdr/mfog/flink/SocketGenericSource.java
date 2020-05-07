@@ -16,24 +16,19 @@
 
 package br.ufscar.dc.gsdr.mfog.flink;
 
+import br.ufscar.dc.gsdr.mfog.structs.SelfDataStreamSerializable;
 import br.ufscar.dc.gsdr.mfog.util.TCP;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.util.zip.GZIPInputStream;
 
 import static org.apache.flink.util.NetUtils.isValidClientPort;
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-public class SocketGenericSource<T> implements SourceFunction<T> {
+public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implements SourceFunction<T> {
     protected static final long serialVersionUID = 1L;
     public static int DEFAULT_DELAY_BETWEEN_RETRIES = 1000;
     public static int DEFAULT_MAX_RETRIES = 10;
@@ -60,7 +55,8 @@ public class SocketGenericSource<T> implements SourceFunction<T> {
     }
 
     public SocketGenericSource(
-        String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout, T reusableObject, Class<T> typeInfo, String sourceName, boolean withGzip
+        String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout, T reusableObject,
+        Class<T> typeInfo, String sourceName, boolean withGzip
     ) {
         checkArgument(isValidClientPort(port), "port is out of range");
         checkArgument(
@@ -94,11 +90,11 @@ public class SocketGenericSource<T> implements SourceFunction<T> {
         while (isRunning) {
 
             try (TCP<T> socket = new TCP<T>(typeInfo, reusableObject, SocketGenericSource.class)) {
-                socket.withGzip = withGzip;
+                // socket.withGzip = withGzip;
                 currentSocket = socket;
                 log.info("Connecting to server socket {}:{}", hostname, port);
                 try {
-                    socket.client(hostname, port, maxNumRetries, delayBetweenRetries, connectionTimeout);
+                    socket.client(hostname, port, 0, 0, connectionTimeout);
                     while (isRunning && socket.hasNext()) {
                         ctx.collect(socket.next());
                     }

@@ -1,5 +1,7 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
@@ -8,7 +10,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.Objects;
 
-public class LabeledExample implements Serializable {
+public class LabeledExample extends Serializer<LabeledExample> implements Serializable, SelfDataStreamSerializable<LabeledExample> {
 
     public Point point;
     public String label;
@@ -94,4 +96,31 @@ public class LabeledExample implements Serializable {
         return SerializationUtils.serialize(this);
     }
 
+    @Override
+    public void write(Kryo kryo, Output output, LabeledExample object) {
+        output.writeString(object.label);
+        object.point.write(kryo, output, object.point);
+    }
+
+    @Override
+    public LabeledExample read(Kryo kryo, Input input, Class<LabeledExample> type) {
+        LabeledExample labeledExample = new LabeledExample();
+        labeledExample.label = input.readString();
+        labeledExample.point = new Point().read(kryo, input, Point.class);
+        return labeledExample;
+    }
+
+    public LabeledExample read(DataInputStream in, LabeledExample reuse) throws IOException {
+        reuse.label = in.readUTF();
+        if (reuse.point == null) {
+            reuse.point = new Point();
+        }
+        reuse.point = reuse.point.read(in, reuse.point);
+        return reuse;
+    }
+
+    public void write(DataOutputStream out, LabeledExample toSend) throws IOException {
+        out.writeUTF(toSend.label);
+        toSend.point.write(out, toSend.point);
+    }
 }

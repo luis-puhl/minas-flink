@@ -1,5 +1,7 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.apache.commons.lang3.SerializationUtils;
@@ -8,7 +10,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.Objects;
 
-public class Cluster implements Serializable {
+public class Cluster extends Serializer<Cluster> implements Serializable, SelfDataStreamSerializable<Cluster> {
     public static String CATEGORY_NORMAL = "normal";
     public static String CATEGORY_EXTENSION = "extension";
     public static String CATEGORY_NOVELTY = "novelty";
@@ -184,6 +186,57 @@ public class Cluster implements Serializable {
     @Override
     public String toString() {
         return "Cluster{id=" + id + ", center=" + center + ", variance=" + variance + ", label='" + label + '\'' + ", category='" + category + '\'' + ", matches=" + matches + ", time=" + time + '}';
+    }
+
+    public void write(DataOutputStream out, Cluster cl) throws IOException {
+        out.writeLong(cl.id);
+        out.writeFloat(cl.variance);
+        out.writeUTF(cl.label);
+        out.writeUTF(cl.category);
+        out.writeLong(cl.matches);
+        out.writeLong(cl.time);
+        cl.center.write(out, cl.center);
+    }
+
+    public Cluster read(DataInputStream in, Cluster cl) throws IOException {
+        cl.id = in.readLong();
+        cl.variance = in.readFloat();
+        cl.label = in.readUTF();
+        cl.category = in.readUTF();
+        cl.matches = in.readLong();
+        cl.time = in.readLong();
+        if (cl.center == null) {
+            cl.center = new Point();
+        }
+        cl.center = cl.center.read(in, cl.center);
+        return cl;
+    }
+
+    @Override
+    public void write(Kryo kryo, Output output, Cluster object) {
+        output.writeLong(object.id);
+        output.writeFloat(object.variance);
+        output.writeString(object.label);
+        output.writeString(object.category);
+        output.writeLong(object.matches);
+        output.writeLong(object.time);
+        object.center.write(kryo, output, object.center);
+    }
+
+    @Override
+    public Cluster read(Kryo kryo, Input input, Class<Cluster> type) {
+        Cluster cl = new Cluster();
+        cl.id = input.readLong();
+        cl.variance = input.readFloat();
+        cl.label = input.readString();
+        cl.category = input.readString();
+        cl.matches = input.readLong();
+        cl.time = input.readLong();
+        if (cl.center == null) {
+            cl.center = new Point();
+        }
+        cl.center = cl.center.read(kryo, input, Point.class);
+        return cl;
     }
 
 }
