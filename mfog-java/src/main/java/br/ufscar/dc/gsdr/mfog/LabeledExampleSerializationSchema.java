@@ -1,7 +1,6 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
-
 import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +10,9 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public class LabeledExampleSerializationSchema implements SerializationSchema<LabeledExample>, Serializable {
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(LabeledExampleSerializationSchema.class);
     protected transient ByteArrayOutputStream byteArrayOutputStream;
     protected transient DataOutputStream dataOutputStream;
-    static final org.slf4j.Logger log = LoggerFactory.getLogger(LabeledExampleSerializationSchema.class);
 
     @Override
     public byte[] serialize(LabeledExample element) {

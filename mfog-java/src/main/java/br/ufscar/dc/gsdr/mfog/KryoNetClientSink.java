@@ -2,31 +2,30 @@ package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-
 import com.esotericsoftware.kryonet.Client;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.slf4j.LoggerFactory;
 
 public class KryoNetClientSink<T> extends RichSinkFunction<T> {
+    private final Class<T> generics;
     protected int port;
     protected String hostname;
     transient Client client;
     long sent;
-
-    private final Class<T> generics;
     transient org.slf4j.Logger log;
-    void setUpLogger() {
-        if (log == null) {
-            log = LoggerFactory.getLogger(KryoNetClientSink.class);
-        }
-    }
 
     public KryoNetClientSink(Class<T> generics, String hostname, int port) {
         this.generics = generics;
         this.port = port;
         this.hostname = hostname;
         setUpLogger();
+    }
+
+    void setUpLogger() {
+        if (log == null) {
+            log = LoggerFactory.getLogger(KryoNetClientSink.class);
+        }
     }
 
     public void connect() throws Exception {

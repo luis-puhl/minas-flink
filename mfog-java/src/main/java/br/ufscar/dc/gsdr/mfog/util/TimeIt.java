@@ -3,11 +3,13 @@ package br.ufscar.dc.gsdr.mfog.util;
 public class TimeIt {
     long millis;
     long nano;
+
     public TimeIt start() {
         millis = System.currentTimeMillis();
         nano = System.nanoTime();
         return this;
     }
+
     public String finish(long items) {
         long millisDiff = System.currentTimeMillis() - millis;
         long nanoDiff = System.nanoTime() - nano;

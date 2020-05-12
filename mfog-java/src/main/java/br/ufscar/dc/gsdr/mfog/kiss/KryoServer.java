@@ -2,7 +2,6 @@ package br.ufscar.dc.gsdr.mfog.kiss;
 
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;

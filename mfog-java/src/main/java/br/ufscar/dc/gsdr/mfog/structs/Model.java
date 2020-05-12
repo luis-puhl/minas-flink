@@ -36,7 +36,7 @@ public class Model extends Serializer<Model> implements Serializable, SelfDataSt
         matches++;
         if (matches == Long.MAX_VALUE) {
             // looped
-            for (Map.Entry<Long, Long> entry: times.entrySet()) {
+            for (Map.Entry<Long, Long> entry : times.entrySet()) {
                 entry.setValue(-(entry.getValue() - Long.MAX_VALUE));
             }
             matches = 0;
@@ -54,13 +54,14 @@ public class Model extends Serializer<Model> implements Serializable, SelfDataSt
     public void putToSleep() {
         this.putToSleep(10000, 5);
     }
+
     public void putToSleep(long diff, int minModelSize) {
         if (matches - lastSleepTest < diff) {
             return;
         }
         lastSleepTest = matches;
         List<Cluster> toRemove = new ArrayList<>(model.size());
-        for (Map.Entry<Long, Long> entry: times.entrySet()) {
+        for (Map.Entry<Long, Long> entry : times.entrySet()) {
             long id = entry.getKey();
             long lastMatch = entry.getValue();
             if (matches - lastMatch > diff) {
@@ -118,7 +119,7 @@ public class Model extends Serializer<Model> implements Serializable, SelfDataSt
         }
         if (interSectSize > modelSize) {
             while (model.model.size() > modelSize) {
-                model.model.remove(model.model.size() -1);
+                model.model.remove(model.model.size() - 1);
             }
         }
         return model;

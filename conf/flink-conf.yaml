@@ -3,7 +3,6 @@ jobmanager.rpc.address: localhost
 jobmanager.rpc.port: 6123
 jobmanager.heap.size: 1024m
 taskmanager.memory.process.size: 1568m
-taskmanager.numberOfTaskSlots: 4
-parallelism.default: 4
+taskmanager.numberOfTaskSlots: 8
+parallelism.default: 8
 jobmanager.execution.failover-strategy: region
-

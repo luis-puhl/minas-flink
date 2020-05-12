@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Point extends Serializer<Point>  implements Serializable, SelfDataStreamSerializable<Point> {
+public class Point extends Serializer<Point> implements Serializable, SelfDataStreamSerializable<Point> {
 
     public static String csv = "id,value,time";
     public long id;
@@ -102,15 +102,15 @@ public class Point extends Serializer<Point>  implements Serializable, SelfDataS
     }
 
     //        /**
-//         * @param other
-//         * @return Internal Product = a * b = [a_i * b_i, ...]
-//         */
-//        def *(other: Point): Float =
-//                                                                 checkSize(other, this.value.zip(other.value).map(x => x._1 * x._2).sum)
-//        def *(scalar: Float): Point =
-//                                                                     Point(this.id, this.value.map(x => x * scalar))
-//        def /(scalar: Float): Point =
-//                                                                     this * (1/scalar)
+    //         * @param other
+    //         * @return Internal Product = a * b = [a_i * b_i, ...]
+    //         */
+    //        def *(other: Point): Float =
+    //                                                                 checkSize(other, this.value.zip(other.value).map(x => x._1 * x._2).sum)
+    //        def *(scalar: Float): Point =
+    //                                                                     Point(this.id, this.value.map(x => x * scalar))
+    //        def /(scalar: Float): Point =
+    //                                                                     this * (1/scalar)
     public Point scalarMul(float x) {
         float[] val = new float[dimension()];
         for (int i = 0; i < value.length; i++) {
@@ -137,17 +137,17 @@ public class Point extends Serializer<Point>  implements Serializable, SelfDataS
      * def unary_| : Float = this.value.map(x => Math.pow(x, 2)).sum
      */
 
-//        /**
-//         * @return ||point|| = √(|a|)
-//         */
-//        def unary_|| : Float =
-//                                                     Math.sqrt(this.unary_|)
-//
-//        override def equals(other: Any): Boolean = other match {
-//            case Point(id, value, time) => id == this.id && value.equals(this.value)
-//            case _ => false
-//        }
-//
+    //        /**
+    //         * @return ||point|| = √(|a|)
+    //         */
+    //        def unary_|| : Float =
+    //                                                     Math.sqrt(this.unary_|)
+    //
+    //        override def equals(other: Any): Boolean = other match {
+    //            case Point(id, value, time) => id == this.id && value.equals(this.value)
+    //            case _ => false
+    //        }
+    //
     public void checkSize(Point other) {
         if (this.dimension() != other.dimension()) {
             throw new RuntimeException(
@@ -164,15 +164,15 @@ public class Point extends Serializer<Point>  implements Serializable, SelfDataS
         }
         return Math.sqrt(val);
     }
-//        def euclideanSqrDistance(other: Point): Float =
-//                                                                                                        checkSize(other, (this - other).unary_|)
-//        def taxiCabDistance(other: Point): Float =
-//                                                                                             checkSize(other, (this - other).value.map(d => d.abs).sum)
-//        def cosDistance(other: Point): Float =
-//                                                                                     checkSize(other, (this * other) / (this.unary_|| * other.unary_||))
-//        def distance(other: Point)(implicit distanceOperator: Point.DistanceOperator): Float =
-//                                                                                                                                                                                     distanceOperator.compare(this, other)
-//    }
+    //        def euclideanSqrDistance(other: Point): Float =
+    //                                                                                                        checkSize(other, (this - other).unary_|)
+    //        def taxiCabDistance(other: Point): Float =
+    //                                                                                             checkSize(other, (this - other).value.map(d => d.abs).sum)
+    //        def cosDistance(other: Point): Float =
+    //                                                                                     checkSize(other, (this * other) / (this.unary_|| * other.unary_||))
+    //        def distance(other: Point)(implicit distanceOperator: Point.DistanceOperator): Float =
+    //                                                                                                                                                                                     distanceOperator.compare(this, other)
+    //    }
 
     public long getId() {
         return id;

@@ -12,7 +12,9 @@ public class MfogManager {
     public static final int SOURCE_TEST_DATA_PORT = 9996;
     public static final int SINK_MODULE_TEST_PORT = 9995;
     public static final int SOURCE_EVALUATE_DATA_PORT = 9994;
-    public static final String dateString = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replaceAll(":", "-");
+    public static final String dateString = LocalDateTime.now()
+        .format(DateTimeFormatter.ISO_DATE_TIME)
+        .replaceAll(":", "-");
 
     public static final boolean USE_GZIP = false;
 
@@ -20,7 +22,7 @@ public class MfogManager {
         String outDir = "./out/" + jobName + "/" + dateString + "/";
         File dir = new File(outDir);
         if (!dir.exists()) {
-            if (!dir.mkdirs()) throw new RuntimeException("Output directory '" + outDir +"'could not be created.");
+            if (!dir.mkdirs()) throw new RuntimeException("Output directory '" + outDir + "'could not be created.");
         }
     }
 

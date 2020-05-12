@@ -3,7 +3,6 @@ package br.ufscar.dc.gsdr.mfog;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TimeIt;
 import com.esotericsoftware.kryonet.Client;
@@ -17,8 +16,9 @@ import java.util.stream.Collectors;
 
 public class TrainingStatic {
     static final org.slf4j.Logger log = LoggerFactory.getLogger(TrainingStatic.class);
+
     public static void main(String[] args) throws Exception {
-        
+
         String path = "datasets" + File.separator + "models" + File.separator + "offline.csv";
         BufferedReader in = new BufferedReader(new FileReader(path));
         List<Cluster> model = in.lines().skip(1).limit(100).map(Cluster::fromMinasCsv).collect(Collectors.toList());

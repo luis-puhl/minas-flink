@@ -4,14 +4,15 @@ import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
 import br.ufscar.dc.gsdr.mfog.util.IdGenerator;
-
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +23,8 @@ public class SourceKyoto {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         IdGenerator idGenerator = new IdGenerator();
-        List<LabeledExample> examples = new BufferedReader(new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)).lines()
+        List<LabeledExample> examples = new BufferedReader(
+            new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)).lines()
             // .limit(1000)
             .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).collect(Collectors.toList());
 
@@ -34,7 +36,7 @@ public class SourceKyoto {
         Serializers.registerMfogStructs(server.getKryo());
         server.addListener(new Listener.ThreadedListener(new Listener() {
             Connection classifierConnection;
-            Connection evaluatorConnection;
+
             @Override
             public void received(Connection connection, Object message) {
                 if (message instanceof Message) {
@@ -70,7 +72,8 @@ public class SourceKyoto {
 
     void trainingSource() throws IOException {
         IdGenerator idGenerator = new IdGenerator();
-        Stream<LabeledExample> labeledExampleStream = new BufferedReader(new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.training)).lines()
+        Stream<LabeledExample> labeledExampleStream = new BufferedReader(
+            new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.training)).lines()
             .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line));
         Iterator<LabeledExample> iterator = labeledExampleStream.iterator();
         //
@@ -86,7 +89,7 @@ public class SourceKyoto {
                         connection.close();
                     }
                     if (msg.isReceive()) {
-                        for (;iterator.hasNext();) {
+                        for (; iterator.hasNext(); ) {
                             LabeledExample labeledExample = iterator.next();
                             labeledExample.point.time = System.currentTimeMillis();
                             connection.sendTCP(labeledExample);

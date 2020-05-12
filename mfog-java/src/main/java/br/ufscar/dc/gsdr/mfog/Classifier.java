@@ -20,7 +20,6 @@ import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Model;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
-
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -64,13 +63,11 @@ public class Classifier implements Serializable {
         SingleOutputStreamOperator<LabeledExample> out = examples
             // .rescale()
             // .shuffle()
-            .connect(model.broadcast())
-            .process(new MinasClassify())
+            .connect(model.broadcast()).process(new MinasClassify())
             // .setParallelism(env.getMaxParallelism()) // locks the cluster in the creating state for all jobs
             .name("Classify");
 
-        out
-            .addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT))
+        out.addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT))
             .name("KryoNet Sink");
 
         log.info("Ready to run baseline");

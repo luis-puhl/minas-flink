@@ -1,18 +1,13 @@
 package br.ufscar.dc.gsdr.mfog.structs;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
 
 public class Serializers {
 
     static Kryo kryo;
+
     static public Kryo getKryo() {
         if (kryo != null) {
             return kryo;
@@ -25,6 +20,7 @@ public class Serializers {
         kryo.setRegistrationRequired(true);
         return kryo;
     }
+
     static public Kryo registerMfogStructs(Kryo kryo) {
         kryo.register(Cluster.class, new Cluster());
         kryo.register(Point.class, new Point());

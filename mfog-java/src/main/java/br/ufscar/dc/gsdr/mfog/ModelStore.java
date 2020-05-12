@@ -3,7 +3,6 @@ package br.ufscar.dc.gsdr.mfog;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TimeIt;
 import com.esotericsoftware.kryonet.Connection;
