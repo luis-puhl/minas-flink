@@ -33,7 +33,7 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSin
  * <p>To package your application into a JAR file for execution, run
  * 'mvn clean package' on the command line.
  *
- * <p>If you change the name of the main class (with the public static void main(String[] args))
+ * <p>If you change the name of the run class (with the public static void run(String[] args))
  * method, change the respective entry in the POM.xml file (simply search for 'mainClass').
  */
 public class StreamingJob {

@@ -1,4 +1,4 @@
-package br.ufscar.dc.gsdr.mfog.flink;
+package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Model;

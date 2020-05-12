@@ -1,10 +1,13 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
+import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-import br.ufscar.dc.gsdr.mfog.util.Logger;
+
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.TCP;
+import br.ufscar.dc.gsdr.mfog.util.TimeIt;
+import com.esotericsoftware.kryonet.Client;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,32 +16,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TrainingStatic {
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(TrainingStatic.class);
     public static void main(String[] args) throws Exception {
-        final Logger LOG = Logger.getLogger(TrainingStatic.class);
+        
         String path = "datasets" + File.separator + "models" + File.separator + "offline.csv";
         BufferedReader in = new BufferedReader(new FileReader(path));
         List<Cluster> model = in.lines().skip(1).limit(100).map(Cluster::fromMinasCsv).collect(Collectors.toList());
         //
-        LOG.info("connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.MODEL_STORE_PORT);
-        TCP<Cluster> socket = new TCP<>(Cluster.class, new Cluster(), TrainingStatic.class);
-        socket.client(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
-        LOG.info("Sending");
+        Client client = new Client();
+        Serializers.registerMfogStructs(client.getKryo());
+        client.start();
+        log.info("connecting to " + MfogManager.SERVICES_HOSTNAME + ":" + MfogManager.MODEL_STORE_PORT);
+        client.connect(5000, MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
+        int i = 0;
+        TimeIt timeIt = new TimeIt().start();
+        client.sendTCP(new Message(Message.Intentions.SEND_ONLY));
+        log.info("Sending");
         for (Cluster cluster : model) {
-            if (!socket.isConnected()) {
-                LOG.warn("Reconnecting");
-                socket.client(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
-            }
-            try {
-                if (!socket.send(cluster)) {
-                    break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
-            }
+            client.sendTCP(cluster);
+            i++;
         }
-        socket.flush();
-        socket.close();
-        LOG.info("done");
+        client.sendTCP(new Message(Message.Intentions.DONE));
+        client.close();
+        //
+        log.info(timeIt.finish(i));
     }
 }

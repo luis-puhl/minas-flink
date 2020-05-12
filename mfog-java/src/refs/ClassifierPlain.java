@@ -3,7 +3,7 @@ package br.ufscar.dc.gsdr.mfog;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
-import br.ufscar.dc.gsdr.mfog.util.Logger;
+
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 
 import java.io.BufferedInputStream;

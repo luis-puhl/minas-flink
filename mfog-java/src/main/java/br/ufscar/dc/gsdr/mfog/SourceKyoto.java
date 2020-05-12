@@ -1,109 +1,107 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
-import br.ufscar.dc.gsdr.mfog.structs.Point;
+import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
-import br.ufscar.dc.gsdr.mfog.util.Logger;
+import br.ufscar.dc.gsdr.mfog.util.IdGenerator;
+
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
-import br.ufscar.dc.gsdr.mfog.util.TCP;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SourceKyoto {
-    static final String training = "kyoto_binario_binarized_offline_1class_fold1_ini";
-    static final String test = "kyoto_binario_binarized_offline_1class_fold1_onl";
-    static final String basePath = "datasets" + File.separator + "kyoto-bin" + File.separator;
-    static final Logger LOG = Logger.getLogger(SourceKyoto.class);
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(SourceKyoto.class);
 
     public static void main(String[] args) throws InterruptedException, IOException {
         IdGenerator idGenerator = new IdGenerator();
-        Iterator<LabeledExample> iterator = new BufferedReader(new FileReader(basePath + test)).lines()
+        List<LabeledExample> examples = new BufferedReader(new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)).lines()
             // .limit(1000)
-            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line))
-            .collect(Collectors.toList()).iterator();
+            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line)).collect(Collectors.toList());
 
-        Queue<LabeledExample> testQueue = new LinkedList<>();
-        Queue<LabeledExample> evaluationQueue = new LinkedList<>();
-
-        //
-        class EvaluatorRunnable implements Runnable {
-            volatile boolean isRunning = true;
+        Server server = new Server(70 * 1024 * 1024, 2048) {
+            protected Connection newConnection() {
+                return new ModelStore.ModelConnection();
+            }
+        };
+        Serializers.registerMfogStructs(server.getKryo());
+        server.addListener(new Listener.ThreadedListener(new Listener() {
+            Connection classifierConnection;
+            Connection evaluatorConnection;
             @Override
-            public void run() {
-                final Logger log = Logger.getLogger(EvaluatorRunnable.class);
-                try {
-                    TCP<LabeledExample> evaluator = new TCP<>(LabeledExample.class, new LabeledExample(), EvaluatorRunnable.class);
-                    evaluator.server(MfogManager.SOURCE_EVALUATE_DATA_PORT);
-                    log.info("Evaluator ready");
-                    while (isRunning && iterator.hasNext() || !evaluationQueue.isEmpty()) {
-                        if (evaluator.isConnected()) {
-                            if (!testQueue.isEmpty()) {
-                                evaluator.send(testQueue.poll());
-                            } else if (iterator.hasNext()) {
-                                LabeledExample next = iterator.next();
-                                evaluator.send(next);
-                                evaluationQueue.add(next);
-                            }
-                        } else if (isRunning) {
-                            log.info("Evaluator Accept");
-                            evaluator.serverAccept();
-                        }
+            public void received(Connection connection, Object message) {
+                if (message instanceof Message) {
+                    Message msg = (Message) message;
+                    if (msg.isDone()) {
+                        log.info("done");
+                        connection.close();
                     }
-                    evaluator.flush();
-                    evaluator.close();
-                    evaluator.closeServer();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    if (msg.isClassifier()) {
+                        classifierConnection = connection;
+                        log.info("Classifier is here");
+                        for (LabeledExample labeledExample : examples) {
+                            classifierConnection.sendTCP(labeledExample.point);
+                        }
+                        log.info("send...  ...done");
+                        classifierConnection.sendTCP(new Message(Message.Intentions.DONE));
+                        classifierConnection.close();
+                    }
                 }
             }
-            public void cancel() {
-                isRunning = false;
-            }
-        }
-        EvaluatorRunnable evaluatorRunnable = new EvaluatorRunnable();
-        Thread evaluatorThread = new Thread(evaluatorRunnable);
-        evaluatorThread.start();
-        //
-        TCP<Point> classifier = new TCP<>(Point.class, new Point(), SourceKyoto.class);
-        classifier.server(MfogManager.SOURCE_TEST_DATA_PORT);
-        LOG.info("Classifier Ready");
-        while (iterator.hasNext() || !testQueue.isEmpty()){
-            if (classifier.isConnected()) {
-                if (!testQueue.isEmpty()) {
-                    classifier.send(testQueue.poll().point);
-                } else if (iterator.hasNext()) {
-                    LabeledExample next = iterator.next();
-                    classifier.send(next.point);
-                    evaluationQueue.add(next);
-                }
-            } else {
-                LOG.info("Classifier Accept");
-                classifier.serverAccept();
-            }
-        }
-        classifier.flush();
-        classifier.close();
-        classifier.closeServer();
 
-        evaluatorRunnable.cancel();
-        evaluatorThread.interrupt();
-        evaluatorThread.join();
-        LOG.info("done");
+            @Override
+            public void disconnected(Connection conn) {
+                ModelStore.ModelConnection connection = (ModelStore.ModelConnection) conn;
+                log.info(connection.timeIt.finish(examples.size()));
+            }
+        }));
+        server.bind(MfogManager.SOURCE_TEST_DATA_PORT);
+        server.start();
+
+        SourceKyoto.log.info("done");
     }
 
-    static class IdGenerator implements Iterator<Integer> {
-        int id = 0;
+    void trainingSource() throws IOException {
+        IdGenerator idGenerator = new IdGenerator();
+        Stream<LabeledExample> labeledExampleStream = new BufferedReader(new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.training)).lines()
+            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line));
+        Iterator<LabeledExample> iterator = labeledExampleStream.iterator();
+        //
+        Server server = new Server();
+        Serializers.registerMfogStructs(server.getKryo());
+        server.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object message) {
+                if (message instanceof Message) {
+                    Message msg = (Message) message;
+                    if (msg.isDone()) {
+                        log.info("done");
+                        connection.close();
+                    }
+                    if (msg.isReceive()) {
+                        for (;iterator.hasNext();) {
+                            LabeledExample labeledExample = iterator.next();
+                            labeledExample.point.time = System.currentTimeMillis();
+                            connection.sendTCP(labeledExample);
+                        }
+                    }
+                }
+            }
 
-        @Override
-        public boolean hasNext() {
-            return true;
-        }
-
-        @Override
-        public Integer next() {
-            return id++;
-        }
+            @Override
+            public void disconnected(Connection conn) {
+                ModelStore.ModelConnection connection = (ModelStore.ModelConnection) conn;
+                log.info(connection.timeIt.finish(labeledExampleStream.count()));
+            }
+        });
+        server.bind(MfogManager.SOURCE_TEST_DATA_PORT);
+        server.run();
     }
 }

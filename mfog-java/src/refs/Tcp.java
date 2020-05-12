@@ -2,6 +2,7 @@ package br.ufscar.dc.gsdr.mfog.util;
 
 import br.ufscar.dc.gsdr.mfog.structs.SelfDataStreamSerializable;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
+import com.esotericsoftware.kryo.io.Output;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -9,7 +10,8 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
+@Deprecated
+public class Tcp<T extends SelfDataStreamSerializable<T>> implements Closeable {
     protected final Logger log;
     protected final Class<T> typeParameterClass;
     // protected final Kryo kryo;
@@ -29,7 +31,7 @@ public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
     protected T next;
 
     @SuppressWarnings("unchecked")
-    public TCP(Class<T> typeParameterClass, T reusableObject, Class<?> caller) {
+    public Tcp(Class<T> typeParameterClass, T reusableObject, Class<?> caller) {
         this.reusableObject = reusableObject;
         this.typeParameterClass = typeParameterClass;
         this.log = Logger.getLogger(this.getClass(), typeParameterClass, caller);
@@ -53,7 +55,7 @@ public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
         }).start();
     }
     public static void selfTest(boolean isServer) throws Exception {
-        Logger log = Logger.getLogger(TCP.class);
+        Logger log = Logger.getLogger(Tcp.class);
         int port = 8888;
         String kind = "client";
         if (isServer) {
@@ -62,7 +64,7 @@ public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
         log.info("Self test >" + kind);
 
         log.info("Point List full ");
-        TCP<Point> tcp = new TCP<>(Point.class, new Point(), TCP.class);
+        Tcp<Point> tcp = new Tcp<>(Point.class, new Point(), Tcp.class);
         //
         if (isServer) {
             tcp.server(port);
@@ -113,7 +115,7 @@ public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
         client(host, port, 3, 1000, 0);
     }
 
-    public TCP<T> client(String host, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout) throws IOException, InterruptedException {
+    public Tcp<T> client(String host, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout) throws IOException, InterruptedException {
         log.info("socket");
         socket = null;
         Exception lastEx = null;
@@ -135,7 +137,7 @@ public class TCP<T extends SelfDataStreamSerializable<T>> implements Closeable {
             }
             if (maxNumRetries != -1) maxNumRetries--;
         }
-        throw new IOException(TCP.class.getSimpleName() + " could not connect.", lastEx);
+        throw new IOException(Tcp.class.getSimpleName() + " could not connect.", lastEx);
     }
 
     public boolean send(T toSend) throws IOException {

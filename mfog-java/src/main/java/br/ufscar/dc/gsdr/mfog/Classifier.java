@@ -16,46 +16,23 @@
 
 package br.ufscar.dc.gsdr.mfog;
 
-import br.ufscar.dc.gsdr.mfog.flink.MinasClassify;
-import br.ufscar.dc.gsdr.mfog.flink.ModelAggregate;
-import br.ufscar.dc.gsdr.mfog.flink.SocketGenericSource;
 import br.ufscar.dc.gsdr.mfog.structs.Cluster;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Model;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
-import br.ufscar.dc.gsdr.mfog.util.Logger;
+
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import org.apache.flink.api.common.ExecutionConfig;
-import org.apache.flink.api.common.functions.RichMapFunction;
-import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Classifier implements Serializable {
-    private static Logger LOG = Logger.getLogger(Classifier.class);
-
-    public static void simpleTest(StreamExecutionEnvironment env) throws Exception {
-        env.fromElements(new LabeledExample("label", Point.zero(22)), new LabeledExample("label", Point.zero(22)),
-            new LabeledExample("label", Point.zero(22)), new LabeledExample("label", Point.zero(22)),
-            new LabeledExample("label", Point.zero(22)), new LabeledExample("label", Point.zero(22)),
-            new LabeledExample("label", Point.zero(22)), new LabeledExample("label", Point.zero(22)),
-            new LabeledExample("label", Point.zero(22))
-        )
-            .writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT,
-                new LabeledExampleSerializationSchema()
-            );
-        env.execute("simple test");
-    }
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(Classifier.class);
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -64,64 +41,42 @@ public class Classifier implements Serializable {
         config.addDefaultKryoSerializer(Point.class, new Point());
         config.addDefaultKryoSerializer(LabeledExample.class, new LabeledExample());
         config.addDefaultKryoSerializer(Model.class, new Model());
-        SocketGenericSource.DEFAULT_GZIP = MfogManager.USE_GZIP;
+        String hostname = MfogManager.SERVICES_HOSTNAME;
 
-        DataStream<Cluster> modelSocket = env.addSource(
-            new SocketGenericSource<>(MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT, new Cluster(),
-                Cluster.class, "Model Socket"
-            ), "Model Socket", TypeInformation.of(Cluster.class));
+        DataStreamSource<Cluster> modelSocket = env.addSource(
+            new KryoNetClientSource<>(Cluster.class, hostname, MfogManager.MODEL_STORE_PORT), "KryoNet model",
+            TypeInformation.of(Cluster.class)
+        );
         DataStreamSource<Point> examples = env.addSource(
-            new SocketGenericSource<>(MfogManager.SERVICES_HOSTNAME, MfogManager.SOURCE_TEST_DATA_PORT, new Point(),
-                Point.class, "Examples Socket"
-            ), "Examples Socket", TypeInformation.of(Point.class));
-
+            new KryoNetClientSource<>(Point.class, hostname, MfogManager.SOURCE_TEST_DATA_PORT), "KryoNet examples",
+            TypeInformation.of(Point.class)
+        );
         SingleOutputStreamOperator<Model> model = modelSocket.keyBy(value -> 0)
             .map(new ModelAggregate())
             .name("Map2Model");
 
         // ------------------------------
-        String jobName = ".rescale setParallelism(3) print plain & aggregate, sink";
+        String jobName = "" +
+            //"rescale " + "shuffle " +
+            // "parallelism(envMax) " +
+            "sink(string socket) ";
 
         SingleOutputStreamOperator<LabeledExample> out = examples
-            .rescale()
-            //.shuffle()
-            .connect(model.broadcast()).process(new MinasClassify())
-            .setParallelism(3) // locks the cluster in the creating state for all jobs
+            // .rescale()
+            // .shuffle()
+            .connect(model.broadcast())
+            .process(new MinasClassify())
+            // .setParallelism(env.getMaxParallelism()) // locks the cluster in the creating state for all jobs
             .name("Classify");
 
-        out.print("plain");
-        out.keyBy(v -> 0).map(new RichMapFunction<LabeledExample, Map<String, Long>>() {
-            Map<String, Long> map = new HashMap<>();
+        out
+            .addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT))
+            .name("KryoNet Sink");
 
-            @Override
-            public Map<String, Long> map(LabeledExample x) throws Exception {
-                long count = map.getOrDefault(x.label, 0L) + 1L;
-                map.put(x.label, count);
-                return map;
-            }
-        }).print("aggregated");
-        out.writeToSocket(MfogManager.SERVICES_HOSTNAME, MfogManager.SINK_MODULE_TEST_PORT, new LabeledExampleSerializationSchema()).name("fog sink");
-
-        LOG.info("Ready to run baseline");
+        log.info("Ready to run baseline");
         long start = System.currentTimeMillis();
         env.execute(jobName);
         long elapsed = System.currentTimeMillis() - start;
-        LOG.info("Ran " + jobName + " in " + elapsed * 10e-4 + "s");
-        LOG.info("done");
-    }
-
-    public static class LabeledExampleSerializationSchema implements SerializationSchema<LabeledExample>, Serializable {
-        @Override
-        public byte[] serialize(LabeledExample element) {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
-            DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
-            try {
-                element.write(dataOutputStream, element);
-                dataOutputStream.flush();
-            } catch (IOException e) {
-                LOG.error(e);
-            }
-            return byteArrayOutputStream.toByteArray();
-        }
+        log.info("Ran " + jobName + " in " + elapsed * 10e-4 + "s");
     }
 }

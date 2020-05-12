@@ -16,8 +16,14 @@
 
 package br.ufscar.dc.gsdr.mfog.flink;
 
+import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.SelfDataStreamSerializable;
-import br.ufscar.dc.gsdr.mfog.util.TCP;
+import br.ufscar.dc.gsdr.mfog.structs.Serializers;
+import br.ufscar.dc.gsdr.mfog.util.MfogManager;
+import br.ufscar.dc.gsdr.mfog.util.TimeIt;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +39,6 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
     public static int DEFAULT_DELAY_BETWEEN_RETRIES = 1000;
     public static int DEFAULT_MAX_RETRIES = 10;
     public static int DEFAULT_TIMEOUT = 10;
-    public static boolean DEFAULT_GZIP = false;
     protected final String hostname;
     protected final int port;
     protected final long maxNumRetries;
@@ -41,22 +46,17 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
     protected final int connectionTimeout;
     protected final Class<T> typeInfo;
     protected final String sourceName;
-    protected final boolean withGzip;
     protected transient Logger log;
-    protected transient TCP<T> currentSocket;
     protected volatile boolean isRunning = true;
-    protected T reusableObject;
+    Client client;
+    long i = 0;
 
-    public SocketGenericSource(String hostname, int port, T reusableObject, Class<T> typeInfo, String sourceName) {
-        this(
-            hostname, port, DEFAULT_MAX_RETRIES, DEFAULT_DELAY_BETWEEN_RETRIES, DEFAULT_TIMEOUT, reusableObject,
-            typeInfo, sourceName, DEFAULT_GZIP
-        );
+    public SocketGenericSource(String hostname, int port, Class<T> typeInfo, String sourceName) {
+        this(hostname, port, DEFAULT_MAX_RETRIES, DEFAULT_DELAY_BETWEEN_RETRIES, DEFAULT_TIMEOUT, typeInfo, sourceName);
     }
 
     public SocketGenericSource(
-        String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout, T reusableObject,
-        Class<T> typeInfo, String sourceName, boolean withGzip
+        String hostname, int port, long maxNumRetries, long delayBetweenRetries, int connectionTimeout, Class<T> typeInfo, String sourceName
     ) {
         checkArgument(isValidClientPort(port), "port is out of range");
         checkArgument(
@@ -69,8 +69,6 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
         this.typeInfo = typeInfo;
         this.sourceName = sourceName;
         this.delayBetweenRetries = delayBetweenRetries;
-        this.withGzip = withGzip;
-        this.reusableObject = reusableObject;
         this.connectionTimeout = connectionTimeout;
         this.getLog().info("constructor {}", port);
     }
@@ -78,7 +76,7 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
     Logger getLog() {
         if (log == null) {
             this.log = LoggerFactory.getLogger(
-                br.ufscar.dc.gsdr.mfog.util.Logger.getLoggerMame(SocketGenericSource.class, typeInfo));
+                br.ufscar.dc.gsdr.mfog.util.Logger.getLogger(SocketGenericSource.class, typeInfo).getServiceName());
         }
         return this.log;
     }
@@ -87,28 +85,44 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
     public void run(SourceContext<T> ctx) throws Exception {
         long attempt = 0;
         getLog();
-        while (isRunning) {
-
-            try (TCP<T> socket = new TCP<T>(typeInfo, reusableObject, SocketGenericSource.class)) {
-                // socket.withGzip = withGzip;
-                currentSocket = socket;
-                log.info("Connecting to server socket {}:{}", hostname, port);
-                try {
-                    socket.client(hostname, port, 0, 0, connectionTimeout);
-                    while (isRunning && socket.hasNext()) {
-                        ctx.collect(socket.next());
+        Client client = new Client();
+        Serializers.registerMfogStructs(client.getKryo());
+        client.addListener(new Listener() {
+            @Override
+            public void received(Connection connection, Object message) {
+                super.received(connection, message);
+                if (message instanceof Message) {
+                    Message msg = (Message) message;
+                    if (msg.isDone()) {
+                        client.close();
                     }
-                } catch (IOException e) {
-                    log.warn(e.getMessage());
+                } else if (typeInfo.isInstance(message)) {
+                    i++;
+                    ctx.collect((T) message);
                 }
             }
-
-            // if we dropped out of this loop due to an EOF, sleep and retry
+        });
+        // client.start();
+        log.info("Connecting to server socket {}:{}", hostname, port);
+        client.connect(5000, MfogManager.SERVICES_HOSTNAME, MfogManager.MODEL_STORE_PORT);
+        client.sendTCP(new Message(Message.Intentions.SEND_ONLY));
+        this.client = client;
+        //
+        TimeIt timeIt = new TimeIt().start();
+        while (isRunning) {
+            try {
+                while (isRunning) {
+                    client.update(connectionTimeout);
+                }
+            } catch (IOException e) {
+                log.warn(e.getMessage());
+            }
             if (isRunning) {
                 attempt++;
                 if (maxNumRetries == -1 || attempt < maxNumRetries) {
                     log.warn("Lost connection to server socket. Retrying in " + delayBetweenRetries + " msecs...");
                     Thread.sleep(delayBetweenRetries);
+                    client.reconnect();
                 } else {
                     // this should probably be here, but some examples expect simple exists of the stream source
                     // throw new EOFException("Reached end of stream and reconnects are not enabled.");
@@ -116,6 +130,8 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
                 }
             }
         }
+        client.dispose();
+        log.info(timeIt.finish(i));
     }
 
     @Override
@@ -124,10 +140,10 @@ public class SocketGenericSource<T extends SelfDataStreamSerializable<T>> implem
 
         // we need to close the socket as well, because the Thread.interrupt() function will
         // not wake the thread in the socketStream.read() method when blocked.
-        TCP<T> theSocket = this.currentSocket;
+        Client theSocket = this.client;
         if (theSocket != null) {
             try {
-                theSocket.close();
+                theSocket.dispose();
             } catch (IOException e) {
                 log.error(e.getMessage());
             }

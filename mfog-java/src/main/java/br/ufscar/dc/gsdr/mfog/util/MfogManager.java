@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MfogManager {
-    public static final String SERVICES_HOSTNAME = "192.168.15.13";
+    public static final String SERVICES_HOSTNAME = "localhost";
     public static final int SOURCE_TRAINING_DATA_PORT = 9999;
     public static final int MODEL_STORE_INTAKE_PORT = 9998;
     public static final int MODEL_STORE_PORT = 9997;
@@ -22,5 +22,11 @@ public class MfogManager {
         if (!dir.exists()) {
             if (!dir.mkdirs()) throw new RuntimeException("Output directory '" + outDir +"'could not be created.");
         }
+    }
+
+    public static class Kyoto {
+        public static final String training = "kyoto_binario_binarized_offline_1class_fold1_ini";
+        public static final String test = "kyoto_binario_binarized_offline_1class_fold1_onl";
+        public static final String basePath = "datasets" + File.separator + "kyoto-bin" + File.separator;
     }
 }

@@ -1,0 +1,48 @@
+[INFO] Finished at: 2020-05-08T19:42:49-03:00
+[INFO] ------------------------------------------------------------------------
+2020-05-08T19:42:49.819 INFO  Tcp<Cluster, ModelStore> server ready on 0.0.0.0/0.0.0.0:9997
+2020-05-08T19:42:49.846 INFO  ModelStore server ready on 0.0.0.0/0.0.0.0:9997
+2020-05-08T19:42:49.846 INFO  Tcp<Cluster, ModelStore> accept
+2020-05-08T19:42:49.820 INFO  Tcp<LabeledExample, SinkFog> server ready on 0.0.0.0/0.0.0.0:9995
+2020-05-08T19:42:49.854 INFO  Tcp<LabeledExample, SinkFog> accept
+2020-05-08T19:42:49.938 INFO  TrainingStatic connecting to localhost:9997
+2020-05-08T19:42:49.968 INFO  Tcp<Cluster, TrainingStatic> socket
+2020-05-08T19:42:49.988 INFO  ModelStore Receiving
+2020-05-08T19:42:49.990 INFO  TrainingStatic Sending
+2020-05-08T19:42:49.995 INFO  Tcp<Cluster, TrainingStatic> new writer
+2020-05-08T19:42:50.008 INFO  Tcp<Cluster, TrainingStatic> flush
+2020-05-08T19:42:50.013 INFO  Tcp<Cluster, ModelStore> 100 items, 25 ms, 24314956 ns, 40 i/s
+2020-05-08T19:42:50.013 INFO  Tcp<Cluster, ModelStore> accept
+2020-05-08T19:42:50.014 INFO  Tcp<Cluster, TrainingStatic> 100 items, 24 ms, 24087609 ns, 41 i/s
+2020-05-08T19:42:50.015 INFO  TrainingStatic done
+../ref-git/flink-1.10.0/bin/flink run target/mfog-0.4.jar --class br.ufscar.dc.gsdr.mfog.Classifier
+2020-05-08T19:42:50.811 INFO  Classifier Ready to run baseline
+2020-05-08T19:42:52.445 INFO  Tcp<LabeledExample, EvaluatorRunnable> server ready on 0.0.0.0/0.0.0.0:9994
+2020-05-08T19:42:52.476 INFO  EvaluatorRunnable Evaluator ready
+2020-05-08T19:42:52.477 INFO  EvaluatorRunnable Evaluator Accept
+2020-05-08T19:42:52.477 INFO  Tcp<LabeledExample, EvaluatorRunnable> accept
+2020-05-08T19:42:52.445 INFO  Tcp<Point, SourceKyoto> server ready on 0.0.0.0/0.0.0.0:9996
+2020-05-08T19:42:52.485 INFO  Tcp<Point, SourceKyoto> accept
+Job has been submitted with JobID 2c645f9248e37f5fda36af33e6e25ea5
+2020-05-08T19:42:52.963 INFO  SinkFog connected to classifier, connecting to localhost:9994
+2020-05-08T19:42:52.964 INFO  Tcp<LabeledExample, SinkFog> socket
+2020-05-08T19:42:52.976 INFO  SinkFog connected to source
+2020-05-08T19:42:52.977 INFO  Tcp<LabeledExample, EvaluatorRunnable> new writer
+
+
+com.esotericsoftware.kryonet.Server;
+
+[INFO] Finished at: 2020-05-09T21:59:10-03:00
+[INFO] ------------------------------------------------------------------------
+[1] 120669
+00:00  INFO: [kryonet] Server opened.
+2020-05-09T21:59:11.798 INFO  TrainingStatic connecting to localhost:9997
+00:00  INFO: Connecting: localhost/127.0.0.1:9997
+00:01  INFO: [kryonet] Connection 1 connected: /127.0.0.1
+00:00  INFO: [kryonet] Connection 1 connected: localhost/127.0.0.1
+2020-05-09T21:59:11.916 INFO  TrainingStatic 100 items, 9 ms, 8661294 ns, 111 i/s
+00:00  INFO: [kryonet] Connection 1 disconnected.
+2020-05-09T21:59:11.917 INFO  ModelStore 100 items, 91 ms, 91632981 ns, 11 i/s                                                                                                                
+00:01  INFO: [kryonet] Connection 1 disconnected.
+git_prompt_info:5: character not in range
+

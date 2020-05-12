@@ -25,6 +25,15 @@ public class Serializers {
         kryo.setRegistrationRequired(true);
         return kryo;
     }
+    static public Kryo registerMfogStructs(Kryo kryo) {
+        kryo.register(Cluster.class, new Cluster());
+        kryo.register(Point.class, new Point());
+        kryo.register(LabeledExample.class, new LabeledExample());
+        kryo.register(Model.class, new Model());
+        kryo.register(Message.class);
+        kryo.register(Message.Intentions.class);
+        return kryo;
+    }
 
     static public void main(String[] args) throws Exception {
         Kryo kryo = getKryo();

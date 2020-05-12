@@ -1,0 +1,10 @@
+# esse arquivo, apesar de não ter extensão, aceita comentários com # e
+# configura o cluster onde linhas indicam endereço SSH dos nós gerenciadores
+# de tarefas.
+
+localhost
+
+# almoco
+# pi@192.168.15.10
+# hermes-pi-1.ufscar.br
+# pi@192.168.15.16
