@@ -222,12 +222,12 @@ public class Point extends Serializer<Point> implements Serializable, SelfDataSt
     public void write(Kryo kryo, Output output, Point point) {
         output.writeLong(point.id);
         output.writeInt(point.value.length);
-        output.writeFloats(point.value);
+        output.writeFloats(point.value, 0, point.value.length);
         output.writeLong(point.time);
     }
 
     @Override
-    public Point read(Kryo kryo, Input input, Class<Point> type) {
+    public Point read(Kryo kryo, Input input, Class<? extends Point> type) {
         Point object = new Point();
         object.id = input.readLong();
         int dimensions = input.readInt();

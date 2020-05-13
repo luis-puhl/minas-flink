@@ -47,11 +47,12 @@ public class Classifier implements Serializable {
             TypeInformation.of(Cluster.class)
         );
         DataStreamSource<Point> examples = env.addSource(
-            new KryoNetClientSource<>(Point.class, hostname, MfogManager.SOURCE_TEST_DATA_PORT), "KryoNet examples",
+            new KryoNetClientParallelSource<>(Point.class, hostname, MfogManager.SOURCE_TEST_DATA_PORT), "KryoNet examples",
             TypeInformation.of(Point.class)
         );
         SingleOutputStreamOperator<Model> model = modelSocket.keyBy(value -> 0)
             .map(new ModelAggregate())
+            .setParallelism(1)
             .name("Map2Model");
 
         // ------------------------------

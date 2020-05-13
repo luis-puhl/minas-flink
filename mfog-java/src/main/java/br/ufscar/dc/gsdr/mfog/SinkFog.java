@@ -5,6 +5,7 @@ import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
 import br.ufscar.dc.gsdr.mfog.util.IdGenerator;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
+import br.ufscar.dc.gsdr.mfog.util.TimeItConnection;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -32,20 +33,25 @@ public class SinkFog {
         //
         final List<EvaluatorInput> predictions = new LinkedList<>();
         //
-        Server server = new Server();
+
+        Server server = new Server() {
+            protected Connection newConnection() {
+                return new TimeItConnection();
+            }
+        };
         Serializers.registerMfogStructs(server.getKryo());
         server.addListener(new Listener() {
-            int received;
-
             @Override
-            public void received(Connection connection, Object message) {
-                super.received(connection, message);
+            public void received(Connection conn, Object message) {
+                TimeItConnection connection = (TimeItConnection) conn;
                 if (message instanceof LabeledExample) {
                     LabeledExample prediction = (LabeledExample) message;
-                    received++;
+                    connection.items++;
                     predictions.add(new EvaluatorInput(prediction));
-                    if (examples.size() == received) {
-                        server.stop();
+                    if (examples.size() == predictions.size()) {
+                        log.info("received all items");
+                        connection.sendTCP(new Message(Message.Intentions.DONE));
+                        connection.close();
                     }
                 }
                 if (message instanceof Message) {
@@ -54,15 +60,14 @@ public class SinkFog {
                         log.info("received Disconnect");
                         connection.close();
                     }
-                    log.info("server received " + received);
+                    log.info("server received " + connection.finish());
                 }
             }
 
             @Override
-            public void disconnected(Connection connection) {
-                super.disconnected(connection);
-                log.info("disconnected " + connection);
-                log.info("server received " + received);
+            public void disconnected(Connection conn) {
+                TimeItConnection connection = (TimeItConnection) conn;
+                log.info("disconnected " + connection.finish());
             }
         });
         server.bind(MfogManager.SINK_MODULE_TEST_PORT);

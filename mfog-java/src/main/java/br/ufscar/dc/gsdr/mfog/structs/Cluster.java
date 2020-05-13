@@ -224,7 +224,7 @@ public class Cluster extends Serializer<Cluster> implements Serializable, SelfDa
     }
 
     @Override
-    public Cluster read(Kryo kryo, Input input, Class<Cluster> type) {
+    public Cluster read(Kryo kryo, Input input, Class<? extends Cluster> type) {
         Cluster cl = new Cluster();
         cl.id = input.readLong();
         cl.variance = input.readFloat();

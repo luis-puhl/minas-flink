@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class KryoNetClientSource<T> implements SourceFunction<T> {
-    private final Class<T> generics;
-    transient Client client;
-    transient org.slf4j.Logger log;
-    private int port;
-    private String hostname;
+    protected final Class<T> generics;
+    protected transient Client client;
+    protected transient org.slf4j.Logger log;
+    protected int port;
+    protected String hostname;
 
     public KryoNetClientSource(Class<T> generics, String hostname, int port) {
         this.generics = generics;
@@ -24,7 +24,7 @@ public class KryoNetClientSource<T> implements SourceFunction<T> {
         setUpLogger();
     }
 
-    void setUpLogger() {
+    protected void setUpLogger() {
         if (log == null) {
             log = LoggerFactory.getLogger(KryoNetClientSource.class);
         }
@@ -56,6 +56,7 @@ public class KryoNetClientSource<T> implements SourceFunction<T> {
                         } catch (IOException e) {
                             log.error("Failed to dispose client.", e);
                         }
+                        client.getUpdateThread().interrupt();
                     }
                     log.warn("received " + received);
                 }
