@@ -2,7 +2,6 @@ package br.ufscar.dc.gsdr.mfog.kiss;
 
 import br.ufscar.dc.gsdr.mfog.KryoNetClientParallelSource;
 import br.ufscar.dc.gsdr.mfog.KryoNetClientSink;
-import br.ufscar.dc.gsdr.mfog.MinasClassify;
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Serializers;
 import br.ufscar.dc.gsdr.mfog.util.TimeItConnection;
@@ -10,23 +9,18 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.apache.flink.api.common.state.MapStateDescriptor;
+import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.api.datastream.BroadcastStream;
-import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
-import org.apache.flink.streaming.api.functions.co.CoProcessFunction;
 import org.apache.flink.util.Collector;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class KeepItSimpleStupid {
     static final org.slf4j.Logger log = LoggerFactory.getLogger(KeepItSimpleStupid.class);
@@ -44,34 +38,62 @@ public class KeepItSimpleStupid {
 
         DataStreamSource<String> sourceA = env.addSource(new KryoNetClientParallelSource<>(
             // new KryoNetClientSource<>(
-            String.class, "localhost", 13000), "KryoNet model", TypeInformation.of(String.class));
+            String.class, "localhost", 13000), "KryoNet A", TypeInformation.of(String.class));
 
         DataStreamSource<String> sourceB = env.addSource(new KryoNetClientParallelSource<>(
             // new KryoNetClientSource<>(
-            String.class, "localhost", 13001), "KryoNet model", TypeInformation.of(String.class));
+            String.class, "localhost", 13001), "KryoNet B", TypeInformation.of(String.class));
 
         sourceA.map(i -> i.concat("-flink"))
-            .addSink(new KryoNetClientSink<>(String.class, "localhost", 13002)).name("KryoNet Sink");
+            .setParallelism(env.getMaxParallelism())
+            .addSink(new KryoNetClientSink<>(String.class, "localhost", 13002)).name("KryoNet Sink A");
 
         sourceB.map(i -> i.concat("-flink"))
-            .addSink(new KryoNetClientSink<>(String.class, "localhost", 13003)).name("KryoNet Sink");
+            .setParallelism(env.getMaxParallelism())
+            .addSink(new KryoNetClientSink<>(String.class, "localhost", 13003)).name("KryoNet Sink B");
 
-        MapStateDescriptor<String, String> stateDescriptor = new MapStateDescriptor<>("state", String.class, String.class);
+        MapStateDescriptor<String, List<String>> stateDescriptor = new MapStateDescriptor<>(
+            "state",
+            TypeInformation.of(String.class),
+            TypeInformation.of(new TypeHint<List<String>>(){})
+        );
         BroadcastStream<String> broadcastB = sourceB.broadcast(stateDescriptor);
         SingleOutputStreamOperator<String> process = sourceA.connect(broadcastB)
             .process(new BroadcastProcessFunction<String, String, String>() {
+                List<String> buffer = new LinkedList<>();
                 @Override
                 public void processElement(String value, ReadOnlyContext ctx, Collector<String> out) throws Exception {
-                    out.collect(value.concat(ctx.getBroadcastState(stateDescriptor).get("state")));
+                    List<String> state = ctx.getBroadcastState(stateDescriptor).get("state");
+                    if (state == null) {
+                        buffer.add(value);
+                    } else {
+                        process(value, state, out);
+                    }
+                }
+
+                void process(String value, List<String> state, Collector<String> out) {
+                    int i = Collections.binarySearch(state, value);
+                    out.collect(value + " -> " + i);
                 }
 
                 @Override
                 public void processBroadcastElement(String value, Context ctx, Collector<String> out) throws Exception {
-                    ctx.getBroadcastState(stateDescriptor).put("state", value);
+                    List<String> state = ctx.getBroadcastState(stateDescriptor).get("state");
+                    if (state == null) {
+                        state = new LinkedList<>();
+                    }
+                    state.add(value);
+                    ctx.getBroadcastState(stateDescriptor).put("state", state);
+                    for (String example : buffer) {
+                        process(example, state, out);
+                    }
+                    buffer.clear();
                 }
-            });
+            })
+            .setParallelism(env.getMaxParallelism())
+            .name("Process Broadcast");
 
-        process.addSink(new KryoNetClientSink<>(String.class, "localhost", 13004)).name("KryoNet Sink");
+        process.addSink(new KryoNetClientSink<>(String.class, "localhost", 13004)).name("KryoNet Sink processed");
 
         env.execute("Keep It Simple, Stupid");
     }
@@ -109,7 +131,14 @@ public class KeepItSimpleStupid {
 
     static void doServer(int port, String serverName) throws IOException {
         final org.slf4j.Logger log = LoggerFactory.getLogger(serverName);
-        Server server = new Server() {
+        /*
+        Exception in thread "Thread-4" java.lang.OutOfMemoryError: Java heap space
+            at java.nio.HeapByteBuffer.<init>(HeapByteBuffer.java:57)
+            at java.nio.ByteBuffer.allocate(ByteBuffer.java:335)
+            at com.esotericsoftware.kryonet.TcpConnection.<init>(TcpConnection.java:34)
+        Server server = new Server(653457 * 1024, 2048) {
+         */
+        Server server = new Server(653457, 2048) {
             protected Connection newConnection() {
                 return new TimeItConnection();
             }
@@ -130,17 +159,20 @@ public class KeepItSimpleStupid {
                     if (msg.isDone()) {
                         log.warn(port + " received Disconnect");
                         connection.close();
+                        return;
                     }
                     if (msg.isReceive()) {
                         log.warn(port + " sending...");
-                        for (int i = 0; i < 100 * 1000; i++) {
-                            connection.sendTCP(String.valueOf(i));
+                        for (int i = 0; i < 653457; i++) {
+                            // Exception in thread "pool-1-thread-1" com.esotericsoftware.kryo.KryoException: Buffer overflow. Available: 1, required: 2
+                            // intermittent
+                            connection.sendTCP(i + "0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A");
                             connection.items++;
                         }
                         connection.sendTCP(new Message(Message.Intentions.DONE));
                         log.warn(port + " sending...  ...done");
+                        return;
                     }
-                    return;
                 }
                 if (message instanceof String) {
                     connection.items++;
@@ -166,5 +198,7 @@ public class KeepItSimpleStupid {
         }));
         server.bind(port);
         server.run();
+        server.stop();
+        server.dispose();
     }
 }
