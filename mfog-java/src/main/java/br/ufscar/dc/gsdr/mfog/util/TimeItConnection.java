@@ -9,10 +9,4 @@ public class TimeItConnection extends Connection {
     public String finish() {
         return timeIt.finish(items);
     }
-
-    public int getBufferAvailable() {
-        int position = tcp.writeBuffer.position();
-        int capacity = tcp.writeBuffer.capacity();
-        return capacity - position;
-    }
 }

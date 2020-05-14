@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,74 +23,6 @@ import java.util.stream.Stream;
 
 public class SourceKyoto {
     static final org.slf4j.Logger log = LoggerFactory.getLogger(SourceKyoto.class);
-
-    static class Sender<T> implements Runnable {
-        final Iterator<T> examplesIter;
-        final List<TimeItConnection> connections = new ArrayList<>(16);
-        final org.slf4j.Logger log;
-
-        Sender(Iterator<T> examplesIter, Class<T> typeInfo, Class<?> service) {
-            String name = service.getName() + "-" + Sender.class.getName() + "-" + typeInfo.getName();
-            log = LoggerFactory.getLogger(name);
-            log.info(name);
-            this.examplesIter = examplesIter;
-        }
-
-        synchronized int addConnection(TimeItConnection connection) {
-            synchronized (connections) {
-                connections.add(connection);
-                return connections.size();
-            }
-        }
-
-        @Override
-        public void run() {
-            // sender
-            log.info("sending...");
-            int activeConnections = 1;
-            long sent = 0;
-            while (examplesIter.hasNext() && activeConnections >= 1) {
-                long thisSession = sent;
-                synchronized (connections) {
-                    for (Iterator<TimeItConnection> conns = connections.iterator(); conns.hasNext(); ) {
-                        TimeItConnection current = conns.next();
-                        if (!current.isConnected()) {
-                            log.info("isConnected " + current);
-                            conns.remove();
-                            continue;
-                        }
-                        synchronized (examplesIter) {
-                            if (examplesIter.hasNext()) {
-                                // log.info("send " + current.getTcpWriteBufferSize());
-                                current.items++;
-                                sent++;
-                                current.sendTCP(examplesIter.next());
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-                    activeConnections = connections.size();
-                }
-                Thread.yield();
-                if (thisSession == sent) {
-                    log.info("All buffers full, nothing sent, will sleep. " + activeConnections);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            synchronized (connections) {
-                for (Connection current : connections) {
-                    current.sendTCP(new Message(Message.Intentions.DONE));
-                    current.close();
-                }
-            }
-            log.info("send...  ...done");
-        }
-    };
 
     public static void main(String[] args) throws IOException {
         IdGenerator idGenerator = new IdGenerator();
@@ -115,28 +48,18 @@ public class SourceKyoto {
             }
         }
         final SynchronizedIterator<Point> examplesIterator = new SynchronizedIterator<>(examples.iterator());
-        class ParallelSenderConnection extends Connection {
-            TimeIt timeIt = new TimeIt().start();
-            int items = 0;
-            Server server;
-            ParallelSenderConnection(Server server) {
-                this.server = server;
-            }
 
-            String finish() {
-                return timeIt.finish(items);
-            }
-        }
-        Server server = new Server() {
+        final int writeBufferSize = 70 * 1024 * 1024;
+        Server server = new Server(writeBufferSize, 2048) {
             protected Connection newConnection() {
-                return new ParallelSenderConnection(this);
+                return new TimeItConnection();
             }
         };
         Serializers.registerMfogStructs(server.getKryo());
-        server.addListener(new Listener() {
+        server.addListener(new Listener.ThreadedListener(new Listener() {
             @Override
             public void received(Connection conn, Object message) {
-                ParallelSenderConnection connection = (ParallelSenderConnection) conn;
+                TimeItConnection connection = (TimeItConnection) conn;
                 if (message instanceof Message) {
                     Message msg = (Message) message;
                     // log.info("msg=" + msg);
@@ -146,44 +69,41 @@ public class SourceKyoto {
                     }
                     if (msg.isClassifier()) {
                         log.info("Classifier is here");
-                        Thread sender = new Thread(() -> {
-                            log.info("sending... " + connection);
-                            int strike = 3;
-                            while (strike > 0 && connection.isConnected()) {
-                                Thread.yield();
-                                if (connection.getTcpWriteBufferSize() < 10) {
-                                    strike--;
-                                    try {
-                                        Thread.sleep(10);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    continue;
-                                }
-                                synchronized (examplesIterator) {
-                                    if (examplesIterator.hasNext()) {
-                                        connection.sendTCP(examplesIterator.next());
-                                    } else {
-                                        log.info("no more items \t" + connection);
-                                        connection.sendTCP(new Message(Message.Intentions.DONE));
-                                        connection.close();
-                                        return;
-                                    }
-                                }
-                            }
-                            log.info("early disconnection \t" + connection);
-                        }, "Sender for " + connection);
-                        sender.start();
+                        for (Point example : examples) {
+                            connection.sendTCP(example);
+                            connection.items++;
+                        }
+                        log.info("send...  ...done " + connection.finish());
+                        connection.sendTCP(new Message(Message.Intentions.DONE));
+                        connection.close();
+                        // Thread sender = new Thread(() -> {
+                        //     log.info("sending... " + connection);
+                        //     while (connection.isConnected()) {
+                        //         Thread.yield();
+                        //         synchronized (examplesIterator) {
+                        //             if (examplesIterator.hasNext()) {
+                        //                 connection.sendTCP(examplesIterator.next());
+                        //             } else {
+                        //                 log.info("no more items \t" + connection);
+                        //                 connection.sendTCP(new Message(Message.Intentions.DONE));
+                        //                 connection.close();
+                        //                 return;
+                        //             }
+                        //         }
+                        //     }
+                        //     log.info("early disconnection \t" + connection + " " + connection.finish());
+                        // }, "Sender for " + connection);
+                        // sender.start();
                     }
                 }
             }
 
             @Override
             public void disconnected(Connection conn) {
-                ParallelSenderConnection connection = (ParallelSenderConnection) conn;
+                TimeItConnection connection = (TimeItConnection) conn;
                 log.info(connection.finish());
             }
-        });
+        }));
         server.bind(MfogManager.SOURCE_TEST_DATA_PORT);
         server.run();
 

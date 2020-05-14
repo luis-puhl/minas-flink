@@ -19,8 +19,8 @@ spot: kill build runMfog
 	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.Classifier
 
 kiss: kill build
-	../ref-git/flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.kiss.FlinkJob target/mfog-0.4.jar &\
-	java -cp target/mfog-0.4.jar br.ufscar.dc.gsdr.mfog.kiss.KryoServer
+	java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.kiss.KeepItSimpleStupid servers &
+	../ref-git/flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.kiss.KeepItSimpleStupid target/mfog-0.4.jar
 
 kill:
 	@ps -o "%p|%a" | grep "[j]ava -cp target/mfog" | tee /dev/tty | awk -F "|" '{print $$1}' > tokill.ps
