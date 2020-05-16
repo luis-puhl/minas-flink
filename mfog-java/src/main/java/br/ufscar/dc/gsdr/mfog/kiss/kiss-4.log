@@ -1,0 +1,124 @@
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.488 s
+[INFO] Finished at: 2020-05-16T16:23:29-03:00
+[INFO] ------------------------------------------------------------------------
+java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.kiss.KeepItSimpleStupid servers &
+../ref-git/flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.kiss.KeepItSimpleStupid target/mfog-0.4.jar
+16:23:30 INFO  Producer A start
+16:23:30 INFO  Consumer start
+16:23:30 INFO  Producer B start
+16:23:30 INFO  esotericsoftware.minlog kryonet: Server opened.
+16:23:30 INFO  esotericsoftware.minlog kryonet: Server opened.
+16:23:30 INFO  esotericsoftware.minlog kryonet: Server opened.
+Job has been submitted with JobID 01bb5bb52ade647f8d851356ca22d370
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /127.0.0.1
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /127.0.0.1
+16:23:32 INFO  Producer B  connected Connection 1
+16:23:32 INFO  Producer B  idle 1
+16:23:32 INFO  Producer A  connected Connection 1
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /127.0.0.1
+16:23:32 INFO  Producer A  idle 1
+16:23:32 INFO  Producer B  connected Connection 2
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 3 connected: /127.0.0.1
+16:23:32 INFO  Producer B  connected Connection 3
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 4 connected: /127.0.0.1
+16:23:32 INFO  Producer B  connected Connection 4
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /127.0.0.1
+16:23:32 INFO  Producer A  connected Connection 2
+16:23:32 INFO  Producer A  received Message{value=CLASSIFIER}
+16:23:32 INFO  Producer A  sending...
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 3 connected: /127.0.0.1
+16:23:32 INFO  Producer B  received Message{value=CLASSIFIER}
+16:23:32 INFO  Producer B  sending...
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 4 connected: /127.0.0.1
+16:23:32 INFO  Producer B  sending...  ...done Connection 1 102 items, 97 ms, 97247193 ns, 1 i/ms
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+16:23:32 INFO  Producer B  received Message{value=CLASSIFIER}
+16:23:32 INFO  Producer B  sending...
+16:23:32 INFO  Producer B  sending...  ...done Connection 2 2 items, 31 ms, 30911090 ns, 0 i/ms
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+16:23:32 INFO  Producer B  received Message{value=CLASSIFIER}
+16:23:32 INFO  Producer B  sending...
+16:23:32 INFO  Producer B  sending...  ...done Connection 4 2 items, 31 ms, 30575600 ns, 0 i/ms
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 4 disconnected.
+16:23:32 INFO  Producer B  received Message{value=CLASSIFIER}
+16:23:32 INFO  Producer B  sending...
+16:23:32 INFO  Producer B  sending...  ...done Connection 3 2 items, 31 ms, 31778719 ns, 0 i/ms
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 3 disconnected.
+16:23:32 INFO  Producer B  disconnected Connection 1 102 items, 102 ms, 102166414 ns, 1 i/ms
+16:23:32 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /127.0.0.1
+16:23:32 INFO  Consumer  connected Connection 1
+16:23:32 INFO  Consumer  idle 1
+16:23:32 INFO  Consumer  received Message{value=SEND_ONLY}
+16:23:32 INFO  Producer B  No more connections total received=0
+16:23:32 INFO  esotericsoftware.minlog kryonet: Server closed.
+16:23:32 INFO  Producer B  disconnected Connection 2 2 items, 135 ms, 134971312 ns, 0 i/ms
+16:23:32 INFO  Producer B  No more connections total received=0
+16:23:32 INFO  Producer B  disconnected Connection 4 2 items, 234 ms, 234348533 ns, 0 i/ms
+16:23:32 INFO  Producer B  No more connections total received=0
+16:23:32 INFO  Producer B  disconnected Connection 3 2 items, 335 ms, 335316254 ns, 0 i/ms
+16:23:32 INFO  Producer B Done
+16:23:32 INFO  Producer B  No more connections total received=0
+16:23:33 INFO  Consumer  idle 49317
+16:23:34 INFO  Consumer 0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A,99998,100,-1
+16:23:34 INFO  Consumer  idle 126550
+16:23:35 INFO  Consumer 0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A,199998,100,-1
+16:23:35 INFO  Consumer  idle 203323
+16:23:36 INFO  Consumer  idle 287306
+16:23:36 INFO  Consumer 0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A,299998,100,-1
+16:23:37 INFO  Producer A  connected Connection 3
+16:23:37 INFO  Producer A  idle 1
+16:23:37 INFO  Producer A  received Message{value=CLASSIFIER}
+16:23:37 INFO  Producer A  sending...
+16:23:37 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /127.0.0.1
+16:23:37 INFO  Consumer  connected Connection 2
+16:23:37 INFO  Consumer  received Message{value=SEND_ONLY}
+16:23:37 INFO  Consumer  idle 12388
+16:23:37 INFO  Consumer 0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A,399998,100,-1
+16:23:38 INFO  Consumer  idle 91656
+16:23:38 INFO  Consumer 0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A,519769,100,-1
+16:23:39 INFO  Consumer  idle 175786
+16:23:39 INFO  Consumer 0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A,619769,100,-1
+16:23:40 INFO  Producer A  connected Connection 4
+16:23:40 INFO  Producer A  idle 1
+16:23:40 INFO  Producer A  sending...  ...done Connection 1 425478 items, 7906 ms, 7905263197 ns, 53 i/ms
+16:23:40 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+16:23:40 INFO  Producer A  received Message{value=CLASSIFIER}
+16:23:40 INFO  Producer A  sending...
+16:23:40 INFO  Producer A  sending...  ...done Connection 3 2 items, 7830 ms, 7830169707 ns, 0 i/ms
+16:23:40 INFO  esotericsoftware.minlog kryonet: Connection 3 disconnected.
+16:23:40 INFO  Producer A  sending...  ...done Connection 2 274526 items, 7844 ms, 7844570649 ns, 34 i/ms
+16:23:40 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+16:23:40 INFO  Producer A  received Message{value=CLASSIFIER}
+16:23:40 INFO  Producer A  sending...
+16:23:40 INFO  Producer A  sending...  ...done Connection 4 2 items, 7830 ms, 7830060779 ns, 0 i/ms
+16:23:40 INFO  esotericsoftware.minlog kryonet: Connection 4 disconnected.
+16:23:40 INFO  Producer A  disconnected Connection 1 425478 items, 7924 ms, 7923435658 ns, 53 i/ms
+16:23:40 INFO  Consumer  received Disconnect
+16:23:40 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+16:23:40 INFO  Consumer  disconnected Connection 1 425477 items, 7790 ms, 7789454098 ns, 54 i/ms
+16:23:40 INFO  Producer A  No more connections total received=0
+16:23:40 INFO  esotericsoftware.minlog kryonet: Server closed.
+16:23:40 INFO  Producer A  disconnected Connection 3 2 items, 7948 ms, 7948414755 ns, 0 i/ms
+16:23:40 INFO  Producer A  No more connections total received=0
+16:23:40 INFO  Producer A  disconnected Connection 2 274526 items, 8063 ms, 8062986745 ns, 34 i/ms
+16:23:40 INFO  Consumer  idle 270909
+16:23:40 INFO  Consumer  received Disconnect
+16:23:40 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+16:23:40 INFO  Consumer  disconnected Connection 2 274525 items, 3214 ms, 3213807873 ns, 85 i/ms
+16:23:40 INFO  Producer A  No more connections total received=0
+16:23:40 INFO  Producer A  disconnected Connection 4 2 items, 8148 ms, 8148334937 ns, 0 i/ms
+16:23:40 INFO  Producer A Done
+16:23:40 INFO  kiss.KeepItSimpleStupid joined Thread[Thread-0,5,]
+16:23:40 INFO  kiss.KeepItSimpleStupid joined Thread[Thread-1,5,]
+16:23:40 INFO  Consumer  No more connections total received=700000
+16:23:40 INFO  esotericsoftware.minlog kryonet: Server closed.
+Program execution finished
+Job with JobID 01bb5bb52ade647f8d851356ca22d370 has finished.
+Job Runtime: 8613 ms
+
+16:23:40 INFO  Producer A  No more connections total received=0
+16:23:40 INFO  Consumer Done
+16:23:40 INFO  kiss.KeepItSimpleStupid joined Thread[Thread-2,5,]

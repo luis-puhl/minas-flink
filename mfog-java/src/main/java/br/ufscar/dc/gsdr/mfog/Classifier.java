@@ -68,7 +68,7 @@ public class Classifier implements Serializable {
             // .setParallelism(env.getMaxParallelism()) // locks the cluster in the creating state for all jobs
             .name("Classify");
 
-        out.addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT))
+        out.addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT, 0.9f))
             .name("KryoNet Sink");
 
         log.info("Ready to run baseline");

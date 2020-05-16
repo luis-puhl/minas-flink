@@ -12,18 +12,20 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class KryoNetClientSink<T> extends RichSinkFunction<T> {
-    private final Class<T> generics;
-    protected int port;
-    protected String hostname;
-    transient Client client;
-    long sent;
-    transient org.slf4j.Logger log;
-    transient Queue<T> queue;
+    public final Class<T> generics;
+    public final int port;
+    public final String hostname;
+    public final float idleThreshold;
+    protected transient Client client;
+    protected long sent;
+    protected transient org.slf4j.Logger log;
+    protected transient Queue<T> queue;
 
-    public KryoNetClientSink(Class<T> generics, String hostname, int port) {
+    public KryoNetClientSink(Class<T> generics, String hostname, int port, float idleThreshold) {
         this.generics = generics;
         this.port = port;
         this.hostname = hostname;
+        this.idleThreshold = idleThreshold;
         setUpLogger();
     }
 
@@ -40,7 +42,7 @@ public class KryoNetClientSink<T> extends RichSinkFunction<T> {
         client.start();
         client.connect(5000, hostname, port);
         client.sendTCP(new Message(Message.Intentions.SEND_ONLY));
-        client.setIdleThreshold(0.90f);
+        client.setIdleThreshold(this.idleThreshold);
         queue = new LinkedList<>();
     }
 
