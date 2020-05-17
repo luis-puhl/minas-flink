@@ -11,33 +11,22 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Iterator;
 
-class KissServer extends Listener implements Runnable, Iterator<String> {
+class KissServer<T> extends Listener implements Runnable {
     final String name;
     final int port;
     final org.slf4j.Logger log;
-    final int amount;
     final float idle;
     Server server;
     int received = 0;
-    Integer iterator = 0;
+    final Iterator<T> iterator;
     long lastIdleMsg = System.currentTimeMillis();
 
-    KissServer(String name, int port, int amount, float idle) {
+    KissServer(String name, int port, Iterator<T> iterator, float idle) {
         this.name = name;
         this.port = port;
         this.log = LoggerFactory.getLogger(name);
-        this.amount = amount;
+        this.iterator = iterator;
         this.idle = idle;
-    }
-
-    @Override
-    public boolean hasNext() {
-        return iterator < amount;
-    }
-
-    @Override
-    public synchronized String next() {
-        return "0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,1,0,0,0,0,0,0,0,0,1,A," + (iterator++);
     }
 
     @Override
@@ -80,12 +69,12 @@ class KissServer extends Listener implements Runnable, Iterator<String> {
 
     void sender(TimeItConnection connection) {
         if (!connection.isSender) return;
-        synchronized (this) {
-            while (this.hasNext() && connection.isIdle()) {
-                connection.sendTCP(this.next());
+        synchronized (iterator) {
+            while (iterator.hasNext() && connection.isIdle()) {
+                connection.sendTCP(iterator.next());
             }
         }
-        if (!this.hasNext()) {
+        if (!iterator.hasNext()) {
             connection.sendTCP(new Message(Message.Intentions.DONE));
             log.info(" sending...  ...done " + connection.finish());
             connection.isSender = false;
@@ -126,7 +115,7 @@ class KissServer extends Listener implements Runnable, Iterator<String> {
     public void disconnected(Connection conn) {
         TimeItConnection connection = (TimeItConnection) conn;
         log.info(" disconnected " + connection.finish());
-        if (this.hasNext()) return;
+        if (iterator.hasNext()) return;
         try {
             Thread.sleep(100);
             if (server.getConnections().length == 0) {
