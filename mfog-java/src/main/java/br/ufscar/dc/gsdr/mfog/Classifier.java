@@ -32,6 +32,7 @@ import java.io.Serializable;
 
 public class Classifier implements Serializable {
     static final org.slf4j.Logger log = LoggerFactory.getLogger(Classifier.class);
+    static final float idle = 0.15f;
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -41,6 +42,8 @@ public class Classifier implements Serializable {
         config.addDefaultKryoSerializer(LabeledExample.class, new LabeledExample());
         config.addDefaultKryoSerializer(Model.class, new Model());
         String hostname = MfogManager.SERVICES_HOSTNAME;
+
+        final int parallelism = env.getMaxParallelism();
 
         DataStreamSource<Cluster> modelSocket = env.addSource(
             new KryoNetClientSource<>(Cluster.class, hostname, MfogManager.MODEL_STORE_PORT), "KryoNet model",
@@ -52,11 +55,11 @@ public class Classifier implements Serializable {
         );
         SingleOutputStreamOperator<Model> model = modelSocket.keyBy(value -> 0)
             .map(new ModelAggregate())
-            .setParallelism(1)
             .name("Map2Model");
+        if (parallelism > 0) model = model.setParallelism(parallelism);
 
         // ------------------------------
-        String jobName = "" +
+        String jobName = "Classifier " +
             //"rescale " + "shuffle " +
             // "parallelism(envMax) " +
             "sink(string socket) ";
@@ -67,8 +70,9 @@ public class Classifier implements Serializable {
             .connect(model.broadcast()).process(new MinasClassify())
             // .setParallelism(env.getMaxParallelism()) // locks the cluster in the creating state for all jobs
             .name("Classify");
+        if (parallelism > 0) out = out.setParallelism(parallelism);
 
-        out.addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT, 0.9f))
+        out.addSink(new KryoNetClientSink<>(LabeledExample.class, hostname, MfogManager.SINK_MODULE_TEST_PORT, idle))
             .name("KryoNet Sink");
 
         log.info("Ready to run baseline");

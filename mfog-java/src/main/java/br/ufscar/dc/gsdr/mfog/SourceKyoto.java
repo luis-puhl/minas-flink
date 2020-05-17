@@ -1,5 +1,6 @@
 package br.ufscar.dc.gsdr.mfog;
 
+import br.ufscar.dc.gsdr.mfog.kiss.KissServer;
 import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
 import br.ufscar.dc.gsdr.mfog.structs.Message;
 import br.ufscar.dc.gsdr.mfog.structs.Point;
@@ -49,62 +50,7 @@ public class SourceKyoto {
         }
         final SynchronizedIterator<Point> examplesIterator = new SynchronizedIterator<>(examples.iterator());
 
-        final int writeBufferSize = 70 * 1024 * 1024;
-        Server server = new Server(writeBufferSize, 2048) {
-            protected Connection newConnection() {
-                return new TimeItConnection();
-            }
-        };
-        Serializers.registerMfogStructs(server.getKryo());
-        server.addListener(new Listener.ThreadedListener(new Listener() {
-            @Override
-            public void received(Connection conn, Object message) {
-                TimeItConnection connection = (TimeItConnection) conn;
-                if (message instanceof Message) {
-                    Message msg = (Message) message;
-                    // log.info("msg=" + msg);
-                    if (msg.isDone()) {
-                        log.info("done");
-                        connection.close();
-                    }
-                    if (msg.isClassifier()) {
-                        log.info("Classifier is here");
-                        for (Point example : examples) {
-                            connection.sendTCP(example);
-                            connection.items++;
-                        }
-                        log.info("send...  ...done " + connection.finish());
-                        connection.sendTCP(new Message(Message.Intentions.DONE));
-                        connection.close();
-                        // Thread sender = new Thread(() -> {
-                        //     log.info("sending... " + connection);
-                        //     while (connection.isConnected()) {
-                        //         Thread.yield();
-                        //         synchronized (examplesIterator) {
-                        //             if (examplesIterator.hasNext()) {
-                        //                 connection.sendTCP(examplesIterator.next());
-                        //             } else {
-                        //                 log.info("no more items \t" + connection);
-                        //                 connection.sendTCP(new Message(Message.Intentions.DONE));
-                        //                 connection.close();
-                        //                 return;
-                        //             }
-                        //         }
-                        //     }
-                        //     log.info("early disconnection \t" + connection + " " + connection.finish());
-                        // }, "Sender for " + connection);
-                        // sender.start();
-                    }
-                }
-            }
-
-            @Override
-            public void disconnected(Connection conn) {
-                TimeItConnection connection = (TimeItConnection) conn;
-                log.info(connection.finish());
-            }
-        }));
-        server.bind(MfogManager.SOURCE_TEST_DATA_PORT);
+        KissServer<Point> server = new KissServer<>("Source Kyoto", MfogManager.SOURCE_TEST_DATA_PORT, examples.iterator(), 0.1f);
         server.run();
 
         log.info("done");

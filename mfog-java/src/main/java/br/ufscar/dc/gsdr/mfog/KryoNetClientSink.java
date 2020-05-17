@@ -19,7 +19,7 @@ public class KryoNetClientSink<T> extends RichSinkFunction<T> {
     protected transient Client client;
     protected long sent;
     protected transient org.slf4j.Logger log;
-    protected transient Queue<T> queue;
+    protected final Queue<T> queue = new LinkedList<>();
 
     public KryoNetClientSink(Class<T> generics, String hostname, int port, float idleThreshold) {
         this.generics = generics;
@@ -43,7 +43,6 @@ public class KryoNetClientSink<T> extends RichSinkFunction<T> {
         client.connect(5000, hostname, port);
         client.sendTCP(new Message(Message.Intentions.SEND_ONLY));
         client.setIdleThreshold(this.idleThreshold);
-        queue = new LinkedList<>();
     }
 
     @Override
@@ -55,20 +54,24 @@ public class KryoNetClientSink<T> extends RichSinkFunction<T> {
         if (client.isIdle()) {
             client.sendTCP(value);
         } else {
-            if (queue.isEmpty()) {
-                // when Empty, this listener is removed
-                client.addListener(new TcpIdleSender() {
-                    @Override
-                    protected Object next() {
-                        if (queue.isEmpty()) {
-                            return null;
-                        } else {
-                            return queue.poll();
+            synchronized (queue) {
+                if (queue.isEmpty()) {
+                    // when Empty, this listener is removed
+                    client.addListener(new TcpIdleSender() {
+                        @Override
+                        protected Object next() {
+                            synchronized (queue) {
+                                if (queue.isEmpty()) {
+                                    return null;
+                                } else {
+                                    return queue.poll();
+                                }
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                queue.add(value);
             }
-            queue.add(value);
         }
     }
 

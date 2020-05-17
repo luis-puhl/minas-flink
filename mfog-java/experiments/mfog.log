@@ -37,3 +37,111 @@ Job Runtime: 1403666 ms
 2020-04-27T12:00:30.712 INFO  SinkFog i=652661 cls=100 src=732 466 i/s
 2020-04-27T12:00:31.713 INFO  SinkFog i=653153 cls=100 src=240 466 i/s
 2020-04-27T12:00:32.714 INFO  SinkFog i=653393 cls=164 src=0 466 i/s
+
+# 2020-05-17
+
+14:15:54 INFO  esotericsoftware.minlog kryonet: Server opened.
+14:15:54 INFO  mfog.TrainingStatic connecting to localhost:9997
+14:15:54 INFO  esotericsoftware.minlog Connecting: localhost/127.0.0.1:9997
+14:15:54 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /127.0.0.1
+14:15:54 INFO  mfog.TrainingStatic Sending
+14:15:54 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: localhost/127.0.0.1
+14:15:54 INFO  mfog.ModelStore msg=Message{value=SEND_ONLY}
+14:15:54 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+14:15:54 INFO  mfog.TrainingStatic 100 items, 62 ms, 62908640 ns, 1 i/ms
+14:15:54 INFO  mfog.ModelStore msg=Message{value=DONE}
+14:15:54 INFO  mfog.ModelStore done receiving
+14:15:54 INFO  mfog.ModelStore Connection 1 101 items, 257 ms, 257458193 ns, 0 i/ms
+14:15:54 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+../ref-git/flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.Classifier target/mfog-0.4.jar
+14:15:58 INFO  Source Kyoto start
+14:15:58 INFO  esotericsoftware.minlog kryonet: Server opened.
+14:15:58 INFO  esotericsoftware.minlog kryonet: Server opened.
+14:15:58 INFO  mfog.SinkFog ready
+
+
+Job has been submitted with JobID e61a6d43346632af45a9e671825634de
+14:15:59 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /127.0.0.1
+14:15:59 INFO  mfog.ModelStore msg=Message{value=CLASSIFIER}
+14:15:59 INFO  mfog.ModelStore msg=Message{value=RECEIVE_ONLY}
+14:15:59 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /127.0.0.1
+14:15:59 INFO  Source Kyoto  connected Connection 1
+14:15:59 INFO  Source Kyoto  idle 1
+14:15:59 INFO  Source Kyoto  received Message{value=CLASSIFIER}
+14:15:59 INFO  Source Kyoto  sending...
+14:15:59 INFO  mfog.ModelStore Connection 2 202 items, 45 ms, 44225662 ns, 4 i/ms
+14:15:59 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+14:15:59 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /127.0.0.1
+14:15:59 INFO  mfog.SinkFog server received Connection 1 1 items, 39 ms, 39134747 ns, 0 i/ms
+14:16:00 INFO  Source Kyoto  idle 49297
+14:16:03 INFO  Source Kyoto  idle 226815
+14:16:11 INFO  Source Kyoto  sending...  ...done Connection 1 653459 items, 11789 ms, 11788439142 ns, 55 i/ms
+14:16:11 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+14:16:11 INFO  Source Kyoto  idle 653459
+14:16:11 INFO  Source Kyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@4ea5506d
+14:16:11 INFO  Source Kyoto  disconnected Connection 1 653459 items, 11799 ms, 11799010442 ns, 55 i/ms
+14:16:11 INFO  Source Kyoto  No more connections total received=0
+14:16:11 INFO  esotericsoftware.minlog kryonet: Server closed.
+14:16:11 INFO  mfog.SinkFog received Disconnect
+14:16:11 INFO  mfog.SinkFog disconnected Connection 1 608748 items, 11500 ms, 11500622667 ns, 52 i/ms
+14:16:11 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+14:16:11 INFO  mfog.SinkFog server received Connection 1 608748 items, 11501 ms, 11500835109 ns, 52 i/ms
+14:16:11 INFO  Source Kyoto Done
+14:16:11 INFO  mfog.SourceKyoto done
+Program execution finished
+Job with JobID e61a6d43346632af45a9e671825634de has finished.
+Job Runtime: 12378 ms
+
+done
+14:16:14 WARN  mfog.ModelStore Timed-out EXIT
+14:16:14 INFO  mfog.ModelStore done serving
+14:16:14 INFO  esotericsoftware.minlog kryonet: Server closed.
+14:16:14 INFO  mfog.ModelStore shutdown
+
+
+$ make spot | grep 'mfog.SinkFog'
+  35613|java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.SourceKyoto
+  35614|java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.SinkFog
+15:03:14 INFO  mfog.SinkFog ready
+15:03:15 INFO  mfog.SinkFog server received Connection 1 1 items, 33 ms, 32399683 ns, 0 i/ms
+15:03:15 INFO  mfog.SinkFog server received Connection 4 1 items, 51 ms, 51277305 ns, 0 i/ms
+15:03:15 INFO  mfog.SinkFog server received Connection 5 1 items, 68 ms, 67623920 ns, 0 i/ms
+15:03:15 INFO  mfog.SinkFog server received Connection 2 1 items, 119 ms, 119554812 ns, 0 i/ms
+15:03:16 INFO  mfog.SinkFog server received Connection 3 1 items, 174 ms, 173600985 ns, 0 i/ms
+15:03:16 INFO  mfog.SinkFog server received Connection 6 1 items, 176 ms, 175504998 ns, 0 i/ms
+15:03:16 INFO  mfog.SinkFog server received Connection 7 1 items, 42 ms, 41305189 ns, 0 i/ms
+15:03:16 INFO  mfog.SinkFog server received Connection 8 1 items, 33 ms, 32940887 ns, 0 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 7 81684 items, 12721 ms, 12720393104 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 7 81684 items, 12721 ms, 12720658452 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 5 81685 items, 12954 ms, 12953561843 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 5 81685 items, 12954 ms, 12953685144 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 1 81684 items, 12967 ms, 12966434442 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 1 81684 items, 12967 ms, 12966536554 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 2 81684 items, 12957 ms, 12957431986 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 2 81684 items, 12957 ms, 12957550088 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 3 81684 items, 12960 ms, 12959239696 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 3 81684 items, 12960 ms, 12959338359 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 4 81684 items, 12960 ms, 12960323969 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 4 81684 items, 12960 ms, 12960446306 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received Disconnect
+15:03:28 INFO  mfog.SinkFog disconnected Connection 8 81684 items, 12687 ms, 12687406951 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog server received Connection 8 81684 items, 12687 ms, 12687484908 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog received all items
+15:03:28 INFO  mfog.SinkFog disconnected Connection 6 81685 items, 12880 ms, 12879866705 ns, 6 i/ms
+15:03:28 INFO  mfog.SinkFog everyone is here, time to match
+15:03:29 INFO  mfog.SinkFog took me 653457 loops 531ms
+15:03:29 INFO  mfog.SinkFog items=653457 matches=206278 hits=0.31567186 misses=0.68432814
+
+$ make | grep 'mfog.SinkFog' 
+  36209|java -cp target/mfog-0.4.jar:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.SourceKyoto
+15:04:51 INFO  mfog.SinkFog ready
+15:04:51 INFO  mfog.SinkFog server received Connection 1 1 items, 27 ms, 26191121 ns, 0 i/ms
+15:05:01 INFO  mfog.SinkFog received Disconnect
+15:05:01 INFO  mfog.SinkFog disconnected Connection 1 619285 items, 9530 ms, 9529767338 ns, 64 i/ms
+15:05:01 INFO  mfog.SinkFog server received Connection 1 619285 items, 9530 ms, 9529912038 ns, 64 i/ms
