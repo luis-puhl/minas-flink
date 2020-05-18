@@ -76,7 +76,11 @@ public class KryoNetClientSource<T> implements SourceFunction<T> {
             }
         });
         client.start();
-        client.connect(5000, hostname, port);
+        try {
+            client.connect(5000, hostname, port);
+        } catch (Exception e) {
+            log.error("Failed to connect.", e);
+        }
         client.sendTCP(new Message(Message.Intentions.CLASSIFIER));
         client.sendTCP(new Message(Message.Intentions.RECEIVE_ONLY));
         client.getUpdateThread().join();

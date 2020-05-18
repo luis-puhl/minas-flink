@@ -23,7 +23,7 @@ under the License.
 
 	<groupId>br.ufscar.dc.gsdr</groupId>
 	<artifactId>mfog</artifactId>
-	<version>0.4</version>
+	<version>0.5</version>
 	<packaging>jar</packaging>
 
 	<name>Mfog</name>
@@ -64,13 +64,13 @@ under the License.
 			<artifactId>flink-java</artifactId>
 			<version>${flink.version}</version>
 			<classifier>sources</classifier>
-<!--			<scope>provided</scope>-->
+			<!-- <scope>provided</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
 			<version>${flink.version}</version>
-<!--			<scope>provided</scope>-->
+			<!-- <scope>provided</scope>-->
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
@@ -156,34 +156,11 @@ under the License.
 									</excludes>
 								</filter>
 							</filters>
-							<!--
-Action "run" compiles and runs a program.
-  Syntax: run [OPTIONS] <jar-file> <arguments>
-  "run" action options:
-     -c, - - class <classname>               Class with the program entry point
-                                          ("run()" method). Only needed if the
-                                          JAR file does not specify the class in
-                                          its manifest.
-							-->
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>br.ufscar.dc.gsdr.mfog.Classifier</mainClass>
 								</transformer>
 							</transformers>
-						</configuration>
-					</execution>
-					<execution>
-						<id>build-classifier</id>
-						<configuration>
-							<archive>
-								<manifest>
-									<mainClass>br.ufscar.dc.gsdr.mfog.Classifier</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<finalName>classifier.jar</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -204,51 +181,5 @@ Action "run" compiles and runs a program.
 				<version>2.22.2</version>
 			</plugin>
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-
-				<!-- This improves the out-of-the-box experience in Eclipse by resolving some warnings.
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-shade-plugin</artifactId>
-										<versionRange>[3.1.1,)</versionRange>
-										<goals>
-											<goal>shade</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore/>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-compiler-plugin</artifactId>
-										<versionRange>[3.1,)</versionRange>
-										<goals>
-											<goal>testCompile</goal>
-											<goal>compile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore/>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-				-->
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>

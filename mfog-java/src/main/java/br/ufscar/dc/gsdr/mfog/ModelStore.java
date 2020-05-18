@@ -81,15 +81,16 @@ public class ModelStore {
         //
         // long running
         server.start();
-        final long duration = 10;
+        final long duration = 30;
         final TimeUnit timeUnit = TimeUnit.SECONDS;
+        final long totalTimeOut = timeUnit.toMillis(duration);
         while (true) {
             try {
-                Thread.sleep(timeUnit.toMillis(duration));
+                Thread.sleep(totalTimeOut);
             } catch (InterruptedException e) {
                 break;
             }
-            if (System.currentTimeMillis() - lastUpdated.get() > timeUnit.toMillis(duration)) {
+            if (System.currentTimeMillis() - lastUpdated.get() > totalTimeOut) {
                 log.warn("Timed-out EXIT");
                 break;
             }

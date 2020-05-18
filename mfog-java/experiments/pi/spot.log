@@ -1,0 +1,560 @@
+ 16:11:23  ✘  puhl@pokebola  ...project/minas-flink/mfog-java  ✖ ✹ 
+$ make kill build copy spot@almoco
+  49140|java -cp target/*:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.SourceKyoto
+  49141|java -cp target/*:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.SinkFog
+mvn clean package
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< br.ufscar.dc.gsdr:mfog >-----------------------
+[INFO] Building Mfog 0.5
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ mfog ---
+[INFO] Deleting /home/puhl/project/minas-flink/mfog-java/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ mfog ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ mfog ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 26 source files to /home/puhl/project/minas-flink/mfog-java/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ mfog ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/puhl/project/minas-flink/mfog-java/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ mfog ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 5 source files to /home/puhl/project/minas-flink/mfog-java/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.22.2:test (default-test) @ mfog ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running br.ufscar.dc.gsdr.mfog.ClusterTest
+[0, N, normal, 502, 0, 0.04553028494064095, 0.1736759823342961]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.051 s - in br.ufscar.dc.gsdr.mfog.ClusterTest
+[INFO] Running br.ufscar.dc.gsdr.mfog.structs.ClusterTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s - in br.ufscar.dc.gsdr.mfog.structs.ClusterTest
+[INFO] Running br.ufscar.dc.gsdr.mfog.structs.PointTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s - in br.ufscar.dc.gsdr.mfog.structs.PointTest
+[INFO] Running br.ufscar.dc.gsdr.mfog.structs.LabeledExampleTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s - in br.ufscar.dc.gsdr.mfog.structs.LabeledExampleTest
+[INFO] Running br.ufscar.dc.gsdr.mfog.SourceKyotoTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s - in br.ufscar.dc.gsdr.mfog.SourceKyotoTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ mfog ---
+[INFO] Building jar: /home/puhl/project/minas-flink/mfog-java/target/mfog-0.5.jar
+[INFO] 
+[INFO] --- maven-shade-plugin:3.1.1:shade (default) @ mfog ---
+[INFO] Including org.apache.flink:flink-java:jar:sources:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-core:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-annotations:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-metrics-core:jar:1.10.0 in the shaded jar.
+[INFO] Including commons-collections:commons-collections:jar:3.2.2 in the shaded jar.
+[INFO] Including org.apache.commons:commons-compress:jar:1.18 in the shaded jar.
+[INFO] Including org.apache.flink:flink-shaded-asm-7:jar:7.1-9.0 in the shaded jar.
+[INFO] Including org.apache.commons:commons-lang3:jar:3.3.2 in the shaded jar.
+[INFO] Including org.apache.commons:commons-math3:jar:3.5 in the shaded jar.
+[INFO] Excluding org.slf4j:slf4j-api:jar:1.7.15 from the shaded jar.
+[INFO] Excluding com.google.code.findbugs:jsr305:jar:1.3.9 from the shaded jar.
+[INFO] Excluding org.apache.flink:force-shading:jar:1.10.0 from the shaded jar.
+[INFO] Including org.apache.flink:flink-streaming-java_2.11:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-runtime_2.11:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-java:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-queryable-state-client-java:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-hadoop-fs:jar:1.10.0 in the shaded jar.
+[INFO] Including commons-io:commons-io:jar:2.4 in the shaded jar.
+[INFO] Including org.apache.flink:flink-shaded-netty:jar:4.1.39.Final-9.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-shaded-jackson:jar:2.10.1-9.0 in the shaded jar.
+[INFO] Including commons-cli:commons-cli:jar:1.3.1 in the shaded jar.
+[INFO] Including org.javassist:javassist:jar:3.24.0-GA in the shaded jar.
+[INFO] Including org.scala-lang:scala-library:jar:2.11.12 in the shaded jar.
+[INFO] Including com.typesafe.akka:akka-actor_2.11:jar:2.5.21 in the shaded jar.
+[INFO] Including com.typesafe:config:jar:1.3.3 in the shaded jar.
+[INFO] Including org.scala-lang.modules:scala-java8-compat_2.11:jar:0.7.0 in the shaded jar.
+[INFO] Including com.typesafe.akka:akka-stream_2.11:jar:2.5.21 in the shaded jar.
+[INFO] Including org.reactivestreams:reactive-streams:jar:1.0.2 in the shaded jar.
+[INFO] Including com.typesafe:ssl-config-core_2.11:jar:0.3.7 in the shaded jar.
+[INFO] Including org.scala-lang.modules:scala-parser-combinators_2.11:jar:1.1.1 in the shaded jar.
+[INFO] Including com.typesafe.akka:akka-protobuf_2.11:jar:2.5.21 in the shaded jar.
+[INFO] Including com.typesafe.akka:akka-slf4j_2.11:jar:2.5.21 in the shaded jar.
+[INFO] Including org.clapper:grizzled-slf4j_2.11:jar:1.3.2 in the shaded jar.
+[INFO] Including com.github.scopt:scopt_2.11:jar:3.5.0 in the shaded jar.
+[INFO] Including org.xerial.snappy:snappy-java:jar:1.1.4 in the shaded jar.
+[INFO] Including com.twitter:chill_2.11:jar:0.7.6 in the shaded jar.
+[INFO] Including com.twitter:chill-java:jar:0.7.6 in the shaded jar.
+[INFO] Including org.lz4:lz4-java:jar:1.5.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-clients_2.11:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-optimizer_2.11:jar:1.10.0 in the shaded jar.
+[INFO] Including org.apache.flink:flink-shaded-guava:jar:18.0-9.0 in the shaded jar.
+[INFO] Including org.json:json:jar:20190722 in the shaded jar.
+[INFO] Including com.esotericsoftware.kryo:kryo:jar:2.24.0 in the shaded jar.
+[INFO] Excluding com.esotericsoftware.minlog:minlog:jar:1.2 from the shaded jar.
+[INFO] Including org.objenesis:objenesis:jar:2.1 in the shaded jar.
+[INFO] Including com.esotericsoftware:kryonet:jar:2.22.0-RC1 in the shaded jar.
+[INFO] Including com.esotericsoftware:jsonbeans:jar:0.7 in the shaded jar.
+[INFO] Excluding org.slf4j:slf4j-log4j12:jar:1.7.7 from the shaded jar.
+[INFO] Excluding log4j:log4j:jar:1.2.17 from the shaded jar.
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /home/puhl/project/minas-flink/mfog-java/target/mfog-0.5.jar with /home/puhl/project/minas-flink/mfog-java/target/mfog-0.5-shaded.jar
+[INFO] Dependency-reduced POM written at: /home/puhl/project/minas-flink/mfog-java/dependency-reduced-pom.xml
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.843 s
+[INFO] Finished at: 2020-05-17T16:11:49-03:00
+[INFO] ------------------------------------------------------------------------
+scp target/mfog-0.5.jar pi@almoco:~/
+mfog-0.5.jar                                                                                                                                                100%   48MB   8.2MB/s   00:05    
+16:11:56 INFO  esotericsoftware.minlog kryonet: Server opened.
+16:11:56 INFO  mfog.TrainingStatic connecting to 192.168.15.13:9997
+16:11:56 INFO  esotericsoftware.minlog Connecting: /192.168.15.13:9997
+16:11:56 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
+16:11:56 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
+16:11:56 INFO  mfog.TrainingStatic Sending
+16:11:56 INFO  mfog.ModelStore msg=Message{value=SEND_ONLY}
+16:11:56 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+16:11:56 INFO  mfog.TrainingStatic 100 items, 53 ms, 53059571 ns, 1 i/ms
+16:11:56 INFO  mfog.ModelStore msg=Message{value=DONE}
+16:11:56 INFO  mfog.ModelStore done receiving
+16:11:56 INFO  mfog.ModelStore Connection 1 101 items, 181 ms, 180947373 ns, 0 i/ms
+16:11:56 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+ssh pi@almoco java -cp flink-1.10.0/lib/*:mfog-0.5.jar br.ufscar.dc.gsdr.mfog.Classifier
+16:11:59 INFO  Source Kyoto start
+16:11:59 INFO  esotericsoftware.minlog kryonet: Server opened.
+16:11:59 INFO  esotericsoftware.minlog kryonet: Server opened.
+16:11:59 INFO  mfog.SinkFog ready
+
+
+16:12:02 INFO  mfog.Classifier Ready to run baseline
+16:12:03 INFO  taskexecutor.TaskExecutorResourceUtils The configuration option Key: 'taskmanager.cpu.cores' , default: null (fallback keys: []) required for local execution is not set, setting it to its default value 1.7976931348623157E308
+16:12:03 INFO  taskexecutor.TaskExecutorResourceUtils The configuration option Key: 'taskmanager.memory.task.heap.size' , default: null (fallback keys: []) required for local execution is not set, setting it to its default value 9223372036854775807 bytes
+16:12:03 INFO  taskexecutor.TaskExecutorResourceUtils The configuration option Key: 'taskmanager.memory.task.off-heap.size' , default: 0 bytes (fallback keys: []) required for local execution is not set, setting it to its default value 9223372036854775807 bytes
+16:12:03 INFO  taskexecutor.TaskExecutorResourceUtils The configuration option Key: 'taskmanager.memory.network.min' , default: 64 mb (fallback keys: [{key=taskmanager.network.memory.min, isDeprecated=true}]) required for local execution is not set, setting it to its default value 64 mb
+16:12:03 INFO  taskexecutor.TaskExecutorResourceUtils The configuration option Key: 'taskmanager.memory.network.max' , default: 1 gb (fallback keys: [{key=taskmanager.network.memory.max, isDeprecated=true}]) required for local execution is not set, setting it to its default value 64 mb
+16:12:03 INFO  taskexecutor.TaskExecutorResourceUtils The configuration option Key: 'taskmanager.memory.managed.size' , default: null (fallback keys: [{key=taskmanager.memory.size, isDeprecated=true}]) required for local execution is not set, setting it to its default value 128 mb
+16:12:03 INFO  minicluster.MiniCluster Starting Flink Mini Cluster
+16:12:03 INFO  minicluster.MiniCluster Starting Metrics Registry
+16:12:03 INFO  metrics.MetricRegistryImpl No metrics reporter configured, no metrics will be exposed/reported.
+16:12:03 INFO  minicluster.MiniCluster Starting RPC Service(s)
+16:12:07 INFO  slf4j.Slf4jLogger Slf4jLogger started
+16:12:08 INFO  akka.AkkaRpcServiceUtils Trying to start actor system at :0
+16:12:08 INFO  slf4j.Slf4jLogger Slf4jLogger started
+16:12:08 INFO  remote.Remoting Starting remoting
+16:12:09 INFO  remote.Remoting Remoting started; listening on addresses :[akka.tcp://flink-metrics@127.0.1.1:44331]
+16:12:09 INFO  akka.AkkaRpcServiceUtils Actor system started at akka.tcp://flink-metrics@127.0.1.1:44331
+16:12:09 INFO  akka.AkkaRpcService Starting RPC endpoint for org.apache.flink.runtime.metrics.dump.MetricQueryService at akka://flink-metrics/user/MetricQueryService .
+16:12:10 INFO  minicluster.MiniCluster Starting high-availability services
+16:12:10 INFO  blob.BlobServer Created BLOB server storage directory /tmp/blobStore-34141ca7-2129-46bd-a46f-69ed6a0c733d
+16:12:10 INFO  blob.BlobServer Started BLOB server at 0.0.0.0:45343 - max concurrent requests: 50 - max backlog: 1000
+16:12:10 INFO  blob.PermanentBlobCache Created BLOB cache storage directory /tmp/blobStore-0e06e530-d7e1-482f-9a40-7ee108e66d47
+16:12:10 INFO  blob.TransientBlobCache Created BLOB cache storage directory /tmp/blobStore-10fdd39f-371f-43b9-8de7-264993831c05
+16:12:10 INFO  minicluster.MiniCluster Starting 1 TaskManger(s)
+16:12:10 INFO  taskexecutor.TaskManagerRunner Starting TaskManager with ResourceID: 40515831-58c7-4bec-b5b3-3b6aba3c2d31
+16:12:10 INFO  taskexecutor.TaskManagerServices Temporary file directory '/tmp': total 14 GB, usable 9 GB (64.29% usable)
+16:12:11 INFO  disk.FileChannelManagerImpl FileChannelManager uses directory /tmp/flink-io-89f14af4-2f48-4d44-aaef-21361fbd550c for spill files.
+16:12:11 INFO  disk.FileChannelManagerImpl FileChannelManager uses directory /tmp/flink-netty-shuffle-ac5312c6-5403-4028-8ede-39e7a00e1a25 for spill files.
+16:12:18 INFO  buffer.NetworkBufferPool Allocated 64 MB for network buffer pool (number of memory segments: 2048, bytes per segment: 32768).
+16:12:18 INFO  network.NettyShuffleEnvironment Starting the network environment and its components.
+16:12:18 INFO  taskexecutor.KvStateService Starting the kvState service and its components.
+16:12:18 INFO  taskexecutor.TaskManagerConfiguration Messages have a max timeout of 10000 ms
+16:12:19 INFO  akka.AkkaRpcService Starting RPC endpoint for org.apache.flink.runtime.taskexecutor.TaskExecutor at akka://flink/user/taskmanager_0 .
+16:12:19 INFO  taskexecutor.JobLeaderService Start job leader service.
+16:12:19 INFO  filecache.FileCache User file cache uses directory /tmp/flink-dist-cache-bcf9b86c-9ded-4b17-8f09-6122da069019
+16:12:19 INFO  dispatcher.DispatcherRestEndpoint Upload directory /tmp/flink-web-upload does not exist. 
+16:12:19 INFO  dispatcher.DispatcherRestEndpoint Created directory /tmp/flink-web-upload for file uploads.
+16:12:19 INFO  dispatcher.DispatcherRestEndpoint Starting rest endpoint.
+16:12:20 WARN  webmonitor.WebMonitorUtils Log file environment variable 'log.file' is not set.
+16:12:20 WARN  webmonitor.WebMonitorUtils JobManager log files are unavailable in the web dashboard. Log file location not found in environment variable 'log.file' or configuration key 'Key: 'web.log.path' , default: null (fallback keys: [{key=jobmanager.web.log.path, isDeprecated=true}])'.
+16:12:21 INFO  dispatcher.DispatcherRestEndpoint Rest endpoint listening at localhost:33711
+16:12:21 INFO  embedded.EmbeddedLeaderService Proposing leadership to contender http://localhost:33711
+16:12:21 INFO  dispatcher.DispatcherRestEndpoint Web frontend listening at http://localhost:33711.
+16:12:21 INFO  dispatcher.DispatcherRestEndpoint http://localhost:33711 was granted leadership with leaderSessionID=9d78699a-3bf0-4b0a-ae2e-7b9ae5d4b724
+16:12:21 INFO  embedded.EmbeddedLeaderService Received confirmation of leadership for leader http://localhost:33711 , session=9d78699a-3bf0-4b0a-ae2e-7b9ae5d4b724
+16:12:21 INFO  akka.AkkaRpcService Starting RPC endpoint for org.apache.flink.runtime.resourcemanager.StandaloneResourceManager at akka://flink/user/resourcemanager .
+16:12:22 INFO  embedded.EmbeddedLeaderService Proposing leadership to contender LeaderContender: DefaultDispatcherRunner
+16:12:22 INFO  embedded.EmbeddedLeaderService Proposing leadership to contender LeaderContender: StandaloneResourceManager
+16:12:22 INFO  resourcemanager.StandaloneResourceManager ResourceManager akka://flink/user/resourcemanager was granted leadership with fencing token be691f4a378543d822371bed45864227
+16:12:22 INFO  minicluster.MiniCluster Flink Mini Cluster started successfully
+16:12:22 INFO  runner.SessionDispatcherLeaderProcess Start SessionDispatcherLeaderProcess.
+16:12:22 INFO  slotmanager.SlotManagerImpl Starting the SlotManager.
+16:12:22 INFO  runner.SessionDispatcherLeaderProcess Recover all persisted job graphs.
+16:12:22 INFO  runner.SessionDispatcherLeaderProcess Successfully recovered 0 persisted job graphs.
+16:12:22 INFO  embedded.EmbeddedLeaderService Received confirmation of leadership for leader akka://flink/user/resourcemanager , session=22371bed-4586-4227-be69-1f4a378543d8
+16:12:22 INFO  taskexecutor.TaskExecutor Connecting to ResourceManager akka://flink/user/resourcemanager(be691f4a378543d822371bed45864227).
+16:12:22 INFO  akka.AkkaRpcService Starting RPC endpoint for org.apache.flink.runtime.dispatcher.StandaloneDispatcher at akka://flink/user/dispatcher .
+16:12:22 INFO  taskexecutor.TaskExecutor Resolved ResourceManager address, beginning registration
+16:12:22 INFO  taskexecutor.TaskExecutor Registration at ResourceManager attempt 1 (timeout=100ms)
+16:12:22 INFO  embedded.EmbeddedLeaderService Received confirmation of leadership for leader akka://flink/user/dispatcher , session=f51c4335-f30b-46be-bc33-fedb05659b15
+16:12:22 INFO  resourcemanager.StandaloneResourceManager Registering TaskManager with ResourceID 40515831-58c7-4bec-b5b3-3b6aba3c2d31 (akka://flink/user/taskmanager_0) at ResourceManager
+16:12:22 INFO  taskexecutor.TaskExecutor Successful registration at resource manager akka://flink/user/resourcemanager under registration id e21d0a33e41e20c8d54ed01884850a64.
+16:12:22 INFO  dispatcher.StandaloneDispatcher Received JobGraph submission 44cdfa842088d4113d3e7246096e2d33 (Classifier sink(string socket) ).
+16:12:22 INFO  dispatcher.StandaloneDispatcher Submitting job 44cdfa842088d4113d3e7246096e2d33 (Classifier sink(string socket) ).
+16:12:22 INFO  akka.AkkaRpcService Starting RPC endpoint for org.apache.flink.runtime.jobmaster.JobMaster at akka://flink/user/jobmanager_1 .
+16:12:22 INFO  jobmaster.JobMaster Initializing job Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33).
+16:12:22 INFO  jobmaster.JobMaster Using restart back off time strategy NoRestartBackoffTimeStrategy for Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33).
+16:12:22 INFO  jobmaster.JobMaster Running initialization on master for job Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33).
+16:12:22 INFO  jobmaster.JobMaster Successfully ran initialization on master in 0 ms.
+16:12:23 INFO  jobmaster.JobMaster No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:23 INFO  flip1.RestartPipelinedRegionStrategy Start building failover regions.
+16:12:23 INFO  flip1.RestartPipelinedRegionStrategy Created 1 failover regions.
+16:12:23 INFO  jobmaster.JobMaster Using failover strategy org.apache.flink.runtime.executiongraph.failover.flip1.RestartPipelinedRegionStrategy@f73a8d for Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33).
+16:12:23 INFO  embedded.EmbeddedLeaderService Proposing leadership to contender akka://flink/user/jobmanager_1
+16:12:23 INFO  jobmaster.JobManagerRunnerImpl JobManager runner for job Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33) was granted leadership with session id 1f07fd37-62ed-4a9c-8a88-791af5ee08fc at akka://flink/user/jobmanager_1.
+16:12:23 INFO  jobmaster.JobMaster Starting execution of job Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33) under job master id 8a88791af5ee08fc1f07fd3762ed4a9c.
+16:12:23 INFO  jobmaster.JobMaster Starting scheduling with scheduling strategy [org.apache.flink.runtime.scheduler.strategy.EagerSchedulingStrategy]
+16:12:23 INFO  executiongraph.ExecutionGraph Job Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33) switched from state CREATED to RUNNING.
+16:12:23 INFO  executiongraph.ExecutionGraph Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from CREATED to SCHEDULED.
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from CREATED to SCHEDULED.
+16:12:23 INFO  slotpool.SlotPoolImpl Cannot serve slot request, no ResourceManager connected. Adding as pending request [SlotRequestId{ee94dfe25e01d8090043a9a02b5a83e6}]
+16:12:23 INFO  embedded.EmbeddedLeaderService Received confirmation of leadership for leader akka://flink/user/jobmanager_1 , session=1f07fd37-62ed-4a9c-8a88-791af5ee08fc
+16:12:23 INFO  jobmaster.JobMaster Connecting to ResourceManager akka://flink/user/resourcemanager(be691f4a378543d822371bed45864227)
+16:12:23 INFO  jobmaster.JobMaster Resolved ResourceManager address, beginning registration
+16:12:23 INFO  jobmaster.JobMaster Registration at ResourceManager attempt 1 (timeout=100ms)
+16:12:23 INFO  resourcemanager.StandaloneResourceManager Registering job manager 8a88791af5ee08fc1f07fd3762ed4a9c@akka://flink/user/jobmanager_1 for job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  resourcemanager.StandaloneResourceManager Registered job manager 8a88791af5ee08fc1f07fd3762ed4a9c@akka://flink/user/jobmanager_1 for job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  jobmaster.JobMaster JobManager successfully registered at ResourceManager, leader id: be691f4a378543d822371bed45864227.
+16:12:23 INFO  slotpool.SlotPoolImpl Requesting new slot [SlotRequestId{ee94dfe25e01d8090043a9a02b5a83e6}] and profile ResourceProfile{UNKNOWN} from resource manager.
+16:12:23 INFO  resourcemanager.StandaloneResourceManager Request slot with profile ResourceProfile{UNKNOWN} for job 44cdfa842088d4113d3e7246096e2d33 with allocation id 4d9c4abc92f6425e853452cc127b95dc.
+16:12:23 INFO  taskexecutor.TaskExecutor Receive slot request 4d9c4abc92f6425e853452cc127b95dc for job 44cdfa842088d4113d3e7246096e2d33 from resource manager with leader id be691f4a378543d822371bed45864227.
+16:12:23 INFO  taskexecutor.TaskExecutor Allocated slot for 4d9c4abc92f6425e853452cc127b95dc.
+16:12:23 INFO  taskexecutor.JobLeaderService Add job 44cdfa842088d4113d3e7246096e2d33 for job leader monitoring.
+16:12:23 INFO  taskexecutor.JobLeaderService Try to register at job manager akka://flink/user/jobmanager_1 with leader id 1f07fd37-62ed-4a9c-8a88-791af5ee08fc.
+16:12:23 INFO  taskexecutor.JobLeaderService Resolved JobManager address, beginning registration
+16:12:23 INFO  taskexecutor.JobLeaderService Registration at JobManager attempt 1 (timeout=100ms)
+16:12:23 INFO  taskexecutor.JobLeaderService Successful registration at job manager akka://flink/user/jobmanager_1 for job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  taskexecutor.TaskExecutor Establish JobManager connection for job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  taskexecutor.TaskExecutor Offer reserved slots to the leader of job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  slotpool.SlotPoolImpl Requesting new slot [SlotRequestId{f90b6fe4051e2387733bd9ff9e86f6b3}] and profile ResourceProfile{UNKNOWN} from resource manager.
+16:12:23 INFO  resourcemanager.StandaloneResourceManager Request slot with profile ResourceProfile{UNKNOWN} for job 44cdfa842088d4113d3e7246096e2d33 with allocation id ff9109526d43468b0312deb33ff4e36f.
+16:12:23 INFO  slotpool.SlotPoolImpl Requesting new slot [SlotRequestId{419a78c0e5ee093b5e15f288f428a9ee}] and profile ResourceProfile{UNKNOWN} from resource manager.
+16:12:23 INFO  taskexecutor.TaskExecutor Receive slot request ff9109526d43468b0312deb33ff4e36f for job 44cdfa842088d4113d3e7246096e2d33 from resource manager with leader id be691f4a378543d822371bed45864227.
+16:12:23 INFO  slotpool.SlotPoolImpl Requesting new slot [SlotRequestId{b08e0984bbe01ce9566aa6420cc9fb6c}] and profile ResourceProfile{UNKNOWN} from resource manager.
+16:12:23 INFO  taskexecutor.TaskExecutor Allocated slot for ff9109526d43468b0312deb33ff4e36f.
+16:12:23 INFO  taskexecutor.TaskExecutor Offer reserved slots to the leader of job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  resourcemanager.StandaloneResourceManager Request slot with profile ResourceProfile{UNKNOWN} for job 44cdfa842088d4113d3e7246096e2d33 with allocation id f987b23fcd700b9f9d0453e09d6ccbda.
+16:12:23 INFO  resourcemanager.StandaloneResourceManager Request slot with profile ResourceProfile{UNKNOWN} for job 44cdfa842088d4113d3e7246096e2d33 with allocation id cdb313a80d700ce573dd194634f85151.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot 4d9c4abc92f6425e853452cc127b95dc.
+16:12:23 INFO  slotpool.SlotPoolImpl Received repeated offer for slot [4d9c4abc92f6425e853452cc127b95dc]. Ignoring.
+16:12:23 INFO  taskexecutor.TaskExecutor Receive slot request f987b23fcd700b9f9d0453e09d6ccbda for job 44cdfa842088d4113d3e7246096e2d33 from resource manager with leader id be691f4a378543d822371bed45864227.
+16:12:23 INFO  taskexecutor.TaskExecutor Allocated slot for f987b23fcd700b9f9d0453e09d6ccbda.
+16:12:23 INFO  taskexecutor.TaskExecutor Offer reserved slots to the leader of job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  slotpool.SlotPoolImpl Received repeated offer for slot [ff9109526d43468b0312deb33ff4e36f]. Ignoring.
+16:12:23 INFO  taskexecutor.TaskExecutor Receive slot request cdb313a80d700ce573dd194634f85151 for job 44cdfa842088d4113d3e7246096e2d33 from resource manager with leader id be691f4a378543d822371bed45864227.
+16:12:23 INFO  taskexecutor.TaskExecutor Allocated slot for cdb313a80d700ce573dd194634f85151.
+16:12:23 INFO  taskexecutor.TaskExecutor Offer reserved slots to the leader of job 44cdfa842088d4113d3e7246096e2d33.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot ff9109526d43468b0312deb33ff4e36f.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot 4d9c4abc92f6425e853452cc127b95dc.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot ff9109526d43468b0312deb33ff4e36f.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot f987b23fcd700b9f9d0453e09d6ccbda.
+16:12:23 INFO  executiongraph.ExecutionGraph Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Source: KryoNet model (1/1) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Source: KryoNet examples (1/1) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Map2Model (1/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Map2Model (2/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Map2Model (3/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Map2Model (4/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Classify -> Sink: KryoNet Sink (1/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Classify -> Sink: KryoNet Sink (2/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Classify -> Sink: KryoNet Sink (3/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from SCHEDULED to DEPLOYING.
+16:12:23 INFO  executiongraph.ExecutionGraph Deploying Classify -> Sink: KryoNet Sink (4/4) (attempt #0) to 40515831-58c7-4bec-b5b3-3b6aba3c2d31 @ localhost (dataPort=-1)
+16:12:23 INFO  slotpool.SlotPoolImpl Received repeated offer for slot [ff9109526d43468b0312deb33ff4e36f]. Ignoring.
+16:12:23 INFO  slotpool.SlotPoolImpl Received repeated offer for slot [f987b23fcd700b9f9d0453e09d6ccbda]. Ignoring.
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Source: KryoNet model (1/1).
+16:12:23 INFO  taskmanager.Task Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Source: KryoNet examples (1/1).
+16:12:23 INFO  taskmanager.Task Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Map2Model (1/4).
+16:12:23 INFO  taskmanager.Task Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Map2Model (2/4).
+16:12:23 INFO  taskmanager.Task Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Map2Model (3/4).
+16:12:23 INFO  taskmanager.Task Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Map2Model (4/4).
+16:12:23 INFO  taskmanager.Task Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Classify -> Sink: KryoNet Sink (1/4).
+16:12:23 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) [DEPLOYING]
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Classify -> Sink: KryoNet Sink (2/4).
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Classify -> Sink: KryoNet Sink (3/4).
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Registering task at network: Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) [DEPLOYING].
+16:12:23 INFO  taskexecutor.TaskExecutor Received task Classify -> Sink: KryoNet Sink (4/4).
+16:12:23 INFO  taskmanager.Task Registering task at network: Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) [DEPLOYING].
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot cdb313a80d700ce573dd194634f85151.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot ff9109526d43468b0312deb33ff4e36f.
+16:12:23 INFO  slot.TaskSlotTableImpl Activate slot f987b23fcd700b9f9d0453e09d6ccbda.
+16:12:23 INFO  taskmanager.Task Registering task at network: Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) [DEPLOYING].
+16:12:23 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from CREATED to DEPLOYING.
+16:12:23 INFO  taskmanager.Task Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) [DEPLOYING]
+16:12:23 INFO  taskmanager.Task Loading JAR files for task Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) [DEPLOYING].
+16:12:24 INFO  taskmanager.Task Registering task at network: Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) [DEPLOYING].
+16:12:24 INFO  taskmanager.Task Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  executiongraph.ExecutionGraph Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  executiongraph.ExecutionGraph Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  taskmanager.Task Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  executiongraph.ExecutionGraph Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  executiongraph.ExecutionGraph Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  tasks.StreamTask No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+16:12:24 INFO  executiongraph.ExecutionGraph Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  executiongraph.ExecutionGraph Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from DEPLOYING to RUNNING.
+16:12:24 INFO  heap.HeapKeyedStateBackend Initializing heap keyed state backend with stream factory.
+16:12:24 INFO  heap.HeapKeyedStateBackend Initializing heap keyed state backend with stream factory.
+16:12:24 INFO  heap.HeapKeyedStateBackend Initializing heap keyed state backend with stream factory.
+16:12:24 INFO  heap.HeapKeyedStateBackend Initializing heap keyed state backend with stream factory.
+16:12:24 INFO  mfog.ModelAggregate Map2Model Open
+16:12:24 INFO  mfog.ModelAggregate Map2Model Open
+16:12:24 INFO  mfog.ModelAggregate Map2Model Open
+16:12:24 INFO  mfog.ModelAggregate Map2Model Open
+00:00  INFO: Connecting: /192.168.15.13:9997
+00:00  INFO: Connecting: /192.168.15.13:9996
+16:12:24 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.10
+16:12:24 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.10
+16:12:24 INFO  Source Kyoto  connected Connection 1
+16:12:24 INFO  Source Kyoto  idle 1
+00:00  INFO: [kryonet] Connection 2 connected: /192.168.15.13
+00:00  INFO: [kryonet] Connection 1 connected: /192.168.15.13
+16:12:25 INFO  mfog.ModelStore msg=Message{value=CLASSIFIER}
+16:12:25 INFO  mfog.ModelStore msg=Message{value=RECEIVE_ONLY}
+16:12:25 INFO  Source Kyoto  received Message{value=CLASSIFIER}
+16:12:25 INFO  Source Kyoto  sending...
+16:12:25 INFO  mfog.ModelStore Connection 2 202 items, 131 ms, 130705201 ns, 1 i/ms
+16:12:25 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+16:12:25 INFO  mfog.KryoNetClientSource client.stop
+16:12:25 WARN  mfog.KryoNetClientSource received 100
+00:00  INFO: [kryonet] Connection 2 disconnected.
+16:12:25 WARN  mfog.KryoNetClientSource received 100
+16:12:25 INFO  mfog.KryoNetClientSource run is done
+16:12:25 INFO  taskmanager.Task Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from RUNNING to FINISHED.
+16:12:25 INFO  taskmanager.Task Freeing task resources for Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736).
+16:12:25 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) [FINISHED]
+16:12:25 INFO  taskmanager.Task Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from RUNNING to FINISHED.
+16:12:25 INFO  taskmanager.Task Freeing task resources for Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29).
+16:12:25 INFO  taskmanager.Task Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from RUNNING to FINISHED.
+16:12:25 INFO  taskmanager.Task Freeing task resources for Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01).
+16:12:25 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) [FINISHED]
+16:12:25 INFO  taskmanager.Task Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from RUNNING to FINISHED.
+16:12:25 INFO  taskmanager.Task Freeing task resources for Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13).
+16:12:25 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) [FINISHED]
+16:12:25 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) [FINISHED]
+16:12:25 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (1/4) 03162f7ed57a2d84ce8252d26116ef13.
+16:12:25 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (4/4) ebef8d3bd98eafb5589801ba75100a29.
+16:12:25 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Source: KryoNet model (1/1) d10f98ee91e579eec9a83401d34fe736.
+16:12:25 INFO  executiongraph.ExecutionGraph Map2Model (1/4) (03162f7ed57a2d84ce8252d26116ef13) switched from RUNNING to FINISHED.
+16:12:25 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (2/4) 4cbee5269ef3ee4e68e346536d05ed01.
+16:12:25 INFO  executiongraph.ExecutionGraph Map2Model (4/4) (ebef8d3bd98eafb5589801ba75100a29) switched from RUNNING to FINISHED.
+16:12:25 INFO  executiongraph.ExecutionGraph Source: KryoNet model (1/1) (d10f98ee91e579eec9a83401d34fe736) switched from RUNNING to FINISHED.
+16:12:25 INFO  executiongraph.ExecutionGraph Map2Model (2/4) (4cbee5269ef3ee4e68e346536d05ed01) switched from RUNNING to FINISHED.
+16:12:25 INFO  Source Kyoto  idle 5734
+16:12:27 INFO  Source Kyoto  idle 22367
+16:12:27 INFO  mfog.MinasClassify Model update, cleaning buffer with 4603
+16:12:27 INFO  mfog.MinasClassify Model update, cleaning buffer with 4603
+16:12:27 INFO  mfog.MinasClassify Model update, cleaning buffer with 4603
+00:02  INFO: Connecting: /192.168.15.13:9995
+16:12:27 INFO  mfog.MinasClassify Model update, cleaning buffer with 4603
+16:12:27 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.10
+00:02  INFO: Connecting: /192.168.15.13:9995
+00:02  INFO: Connecting: /192.168.15.13:999516:12:27 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.10
+
+16:12:27 INFO  esotericsoftware.minlog kryonet: Connection 3 connected: /192.168.15.10
+00:02  INFO: [kryonet] Connection 1 connected: /192.168.15.13
+00:02  INFO: [kryonet] Connection 2 connected: /192.168.15.13
+00:02  INFO: Connecting: /192.168.15.13:9995
+16:12:27 INFO  mfog.SinkFog server received Connection 2 1 items, 27 ms, 26861013 ns, 0 i/ms
+16:12:27 INFO  mfog.SinkFog server received Connection 1 1 items, 44 ms, 43894853 ns, 0 i/ms
+16:12:27 INFO  esotericsoftware.minlog kryonet: Connection 4 connected: /192.168.15.10
+16:12:27 INFO  mfog.SinkFog server received Connection 3 1 items, 29 ms, 29278903 ns, 0 i/ms
+00:02  INFO: [kryonet] Connection 3 connected: /192.168.15.13
+00:02  INFO: [kryonet] Connection 4 connected: /192.168.15.13
+16:12:27 INFO  mfog.SinkFog server received Connection 4 1 items, 31 ms, 31375233 ns, 0 i/ms
+16:12:28 INFO  taskmanager.Task Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from RUNNING to FINISHED.
+16:12:28 INFO  taskmanager.Task Freeing task resources for Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267).
+16:12:28 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) [FINISHED]
+16:12:28 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (3/4) fe1be4fc8bb47402cdcee065c0dfc267.
+16:12:28 INFO  executiongraph.ExecutionGraph Map2Model (3/4) (fe1be4fc8bb47402cdcee065c0dfc267) switched from RUNNING to FINISHED.
+16:12:28 INFO  Source Kyoto  idle 24904
+16:12:29 INFO  Source Kyoto  idle 46996
+16:12:30 INFO  Source Kyoto  idle 63141
+16:12:32 INFO  Source Kyoto  idle 77557
+16:12:33 INFO  Source Kyoto  idle 91973
+16:12:34 INFO  Source Kyoto  idle 107543
+16:12:35 INFO  Source Kyoto  idle 122535
+16:12:36 INFO  Source Kyoto  idle 138681
+16:12:37 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+16:12:37 INFO  Source Kyoto  disconnected Connection 1 152520 items, 12156 ms, 12155921114 ns, 12 i/ms
+16:12:37 INFO  mfog.KryoNetClientSource client.stop
+16:12:37 WARN  mfog.KryoNetClientSource received 152519
+00:12  INFO: [kryonet] Connection 1 disconnected.
+16:12:37 INFO  mfog.KryoNetClientSource run is done
+16:12:37 INFO  taskmanager.Task Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from RUNNING to FINISHED.
+16:12:37 INFO  taskmanager.Task Freeing task resources for Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e).
+16:12:37 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) [FINISHED]
+16:12:37 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Source: KryoNet examples (1/1) b09a9b529e6ea1c8f139405942a5140e.
+16:12:37 INFO  executiongraph.ExecutionGraph Source: KryoNet examples (1/1) (b09a9b529e6ea1c8f139405942a5140e) switched from RUNNING to FINISHED.
+16:12:37 WARN  mfog.KryoNetClientSink sent 38130
+00:12  INFO: [kryonet] Connection 4 disconnected.16:12:37 INFO  mfog.SinkFog received Disconnect
+16:12:37 INFO  mfog.SinkFog disconnected Connection 4 38132 items, 9945 ms, 9944494089 ns, 3 i/ms
+
+16:12:37 INFO  esotericsoftware.minlog kryonet: Connection 4 disconnected.
+16:12:37 INFO  mfog.SinkFog server received Connection 4 38132 items, 9945 ms, 9944849924 ns, 3 i/ms
+16:12:37 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from RUNNING to FINISHED.
+16:12:37 INFO  taskmanager.Task Freeing task resources for Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe).
+16:12:37 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) [FINISHED]
+16:12:37 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (2/4) 54ef1e1fed7f662de78466a047ef3bfe.
+16:12:37 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (2/4) (54ef1e1fed7f662de78466a047ef3bfe) switched from RUNNING to FINISHED.
+16:12:37 WARN  mfog.KryoNetClientSink sent 38129
+00:12  INFO: [kryonet] Connection 3 disconnected.
+16:12:37 INFO  mfog.SinkFog received Disconnect
+16:12:37 INFO  mfog.SinkFog disconnected Connection 3 38131 items, 9996 ms, 9996523333 ns, 3 i/ms
+16:12:37 INFO  esotericsoftware.minlog kryonet: Connection 3 disconnected.
+16:12:37 INFO  mfog.SinkFog server received Connection 3 38131 items, 9997 ms, 9996690984 ns, 3 i/ms
+16:12:37 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from RUNNING to FINISHED.
+16:12:37 INFO  taskmanager.Task Freeing task resources for Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14).
+16:12:37 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) [FINISHED]
+16:12:37 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (1/4) 03b9d4362a4085a2d2765c28a0c5be14.
+16:12:37 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (1/4) (03b9d4362a4085a2d2765c28a0c5be14) switched from RUNNING to FINISHED.
+16:12:37 WARN  mfog.KryoNetClientSink sent 38130
+16:12:37 INFO  mfog.SinkFog received Disconnect
+16:12:37 INFO  mfog.SinkFog disconnected Connection 2 38132 items, 10019 ms, 10019181644 ns, 3 i/ms
+16:12:37 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+16:12:37 INFO  mfog.SinkFog server received Connection 2 38132 items, 10019 ms, 10019332002 ns, 3 i/ms
+00:12  INFO: [kryonet] Connection 2 disconnected.
+16:12:37 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from RUNNING to FINISHED.
+16:12:37 INFO  taskmanager.Task Freeing task resources for Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3).
+16:12:37 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) [FINISHED]
+16:12:37 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (4/4) 2113766a98687264ab46f78e0f29f2f3.
+16:12:37 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (4/4) (2113766a98687264ab46f78e0f29f2f3) switched from RUNNING to FINISHED.
+16:12:37 INFO  Source Kyoto  sending...  ...done Connection 1 653459 items, 12958 ms, 12958148368 ns, 50 i/ms
+16:12:37 INFO  mfog.SinkFog received Disconnect
+16:12:37 WARN  mfog.KryoNetClientSink sent 38130
+16:12:37 INFO  mfog.SinkFog disconnected Connection 1 38132 items, 10406 ms, 10406571039 ns, 3 i/ms
+16:12:37 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+00:13  INFO: [kryonet] Connection 1 disconnected.
+16:12:37 INFO  mfog.SinkFog server received Connection 1 38132 items, 10407 ms, 10406737770 ns, 3 i/ms
+16:12:37 INFO  taskmanager.Task Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from RUNNING to FINISHED.
+16:12:37 INFO  taskmanager.Task Freeing task resources for Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171).
+16:12:37 INFO  taskmanager.Task Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) [FINISHED]
+16:12:37 INFO  taskexecutor.TaskExecutor Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (3/4) e96bb5bf9417126d7bd200adfb751171.
+16:12:37 INFO  executiongraph.ExecutionGraph Classify -> Sink: KryoNet Sink (3/4) (e96bb5bf9417126d7bd200adfb751171) switched from RUNNING to FINISHED.
+16:12:37 INFO  executiongraph.ExecutionGraph Job Classifier sink(string socket)  (44cdfa842088d4113d3e7246096e2d33) switched from state RUNNING to FINISHED.
+16:12:37 INFO  checkpoint.CheckpointCoordinator Stopping checkpoint coordinator for job 44cdfa842088d4113d3e7246096e2d33.
+16:12:37 INFO  checkpoint.StandaloneCompletedCheckpointStore Shutting down
+16:12:37 INFO  minicluster.MiniCluster Shutting down Flink Mini Cluster
+16:12:37 INFO  dispatcher.DispatcherRestEndpoint Shutting down rest endpoint.
+16:12:37 INFO  taskexecutor.TaskExecutor Stopping TaskExecutor akka://flink/user/taskmanager_0.
+16:12:37 INFO  taskexecutor.TaskExecutor Close ResourceManager connection 03cbccd211d5abba85d52456667c4d43.
+16:12:37 INFO  dispatcher.StandaloneDispatcher Job 44cdfa842088d4113d3e7246096e2d33 reached globally terminal state FINISHED.
+16:12:37 INFO  mfog.Classifier Ran Classifier sink(string socket)  in 35.614s
+16:12:37 INFO  resourcemanager.StandaloneResourceManager Closing TaskExecutor connection 40515831-58c7-4bec-b5b3-3b6aba3c2d31 because: The TaskExecutor is shutting down.
+16:12:38 INFO  slot.TaskSlotTableImpl Free slot TaskSlot(index:1, state:ACTIVE, resource profile: ResourceProfile{managedMemory=32.000mb (33554432 bytes), networkMemory=16.000mb (16777216 bytes)}, allocationId: ff9109526d43468b0312deb33ff4e36f, jobId: 44cdfa842088d4113d3e7246096e2d33).
+16:12:38 INFO  jobmaster.JobMaster Stopping the JobMaster for job Classifier sink(string socket) (44cdfa842088d4113d3e7246096e2d33).
+16:12:38 INFO  slotpool.SlotPoolImpl Suspending SlotPool.
+16:12:38 INFO  jobmaster.JobMaster Close ResourceManager connection 03cbccd211d5abba85d52456667c4d43: JobManager is shutting down..
+16:12:38 INFO  resourcemanager.StandaloneResourceManager Disconnect job manager 8a88791af5ee08fc1f07fd3762ed4a9c@akka://flink/user/jobmanager_1 for job 44cdfa842088d4113d3e7246096e2d33 from the resource manager.
+16:12:38 INFO  slotpool.SlotPoolImpl Stopping SlotPool.
+16:12:38 INFO  slot.TaskSlotTableImpl Free slot TaskSlot(index:3, state:ACTIVE, resource profile: ResourceProfile{managedMemory=32.000mb (33554432 bytes), networkMemory=16.000mb (16777216 bytes)}, allocationId: cdb313a80d700ce573dd194634f85151, jobId: 44cdfa842088d4113d3e7246096e2d33).
+16:12:38 INFO  slot.TaskSlotTableImpl Free slot TaskSlot(index:2, state:ACTIVE, resource profile: ResourceProfile{managedMemory=32.000mb (33554432 bytes), networkMemory=16.000mb (16777216 bytes)}, allocationId: f987b23fcd700b9f9d0453e09d6ccbda, jobId: 44cdfa842088d4113d3e7246096e2d33).
+16:12:38 INFO  slot.TaskSlotTableImpl Free slot TaskSlot(index:0, state:ACTIVE, resource profile: ResourceProfile{managedMemory=32.000mb (33554432 bytes), networkMemory=16.000mb (16777216 bytes)}, allocationId: 4d9c4abc92f6425e853452cc127b95dc, jobId: 44cdfa842088d4113d3e7246096e2d33).
+16:12:38 INFO  taskexecutor.TaskExecutor JobManager for job 44cdfa842088d4113d3e7246096e2d33 with leader id 8a88791af5ee08fc1f07fd3762ed4a9c lost leadership.
+16:12:38 INFO  dispatcher.DispatcherRestEndpoint Removing cache directory /tmp/flink-web-ui
+16:12:38 INFO  dispatcher.DispatcherRestEndpoint Shut down complete.
+16:12:38 INFO  taskexecutor.TaskExecutor Close JobManager connection for job 44cdfa842088d4113d3e7246096e2d33.
+16:12:38 INFO  resourcemanager.StandaloneResourceManager Shut down cluster because application is in CANCELED, diagnostics DispatcherResourceManagerComponent has been closed..
+16:12:38 INFO  component.DispatcherResourceManagerComponent Closing components.
+16:12:38 INFO  taskexecutor.JobLeaderService Stop job leader service.
+16:12:38 INFO  state.TaskExecutorLocalStateStoresManager Shutting down TaskExecutorLocalStateStoresManager.
+16:12:38 INFO  runner.SessionDispatcherLeaderProcess Stopping SessionDispatcherLeaderProcess.
+16:12:38 INFO  dispatcher.StandaloneDispatcher Stopping dispatcher akka://flink/user/dispatcher.
+16:12:38 INFO  dispatcher.StandaloneDispatcher Stopping all currently running jobs of dispatcher akka://flink/user/dispatcher.
+16:12:38 INFO  slotmanager.SlotManagerImpl Closing the SlotManager.
+16:12:38 INFO  slotmanager.SlotManagerImpl Suspending the SlotManager.
+16:12:38 INFO  backpressure.BackPressureRequestCoordinator Shutting down back pressure request coordinator.
+16:12:38 INFO  dispatcher.StandaloneDispatcher Stopped dispatcher akka://flink/user/dispatcher.
+16:12:38 INFO  disk.FileChannelManagerImpl FileChannelManager removed spill file directory /tmp/flink-io-89f14af4-2f48-4d44-aaef-21361fbd550c
+16:12:38 INFO  network.NettyShuffleEnvironment Shutting down the network environment and its components.
+16:12:38 INFO  disk.FileChannelManagerImpl FileChannelManager removed spill file directory /tmp/flink-netty-shuffle-ac5312c6-5403-4028-8ede-39e7a00e1a25
+16:12:38 INFO  taskexecutor.KvStateService Shutting down the kvState service and its components.
+16:12:38 INFO  taskexecutor.JobLeaderService Stop job leader service.
+16:12:38 INFO  filecache.FileCache removed file cache directory /tmp/flink-dist-cache-bcf9b86c-9ded-4b17-8f09-6122da069019
+16:12:38 INFO  taskexecutor.TaskExecutor Stopped TaskExecutor akka://flink/user/taskmanager_0.
+16:12:38 INFO  akka.AkkaRpcService Stopping Akka RPC service.
+16:12:38 INFO  remote.RemoteActorRefProvider$RemotingTerminator Shutting down remote daemon.
+16:12:38 INFO  remote.RemoteActorRefProvider$RemotingTerminator Remote daemon shut down; proceeding with flushing remote transports.
+16:12:38 INFO  remote.RemoteActorRefProvider$RemotingTerminator Remoting shut down.
+16:12:38 INFO  akka.AkkaRpcService Stopping Akka RPC service.
+16:12:38 INFO  akka.AkkaRpcService Stopped Akka RPC service.
+16:12:38 INFO  blob.PermanentBlobCache Shutting down BLOB cache
+16:12:38 INFO  blob.TransientBlobCache Shutting down BLOB cache
+16:12:38 INFO  blob.BlobServer Stopped BLOB server at 0.0.0.0:45343
+16:12:38 INFO  akka.AkkaRpcService Stopped Akka RPC service.
+done
