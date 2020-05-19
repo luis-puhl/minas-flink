@@ -1,0 +1,129 @@
+ssh pi@almoco '/home/pi/flink-1.10.0/bin/stop-cluster.sh'
+Stopping taskexecutor daemon (pid: 6103) on host almoco.
+Stopping standalonesession daemon (pid: 5808) on host almoco.
+scp -r pi@almoco:/home/pi/flink-1.10.0/log/* experiments/pi/flink.log
+ssh pi@almoco 'rm /home/pi/flink-1.10.0/log/*'
+ssh pi@almoco '/home/pi/flink-1.10.0/bin/start-cluster.sh'
+Starting cluster.
+Starting standalonesession daemon on host almoco.
+Starting taskexecutor daemon on host almoco.
+15:39:41 INFO  esotericsoftware.minlog kryonet: Server opened.
+15:39:41 INFO  esotericsoftware.minlog kryonet: Server opened.
+15:39:41 INFO  mfog.SinkFog ready
+
+
+15:39:41 INFO  mfog.TrainingStatic connecting to 192.168.15.13:9997
+15:39:41 INFO  esotericsoftware.minlog Connecting: /192.168.15.13:9997
+15:39:41 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
+15:39:41 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
+15:39:41 INFO  mfog.TrainingStatic Sending
+15:39:41 INFO  mfog.ModelStore msg=Message{value=SEND_ONLY}
+15:39:41 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+15:39:41 INFO  mfog.TrainingStatic 100 items, 34 ms, 33804002 ns, 2 i/ms
+15:39:41 INFO  mfog.ModelStore msg=Message{value=DONE}
+15:39:41 INFO  mfog.ModelStore done receiving
+15:39:41 INFO  mfog.ModelStore Connection 1 101 items, 176 ms, 175683187 ns, 0 i/ms
+15:39:41 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+ssh pi@almoco flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.Classifier ./mfog-0.5.jar
+15:39:44 INFO  mfog.SourceKyoto start
+15:39:44 INFO  esotericsoftware.minlog kryonet: Server opened.
+Job has been submitted with JobID 5235494721167e0ee477359eecace27c
+15:40:11 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.10
+15:40:11 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.10
+15:40:11 INFO  mfog.SourceKyoto  connected Connection 1
+15:40:11 INFO  mfog.SourceKyoto  idle 1
+15:40:11 INFO  mfog.ModelStore msg=Message{value=CLASSIFIER}
+15:40:11 INFO  mfog.ModelStore msg=Message{value=RECEIVE_ONLY}
+15:40:11 INFO  mfog.SourceKyoto  received Message{value=CLASSIFIER}
+15:40:11 INFO  mfog.SourceKyoto  sending...
+15:40:11 INFO  mfog.ModelStore Connection 2 202 items, 83 ms, 82589160 ns, 2 i/ms
+15:40:11 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+15:40:12 INFO  mfog.SourceKyoto  idle 28255
+15:40:13 INFO  mfog.SourceKyoto  idle 62085
+15:40:14 INFO  mfog.SourceKyoto  idle 100719
+15:40:15 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.10
+15:40:15 INFO  mfog.SinkFog server received Connection 1 1 items, 24 ms, 23649645 ns, 0 i/ms
+15:40:15 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.10
+15:40:15 INFO  mfog.SinkFog server received Connection 2 1 items, 11 ms, 10522328 ns, 0 i/ms
+15:40:18 INFO  mfog.SourceKyoto  idle 105333
+15:40:19 INFO  mfog.SourceKyoto  idle 115135
+15:40:21 INFO  mfog.SourceKyoto  idle 130128
+15:40:22 INFO  mfog.SourceKyoto  idle 144544
+15:40:22 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@c35382d
+15:40:23 INFO  mfog.SourceKyoto  idle 153770
+15:40:24 INFO  mfog.SourceKyoto  idle 158960
+15:40:25 INFO  mfog.SourceKyoto  idle 179719
+15:40:27 INFO  mfog.SourceKyoto  idle 189522
+15:40:28 INFO  mfog.SourceKyoto  idle 210857
+15:40:29 INFO  mfog.SourceKyoto  idle 225273
+15:40:30 INFO  mfog.SourceKyoto  idle 229886
+15:40:30 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@4937b7cf
+15:40:32 INFO  mfog.SourceKyoto  idle 241419
+15:40:33 INFO  mfog.SourceKyoto  idle 255258
+15:40:34 INFO  mfog.SourceKyoto  idle 260448
+15:40:35 INFO  mfog.SourceKyoto  idle 265061
+15:40:36 INFO  mfog.SourceKyoto  idle 269674
+15:40:37 INFO  mfog.SourceKyoto  idle 280054
+15:40:38 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@258c520f
+15:40:39 INFO  mfog.SourceKyoto  idle 284667
+15:40:41 INFO  mfog.SourceKyoto  idle 293893
+15:40:43 INFO  mfog.SourceKyoto  idle 298506
+15:40:44 INFO  mfog.SourceKyoto  idle 304272
+15:40:45 INFO  mfog.SourceKyoto  idle 313499
+15:40:46 INFO  mfog.SourceKyoto  idle 327338
+15:40:46 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@7834be57
+15:40:47 INFO  mfog.SourceKyoto  idle 341754
+15:40:48 INFO  mfog.SourceKyoto  idle 365973
+15:40:50 INFO  mfog.SourceKyoto  idle 378082
+15:40:51 INFO  mfog.SourceKyoto  idle 393651
+15:40:52 INFO  mfog.SourceKyoto  idle 419600
+15:40:54 INFO  mfog.SourceKyoto  idle 424213
+15:40:54 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@5d65052c
+15:40:55 INFO  mfog.SourceKyoto  idle 434016
+15:40:56 INFO  mfog.SourceKyoto  idle 450162
+15:40:57 INFO  mfog.SourceKyoto  idle 459964
+15:40:58 INFO  mfog.SourceKyoto  idle 470344
+15:41:00 INFO  mfog.SourceKyoto  idle 479570
+15:41:01 INFO  mfog.SourceKyoto  idle 488796
+15:41:02 INFO  mfog.SourceKyoto  idle 510709
+15:41:03 INFO  mfog.SourceKyoto  idle 527431
+15:41:04 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@29184880
+15:41:04 INFO  mfog.SourceKyoto  idle 537234
+15:41:05 INFO  mfog.SourceKyoto  idle 557416
+15:41:06 INFO  mfog.SourceKyoto  idle 562029
+15:41:08 INFO  mfog.SourceKyoto  idle 571255
+15:41:09 INFO  mfog.SourceKyoto  idle 596627
+15:41:11 INFO  mfog.SourceKyoto  idle 611043
+15:41:11 WARN  mfog.ModelStore Timed-out EXIT
+15:41:11 INFO  mfog.ModelStore done serving
+15:41:11 INFO  esotericsoftware.minlog kryonet: Server closed.
+15:41:11 INFO  mfog.ModelStore shutdown
+15:41:12 INFO  mfog.SourceKyoto  received com.esotericsoftware.kryonet.FrameworkMessage$KeepAlive@6ec36b86
+15:41:12 INFO  mfog.SourceKyoto  idle 621423
+15:41:13 INFO  mfog.SourceKyoto  idle 642758
+15:41:14 INFO  mfog.SourceKyoto  idle 652561
+15:41:14 INFO  mfog.SourceKyoto  sending...  ...done Connection 1 653459 items, 63200 ms, 63199923863 ns, 10 i/ms
+15:41:14 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+15:41:14 INFO  mfog.SourceKyoto  disconnected Connection 1 653459 items, 63201 ms, 63200994128 ns, 10 i/ms
+15:41:14 INFO  mfog.SourceKyoto  No more connections total received=0
+15:41:14 INFO  esotericsoftware.minlog kryonet: Server closed.
+15:41:15 INFO  mfog.SourceKyoto Done
+15:41:15 INFO  mfog.SourceKyoto done
+15:41:16 INFO  mfog.SinkFog received Disconnect
+15:41:16 INFO  mfog.SinkFog disconnected Connection 1 326736 items, 61592 ms, 61592198842 ns, 5 i/ms
+15:41:16 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+15:41:16 INFO  mfog.SinkFog server received Connection 1 326736 items, 61592 ms, 61592500468 ns, 5 i/ms
+15:41:16 INFO  mfog.SinkFog received all items
+15:41:16 INFO  mfog.SinkFog disconnected Connection 2 326738 items, 61625 ms, 61624521626 ns, 5 i/ms
+15:41:16 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+15:41:17 INFO  mfog.SinkFog everyone is here, time to match
+
+
+15:41:17 INFO  esotericsoftware.minlog kryonet: Server closed.
+Program execution finished
+Job with JobID 5235494721167e0ee477359eecace27c has finished.
+Job Runtime: 71980 ms
+
+done
+15:41:17 INFO  mfog.SinkFog took me 653457 loops 460ms
+15:41:17 INFO  mfog.SinkFog items=653457 matches=206278 hits=0.31567186 misses=0.68432814

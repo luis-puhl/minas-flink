@@ -125,11 +125,11 @@ public class KeepItSimpleStupid {
     static void doServers() throws InterruptedException {
         List<Thread> servers = Arrays.asList(
             //
-            new Thread(new KissServer<>("Producer A", 13000, makeIterator(700 * 1000), idle)),
-            new Thread(new KissServer<>("Producer B", 13001, makeIterator(100), idle)),
+            new Thread(new KissServer<>(LoggerFactory.getLogger("Producer A"), 13000, makeIterator(700 * 1000), idle)),
+            new Thread(new KissServer<>(LoggerFactory.getLogger("Producer B"), 13001, makeIterator(100), idle)),
             // new Thread(new KissServer("Consumer A", 13002)),
             // new Thread(new KissServer("Consumer B", 13003)),
-            new Thread(new KissServer<>("Consumer", 13004, makeIterator(0), idle))
+            new Thread(new KissServer<>(LoggerFactory.getLogger("Consumer"), 13004, makeIterator(0), idle))
         );
         for (Thread server : servers) {
             server.start();

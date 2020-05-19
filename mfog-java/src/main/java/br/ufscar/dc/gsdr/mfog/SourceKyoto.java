@@ -50,7 +50,7 @@ public class SourceKyoto {
         }
         final SynchronizedIterator<Point> examplesIterator = new SynchronizedIterator<>(examples.iterator());
 
-        KissServer<Point> server = new KissServer<>("Source Kyoto", MfogManager.SOURCE_TEST_DATA_PORT, examples.iterator(), 0.1f);
+        KissServer<Point> server = new KissServer<>(log, MfogManager.SOURCE_TEST_DATA_PORT, examples.iterator(), 0.1f);
         server.run();
 
         log.info("done");

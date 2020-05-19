@@ -24,15 +24,7 @@ public class SinkFog {
     static final org.slf4j.Logger log = LoggerFactory.getLogger(SinkFog.class);
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        IdGenerator idGenerator = new IdGenerator();
-        final List<LabeledExample> examples = new BufferedReader(
-            new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)).lines()
-            // .limit(1000)
-            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line))
-            .collect(Collectors.toCollection(LinkedList::new));
-        //
         final List<EvaluatorInput> predictions = new LinkedList<>();
-        //
 
         Server server = new Server() {
             protected Connection newConnection() {
@@ -48,7 +40,7 @@ public class SinkFog {
                     LabeledExample prediction = (LabeledExample) message;
                     connection.items++;
                     predictions.add(new EvaluatorInput(prediction));
-                    if (examples.size() == predictions.size()) {
+                    if (653457 == predictions.size()) {
                         log.info("received all items");
                         connection.sendTCP(new Message(Message.Intentions.DONE));
                         connection.close();
@@ -73,6 +65,14 @@ public class SinkFog {
         server.bind(MfogManager.SINK_MODULE_TEST_PORT);
         server.start();
         log.info("ready\n\n");
+        //
+        IdGenerator idGenerator = new IdGenerator();
+        final List<LabeledExample> examples = new BufferedReader(
+            new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)).lines()
+            // .limit(1000)
+            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line))
+            .collect(Collectors.toCollection(LinkedList::new));
+        //
         while (predictions.size() == 0 || examples.size() != predictions.size()) {
             Thread.sleep(1000);
         }

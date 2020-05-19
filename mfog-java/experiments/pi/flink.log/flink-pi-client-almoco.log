@@ -1,0 +1,57 @@
+2020-05-18 16:37:24,643 INFO  org.apache.flink.client.cli.CliFrontend                       - --------------------------------------------------------------------------------
+2020-05-18 16:37:24,649 INFO  org.apache.flink.client.cli.CliFrontend                       -  Starting Command Line Client (Version: 1.10.0, Rev:aa4eb8f, Date:07.02.2020 @ 19:18:19 CET)
+2020-05-18 16:37:24,649 INFO  org.apache.flink.client.cli.CliFrontend                       -  OS current user: pi
+2020-05-18 16:37:24,650 INFO  org.apache.flink.client.cli.CliFrontend                       -  Current Hadoop/Kerberos user: <no hadoop dependency found>
+2020-05-18 16:37:24,651 INFO  org.apache.flink.client.cli.CliFrontend                       -  JVM: OpenJDK Client VM - Oracle Corporation - 1.8/25.212-b01
+2020-05-18 16:37:24,651 INFO  org.apache.flink.client.cli.CliFrontend                       -  Maximum heap size: 224 MiBytes
+2020-05-18 16:37:24,652 INFO  org.apache.flink.client.cli.CliFrontend                       -  JAVA_HOME: (not set)
+2020-05-18 16:37:24,653 INFO  org.apache.flink.client.cli.CliFrontend                       -  No Hadoop Dependency available
+2020-05-18 16:37:24,653 INFO  org.apache.flink.client.cli.CliFrontend                       -  JVM Options:
+2020-05-18 16:37:24,653 INFO  org.apache.flink.client.cli.CliFrontend                       -     -Dlog.file=/home/pi/flink-1.10.0/log/flink-pi-client-almoco.log
+2020-05-18 16:37:24,654 INFO  org.apache.flink.client.cli.CliFrontend                       -     -Dlog4j.configuration=file:/home/pi/flink-1.10.0/conf/log4j-cli.properties
+2020-05-18 16:37:24,654 INFO  org.apache.flink.client.cli.CliFrontend                       -     -Dlogback.configurationFile=file:/home/pi/flink-1.10.0/conf/logback.xml
+2020-05-18 16:37:24,654 INFO  org.apache.flink.client.cli.CliFrontend                       -  Program Arguments:
+2020-05-18 16:37:24,655 INFO  org.apache.flink.client.cli.CliFrontend                       -     run
+2020-05-18 16:37:24,655 INFO  org.apache.flink.client.cli.CliFrontend                       -     --class
+2020-05-18 16:37:24,655 INFO  org.apache.flink.client.cli.CliFrontend                       -     br.ufscar.dc.gsdr.mfog.Classifier
+2020-05-18 16:37:24,656 INFO  org.apache.flink.client.cli.CliFrontend                       -     ./mfog-0.5.jar
+2020-05-18 16:37:24,656 INFO  org.apache.flink.client.cli.CliFrontend                       -  Classpath: /home/pi/flink-1.10.0/lib/flink-table_2.11-1.10.0.jar:/home/pi/flink-1.10.0/lib/flink-table-blink_2.11-1.10.0.jar:/home/pi/flink-1.10.0/lib/log4j-1.2.17.jar:/home/pi/flink-1.10.0/lib/slf4j-log4j12-1.7.15.jar:/home/pi/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar:::
+2020-05-18 16:37:24,657 INFO  org.apache.flink.client.cli.CliFrontend                       - --------------------------------------------------------------------------------
+2020-05-18 16:37:24,683 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.address, 192.168.15.10
+2020-05-18 16:37:24,684 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.port, 6123
+2020-05-18 16:37:24,684 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.heap.size, 1024m
+2020-05-18 16:37:24,685 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.memory.process.size, 1568m
+2020-05-18 16:37:24,686 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.numberOfTaskSlots, 4
+2020-05-18 16:37:24,686 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: parallelism.default, 4
+2020-05-18 16:37:24,687 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.execution.failover-strategy, region
+2020-05-18 16:37:24,698 WARN  org.apache.flink.client.cli.CliFrontend                       - Could not load CLI class org.apache.flink.yarn.cli.FlinkYarnSessionCli.
+java.lang.NoClassDefFoundError: org/apache/hadoop/yarn/exceptions/YarnException
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at org.apache.flink.client.cli.CliFrontend.loadCustomCommandLine(CliFrontend.java:1076)
+	at org.apache.flink.client.cli.CliFrontend.loadCustomCommandLines(CliFrontend.java:1030)
+	at org.apache.flink.client.cli.CliFrontend.main(CliFrontend.java:957)
+Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.yarn.exceptions.YarnException
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:382)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:349)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 5 more
+2020-05-18 16:37:25,281 INFO  org.apache.flink.core.fs.FileSystem                           - Hadoop is not in the classpath/dependencies. The extended set of supported File Systems via Hadoop is not available.
+2020-05-18 16:37:25,461 INFO  org.apache.flink.runtime.security.modules.HadoopModuleFactory  - Cannot create Hadoop Security Module because Hadoop cannot be found in the Classpath.
+2020-05-18 16:37:25,553 INFO  org.apache.flink.runtime.security.modules.JaasModule          - Jaas file will be created as /tmp/jaas-7037396117382876527.conf.
+2020-05-18 16:37:25,566 INFO  org.apache.flink.runtime.security.SecurityUtils               - Cannot install HadoopSecurityContext because Hadoop cannot be found in the Classpath.
+2020-05-18 16:37:25,569 INFO  org.apache.flink.client.cli.CliFrontend                       - Running 'run' command.
+2020-05-18 16:37:25,599 INFO  org.apache.flink.client.cli.CliFrontend                       - Building program from JAR file
+2020-05-18 16:37:26,628 INFO  org.apache.flink.client.ClientUtils                           - Starting program (detached: false)
+2020-05-18 16:37:29,393 INFO  br.ufscar.dc.gsdr.mfog.Classifier                             - Ready to run baseline
+2020-05-18 16:37:30,042 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.address, 192.168.15.10
+2020-05-18 16:37:30,043 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.port, 6123
+2020-05-18 16:37:30,043 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.heap.size, 1024m
+2020-05-18 16:37:30,044 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.memory.process.size, 1568m
+2020-05-18 16:37:30,044 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.numberOfTaskSlots, 4
+2020-05-18 16:37:30,044 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: parallelism.default, 4
+2020-05-18 16:37:30,045 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.execution.failover-strategy, region
+2020-05-18 16:37:30,123 INFO  org.apache.flink.configuration.Configuration                  - Config uses fallback configuration key 'jobmanager.rpc.address' instead of key 'rest.address'
+2020-05-18 16:37:45,920 INFO  org.apache.flink.configuration.Configuration                  - Config uses fallback configuration key 'jobmanager.rpc.address' instead of key 'rest.address'
+2020-05-18 16:38:08,619 INFO  br.ufscar.dc.gsdr.mfog.Classifier                             - Ran Classifier parallelism(0) rescale evaluate  in 39.225s

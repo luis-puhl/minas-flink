@@ -1,0 +1,310 @@
+2020-05-18 16:37:02,874 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - --------------------------------------------------------------------------------
+2020-05-18 16:37:02,880 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  Preconfiguration: 
+2020-05-18 16:37:02,881 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - 
+
+
+TM_RESOURCES_JVM_PARAMS extraction logs:
+ - Loading configuration property: jobmanager.rpc.address, 192.168.15.10
+ - Loading configuration property: jobmanager.rpc.port, 6123
+ - Loading configuration property: jobmanager.heap.size, 1024m
+ - Loading configuration property: taskmanager.memory.process.size, 1568m
+ - Loading configuration property: taskmanager.numberOfTaskSlots, 4
+ - Loading configuration property: parallelism.default, 4
+ - Loading configuration property: jobmanager.execution.failover-strategy, region
+ - The derived from fraction jvm overhead memory (156.800mb (164416719 bytes)) is less than its min value 192.000mb (201326592 bytes), min value will be used instead
+BASH_JAVA_UTILS_EXEC_RESULT:-Xmx536870902 -Xms536870902 -XX:MaxDirectMemorySize=268435458 -XX:MaxMetaspaceSize=100663296
+
+TM_RESOURCES_DYNAMIC_CONFIGS extraction logs:
+ - Loading configuration property: jobmanager.rpc.address, 192.168.15.10
+ - Loading configuration property: jobmanager.rpc.port, 6123
+ - Loading configuration property: jobmanager.heap.size, 1024m
+ - Loading configuration property: taskmanager.memory.process.size, 1568m
+ - Loading configuration property: taskmanager.numberOfTaskSlots, 4
+ - Loading configuration property: parallelism.default, 4
+ - Loading configuration property: jobmanager.execution.failover-strategy, region
+ - The derived from fraction jvm overhead memory (156.800mb (164416719 bytes)) is less than its min value 192.000mb (201326592 bytes), min value will be used instead
+BASH_JAVA_UTILS_EXEC_RESULT:-D taskmanager.memory.framework.off-heap.size=134217728b -D taskmanager.memory.network.max=134217730b -D taskmanager.memory.network.min=134217730b -D taskmanager.memory.framework.heap.size=134217728b -D taskmanager.memory.managed.size=536870920b -D taskmanager.cpu.cores=4.0 -D taskmanager.memory.task.heap.size=402653174b -D taskmanager.memory.task.off-heap.size=0b 
+
+2020-05-18 16:37:02,882 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - --------------------------------------------------------------------------------
+2020-05-18 16:37:02,883 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  Starting TaskManager (Version: 1.10.0, Rev:aa4eb8f, Date:07.02.2020 @ 19:18:19 CET)
+2020-05-18 16:37:02,884 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  OS current user: pi
+2020-05-18 16:37:02,885 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  Current Hadoop/Kerberos user: <no hadoop dependency found>
+2020-05-18 16:37:02,886 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  JVM: OpenJDK Client VM - Oracle Corporation - 1.8/25.212-b01
+2020-05-18 16:37:02,887 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  Maximum heap size: 494 MiBytes
+2020-05-18 16:37:02,887 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  JAVA_HOME: (not set)
+2020-05-18 16:37:02,889 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  No Hadoop Dependency available
+2020-05-18 16:37:02,889 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  JVM Options:
+2020-05-18 16:37:02,890 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -XX:+UseG1GC
+2020-05-18 16:37:02,890 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -Xmx536870902
+2020-05-18 16:37:02,891 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -Xms536870902
+2020-05-18 16:37:02,891 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -XX:MaxDirectMemorySize=268435458
+2020-05-18 16:37:02,891 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -XX:MaxMetaspaceSize=100663296
+2020-05-18 16:37:02,892 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -Dlog.file=/home/pi/flink-1.10.0/log/flink-pi-taskexecutor-0-almoco.log
+2020-05-18 16:37:02,892 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -Dlog4j.configuration=file:/home/pi/flink-1.10.0/conf/log4j.properties
+2020-05-18 16:37:02,893 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -Dlogback.configurationFile=file:/home/pi/flink-1.10.0/conf/logback.xml
+2020-05-18 16:37:02,893 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  Program Arguments:
+2020-05-18 16:37:02,893 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     --configDir
+2020-05-18 16:37:02,894 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     /home/pi/flink-1.10.0/conf
+2020-05-18 16:37:02,894 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,894 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.framework.off-heap.size=134217728b
+2020-05-18 16:37:02,895 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,895 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.network.max=134217730b
+2020-05-18 16:37:02,895 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,896 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.network.min=134217730b
+2020-05-18 16:37:02,896 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,896 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.framework.heap.size=134217728b
+2020-05-18 16:37:02,896 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,897 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.managed.size=536870920b
+2020-05-18 16:37:02,897 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,897 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.cpu.cores=4.0
+2020-05-18 16:37:02,898 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,898 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.task.heap.size=402653174b
+2020-05-18 16:37:02,898 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     -D
+2020-05-18 16:37:02,898 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -     taskmanager.memory.task.off-heap.size=0b
+2020-05-18 16:37:02,899 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       -  Classpath: /home/pi/flink-1.10.0/lib/flink-table_2.11-1.10.0.jar:/home/pi/flink-1.10.0/lib/flink-table-blink_2.11-1.10.0.jar:/home/pi/flink-1.10.0/lib/log4j-1.2.17.jar:/home/pi/flink-1.10.0/lib/slf4j-log4j12-1.7.15.jar:/home/pi/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar:::
+2020-05-18 16:37:02,899 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - --------------------------------------------------------------------------------
+2020-05-18 16:37:02,905 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - Registered UNIX signal handlers for [TERM, HUP, INT]
+2020-05-18 16:37:02,927 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - Maximum number of open file descriptors is 1048576.
+2020-05-18 16:37:02,997 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.address, 192.168.15.10
+2020-05-18 16:37:02,998 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.port, 6123
+2020-05-18 16:37:02,999 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.heap.size, 1024m
+2020-05-18 16:37:03,000 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.memory.process.size, 1568m
+2020-05-18 16:37:03,001 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.numberOfTaskSlots, 4
+2020-05-18 16:37:03,001 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: parallelism.default, 4
+2020-05-18 16:37:03,002 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.execution.failover-strategy, region
+2020-05-18 16:37:03,604 INFO  org.apache.flink.core.fs.FileSystem                           - Hadoop is not in the classpath/dependencies. The extended set of supported File Systems via Hadoop is not available.
+2020-05-18 16:37:03,722 INFO  org.apache.flink.runtime.security.modules.HadoopModuleFactory  - Cannot create Hadoop Security Module because Hadoop cannot be found in the Classpath.
+2020-05-18 16:37:03,795 INFO  org.apache.flink.runtime.security.modules.JaasModule          - Jaas file will be created as /tmp/jaas-74144190384491442.conf.
+2020-05-18 16:37:03,811 INFO  org.apache.flink.runtime.security.SecurityUtils               - Cannot install HadoopSecurityContext because Hadoop cannot be found in the Classpath.
+2020-05-18 16:37:04,055 INFO  org.apache.flink.configuration.Configuration                  - Config uses fallback configuration key 'jobmanager.rpc.address' instead of key 'rest.address'
+2020-05-18 16:37:04,112 INFO  org.apache.flink.runtime.util.LeaderRetrievalUtils            - Trying to select the network interface and address to use by connecting to the leading JobManager.
+2020-05-18 16:37:04,113 INFO  org.apache.flink.runtime.util.LeaderRetrievalUtils            - TaskManager will try to connect for PT10S before falling back to heuristics
+2020-05-18 16:37:04,605 INFO  org.apache.flink.runtime.net.ConnectionUtils                  - Retrieved new target address /192.168.15.10:6123.
+2020-05-18 16:37:04,622 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - TaskManager will use hostname/address 'almoco' (127.0.1.1) for communication.
+2020-05-18 16:37:04,659 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Trying to start actor system at 127.0.1.1:0
+2020-05-18 16:37:07,163 INFO  akka.event.slf4j.Slf4jLogger                                  - Slf4jLogger started
+2020-05-18 16:37:07,292 INFO  akka.remote.Remoting                                          - Starting remoting
+2020-05-18 16:37:08,095 INFO  akka.remote.Remoting                                          - Remoting started; listening on addresses :[akka.tcp://flink@127.0.1.1:37283]
+2020-05-18 16:37:08,414 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Actor system started at akka.tcp://flink@127.0.1.1:37283
+2020-05-18 16:37:08,475 INFO  org.apache.flink.runtime.metrics.MetricRegistryImpl           - No metrics reporter configured, no metrics will be exposed/reported.
+2020-05-18 16:37:08,488 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Trying to start actor system at 127.0.1.1:0
+2020-05-18 16:37:08,577 INFO  akka.event.slf4j.Slf4jLogger                                  - Slf4jLogger started
+2020-05-18 16:37:08,589 INFO  akka.remote.Remoting                                          - Starting remoting
+2020-05-18 16:37:08,622 INFO  akka.remote.Remoting                                          - Remoting started; listening on addresses :[akka.tcp://flink-metrics@127.0.1.1:36475]
+2020-05-18 16:37:08,663 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Actor system started at akka.tcp://flink-metrics@127.0.1.1:36475
+2020-05-18 16:37:08,685 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcService              - Starting RPC endpoint for org.apache.flink.runtime.metrics.dump.MetricQueryService at akka://flink-metrics/user/MetricQueryService_dc546a8d34393f2655ebe798cd62490c .
+2020-05-18 16:37:08,752 INFO  org.apache.flink.runtime.blob.PermanentBlobCache              - Created BLOB cache storage directory /tmp/blobStore-35aeb51a-d564-424d-b38c-227abe55cbc9
+2020-05-18 16:37:08,766 INFO  org.apache.flink.runtime.blob.TransientBlobCache              - Created BLOB cache storage directory /tmp/blobStore-bfb14888-f392-4fc5-9f7e-56416ee32b14
+2020-05-18 16:37:08,768 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - Starting TaskManager with ResourceID: dc546a8d34393f2655ebe798cd62490c
+2020-05-18 16:37:09,050 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerServices     - Temporary file directory '/tmp': total 14 GB, usable 9 GB (64.29% usable)
+2020-05-18 16:37:09,062 INFO  org.apache.flink.runtime.io.disk.FileChannelManagerImpl       - FileChannelManager uses directory /tmp/flink-io-61dd072e-f599-4338-9022-47cdae0b4a27 for spill files.
+2020-05-18 16:37:09,098 INFO  org.apache.flink.runtime.io.network.netty.NettyConfig         - NettyConfig [server address: /127.0.1.1, server port: 0, ssl enabled: false, memory segment size (bytes): 32768, transport type: NIO, number of server threads: 4 (manual), number of client threads: 4 (manual), server connect backlog: 0 (use Netty's default), client connect timeout (sec): 120, send/receive buffer size (bytes): 0 (use Netty's default)]
+2020-05-18 16:37:09,109 INFO  org.apache.flink.runtime.io.disk.FileChannelManagerImpl       - FileChannelManager uses directory /tmp/flink-netty-shuffle-d9636b14-10ab-4aa9-a583-b710bc4498e1 for spill files.
+2020-05-18 16:37:09,667 INFO  org.apache.flink.runtime.io.network.buffer.NetworkBufferPool  - Allocated 128 MB for network buffer pool (number of memory segments: 4096, bytes per segment: 32768).
+2020-05-18 16:37:09,695 INFO  org.apache.flink.runtime.io.network.NettyShuffleEnvironment   - Starting the network environment and its components.
+2020-05-18 16:37:09,885 INFO  org.apache.flink.runtime.io.network.netty.NettyClient         - Successful initialization (took 189 ms).
+2020-05-18 16:37:10,100 INFO  org.apache.flink.runtime.io.network.netty.NettyServer         - Successful initialization (took 207 ms). Listening on SocketAddress /127.0.1.1:46125.
+2020-05-18 16:37:10,106 INFO  org.apache.flink.runtime.taskexecutor.KvStateService          - Starting the kvState service and its components.
+2020-05-18 16:37:10,149 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerConfiguration  - Messages have a max timeout of 10000 ms
+2020-05-18 16:37:10,203 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcService              - Starting RPC endpoint for org.apache.flink.runtime.taskexecutor.TaskExecutor at akka://flink/user/taskmanager_0 .
+2020-05-18 16:37:10,262 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Start job leader service.
+2020-05-18 16:37:10,270 INFO  org.apache.flink.runtime.filecache.FileCache                  - User file cache uses directory /tmp/flink-dist-cache-ae472a14-72cc-4a2d-a4d0-267689bf27ca
+2020-05-18 16:37:10,279 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Connecting to ResourceManager akka.tcp://flink@192.168.15.10:6123/user/resourcemanager(00000000000000000000000000000000).
+2020-05-18 16:37:11,210 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Resolved ResourceManager address, beginning registration
+2020-05-18 16:37:11,211 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Registration at ResourceManager attempt 1 (timeout=100ms)
+2020-05-18 16:37:11,396 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Registration at ResourceManager attempt 2 (timeout=200ms)
+2020-05-18 16:37:11,581 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Successful registration at resource manager akka.tcp://flink@192.168.15.10:6123/user/resourcemanager under registration id d894920bad4b807e7d577914067f0740.
+2020-05-18 16:37:45,973 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Receive slot request f85cd82e45b2ad10db7be0bbbe03bfa6 for job 31a29f59f996a8fbd90637887b7d8f21 from resource manager with leader id 00000000000000000000000000000000.
+2020-05-18 16:37:46,010 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Allocated slot for f85cd82e45b2ad10db7be0bbbe03bfa6.
+2020-05-18 16:37:46,011 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Add job 31a29f59f996a8fbd90637887b7d8f21 for job leader monitoring.
+2020-05-18 16:37:46,017 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Try to register at job manager akka.tcp://flink@192.168.15.10:6123/user/jobmanager_0 with leader id 00000000-0000-0000-0000-000000000000.
+2020-05-18 16:37:46,102 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Resolved JobManager address, beginning registration
+2020-05-18 16:37:46,103 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Registration at JobManager attempt 1 (timeout=100ms)
+2020-05-18 16:37:46,192 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Successful registration at job manager akka.tcp://flink@192.168.15.10:6123/user/jobmanager_0 for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:46,196 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Establish JobManager connection for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:46,211 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Offer reserved slots to the leader of job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:46,315 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Receive slot request dd244023f085db208f4d9a572de2d770 for job 31a29f59f996a8fbd90637887b7d8f21 from resource manager with leader id 00000000000000000000000000000000.
+2020-05-18 16:37:46,317 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Allocated slot for dd244023f085db208f4d9a572de2d770.
+2020-05-18 16:37:46,317 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Offer reserved slots to the leader of job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:46,331 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Receive slot request 890610fd5da518d40e4b0221b6f5c611 for job 31a29f59f996a8fbd90637887b7d8f21 from resource manager with leader id 00000000000000000000000000000000.
+2020-05-18 16:37:46,333 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Allocated slot for 890610fd5da518d40e4b0221b6f5c611.
+2020-05-18 16:37:46,334 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Offer reserved slots to the leader of job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:46,340 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot f85cd82e45b2ad10db7be0bbbe03bfa6.
+2020-05-18 16:37:46,352 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Receive slot request b90de0df0ad3366c912ac2e6b6b4e0cd for job 31a29f59f996a8fbd90637887b7d8f21 from resource manager with leader id 00000000000000000000000000000000.
+2020-05-18 16:37:46,353 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Allocated slot for b90de0df0ad3366c912ac2e6b6b4e0cd.
+2020-05-18 16:37:46,354 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Offer reserved slots to the leader of job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:46,364 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot f85cd82e45b2ad10db7be0bbbe03bfa6.
+2020-05-18 16:37:46,367 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot dd244023f085db208f4d9a572de2d770.
+2020-05-18 16:37:46,387 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot 890610fd5da518d40e4b0221b6f5c611.
+2020-05-18 16:37:46,388 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot f85cd82e45b2ad10db7be0bbbe03bfa6.
+2020-05-18 16:37:46,389 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot dd244023f085db208f4d9a572de2d770.
+2020-05-18 16:37:46,718 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Source: KryoNet model (1/1).
+2020-05-18 16:37:46,721 INFO  org.apache.flink.runtime.taskmanager.Task                     - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,728 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) [DEPLOYING]
+2020-05-18 16:37:46,741 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) [DEPLOYING].
+2020-05-18 16:37:46,755 INFO  org.apache.flink.runtime.blob.BlobClient                      - Downloading 31a29f59f996a8fbd90637887b7d8f21/p-4d1223d664635598724ea2d65470e489757bb8ef-1279732f1d9336d77bbfce9cc2721731 from /192.168.15.10:36637
+2020-05-18 16:37:46,847 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Map2Model (2/4).
+2020-05-18 16:37:46,849 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,856 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) [DEPLOYING]
+2020-05-18 16:37:46,861 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) [DEPLOYING].
+2020-05-18 16:37:46,877 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Map2Model (3/4).
+2020-05-18 16:37:46,878 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,880 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) [DEPLOYING]
+2020-05-18 16:37:46,881 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) [DEPLOYING].
+2020-05-18 16:37:46,902 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Source: KryoNet examples (1/1).
+2020-05-18 16:37:46,904 INFO  org.apache.flink.runtime.taskmanager.Task                     - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,906 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) [DEPLOYING]
+2020-05-18 16:37:46,907 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) [DEPLOYING].
+2020-05-18 16:37:46,907 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot b90de0df0ad3366c912ac2e6b6b4e0cd.
+2020-05-18 16:37:46,909 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot 890610fd5da518d40e4b0221b6f5c611.
+2020-05-18 16:37:46,909 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Activate slot dd244023f085db208f4d9a572de2d770.
+2020-05-18 16:37:46,926 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Map2Model (1/4).
+2020-05-18 16:37:46,927 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,929 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) [DEPLOYING]
+2020-05-18 16:37:46,930 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) [DEPLOYING].
+2020-05-18 16:37:46,947 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Classify -> Sink: KryoNet Sink (1/4).
+2020-05-18 16:37:46,948 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,951 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) [DEPLOYING]
+2020-05-18 16:37:46,952 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) [DEPLOYING].
+2020-05-18 16:37:46,967 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Map2Model (4/4).
+2020-05-18 16:37:46,968 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,970 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) [DEPLOYING]
+2020-05-18 16:37:46,971 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) [DEPLOYING].
+2020-05-18 16:37:46,989 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Classify -> Sink: KryoNet Sink (3/4).
+2020-05-18 16:37:46,990 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:46,992 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) [DEPLOYING]
+2020-05-18 16:37:46,993 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) [DEPLOYING].
+2020-05-18 16:37:47,008 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Classify -> Sink: KryoNet Sink (4/4).
+2020-05-18 16:37:47,013 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:47,018 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) [DEPLOYING]
+2020-05-18 16:37:47,019 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) [DEPLOYING].
+2020-05-18 16:37:47,031 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Received task Classify -> Sink: KryoNet Sink (2/4).
+2020-05-18 16:37:47,033 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from CREATED to DEPLOYING.
+2020-05-18 16:37:47,034 INFO  org.apache.flink.runtime.taskmanager.Task                     - Creating FileSystem stream leak safety net for task Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) [DEPLOYING]
+2020-05-18 16:37:47,037 INFO  org.apache.flink.runtime.taskmanager.Task                     - Loading JAR files for task Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) [DEPLOYING].
+2020-05-18 16:37:52,550 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) [DEPLOYING].
+2020-05-18 16:37:52,550 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) [DEPLOYING].
+2020-05-18 16:37:52,551 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) [DEPLOYING].
+2020-05-18 16:37:52,550 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) [DEPLOYING].
+2020-05-18 16:37:52,553 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) [DEPLOYING].
+2020-05-18 16:37:52,560 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) [DEPLOYING].
+2020-05-18 16:37:52,564 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) [DEPLOYING].
+2020-05-18 16:37:52,565 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) [DEPLOYING].
+2020-05-18 16:37:52,567 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) [DEPLOYING].
+2020-05-18 16:37:52,572 INFO  org.apache.flink.runtime.taskmanager.Task                     - Registering task at network: Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) [DEPLOYING].
+2020-05-18 16:37:52,728 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,728 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,728 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,729 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,733 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,760 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,761 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,764 INFO  org.apache.flink.runtime.taskmanager.Task                     - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,764 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,802 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,803 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,802 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,803 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,803 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,808 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,808 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,802 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,803 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:52,814 INFO  org.apache.flink.runtime.taskmanager.Task                     - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,817 INFO  org.apache.flink.streaming.runtime.tasks.StreamTask           - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:53,594 INFO  org.apache.flink.runtime.state.heap.HeapKeyedStateBackend     - Initializing heap keyed state backend with stream factory.
+2020-05-18 16:37:53,596 INFO  org.apache.flink.runtime.state.heap.HeapKeyedStateBackend     - Initializing heap keyed state backend with stream factory.
+2020-05-18 16:37:53,595 INFO  org.apache.flink.runtime.state.heap.HeapKeyedStateBackend     - Initializing heap keyed state backend with stream factory.
+2020-05-18 16:37:53,594 INFO  org.apache.flink.runtime.state.heap.HeapKeyedStateBackend     - Initializing heap keyed state backend with stream factory.
+2020-05-18 16:37:55,069 INFO  com.esotericsoftware.minlog                                   - Connecting: /192.168.15.13:9997
+2020-05-18 16:37:55,073 INFO  com.esotericsoftware.minlog                                   - Connecting: /192.168.15.13:9996
+2020-05-18 16:37:55,348 INFO  br.ufscar.dc.gsdr.mfog.Classifier$ModelAggregate              - Map2Model Open
+2020-05-18 16:37:55,348 INFO  br.ufscar.dc.gsdr.mfog.Classifier$ModelAggregate              - Map2Model Open
+2020-05-18 16:37:55,351 INFO  br.ufscar.dc.gsdr.mfog.Classifier$ModelAggregate              - Map2Model Open
+2020-05-18 16:37:55,348 INFO  br.ufscar.dc.gsdr.mfog.Classifier$ModelAggregate              - Map2Model Open
+2020-05-18 16:37:55,378 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 1 connected: /192.168.15.13
+2020-05-18 16:37:55,378 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 2 connected: /192.168.15.13
+2020-05-18 16:37:55,517 INFO  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - client.stop
+2020-05-18 16:37:55,517 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - received 100
+2020-05-18 16:37:55,519 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 2 disconnected.
+2020-05-18 16:37:55,519 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - received 100
+2020-05-18 16:37:55,520 INFO  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - run is done
+2020-05-18 16:37:55,574 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,575 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,575 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054).
+2020-05-18 16:37:55,575 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a).
+2020-05-18 16:37:55,577 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) [FINISHED]
+2020-05-18 16:37:55,578 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) [FINISHED]
+2020-05-18 16:37:55,581 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (1/4) e5b05c8460eff84c121fe112fbf87c0a.
+2020-05-18 16:37:55,589 INFO  org.apache.flink.runtime.taskmanager.Task                     - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,589 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849).
+2020-05-18 16:37:55,590 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,592 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3).
+2020-05-18 16:37:55,593 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) [FINISHED]
+2020-05-18 16:37:55,597 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) [FINISHED]
+2020-05-18 16:37:55,622 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (2/4) 83da6f1d256bb7f89e56d67a213e9054.
+2020-05-18 16:37:55,630 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (4/4) 82344337c45ccd39516bb8f5980ae7f3.
+2020-05-18 16:37:55,634 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Source: KryoNet model (1/1) bf4d48afb22808aaf0e0db732de5f849.
+2020-05-18 16:37:56,473 INFO  br.ufscar.dc.gsdr.mfog.Classifier$MinasClassify               - Model update, cleaning buffer with 2978
+2020-05-18 16:37:56,476 INFO  br.ufscar.dc.gsdr.mfog.Classifier$MinasClassify               - Model update, cleaning buffer with 2978
+2020-05-18 16:37:56,496 INFO  br.ufscar.dc.gsdr.mfog.Classifier$MinasClassify               - Model update, cleaning buffer with 2978
+2020-05-18 16:37:56,496 INFO  com.esotericsoftware.minlog                                   - Connecting: /192.168.15.13:9995
+2020-05-18 16:37:56,500 INFO  com.esotericsoftware.minlog                                   - Connecting: /192.168.15.13:9995
+2020-05-18 16:37:56,514 INFO  br.ufscar.dc.gsdr.mfog.Classifier$MinasClassify               - Model update, cleaning buffer with 2978
+2020-05-18 16:37:56,519 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 2 connected: /192.168.15.13
+2020-05-18 16:37:56,520 INFO  com.esotericsoftware.minlog                                   - Connecting: /192.168.15.13:9995
+2020-05-18 16:37:56,525 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 1 connected: /192.168.15.13
+2020-05-18 16:37:56,545 INFO  com.esotericsoftware.minlog                                   - Connecting: /192.168.15.13:9995
+2020-05-18 16:37:56,547 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 3 connected: /192.168.15.13
+2020-05-18 16:37:56,572 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 4 connected: /192.168.15.13
+2020-05-18 16:37:57,444 INFO  org.apache.flink.runtime.taskmanager.Task                     - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from RUNNING to FINISHED.
+2020-05-18 16:37:57,445 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020).
+2020-05-18 16:37:57,446 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) [FINISHED]
+2020-05-18 16:37:57,447 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Map2Model (3/4) 2ec54bd2d895aa7bf9762fe7858cc020.
+2020-05-18 16:38:08,171 INFO  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - client.stop
+2020-05-18 16:38:08,172 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - received 168073
+2020-05-18 16:38:08,175 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 1 disconnected.
+2020-05-18 16:38:08,176 INFO  br.ufscar.dc.gsdr.mfog.KryoNetClientSource                    - run is done
+2020-05-18 16:38:08,180 INFO  org.apache.flink.runtime.taskmanager.Task                     - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,181 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750).
+2020-05-18 16:38:08,184 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) [FINISHED]
+2020-05-18 16:38:08,185 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Source: KryoNet examples (1/1) 16dd4238a9e27f86b20c2a80888f5750.
+2020-05-18 16:38:08,213 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSink                      - sent 42019
+2020-05-18 16:38:08,214 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 4 disconnected.
+2020-05-18 16:38:08,217 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,218 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f).
+2020-05-18 16:38:08,219 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) [FINISHED]
+2020-05-18 16:38:08,220 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (1/4) 3b2b203c7d519f84129bf57c2e9e718f.
+2020-05-18 16:38:08,256 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSink                      - sent 42018
+2020-05-18 16:38:08,259 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 3 disconnected.
+2020-05-18 16:38:08,262 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,262 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367).
+2020-05-18 16:38:08,264 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) [FINISHED]
+2020-05-18 16:38:08,265 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (2/4) e783b923fedc698a2c2ecc214c839367.
+2020-05-18 16:38:08,305 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSink                      - sent 42018
+2020-05-18 16:38:08,306 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 1 disconnected.
+2020-05-18 16:38:08,308 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,309 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa).
+2020-05-18 16:38:08,310 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) [FINISHED]
+2020-05-18 16:38:08,311 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (4/4) 6096c932f9561f3c9ba5cb48745b4baa.
+2020-05-18 16:38:08,328 WARN  br.ufscar.dc.gsdr.mfog.KryoNetClientSink                      - sent 42018
+2020-05-18 16:38:08,329 INFO  com.esotericsoftware.minlog                                   - kryonet: Connection 2 disconnected.
+2020-05-18 16:38:08,332 INFO  org.apache.flink.runtime.taskmanager.Task                     - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,333 INFO  org.apache.flink.runtime.taskmanager.Task                     - Freeing task resources for Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab).
+2020-05-18 16:38:08,336 INFO  org.apache.flink.runtime.taskmanager.Task                     - Ensuring all FileSystem streams are closed for task Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) [FINISHED]
+2020-05-18 16:38:08,337 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Un-registering task and sending final execution state FINISHED to JobManager for task Classify -> Sink: KryoNet Sink (3/4) 15fe1aec65d5748c2e2cd8cdbeb06fab.
+2020-05-18 16:38:08,548 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Free slot TaskSlot(index:0, state:ACTIVE, resource profile: ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}, allocationId: f85cd82e45b2ad10db7be0bbbe03bfa6, jobId: 31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:38:08,602 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Free slot TaskSlot(index:1, state:ACTIVE, resource profile: ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}, allocationId: dd244023f085db208f4d9a572de2d770, jobId: 31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:38:08,612 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Free slot TaskSlot(index:3, state:ACTIVE, resource profile: ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}, allocationId: b90de0df0ad3366c912ac2e6b6b4e0cd, jobId: 31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:38:08,620 INFO  org.apache.flink.runtime.taskexecutor.slot.TaskSlotTableImpl  - Free slot TaskSlot(index:2, state:ACTIVE, resource profile: ResourceProfile{cpuCores=1.0000000000000000, taskHeapMemory=96.000mb (100663293 bytes), taskOffHeapMemory=0 bytes, managedMemory=128.000mb (134217730 bytes), networkMemory=32.000mb (33554432 bytes)}, allocationId: 890610fd5da518d40e4b0221b6f5c611, jobId: 31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:38:08,623 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Remove job 31a29f59f996a8fbd90637887b7d8f21 from job leader monitoring.
+2020-05-18 16:38:08,624 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Close JobManager connection for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:38:08,644 INFO  org.apache.flink.runtime.taskexecutor.TaskExecutor            - Close JobManager connection for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:38:08,645 INFO  org.apache.flink.runtime.taskexecutor.JobLeaderService        - Cannot reconnect to job 31a29f59f996a8fbd90637887b7d8f21 because it is not registered.
+2020-05-18 16:39:39,650 INFO  org.apache.flink.runtime.taskexecutor.TaskManagerRunner       - RECEIVED SIGNAL 15: SIGTERM. Shutting down as requested.
+2020-05-18 16:39:39,655 INFO  org.apache.flink.runtime.state.TaskExecutorLocalStateStoresManager  - Shutting down TaskExecutorLocalStateStoresManager.
+2020-05-18 16:39:39,656 INFO  org.apache.flink.runtime.blob.PermanentBlobCache              - Shutting down BLOB cache
+2020-05-18 16:39:39,669 INFO  org.apache.flink.runtime.io.disk.FileChannelManagerImpl       - FileChannelManager removed spill file directory /tmp/flink-netty-shuffle-d9636b14-10ab-4aa9-a583-b710bc4498e1
+2020-05-18 16:39:39,672 INFO  org.apache.flink.runtime.blob.TransientBlobCache              - Shutting down BLOB cache
+2020-05-18 16:39:39,680 INFO  org.apache.flink.runtime.io.disk.FileChannelManagerImpl       - FileChannelManager removed spill file directory /tmp/flink-io-61dd072e-f599-4338-9022-47cdae0b4a27
+2020-05-18 16:39:39,684 INFO  org.apache.flink.runtime.filecache.FileCache                  - removed file cache directory /tmp/flink-dist-cache-ae472a14-72cc-4a2d-a4d0-267689bf27ca

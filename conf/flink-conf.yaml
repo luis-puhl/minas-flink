@@ -1,9 +1,46 @@
-# jobmanager.rpc.address: 192.168.15.10
-jobmanager.rpc.address: localhost
+# jobmanager.rpc.address: localhost
+jobmanager.rpc.address: 192.168.15.10
 jobmanager.rpc.port: 6123
-jobmanager.heap.size: 1024m
-taskmanager.memory.process.size: 1568m
-# taskmanager.numberOfTaskSlots: 1
+jobmanager.heap.size: 100m
+
+#taskmanager.memory.network.fraction: 0.1
+#taskmanager.memory.network.min: 64mb
+#taskmanager.memory.network.max: 1gb
+taskmanager.memory.process.size: 800m
+taskmanager.memory.framework.heap.size: 64m
+taskmanager.memory.flink.size: 400m
+taskmanager.memory.network.fraction: 0.1
+taskmanager.memory.network.min: 2m
+taskmanager.memory.network.max: 64m
+taskmanager.memory.jvm-overhead.min: 2m
+taskmanager.memory.jvm-overhead.max: 305m
+taskmanager.memory.managed.size: 100m
 taskmanager.numberOfTaskSlots: 4
-parallelism.default: 1
+parallelism.default: 4
+#fs.default-scheme
+#high-availability.storageDir: hdfs:///flink/ha/
+#high-availability.zookeeper.quorum: localhost:2181
+#high-availability.zookeeper.client.acl: open
+#state.backend: filesystem
+#state.checkpoints.dir: hdfs://namenode-host:port/flink-checkpoints
+#state.savepoints.dir: hdfs://namenode-host:port/flink-checkpoints
+#state.backend.incremental: false
 jobmanager.execution.failover-strategy: region
+#rest.port: 8081
+#rest.address: 0.0.0.0
+#rest.bind-port: 8080-8090
+#rest.bind-address: 0.0.0.0
+#web.submit.enable: false
+#io.tmp.dirs: /tmp
+#classloader.resolve-order: child-first
+#security.kerberos.login.use-ticket-cache: true
+#security.kerberos.login.keytab: /path/to/kerberos/keytab
+#security.kerberos.login.principal: flink-user
+#security.kerberos.login.contexts: Client,KafkaClient
+#zookeeper.sasl.service-name: zookeeper
+#zookeeper.sasl.login-context-name: Client
+#jobmanager.archive.fs.dir: hdfs:///completed-jobs/
+#historyserver.web.address: 0.0.0.0
+#historyserver.web.port: 8082
+#historyserver.archive.fs.dir: hdfs:///completed-jobs/
+#historyserver.archive.fs.refresh-interval: 10000

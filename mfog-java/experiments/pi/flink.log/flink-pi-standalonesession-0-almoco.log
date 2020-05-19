@@ -1,0 +1,191 @@
+2020-05-18 16:36:59,265 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - --------------------------------------------------------------------------------
+2020-05-18 16:36:59,271 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  Starting StandaloneSessionClusterEntrypoint (Version: 1.10.0, Rev:aa4eb8f, Date:07.02.2020 @ 19:18:19 CET)
+2020-05-18 16:36:59,271 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  OS current user: pi
+2020-05-18 16:36:59,273 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  Current Hadoop/Kerberos user: <no hadoop dependency found>
+2020-05-18 16:36:59,273 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  JVM: OpenJDK Client VM - Oracle Corporation - 1.8/25.212-b01
+2020-05-18 16:36:59,274 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  Maximum heap size: 989 MiBytes
+2020-05-18 16:36:59,274 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  JAVA_HOME: (not set)
+2020-05-18 16:36:59,275 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  No Hadoop Dependency available
+2020-05-18 16:36:59,276 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  JVM Options:
+2020-05-18 16:36:59,276 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     -Xms1024m
+2020-05-18 16:36:59,276 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     -Xmx1024m
+2020-05-18 16:36:59,277 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     -Dlog.file=/home/pi/flink-1.10.0/log/flink-pi-standalonesession-0-almoco.log
+2020-05-18 16:36:59,277 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     -Dlog4j.configuration=file:/home/pi/flink-1.10.0/conf/log4j.properties
+2020-05-18 16:36:59,278 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     -Dlogback.configurationFile=file:/home/pi/flink-1.10.0/conf/logback.xml
+2020-05-18 16:36:59,278 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  Program Arguments:
+2020-05-18 16:36:59,279 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     --configDir
+2020-05-18 16:36:59,279 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     /home/pi/flink-1.10.0/conf
+2020-05-18 16:36:59,280 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     --executionMode
+2020-05-18 16:36:59,280 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -     cluster
+2020-05-18 16:36:59,281 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         -  Classpath: /home/pi/flink-1.10.0/lib/flink-table_2.11-1.10.0.jar:/home/pi/flink-1.10.0/lib/flink-table-blink_2.11-1.10.0.jar:/home/pi/flink-1.10.0/lib/log4j-1.2.17.jar:/home/pi/flink-1.10.0/lib/slf4j-log4j12-1.7.15.jar:/home/pi/flink-1.10.0/lib/flink-dist_2.11-1.10.0.jar:::
+2020-05-18 16:36:59,281 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - --------------------------------------------------------------------------------
+2020-05-18 16:36:59,288 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - Registered UNIX signal handlers for [TERM, HUP, INT]
+2020-05-18 16:36:59,374 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.address, 192.168.15.10
+2020-05-18 16:36:59,375 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.rpc.port, 6123
+2020-05-18 16:36:59,376 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.heap.size, 1024m
+2020-05-18 16:36:59,377 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.memory.process.size, 1568m
+2020-05-18 16:36:59,378 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: taskmanager.numberOfTaskSlots, 4
+2020-05-18 16:36:59,379 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: parallelism.default, 4
+2020-05-18 16:36:59,380 INFO  org.apache.flink.configuration.GlobalConfiguration            - Loading configuration property: jobmanager.execution.failover-strategy, region
+2020-05-18 16:36:59,766 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - Starting StandaloneSessionClusterEntrypoint.
+2020-05-18 16:36:59,767 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - Install default filesystem.
+2020-05-18 16:37:00,005 INFO  org.apache.flink.core.fs.FileSystem                           - Hadoop is not in the classpath/dependencies. The extended set of supported File Systems via Hadoop is not available.
+2020-05-18 16:37:00,071 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - Install security context.
+2020-05-18 16:37:00,117 INFO  org.apache.flink.runtime.security.modules.HadoopModuleFactory  - Cannot create Hadoop Security Module because Hadoop cannot be found in the Classpath.
+2020-05-18 16:37:00,148 INFO  org.apache.flink.runtime.security.modules.JaasModule          - Jaas file will be created as /tmp/jaas-5587580304570748848.conf.
+2020-05-18 16:37:00,163 INFO  org.apache.flink.runtime.security.SecurityUtils               - Cannot install HadoopSecurityContext because Hadoop cannot be found in the Classpath.
+2020-05-18 16:37:00,166 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - Initializing cluster services.
+2020-05-18 16:37:00,329 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Trying to start actor system at 192.168.15.10:6123
+2020-05-18 16:37:03,526 INFO  akka.event.slf4j.Slf4jLogger                                  - Slf4jLogger started
+2020-05-18 16:37:03,649 INFO  akka.remote.Remoting                                          - Starting remoting
+2020-05-18 16:37:04,436 INFO  akka.remote.Remoting                                          - Remoting started; listening on addresses :[akka.tcp://flink@192.168.15.10:6123]
+2020-05-18 16:37:04,797 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Actor system started at akka.tcp://flink@192.168.15.10:6123
+2020-05-18 16:37:04,886 INFO  org.apache.flink.configuration.Configuration                  - Config uses fallback configuration key 'jobmanager.rpc.address' instead of key 'rest.address'
+2020-05-18 16:37:04,926 INFO  org.apache.flink.runtime.blob.BlobServer                      - Created BLOB server storage directory /tmp/blobStore-6d8c8c76-742c-4b7d-a37e-16ca36d5dc6c
+2020-05-18 16:37:04,943 INFO  org.apache.flink.runtime.blob.BlobServer                      - Started BLOB server at 0.0.0.0:36637 - max concurrent requests: 50 - max backlog: 1000
+2020-05-18 16:37:04,994 INFO  org.apache.flink.runtime.metrics.MetricRegistryImpl           - No metrics reporter configured, no metrics will be exposed/reported.
+2020-05-18 16:37:05,007 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Trying to start actor system at 192.168.15.10:0
+2020-05-18 16:37:05,099 INFO  akka.event.slf4j.Slf4jLogger                                  - Slf4jLogger started
+2020-05-18 16:37:05,113 INFO  akka.remote.Remoting                                          - Starting remoting
+2020-05-18 16:37:05,162 INFO  akka.remote.Remoting                                          - Remoting started; listening on addresses :[akka.tcp://flink-metrics@192.168.15.10:33783]
+2020-05-18 16:37:05,212 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcServiceUtils         - Actor system started at akka.tcp://flink-metrics@192.168.15.10:33783
+2020-05-18 16:37:05,240 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcService              - Starting RPC endpoint for org.apache.flink.runtime.metrics.dump.MetricQueryService at akka://flink-metrics/user/MetricQueryService .
+2020-05-18 16:37:05,610 INFO  org.apache.flink.runtime.dispatcher.FileArchivedExecutionGraphStore  - Initializing FileArchivedExecutionGraphStore: Storage directory /tmp/executionGraphStore-9536265d-fef8-4385-b4e8-ad7073ffc38f, expiration time 3600000, maximum cache size 52428800 bytes.
+2020-05-18 16:37:05,826 INFO  org.apache.flink.configuration.Configuration                  - Config uses fallback configuration key 'jobmanager.rpc.address' instead of key 'rest.address'
+2020-05-18 16:37:05,830 INFO  org.apache.flink.runtime.dispatcher.DispatcherRestEndpoint    - Upload directory /tmp/flink-web-ff393430-1cee-4f3d-a96a-5aca685eabd2/flink-web-upload does not exist. 
+2020-05-18 16:37:05,834 INFO  org.apache.flink.runtime.dispatcher.DispatcherRestEndpoint    - Created directory /tmp/flink-web-ff393430-1cee-4f3d-a96a-5aca685eabd2/flink-web-upload for file uploads.
+2020-05-18 16:37:05,840 INFO  org.apache.flink.runtime.dispatcher.DispatcherRestEndpoint    - Starting rest endpoint.
+2020-05-18 16:37:06,851 INFO  org.apache.flink.runtime.webmonitor.WebMonitorUtils           - Determined location of main cluster component log file: /home/pi/flink-1.10.0/log/flink-pi-standalonesession-0-almoco.log
+2020-05-18 16:37:06,851 INFO  org.apache.flink.runtime.webmonitor.WebMonitorUtils           - Determined location of main cluster component stdout file: /home/pi/flink-1.10.0/log/flink-pi-standalonesession-0-almoco.out
+2020-05-18 16:37:07,579 INFO  org.apache.flink.runtime.dispatcher.DispatcherRestEndpoint    - Rest endpoint listening at 192.168.15.10:8081
+2020-05-18 16:37:07,582 INFO  org.apache.flink.runtime.dispatcher.DispatcherRestEndpoint    - http://192.168.15.10:8081 was granted leadership with leaderSessionID=00000000-0000-0000-0000-000000000000
+2020-05-18 16:37:07,583 INFO  org.apache.flink.runtime.dispatcher.DispatcherRestEndpoint    - Web frontend listening at http://192.168.15.10:8081.
+2020-05-18 16:37:07,637 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcService              - Starting RPC endpoint for org.apache.flink.runtime.resourcemanager.StandaloneResourceManager at akka://flink/user/resourcemanager .
+2020-05-18 16:37:07,768 INFO  org.apache.flink.runtime.dispatcher.runner.SessionDispatcherLeaderProcess  - Start SessionDispatcherLeaderProcess.
+2020-05-18 16:37:07,781 INFO  org.apache.flink.runtime.dispatcher.runner.SessionDispatcherLeaderProcess  - Recover all persisted job graphs.
+2020-05-18 16:37:07,807 INFO  org.apache.flink.runtime.dispatcher.runner.SessionDispatcherLeaderProcess  - Successfully recovered 0 persisted job graphs.
+2020-05-18 16:37:07,817 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - ResourceManager akka.tcp://flink@192.168.15.10:6123/user/resourcemanager was granted leadership with fencing token 00000000000000000000000000000000
+2020-05-18 16:37:07,843 INFO  org.apache.flink.runtime.resourcemanager.slotmanager.SlotManagerImpl  - Starting the SlotManager.
+2020-05-18 16:37:07,842 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcService              - Starting RPC endpoint for org.apache.flink.runtime.dispatcher.StandaloneDispatcher at akka://flink/user/dispatcher .
+2020-05-18 16:37:10,850 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:11,525 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Ignoring outdated TaskExecutorGateway connection.
+2020-05-18 16:37:11,538 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Registering TaskManager with ResourceID dc546a8d34393f2655ebe798cd62490c (akka.tcp://flink@127.0.1.1:37283/user/taskmanager_0) at ResourceManager
+2020-05-18 16:37:12,886 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:15,883 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:18,887 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:21,878 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:24,881 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:27,885 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:30,878 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:33,880 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:36,879 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:39,889 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:42,878 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:44,251 INFO  org.apache.flink.runtime.dispatcher.StandaloneDispatcher      - Received JobGraph submission 31a29f59f996a8fbd90637887b7d8f21 (Classifier parallelism(0) rescale evaluate ).
+2020-05-18 16:37:44,254 INFO  org.apache.flink.runtime.dispatcher.StandaloneDispatcher      - Submitting job 31a29f59f996a8fbd90637887b7d8f21 (Classifier parallelism(0) rescale evaluate ).
+2020-05-18 16:37:45,000 INFO  org.apache.flink.runtime.rpc.akka.AkkaRpcService              - Starting RPC endpoint for org.apache.flink.runtime.jobmaster.JobMaster at akka://flink/user/jobmanager_0 .
+2020-05-18 16:37:45,052 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Initializing job Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:37:45,203 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Using restart back off time strategy NoRestartBackoffTimeStrategy for Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:37:45,353 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Running initialization on master for job Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:37:45,354 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Successfully ran initialization on master in 0 ms.
+2020-05-18 16:37:45,531 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - No state backend has been configured, using default (Memory / JobManager) MemoryStateBackend (data in heap memory / checkpoints to JobManager) (checkpoints: 'null', savepoints: 'null', asynchronous: TRUE, maxStateSize: 5242880)
+2020-05-18 16:37:45,586 INFO  org.apache.flink.runtime.executiongraph.failover.flip1.RestartPipelinedRegionStrategy  - Start building failover regions.
+2020-05-18 16:37:45,591 INFO  org.apache.flink.runtime.executiongraph.failover.flip1.RestartPipelinedRegionStrategy  - Created 1 failover regions.
+2020-05-18 16:37:45,591 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Using failover strategy org.apache.flink.runtime.executiongraph.failover.flip1.RestartPipelinedRegionStrategy@f1c32f for Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:37:45,605 INFO  org.apache.flink.runtime.jobmaster.JobManagerRunnerImpl       - JobManager runner for job Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21) was granted leadership with session id 00000000-0000-0000-0000-000000000000 at akka.tcp://flink@192.168.15.10:6123/user/jobmanager_0.
+2020-05-18 16:37:45,629 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Starting execution of job Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21) under job master id 00000000000000000000000000000000.
+2020-05-18 16:37:45,651 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Starting scheduling with scheduling strategy [org.apache.flink.runtime.scheduler.strategy.EagerSchedulingStrategy]
+2020-05-18 16:37:45,653 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Job Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21) switched from state CREATED to RUNNING.
+2020-05-18 16:37:45,698 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,698 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,699 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,699 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,699 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,699 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,700 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,700 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,700 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,700 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from CREATED to SCHEDULED.
+2020-05-18 16:37:45,783 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Cannot serve slot request, no ResourceManager connected. Adding as pending request [SlotRequestId{9024fb423f72bf0f5e92282fa8b335fe}]
+2020-05-18 16:37:45,837 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Connecting to ResourceManager akka.tcp://flink@192.168.15.10:6123/user/resourcemanager(00000000000000000000000000000000)
+2020-05-18 16:37:45,857 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Resolved ResourceManager address, beginning registration
+2020-05-18 16:37:45,858 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Registration at ResourceManager attempt 1 (timeout=100ms)
+2020-05-18 16:37:45,865 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Registering job manager 00000000000000000000000000000000@akka.tcp://flink@192.168.15.10:6123/user/jobmanager_0 for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:45,893 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:45,908 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Registered job manager 00000000000000000000000000000000@akka.tcp://flink@192.168.15.10:6123/user/jobmanager_0 for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:37:45,920 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - JobManager successfully registered at ResourceManager, leader id: 00000000000000000000000000000000.
+2020-05-18 16:37:45,923 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Requesting new slot [SlotRequestId{9024fb423f72bf0f5e92282fa8b335fe}] and profile ResourceProfile{UNKNOWN} from resource manager.
+2020-05-18 16:37:45,930 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Request slot with profile ResourceProfile{UNKNOWN} for job 31a29f59f996a8fbd90637887b7d8f21 with allocation id f85cd82e45b2ad10db7be0bbbe03bfa6.
+2020-05-18 16:37:46,286 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Requesting new slot [SlotRequestId{afd6f5cc208073ce72da67f7468f24ff}] and profile ResourceProfile{UNKNOWN} from resource manager.
+2020-05-18 16:37:46,288 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Request slot with profile ResourceProfile{UNKNOWN} for job 31a29f59f996a8fbd90637887b7d8f21 with allocation id dd244023f085db208f4d9a572de2d770.
+2020-05-18 16:37:46,288 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Requesting new slot [SlotRequestId{3790ecbf1ecb753f6e816baceb74ee2a}] and profile ResourceProfile{UNKNOWN} from resource manager.
+2020-05-18 16:37:46,291 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Requesting new slot [SlotRequestId{8dd0c4c51bd7b66c1a1fdcf117d7a403}] and profile ResourceProfile{UNKNOWN} from resource manager.
+2020-05-18 16:37:46,291 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Request slot with profile ResourceProfile{UNKNOWN} for job 31a29f59f996a8fbd90637887b7d8f21 with allocation id 890610fd5da518d40e4b0221b6f5c611.
+2020-05-18 16:37:46,295 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Request slot with profile ResourceProfile{UNKNOWN} for job 31a29f59f996a8fbd90637887b7d8f21 with allocation id b90de0df0ad3366c912ac2e6b6b4e0cd.
+2020-05-18 16:37:46,336 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Received repeated offer for slot [f85cd82e45b2ad10db7be0bbbe03bfa6]. Ignoring.
+2020-05-18 16:37:46,367 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Received repeated offer for slot [f85cd82e45b2ad10db7be0bbbe03bfa6]. Ignoring.
+2020-05-18 16:37:46,368 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Received repeated offer for slot [dd244023f085db208f4d9a572de2d770]. Ignoring.
+2020-05-18 16:37:46,392 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,394 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Source: KryoNet model (1/1) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,413 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,414 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Source: KryoNet examples (1/1) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,420 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,420 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Map2Model (1/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,428 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,429 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Map2Model (2/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,430 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,431 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Map2Model (3/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,432 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,433 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Map2Model (4/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,434 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,435 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Classify -> Sink: KryoNet Sink (1/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,443 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,445 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Classify -> Sink: KryoNet Sink (2/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,446 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,448 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Classify -> Sink: KryoNet Sink (3/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,449 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from SCHEDULED to DEPLOYING.
+2020-05-18 16:37:46,450 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Deploying Classify -> Sink: KryoNet Sink (4/4) (attempt #0) to dc546a8d34393f2655ebe798cd62490c @ almoco (dataPort=46125)
+2020-05-18 16:37:46,451 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Received repeated offer for slot [890610fd5da518d40e4b0221b6f5c611]. Ignoring.
+2020-05-18 16:37:46,452 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Received repeated offer for slot [dd244023f085db208f4d9a572de2d770]. Ignoring.
+2020-05-18 16:37:52,271 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:52,350 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:52,758 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,778 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,788 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,800 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,806 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,815 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,823 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,834 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,838 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:52,849 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from DEPLOYING to RUNNING.
+2020-05-18 16:37:54,886 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:37:55,682 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (1/4) (e5b05c8460eff84c121fe112fbf87c0a) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,703 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (2/4) (83da6f1d256bb7f89e56d67a213e9054) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,716 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (4/4) (82344337c45ccd39516bb8f5980ae7f3) switched from RUNNING to FINISHED.
+2020-05-18 16:37:55,729 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet model (1/1) (bf4d48afb22808aaf0e0db732de5f849) switched from RUNNING to FINISHED.
+2020-05-18 16:37:57,464 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Map2Model (3/4) (2ec54bd2d895aa7bf9762fe7858cc020) switched from RUNNING to FINISHED.
+2020-05-18 16:37:57,885 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:38:00,888 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:38:03,886 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:38:06,894 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:38:08,203 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Source: KryoNet examples (1/1) (16dd4238a9e27f86b20c2a80888f5750) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,240 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (1/4) (3b2b203c7d519f84129bf57c2e9e718f) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,281 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (2/4) (e783b923fedc698a2c2ecc214c839367) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,324 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (4/4) (6096c932f9561f3c9ba5cb48745b4baa) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,348 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Classify -> Sink: KryoNet Sink (3/4) (15fe1aec65d5748c2e2cd8cdbeb06fab) switched from RUNNING to FINISHED.
+2020-05-18 16:38:08,349 INFO  org.apache.flink.runtime.executiongraph.ExecutionGraph        - Job Classifier parallelism(0) rescale evaluate  (31a29f59f996a8fbd90637887b7d8f21) switched from state RUNNING to FINISHED.
+2020-05-18 16:38:08,350 INFO  org.apache.flink.runtime.checkpoint.CheckpointCoordinator     - Stopping checkpoint coordinator for job 31a29f59f996a8fbd90637887b7d8f21.
+2020-05-18 16:38:08,350 INFO  org.apache.flink.runtime.checkpoint.StandaloneCompletedCheckpointStore  - Shutting down
+2020-05-18 16:38:08,399 INFO  org.apache.flink.runtime.dispatcher.StandaloneDispatcher      - Job 31a29f59f996a8fbd90637887b7d8f21 reached globally terminal state FINISHED.
+2020-05-18 16:38:08,462 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Stopping the JobMaster for job Classifier parallelism(0) rescale evaluate (31a29f59f996a8fbd90637887b7d8f21).
+2020-05-18 16:38:08,506 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Suspending SlotPool.
+2020-05-18 16:38:08,507 INFO  org.apache.flink.runtime.jobmaster.JobMaster                  - Close ResourceManager connection a7ab897e4f750603ea8fe49eb6e1743b: JobManager is shutting down..
+2020-05-18 16:38:08,508 INFO  org.apache.flink.runtime.resourcemanager.StandaloneResourceManager  - Disconnect job manager 00000000000000000000000000000000@akka.tcp://flink@192.168.15.10:6123/user/jobmanager_0 for job 31a29f59f996a8fbd90637887b7d8f21 from the resource manager.
+2020-05-18 16:38:08,509 INFO  org.apache.flink.runtime.jobmaster.slotpool.SlotPoolImpl      - Stopping SlotPool.
+2020-05-18 16:38:08,514 INFO  org.apache.flink.runtime.jobmaster.JobManagerRunnerImpl       - JobManagerRunner already shutdown.
+2020-05-18 16:38:09,884 ERROR org.apache.flink.runtime.rest.handler.job.JobDetailsHandler   - Exception occurred in REST handler: Job 520b42fffb9270269738335753065538 not found
+2020-05-18 16:39:40,360 WARN  akka.remote.ReliableDeliverySupervisor                        - Association with remote system [akka.tcp://flink-metrics@127.0.1.1:36475] has failed, address is now gated for [50] ms. Reason: [Disassociated] 
+2020-05-18 16:39:40,367 WARN  akka.remote.ReliableDeliverySupervisor                        - Association with remote system [akka.tcp://flink@127.0.1.1:37283] has failed, address is now gated for [50] ms. Reason: [Disassociated] 
+2020-05-18 16:39:41,208 INFO  org.apache.flink.runtime.entrypoint.ClusterEntrypoint         - RECEIVED SIGNAL 15: SIGTERM. Shutting down as requested.
+2020-05-18 16:39:41,233 INFO  org.apache.flink.runtime.blob.BlobServer                      - Stopped BLOB server at 0.0.0.0:36637

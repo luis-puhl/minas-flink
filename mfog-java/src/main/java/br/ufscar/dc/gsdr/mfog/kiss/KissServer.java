@@ -6,25 +6,23 @@ import br.ufscar.dc.gsdr.mfog.util.TimeItConnection;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Iterator;
 
 public class KissServer<T> extends Listener implements Runnable {
-    final String name;
     final int port;
-    final org.slf4j.Logger log;
+    final Logger log;
     final float idle;
+    final Iterator<T> iterator;
     Server server;
     int received = 0;
-    final Iterator<T> iterator;
     long lastIdleMsg = System.currentTimeMillis();
 
-    public KissServer(String name, int port, Iterator<T> iterator, float idle) {
-        this.name = name;
+    public KissServer(Logger log, int port, Iterator<T> iterator, float idle) {
         this.port = port;
-        this.log = LoggerFactory.getLogger(name);
+        this.log = log;
         this.iterator = iterator;
         this.idle = idle;
     }

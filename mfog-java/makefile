@@ -15,15 +15,19 @@ run: runMfog
 	-../ref-git/flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.Classifier target/*
 	-@echo done
 
-run@almoco: runMfog
+copyAlmoco:
+	scp target/mfog-0.5.jar pi@almoco:/home/pi/
+run@almoco: copyAlmoco runMfog
 	ssh pi@almoco flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.Classifier ./mfog-0.5.jar
 	-@echo done
-spot@almoco: runMfog
+spot@almoco: copyAlmoco runMfog
 	ssh pi@almoco java -cp flink-1.10.0/lib/*:mfog-0.5.jar br.ufscar.dc.gsdr.mfog.Classifier
 	-@echo done
-
-copy:
-	scp target/mfog-0.5.jar pi@almoco:~/
+cleanAlmoco:
+	ssh pi@almoco '/home/pi/flink-1.10.0/bin/stop-cluster.sh'
+	scp -r pi@almoco:/home/pi/flink-1.10.0/log/* experiments/pi/flink.log
+	ssh pi@almoco 'rm /home/pi/flink-1.10.0/log/*'
+	ssh pi@almoco '/home/pi/flink-1.10.0/bin/start-cluster.sh'
 
 spot: kill build runMfog
 	java -cp target/*:../ref-git/flink-1.10.0/lib/* br.ufscar.dc.gsdr.mfog.Classifier
