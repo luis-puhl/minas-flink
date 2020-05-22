@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class KeepItSimpleStupid {
-    static final org.slf4j.Logger log = LoggerFactory.getLogger(KeepItSimpleStupid.class);
+public class KryoKeepItSimpleStupid {
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(KryoKeepItSimpleStupid.class);
     static final float idle = 0.15f;
     static final int parallelism = 2;
     static final int waste_cpu = 0x02f0f0;
@@ -125,11 +125,11 @@ public class KeepItSimpleStupid {
     static void doServers() throws InterruptedException {
         List<Thread> servers = Arrays.asList(
             //
-            new Thread(new KissServer<>(LoggerFactory.getLogger("Producer A"), 13000, makeIterator(700 * 1000), idle)),
-            new Thread(new KissServer<>(LoggerFactory.getLogger("Producer B"), 13001, makeIterator(100), idle)),
+            new Thread(new KryoKissServer<>(LoggerFactory.getLogger("Producer A"), 13000, makeIterator(700 * 1000), idle)),
+            new Thread(new KryoKissServer<>(LoggerFactory.getLogger("Producer B"), 13001, makeIterator(100), idle)),
             // new Thread(new KissServer("Consumer A", 13002)),
             // new Thread(new KissServer("Consumer B", 13003)),
-            new Thread(new KissServer<>(LoggerFactory.getLogger("Consumer"), 13004, makeIterator(0), idle))
+            new Thread(new KryoKissServer<>(LoggerFactory.getLogger("Consumer"), 13004, makeIterator(0), idle))
         );
         for (Thread server : servers) {
             server.start();

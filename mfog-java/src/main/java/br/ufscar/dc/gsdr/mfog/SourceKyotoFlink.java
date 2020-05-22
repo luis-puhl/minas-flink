@@ -1,14 +1,16 @@
 package br.ufscar.dc.gsdr.mfog;
 
 import br.ufscar.dc.gsdr.mfog.kiss.KryoKissServer;
-import br.ufscar.dc.gsdr.mfog.structs.LabeledExample;
-import br.ufscar.dc.gsdr.mfog.structs.Message;
-import br.ufscar.dc.gsdr.mfog.structs.Point;
-import br.ufscar.dc.gsdr.mfog.structs.Serializers;
+import br.ufscar.dc.gsdr.mfog.structs.*;
 import br.ufscar.dc.gsdr.mfog.util.IdGenerator;
 import br.ufscar.dc.gsdr.mfog.util.MfogManager;
 import br.ufscar.dc.gsdr.mfog.util.TimeItConnection;
-import com.esotericsoftware.kryonet.*;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
+import org.apache.flink.api.common.ExecutionConfig;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
@@ -19,37 +21,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SourceKyoto {
-    static final org.slf4j.Logger log = LoggerFactory.getLogger(SourceKyoto.class);
+public class SourceKyotoFlink {
+    static final org.slf4j.Logger log = LoggerFactory.getLogger(SourceKyotoFlink.class);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        ExecutionConfig config = env.getConfig();
+        config.addDefaultKryoSerializer(Cluster.class, new Cluster());
+        config.addDefaultKryoSerializer(Point.class, new Point());
+        config.addDefaultKryoSerializer(LabeledExample.class, new LabeledExample());
+        config.addDefaultKryoSerializer(Model.class, new Model());
         IdGenerator idGenerator = new IdGenerator();
-        List<Point> examples = new BufferedReader(
-            new FileReader(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)).lines()
-            // .limit(1000)
-            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line).point)
-            .collect(Collectors.toList());
 
-        class SynchronizedIterator<T> implements Iterator<T> {
-            final Iterator<T> value;
-            public SynchronizedIterator(Iterator<T> value) {
-                this.value = value;
-            }
-            @Override
-            public synchronized boolean hasNext() {
-                return value.hasNext();
-            }
+        SingleOutputStreamOperator<Point> examples = env
+            .readTextFile(MfogManager.Kyoto.basePath + MfogManager.Kyoto.test)
+            .map(line -> LabeledExample.fromKyotoCSV(idGenerator.next(), line).point);
 
-            @Override
-            public synchronized T next() {
-                return value.next();
-            }
-        }
-        final SynchronizedIterator<Point> examplesIterator = new SynchronizedIterator<>(examples.iterator());
+        examples.addSink(new KryoNetServerSink<>(Point.class, MfogManager.SOURCE_TEST_DATA_PORT));
 
-        KryoKissServer<Point> server = new KryoKissServer<>(log, MfogManager.SOURCE_TEST_DATA_PORT, examples.iterator(), 0.1f);
-        server.run();
-
+        env.execute();
         log.info("done");
     }
 

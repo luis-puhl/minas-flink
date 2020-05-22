@@ -38,6 +38,7 @@ public class KryoNetClientSource<T> implements SourceFunction<T> {
         client.getKryo().register(Integer.class);
         client.addListener(new Listener() {
             int received;
+            boolean isDone = false;
 
             @SuppressWarnings("unchecked")
             @Override
@@ -49,6 +50,7 @@ public class KryoNetClientSource<T> implements SourceFunction<T> {
                 } else if (message instanceof Message) {
                     Message msg = (Message) message;
                     if (msg.isDone()) {
+                        isDone = true;
                         connection.close();
                         client.stop();
                         try {
@@ -65,13 +67,21 @@ public class KryoNetClientSource<T> implements SourceFunction<T> {
             @Override
             public void disconnected(Connection connection) {
                 super.disconnected(connection);
-                log.info("client.stop");
-                log.warn("received " + received);
-                client.stop();
-                try {
-                    client.dispose();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                log.info("Disconnected. Received " + received);
+                if (isDone) {
+                    log.info("client.stop");
+                    client.stop();
+                    try {
+                        client.dispose();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        client.reconnect();
+                    } catch (IOException e) {
+                        log.error("Failed to re-connect.", e);
+                    }
                 }
             }
         });

@@ -2,7 +2,6 @@ package br.ufscar.dc.gsdr.mfog.util;
 
 import br.ufscar.dc.gsdr.mfog.structs.Point;
 
-import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -14,6 +13,27 @@ import java.util.Set;
 
 public class ServerClientNIO {
 
+    public static void main(String[] args) throws InterruptedException {
+        Thread server = new Thread(() -> {
+            try {
+                new Server().main();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+        server.start();
+        Thread client = new Thread(() -> {
+            try {
+                new Client().main();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+        client.start();
+        client.join();
+        server.join();
+    }
+
     static class Client {
         public void main() throws IOException, ClassNotFoundException {
             Logger log = Logger.getLogger(Client.class);
@@ -21,9 +41,8 @@ public class ServerClientNIO {
             Compressor compressor = new Compressor(256);
             //
             log.info("new messages");
-            Iterator<Point> messages = Arrays.asList((new Point[]{
-                    Point.zero(22), Point.zero(22), Point.zero(22)
-            })).iterator();
+            Iterator<Point> messages = Arrays.asList((new Point[]{Point.zero(22), Point.zero(22), Point.zero(22)}))
+                .iterator();
             //
             for (int i = 0; i < 3; i++) {
                 log.info("Connecting to Server on port 1111...");
@@ -61,9 +80,8 @@ public class ServerClientNIO {
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, serverSocketChannel.validOps(), null);
             //
-            Iterator<Point> messages = Arrays.asList((new Point[]{
-                    Point.zero(22), Point.zero(22), Point.zero(22)
-            })).iterator();
+            Iterator<Point> messages = Arrays.asList((new Point[]{Point.zero(22), Point.zero(22), Point.zero(22)}))
+                .iterator();
             for (int i = 0; i < 3; i++) {
                 log.info("select");
                 selector.select();
@@ -95,26 +113,5 @@ public class ServerClientNIO {
                 }
             }
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        Thread server = new Thread(() -> {
-            try {
-                new Server().main();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
-        server.start();
-        Thread client = new Thread(() -> {
-            try {
-                new Client().main();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
-        client.start();
-        client.join();
-        server.join();
     }
 }

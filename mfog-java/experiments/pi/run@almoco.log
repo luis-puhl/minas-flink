@@ -1,12 +1,3 @@
-ssh pi@almoco '/home/pi/flink-1.10.0/bin/stop-cluster.sh'
-Stopping taskexecutor daemon (pid: 21040) on host almoco.
-Stopping standalonesession daemon (pid: 20744) on host almoco.
-scp -r pi@almoco:/home/pi/flink-1.10.0/log/* experiments/pi/flink.log
-ssh pi@almoco 'rm /home/pi/flink-1.10.0/log/*'
-ssh pi@almoco '/home/pi/flink-1.10.0/bin/start-cluster.sh'
-Starting cluster.
-Starting standalonesession daemon on host almoco.
-Starting taskexecutor daemon on host almoco.
 mvn clean package
 [INFO] Scanning for projects...
 [INFO] 
@@ -23,9 +14,9 @@ mvn clean package
 [INFO] 
 [INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ mfog ---
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 23 source files to /home/puhl/project/minas-flink/mfog-java/target/classes
-[INFO] /home/puhl/project/minas-flink/mfog-java/src/main/java/br/ufscar/dc/gsdr/mfog/Classifier.java: /home/puhl/project/minas-flink/mfog-java/src/main/java/br/ufscar/dc/gsdr/mfog/Classifier.java uses unchecked or unsafe operations.
-[INFO] /home/puhl/project/minas-flink/mfog-java/src/main/java/br/ufscar/dc/gsdr/mfog/Classifier.java: Recompile with -Xlint:unchecked for details.
+[INFO] Compiling 26 source files to /home/puhl/project/minas-flink/mfog-java/target/classes
+[INFO] /home/puhl/project/minas-flink/mfog-java/src/main/java/br/ufscar/dc/gsdr/mfog/KryoNetServerSource.java: Some input files use unchecked or unsafe operations.
+[INFO] /home/puhl/project/minas-flink/mfog-java/src/main/java/br/ufscar/dc/gsdr/mfog/KryoNetServerSource.java: Recompile with -Xlint:unchecked for details.
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ mfog ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
@@ -42,11 +33,11 @@ mvn clean package
 [INFO] -------------------------------------------------------
 [INFO] Running br.ufscar.dc.gsdr.mfog.ClusterTest
 [0, N, normal, 502, 0, 0.04553028494064095, 0.1736759823342961]
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.051 s - in br.ufscar.dc.gsdr.mfog.ClusterTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.037 s - in br.ufscar.dc.gsdr.mfog.ClusterTest
 [INFO] Running br.ufscar.dc.gsdr.mfog.structs.ClusterTest
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s - in br.ufscar.dc.gsdr.mfog.structs.ClusterTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s - in br.ufscar.dc.gsdr.mfog.structs.ClusterTest
 [INFO] Running br.ufscar.dc.gsdr.mfog.structs.PointTest
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s - in br.ufscar.dc.gsdr.mfog.structs.PointTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s - in br.ufscar.dc.gsdr.mfog.structs.PointTest
 [INFO] Running br.ufscar.dc.gsdr.mfog.structs.LabeledExampleTest
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s - in br.ufscar.dc.gsdr.mfog.structs.LabeledExampleTest
 [INFO] Running br.ufscar.dc.gsdr.mfog.SourceKyotoTest
@@ -61,47 +52,7 @@ mvn clean package
 [INFO] Building jar: /home/puhl/project/minas-flink/mfog-java/target/mfog-0.5.jar
 [INFO] 
 [INFO] --- maven-shade-plugin:3.1.1:shade (default) @ mfog ---
-[INFO] Including org.apache.flink:flink-java:jar:sources:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-core:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-annotations:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-metrics-core:jar:1.10.0 in the shaded jar.
-[INFO] Including commons-collections:commons-collections:jar:3.2.2 in the shaded jar.
-[INFO] Including org.apache.commons:commons-compress:jar:1.18 in the shaded jar.
-[INFO] Including org.apache.flink:flink-shaded-asm-7:jar:7.1-9.0 in the shaded jar.
-[INFO] Including org.apache.commons:commons-lang3:jar:3.3.2 in the shaded jar.
-[INFO] Including org.apache.commons:commons-math3:jar:3.5 in the shaded jar.
 [INFO] Excluding org.slf4j:slf4j-api:jar:1.7.15 from the shaded jar.
-[INFO] Excluding com.google.code.findbugs:jsr305:jar:1.3.9 from the shaded jar.
-[INFO] Excluding org.apache.flink:force-shading:jar:1.10.0 from the shaded jar.
-[INFO] Including org.apache.flink:flink-streaming-java_2.11:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-runtime_2.11:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-java:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-queryable-state-client-java:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-hadoop-fs:jar:1.10.0 in the shaded jar.
-[INFO] Including commons-io:commons-io:jar:2.4 in the shaded jar.
-[INFO] Including org.apache.flink:flink-shaded-netty:jar:4.1.39.Final-9.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-shaded-jackson:jar:2.10.1-9.0 in the shaded jar.
-[INFO] Including commons-cli:commons-cli:jar:1.3.1 in the shaded jar.
-[INFO] Including org.javassist:javassist:jar:3.24.0-GA in the shaded jar.
-[INFO] Including org.scala-lang:scala-library:jar:2.11.12 in the shaded jar.
-[INFO] Including com.typesafe.akka:akka-actor_2.11:jar:2.5.21 in the shaded jar.
-[INFO] Including com.typesafe:config:jar:1.3.3 in the shaded jar.
-[INFO] Including org.scala-lang.modules:scala-java8-compat_2.11:jar:0.7.0 in the shaded jar.
-[INFO] Including com.typesafe.akka:akka-stream_2.11:jar:2.5.21 in the shaded jar.
-[INFO] Including org.reactivestreams:reactive-streams:jar:1.0.2 in the shaded jar.
-[INFO] Including com.typesafe:ssl-config-core_2.11:jar:0.3.7 in the shaded jar.
-[INFO] Including org.scala-lang.modules:scala-parser-combinators_2.11:jar:1.1.1 in the shaded jar.
-[INFO] Including com.typesafe.akka:akka-protobuf_2.11:jar:2.5.21 in the shaded jar.
-[INFO] Including com.typesafe.akka:akka-slf4j_2.11:jar:2.5.21 in the shaded jar.
-[INFO] Including org.clapper:grizzled-slf4j_2.11:jar:1.3.2 in the shaded jar.
-[INFO] Including com.github.scopt:scopt_2.11:jar:3.5.0 in the shaded jar.
-[INFO] Including org.xerial.snappy:snappy-java:jar:1.1.4 in the shaded jar.
-[INFO] Including com.twitter:chill_2.11:jar:0.7.6 in the shaded jar.
-[INFO] Including com.twitter:chill-java:jar:0.7.6 in the shaded jar.
-[INFO] Including org.lz4:lz4-java:jar:1.5.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-clients_2.11:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-optimizer_2.11:jar:1.10.0 in the shaded jar.
-[INFO] Including org.apache.flink:flink-shaded-guava:jar:18.0-9.0 in the shaded jar.
 [INFO] Including org.json:json:jar:20190722 in the shaded jar.
 [INFO] Including com.esotericsoftware.kryo:kryo:jar:2.24.0 in the shaded jar.
 [INFO] Excluding com.esotericsoftware.minlog:minlog:jar:1.2 from the shaded jar.
@@ -116,83 +67,85 @@ mvn clean package
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  11.655 s
-[INFO] Finished at: 2020-05-18T16:40:01-03:00
+[INFO] Total time:  4.685 s
+[INFO] Finished at: 2020-05-22T11:30:26-03:00
 [INFO] ------------------------------------------------------------------------
 scp target/mfog-0.5.jar pi@almoco:/home/pi/
-16:40:07 INFO  esotericsoftware.minlog kryonet: Server opened.
-16:40:07 INFO  mfog.SinkFog ready
+11:30:27 INFO  esotericsoftware.minlog kryonet: Server opened.
+11:30:27 INFO  esotericsoftware.minlog kryonet: Server opened.
+11:30:27 INFO  mfog.SinkFog ready
 
 
-16:40:07 INFO  esotericsoftware.minlog kryonet: Server opened.
-16:40:07 INFO  mfog.TrainingStatic connecting to 192.168.15.13:9997
-16:40:07 INFO  esotericsoftware.minlog Connecting: /192.168.15.13:9997
-16:40:07 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
-16:40:07 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
-16:40:07 INFO  mfog.TrainingStatic Sending
-16:40:07 INFO  mfog.ModelStore msg=Message{value=SEND_ONLY}
-16:40:07 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
-16:40:07 INFO  mfog.TrainingStatic 100 items, 33 ms, 33510272 ns, 3 i/ms
-16:40:07 INFO  mfog.ModelStore msg=Message{value=DONE}
-16:40:07 INFO  mfog.ModelStore done receiving
-16:40:07 INFO  mfog.ModelStore Connection 1 101 items, 197 ms, 197012361 ns, 0 i/ms
-16:40:07 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+11:30:27 INFO  mfog.TrainingStatic connecting to 192.168.15.13:9997
+11:30:27 INFO  esotericsoftware.minlog Connecting: /192.168.15.13:9997
+11:30:27 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
+11:30:28 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.13
+11:30:28 INFO  mfog.TrainingStatic Sending
+11:30:28 INFO  mfog.ModelStore msg=Message{value=SEND_ONLY}
+11:30:28 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+11:30:28 INFO  mfog.TrainingStatic 100 items, 36 ms, 35288519 ns, 2 i/ms
+11:30:28 INFO  mfog.ModelStore msg=Message{value=DONE}
+11:30:28 INFO  mfog.ModelStore done receiving
+11:30:28 INFO  mfog.ModelStore Connection 1 101 items, 181 ms, 180817225 ns, 0 i/ms
+11:30:28 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
 ssh pi@almoco flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.Classifier ./mfog-0.5.jar
-16:40:09 INFO  mfog.SourceKyoto start
-16:40:10 INFO  esotericsoftware.minlog kryonet: Server opened.
-Job has been submitted with JobID c56e085fbb8823ac5163c33dcf0fe56e
-16:40:41 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.10
-16:40:41 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.10
-16:40:41 INFO  mfog.SourceKyoto  connected Connection 1
-16:40:41 INFO  mfog.SourceKyoto  idle 1
-16:40:41 INFO  mfog.ModelStore msg=Message{value=CLASSIFIER}
-16:40:41 INFO  mfog.ModelStore msg=Message{value=RECEIVE_ONLY}
-16:40:41 INFO  mfog.SourceKyoto  received Message{value=CLASSIFIER}
-16:40:41 INFO  mfog.SourceKyoto  sending...
-16:40:41 INFO  mfog.ModelStore Connection 2 202 items, 146 ms, 145329419 ns, 1 i/ms
-16:40:41 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
-16:40:42 INFO  mfog.SourceKyoto  idle 6529
-16:40:43 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.10
-16:40:43 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.10
-16:40:43 INFO  esotericsoftware.minlog kryonet: Connection 3 connected: /192.168.15.10
-16:40:43 INFO  esotericsoftware.minlog kryonet: Connection 4 connected: /192.168.15.10
-16:40:43 INFO  mfog.SinkFog server received Connection 2 1 items, 31 ms, 30643909 ns, 0 i/ms
-16:40:43 INFO  mfog.SinkFog server received Connection 1 1 items, 42 ms, 41943236 ns, 0 i/ms
-16:40:43 INFO  mfog.SinkFog server received Connection 4 1 items, 40 ms, 39943415 ns, 0 i/ms
-16:40:43 INFO  mfog.SinkFog server received Connection 3 1 items, 53 ms, 53346001 ns, 0 i/ms
-16:40:44 INFO  mfog.SourceKyoto  idle 20061
-16:40:45 INFO  mfog.SourceKyoto  idle 33592
-16:40:46 INFO  mfog.SourceKyoto  idle 47432
-16:40:47 INFO  mfog.SourceKyoto  idle 63898
-16:40:48 INFO  mfog.SourceKyoto  idle 77891
-16:40:49 INFO  mfog.SourceKyoto  idle 92217
-16:40:50 INFO  mfog.SourceKyoto  idle 107671
-16:40:51 INFO  mfog.SourceKyoto  idle 123458
-16:40:52 INFO  mfog.SourceKyoto  idle 138194
-16:40:53 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
-16:40:53 INFO  mfog.SourceKyoto  disconnected Connection 1 151431 items, 12155 ms, 12155378316 ns, 12 i/ms
-16:40:54 INFO  mfog.SinkFog received Disconnect
-16:40:54 INFO  mfog.SinkFog disconnected Connection 3 37856 items, 10759 ms, 10759057688 ns, 3 i/ms
-16:40:54 INFO  esotericsoftware.minlog kryonet: Connection 3 disconnected.
-16:40:54 INFO  mfog.SinkFog server received Connection 3 37856 items, 10759 ms, 10759258516 ns, 3 i/ms
-16:40:54 INFO  mfog.SinkFog received Disconnect
-16:40:54 INFO  mfog.SinkFog disconnected Connection 2 37856 items, 10785 ms, 10785171858 ns, 3 i/ms
-16:40:54 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
-16:40:54 INFO  mfog.SinkFog server received Connection 2 37856 items, 10786 ms, 10785336225 ns, 3 i/ms
-16:40:54 INFO  mfog.SinkFog received Disconnect
-16:40:54 INFO  mfog.SinkFog disconnected Connection 4 37855 items, 10777 ms, 10776487365 ns, 3 i/ms
-16:40:54 INFO  esotericsoftware.minlog kryonet: Connection 4 disconnected.
-16:40:54 INFO  mfog.SinkFog server received Connection 4 37855 items, 10777 ms, 10776764542 ns, 3 i/ms
-16:40:54 INFO  mfog.SinkFog received Disconnect
-16:40:54 INFO  mfog.SinkFog disconnected Connection 1 37856 items, 10867 ms, 10866174363 ns, 3 i/ms
-16:40:54 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
-16:40:54 INFO  mfog.SinkFog server received Connection 1 37856 items, 10867 ms, 10866287711 ns, 3 i/ms
+11:30:30 INFO  mfog.SourceKyoto start
+11:30:30 INFO  esotericsoftware.minlog kryonet: Server opened.
+Job has been submitted with JobID fcc6631f947466e47739a087866e6db3
+11:30:37 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.16
+11:30:37 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.16
+11:30:37 INFO  mfog.SourceKyoto  connected Connection 1
+11:30:37 INFO  mfog.SourceKyoto  idle 1
+11:30:37 INFO  mfog.ModelStore msg=Message{value=CLASSIFIER}
+11:30:37 INFO  mfog.ModelStore msg=Message{value=RECEIVE_ONLY}
+11:30:37 INFO  mfog.SourceKyoto  received Message{value=CLASSIFIER}
+11:30:37 INFO  mfog.SourceKyoto  sending...
+11:30:37 INFO  mfog.ModelStore Connection 2 202 items, 74 ms, 74028046 ns, 2 i/ms
+11:30:37 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+11:30:38 INFO  mfog.SourceKyoto  idle 19097
+11:30:38 INFO  esotericsoftware.minlog kryonet: Connection 1 connected: /192.168.15.16
+11:30:38 INFO  esotericsoftware.minlog kryonet: Connection 2 connected: /192.168.15.16
+11:30:38 INFO  mfog.SinkFog server received Connection 1 1 items, 18 ms, 18372283 ns, 0 i/ms
+11:30:38 INFO  mfog.SinkFog server received Connection 2 1 items, 34 ms, 34294761 ns, 0 i/ms
+11:30:38 INFO  esotericsoftware.minlog kryonet: Connection 3 connected: /192.168.15.16
+11:30:38 INFO  mfog.SinkFog server received Connection 3 1 items, 16 ms, 15679043 ns, 0 i/ms
+11:30:38 INFO  esotericsoftware.minlog kryonet: Connection 4 connected: /192.168.15.16
+11:30:38 INFO  mfog.SinkFog server received Connection 4 1 items, 14 ms, 14453418 ns, 0 i/ms
+11:30:39 INFO  mfog.SourceKyoto  idle 23403
+11:30:40 INFO  mfog.SourceKyoto  idle 34820
+11:30:41 INFO  mfog.SourceKyoto  idle 52120
+11:30:42 INFO  mfog.SourceKyoto  idle 65959
+11:30:43 INFO  mfog.SourceKyoto  idle 81528
+11:30:44 INFO  mfog.SourceKyoto  idle 97674
+11:30:45 INFO  mfog.SourceKyoto  idle 111513
+11:30:47 INFO  mfog.SourceKyoto  idle 126506
+11:30:48 INFO  mfog.SourceKyoto  idle 144381
+11:30:49 INFO  mfog.SourceKyoto  idle 159951
+11:30:49 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+11:30:49 INFO  mfog.SourceKyoto  disconnected Connection 1 162257 items, 12129 ms, 12128873822 ns, 13 i/ms
+11:30:49 INFO  mfog.SinkFog received Disconnect
+11:30:49 INFO  mfog.SinkFog disconnected Connection 2 40566 items, 11419 ms, 11418983540 ns, 3 i/ms
+11:30:49 INFO  esotericsoftware.minlog kryonet: Connection 2 disconnected.
+11:30:49 INFO  mfog.SinkFog server received Connection 2 40566 items, 11419 ms, 11419213379 ns, 3 i/ms
+11:30:49 INFO  mfog.SinkFog received Disconnect
+11:30:49 INFO  mfog.SinkFog disconnected Connection 3 40566 items, 11409 ms, 11409062073 ns, 3 i/ms
+11:30:49 INFO  esotericsoftware.minlog kryonet: Connection 3 disconnected.
+11:30:49 INFO  mfog.SinkFog server received Connection 3 40566 items, 11409 ms, 11409204978 ns, 3 i/ms
+11:30:49 INFO  mfog.SinkFog received Disconnect
+11:30:49 INFO  mfog.SinkFog disconnected Connection 1 40566 items, 11449 ms, 11449421291 ns, 3 i/ms
+11:30:49 INFO  esotericsoftware.minlog kryonet: Connection 1 disconnected.
+11:30:49 INFO  mfog.SinkFog server received Connection 1 40566 items, 11449 ms, 11449563717 ns, 3 i/ms
+11:30:50 INFO  mfog.SourceKyoto  sending...  ...done Connection 1 653459 items, 12795 ms, 12795037245 ns, 51 i/ms
+11:30:50 INFO  mfog.SinkFog received Disconnect
+11:30:50 INFO  mfog.SinkFog disconnected Connection 4 40566 items, 11766 ms, 11765694919 ns, 3 i/ms
+11:30:50 INFO  esotericsoftware.minlog kryonet: Connection 4 disconnected.
+11:30:50 INFO  mfog.SinkFog server received Connection 4 40566 items, 11766 ms, 11765800370 ns, 3 i/ms
 Program execution finished
-Job with JobID c56e085fbb8823ac5163c33dcf0fe56e has finished.
-Job Runtime: 22927 ms
+Job with JobID fcc6631f947466e47739a087866e6db3 has finished.
+Job Runtime: 15050 ms
 
 done
-16:41:37 WARN  mfog.ModelStore Timed-out EXIT
-16:41:37 INFO  mfog.ModelStore done serving
-16:41:37 INFO  esotericsoftware.minlog kryonet: Server closed.
-16:41:37 INFO  mfog.ModelStore shutdown
+11:31:27 WARN  mfog.ModelStore Timed-out EXIT
+11:31:27 INFO  mfog.ModelStore done serving
+11:31:27 INFO  esotericsoftware.minlog kryonet: Server closed.
+11:31:27 INFO  mfog.ModelStore shutdown

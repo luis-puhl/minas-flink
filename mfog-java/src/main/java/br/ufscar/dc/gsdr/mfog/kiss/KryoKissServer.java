@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class KissServer<T> extends Listener implements Runnable {
+public class KryoKissServer<T> extends Listener implements Runnable {
     final int port;
     final Logger log;
     final float idle;
@@ -20,7 +20,7 @@ public class KissServer<T> extends Listener implements Runnable {
     int received = 0;
     long lastIdleMsg = System.currentTimeMillis();
 
-    public KissServer(Logger log, int port, Iterator<T> iterator, float idle) {
+    public KryoKissServer(Logger log, int port, Iterator<T> iterator, float idle) {
         this.port = port;
         this.log = log;
         this.iterator = iterator;
