@@ -14,24 +14,46 @@ import java.nio.file.Paths
 import scala.concurrent.Future
 
 object Echo extends App {
-  implicit val system: ActorSystem = ActorSystem("Echo-TCP")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
-
   val host = "localhost"
   val port = 8888
+  val x = Framing.lengthField(fieldLength = 4, maximumFrameLength = 1024*10)
 
-  println(s"To run: \njava -cp target/*:../ref-git/flink-1.10.0/lib/*     br.ufscar.dc.gsdr.mfog.nio.Echo &\n nc $host $port\nand say something.")
+  def server = {
+    implicit val system: ActorSystem = ActorSystem("Echo-Server")
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
+    Tcp().bind(host, port).runForeach { connection =>
+      println(s"New connection from: ${connection.remoteAddress}")
 
-  val connections: Source[IncomingConnection, Future[ServerBinding]] = Tcp().bind(host, port)
-  connections.runForeach { connection =>
-    println(s"New connection from: ${connection.remoteAddress}")
-
-    val echo = Flow[ByteString]
-      .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
-      .map(_.utf8String)
-      .map(_ + "!!!\n")
-      .map(ByteString(_))
-
-    connection.handleWith(echo)
+      connection.handleWith(
+        Flow[ByteString]
+          .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
+          .map(_.utf8String)
+          .map(_ + "!!!\n")
+          .prepend(Source.single("Hello"))
+          .map(ByteString(_))
+      )
+    }
   }
+  def client = {
+    implicit val system: ActorSystem = ActorSystem("Echo-Client")
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
+
+    Tcp().outgoingConnection(host, port).join(
+      Flow[ByteString]
+        .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
+        .map(_.utf8String)
+        .map(text => println("Server: " + text))
+        .map(_ => scala.io.StdIn.readLine("> "))
+        .via(
+          Flow[String]
+            .takeWhile(_ != "q")
+            .prepend(Source.single("Hello"))
+            .concat(Source.single("BYE"))
+            .map(elem => ByteString(s"$elem\n"))
+        )
+    ).run()
+  }
+
+  new Thread(new Runnable() { override def run(): Unit = server }).start()
+  new Thread(new Runnable() { override def run(): Unit = client }).start()
 }
