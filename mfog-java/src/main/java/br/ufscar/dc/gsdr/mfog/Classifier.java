@@ -37,6 +37,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.api.functions.source.ParallelSourceFunction;
+import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.util.Collector;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +45,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Future;
 
 public class Classifier implements Serializable {
     static final org.slf4j.Logger log = LoggerFactory.getLogger(Classifier.class);
@@ -63,10 +71,30 @@ public class Classifier implements Serializable {
         String hostname = MfogManager.SERVICES_HOSTNAME;
         String jobName = "Classifier ";
 
-        // final int parallelism = env.getMaxParallelism();
-        final int parallelism = 8;
-        jobName += "parallelism(" + parallelism + ") ";
+        SourceFunction<Cluster> modelSourceFunction = new SourceFunction<Cluster>() {
+            @Override
+            public void run(SourceContext<Cluster> ctx) throws Exception {
+                final AsynchronousServerSocketChannel listener = AsynchronousServerSocketChannel
+                    .open().bind(new InetSocketAddress(MfogManager.MODEL_STORE_PORT));
 
+                listener.accept(null, new CompletionHandler<AsynchronousSocketChannel,Void>() {
+                    public void completed(AsynchronousSocketChannel ch, Void att) {
+                        ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
+                        // accept the next connection
+                        listener.accept(null, this);
+                        // handle this connection
+                        ch.read(buffer);
+                        buffer.flip();
+                    }
+                    public void failed(Throwable exc, Void att) {}
+                });
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        };
         DataStream<Cluster> modelSocket = env.addSource(
             new KryoNetClientSource<>(Cluster.class, hostname, MfogManager.MODEL_STORE_PORT), "KryoNet model",
             // getSource(Cluster.class, hostname, MfogManager.MODEL_STORE_PORT),
@@ -83,13 +111,13 @@ public class Classifier implements Serializable {
             .name("Map2Model");
 
         // ------------------------------
-        examples = examples.rescale();
-        jobName += "rescale ";
+        examples = examples.rescale(); jobName += "rescale ";
         // examples = examples.shuffle(); jobName += "shuffle ";
 
-        MapStateDescriptor<String, Model> modelDescriptor = new MapStateDescriptor<>(
-            "state", Types.STRING, Types.POJO(Model.class));
-        SingleOutputStreamOperator<LabeledExample> out = examples.connect(model.broadcast(modelDescriptor))
+        MapStateDescriptor<String, Model> modelDescriptor =
+            new MapStateDescriptor<>("state", Types.STRING, Types.POJO(Model.class));
+        SingleOutputStreamOperator<LabeledExample> out = examples
+            .connect(model.broadcast(modelDescriptor))
             .process(new BroadcastProcessFunction<Point, Model, LabeledExample>() {
                 final org.slf4j.Logger log = LoggerFactory.getLogger(Classifier.class);
                 List<Point> buffer = new LinkedList<>();
@@ -119,6 +147,10 @@ public class Classifier implements Serializable {
                 }
             })
             .name("Classify");
+
+        final int parallelism = env.getMaxParallelism();
+        // final int parallelism = 8;
+        jobName += "parallelism(" + parallelism + ") ";
         if (parallelism > 0) out = out.setParallelism(parallelism);
 
         DataStreamSink<LabeledExample> sink = out.addSink(

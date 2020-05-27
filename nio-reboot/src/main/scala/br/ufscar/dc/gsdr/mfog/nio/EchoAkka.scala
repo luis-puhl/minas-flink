@@ -15,7 +15,7 @@ import java.nio.file.Paths
 
 import scala.concurrent.Future
 
-object Echo extends App {
+object EchoAkka extends App {
   val host = "localhost"
   val port = 8888
   val framing = Framing.lengthField(fieldLength = 4, maximumFrameLength = 1024*10)
