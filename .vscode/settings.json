@@ -1,4 +1,12 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "restructuredtext.confPath": "${workspaceFolder}/ref/scikit-learn/doc"
+    "restructuredtext.confPath": "${workspaceFolder}/ref/scikit-learn/doc",
+    "files.associations": {
+        "cstdlib": "c",
+        "*.tcc": "c",
+        "memory": "c"
+    },
+    "cSpell.words": [
+        "Wtime"
+    ]
 }
