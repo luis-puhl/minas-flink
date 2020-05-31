@@ -7,4 +7,8 @@ run:
 	mpiexec ./target/mfog
 
 clean:
-	@-rm target/mfog
+	@-rm target/*
+
+target/minas:
+	gcc -lm -std=c2x -Wall minas.c -o target/minas
+	./target/minas

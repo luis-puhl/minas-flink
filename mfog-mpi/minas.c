@@ -27,7 +27,13 @@ int classify(Model* model, Point *example, Match *match) {
         }
         max = distance > max ? distance : max;
     }
-    // printf("classify x_%d => %e, %e (%d, %x)\n", example->id, min, max, minCluster->id, minCluster);
+    /*
+    printf(
+        "classify x_%d [0]=%f => min=%e, max=%e, (c0=%e, c=%d, r=%e, m=%d, l=%c)\n",
+        example->id, example->value[0], min, max, minCluster->center[0], minCluster->id,
+        minCluster->radius, min <= minCluster->radius, minCluster->label
+    );
+    */
     if (min <= minCluster->radius) {
         match->clusterId = minCluster->id;
         match->pointId = example->id;
@@ -46,10 +52,10 @@ Model *initModel() {
         model->vals[i].id = i;
         model->vals[i].label = (i % ('z' - 'a')) + 'a';
         model->vals[i].lastTMS = clock();
-        model->vals[i].radius = rand();
+        model->vals[i].radius = 1.0 / ((float) MNS_dimesion);
         model->vals[i].center = malloc(MNS_dimesion * sizeof(float));
         for (int j = 0; j < MNS_dimesion; j++) {
-            model->vals[i].center[j] = rand();
+            model->vals[i].center[j] = ((float) i) / ((float) model->size);
         }
     }
     return model;
@@ -99,11 +105,20 @@ int printModel(Model* model){
     return pr;
 }
 
+int next(Point* prev, int max) {
+    prev->id++;
+    for (int i = 0; i < MNS_dimesion; i++) {
+        prev->value[i] = ((float) prev->id) / ((float) max);
+    }
+    return prev->id < max;
+}
+
 int main(int argc, char const *argv[]) {
-    srand(22);
+    clock_t start = clock();
+    srand(time(0));
     MNS_dimesion = 22;
     Model *model = initModel();
-    printModel(model);
+    // printModel(model);
     //
     Point example;
     example.value = malloc(MNS_dimesion * sizeof(float));
@@ -111,46 +126,48 @@ int main(int argc, char const *argv[]) {
     int matchesSize = 2;
     char *labels = malloc(matchesSize * sizeof(char));
     int *matches = malloc(matchesSize * sizeof(int));
-    int noMatch = 0;
-    for (example.id = 0; example.id < 653457; example.id++) {
-        for (int i = 0; i < MNS_dimesion; i++) {
-            example.value[i] = rand();
-        }
-
-        int hasMatch = classify(model, &example, &match);
-        if (hasMatch) {
-            int i;
-            for (i = 0; i < matchesSize; i++) {
-                if (labels[i] == '\0') {
-                    printf("new label on match map -> %c\n", match.label);
-                    labels[i] = match.label;
-                    matches[i] = 1;
-                    break;
-                }
-                if (match.label == labels[i]) {
-                    matches[i]++;
-                    hasMatch = 0;
-                    break;
-                }
-            }
-            if (hasMatch && labels[i] != '\0') {
-                printf("reallocate match map\n");
-                matchesSize *= 1.15;
-                labels = realloc(labels, matchesSize * sizeof(char));
-                matches = realloc(matches, matchesSize* sizeof(int));
-            }
-        } else {
+    int noMatch, hasMatch, matchIndex;
+    while (next(&example, 653457)) {
+        hasMatch = classify(model, &example, &match);
+        if (!hasMatch) {
             noMatch++;
+            continue;
+        }
+        for (matchIndex = 0; matchIndex < matchesSize; matchIndex++) {
+            // printf("match -> %c == %c, %d, %d\n", match.label, labels[i], hasMatch);
+            if (match.label == labels[matchIndex]) {
+                matches[matchIndex]++;
+                hasMatch = 0;
+                break;
+            }
+            if (labels[matchIndex] == '\0') {
+                // printf("new label on match map -> %c\n", match.label);
+                labels[matchIndex] = match.label;
+                matches[matchIndex] = 1;
+                break;
+            }
+        }
+        if (matchIndex >= matchesSize) {
+            matchesSize += 3;
+            // printf("reallocate match map %d\n", matchesSize);
+            labels = realloc(labels, matchesSize * sizeof(char));
+            matches = realloc(matches, matchesSize* sizeof(int));
         }
     }
+    int total = 0;
     printf("label \tmatches\n");
-    for (int i = 0; i < matchesSize; i++) {
-        printf("%c \t%d\n", labels[i], matches[i]);
+    for (int i = 0; i < matchesSize && labels[i] != 0; i++) {
+        printf("%c %d \t%d\n", labels[i], labels[i], matches[i]);
+        total += matches[i];
     }
     printf("None \t%d\n", noMatch);
+    total += noMatch;
+    printf("Total: \t%d\n", total);
 
     freeModel(model);
     free(labels);
     free(matches);
+    clock_t diff = clock() - start;
+    printf("Done in \t%fs\n", ((double) diff) / ((double) 1000000));
     exit(EXIT_SUCCESS);
 }
