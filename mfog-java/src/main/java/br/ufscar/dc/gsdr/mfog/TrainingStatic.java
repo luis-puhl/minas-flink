@@ -19,7 +19,7 @@ public class TrainingStatic {
 
     public static void main(String[] args) throws Exception {
 
-        String path = "datasets" + File.separator + "models" + File.separator + "offline.csv";
+        String path = "datasets" + File.separator + "model" + File.separator + "offline.csv";
         BufferedReader in = new BufferedReader(new FileReader(path));
         List<Cluster> model = in.lines().skip(1).limit(100).map(Cluster::fromMinasCsv).collect(Collectors.toList());
         //

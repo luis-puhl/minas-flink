@@ -9,7 +9,10 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/target/${fileBasenameNoExtension}",
-            "args": [],
+            "args": [
+                "datasets/model.csv",
+                "datasets/test.csv"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

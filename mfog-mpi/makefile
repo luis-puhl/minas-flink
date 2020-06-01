@@ -11,4 +11,4 @@ clean:
 
 target/minas:
 	gcc -lm -std=c2x -Wall minas.c -o target/minas
-	./target/minas
+	./target/minas datasets/model.csv datasets/test.csv

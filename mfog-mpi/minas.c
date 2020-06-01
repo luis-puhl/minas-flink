@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <err.h>
 
 #include "minas.h"
 
@@ -60,6 +61,76 @@ Model *initModel() {
     }
     return model;
 }
+Model *readModel(const char* fileName) {
+    FILE *modelFile = fopen(fileName, "r");
+    if (modelFile == NULL) errx(EXIT_FAILURE, "bad file open '%s'", fileName);
+    // id,label,category,matches,time,meanDistance,radius,center
+    // 0,N,normal,502,0,0.04553028494064095,0.1736759823342961,[2.888834262948207E-4, 0.020268260292164667,0.04161011127902189, 0.020916334661354643, 1.0, 0.0, 0.0026693227091633474, 0.516593625498008, 0.5267529880478092, 1.9920318725099602E-4, 0.0, 7.968127490039841E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+    char *header = malloc(1024 * sizeof(char));
+    if (fscanf(modelFile, "%s\n", header)) {
+        printf("csv header: %s\n", header);
+        free(header);
+    } else {
+        errx(EXIT_FAILURE, "bad csv header '%s'\n", fileName);
+    }
+
+    #define PRINT_LABELS 1
+    #ifdef PRINT_LABELS
+    int labelsSize = 2;
+    char *labels = malloc(labelsSize * sizeof(char));
+    #endif
+    Model *model = malloc(sizeof(Model));
+    model->vals = malloc(1 * sizeof(Cluster));
+    model->size = 1;
+    //
+    char category[1024];
+    int id, matches, time, i;
+    char label;
+    float meanDistance, radius;
+    float *center;
+    while (!feof(modelFile)) {
+        fscanf(modelFile, "%d,%c,", &id, &label);
+        i = 0;
+        fscanf(modelFile, "%c", &(category[i]));
+        while (category[i] != ',') {
+            fscanf(modelFile, "%c", &(category[++i]));
+        }
+        category[i] = '\0';
+        fscanf(modelFile, "%d,%d,%f,%f,[", &matches, &time, &meanDistance, &radius);
+        center = malloc(MNS_dimesion * sizeof(float));
+        for (i = 0; i < (MNS_dimesion -1); i++) {
+            fscanf(modelFile, "%f, ", &(center[i]));
+        }
+        fscanf(modelFile, "%f]\n", &(center[MNS_dimesion -1]));
+        #ifdef PRINT_LABELS
+        for (i = 0; i < labelsSize; i++) {
+            if (labels[i] == '\0') {
+                labels[i] = label;
+                printf("%c ", labels[i]);
+                labels = realloc(labels, (++labelsSize) * sizeof(Cluster));
+                break;
+            }
+            if (labels[i] == label) break;
+        }
+        #endif
+
+        i = model->size - 1;
+        model->vals[i].id = i;
+        model->vals[i].label = label;
+        model->vals[i].lastTMS = clock();
+        model->vals[i].radius = radius;
+        model->vals[i].center = center;
+        //
+        if (!feof(modelFile)) {
+            model->vals = realloc(model->vals, (++model->size) * sizeof(Cluster));
+        }
+    }
+    #ifdef PRINT_LABELS
+    printf("\n");
+    #endif
+    fclose(modelFile);
+    return model;
+}
 void freeModel(Model* model) {
     for (int i = 0; i < model->size; i++) {
         free(model->vals[i].center);
@@ -105,20 +176,26 @@ int printModel(Model* model){
     return pr;
 }
 
-int next(Point* prev, int max) {
+int next(Point* prev, FILE* file) {
+    if (feof(file)) return 0;
     prev->id++;
     for (int i = 0; i < MNS_dimesion; i++) {
-        prev->value[i] = ((float) prev->id) / ((float) max);
+        fscanf(file, "%f,", &(prev->value[i]));
     }
-    return prev->id < max;
+    char l;
+    fscanf(file, "%c\n", &l);
+    return 1;
 }
 
 int main(int argc, char const *argv[]) {
+    if (argc != 3)
+        errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
+    printf("Reading model from %s\nand test from %s\n", argv[1], argv[2]);
+    MNS_dimesion = 22;
     clock_t start = clock();
     srand(time(0));
-    MNS_dimesion = 22;
-    Model *model = initModel();
-    // printModel(model);
+    //
+    Model *model = readModel(argv[1]);
     //
     Point example;
     example.value = malloc(MNS_dimesion * sizeof(float));
@@ -127,33 +204,39 @@ int main(int argc, char const *argv[]) {
     char *labels = malloc(matchesSize * sizeof(char));
     int *matches = malloc(matchesSize * sizeof(int));
     int noMatch, hasMatch, matchIndex;
-    while (next(&example, 653457)) {
+    //
+    FILE *kyotoOnl = fopen(argv[2], "r");
+    if (kyotoOnl == NULL) errx(EXIT_FAILURE, "bad file open '%s'", argv[2]);
+    // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
+    while (next(&example, kyotoOnl)) {
+        // printFloatArr(example.value);
         hasMatch = classify(model, &example, &match);
         if (!hasMatch) {
             noMatch++;
             continue;
         }
         for (matchIndex = 0; matchIndex < matchesSize; matchIndex++) {
-            // printf("match -> %c == %c, %d, %d\n", match.label, labels[i], hasMatch);
+            // printf("match -> %c == %c, %d, %d\n", match.label, labels[matchIndex], hasMatch);
             if (match.label == labels[matchIndex]) {
                 matches[matchIndex]++;
                 hasMatch = 0;
                 break;
             }
             if (labels[matchIndex] == '\0') {
-                // printf("new label on match map -> %c\n", match.label);
+                printf("new label on match map -> %c\n", match.label);
                 labels[matchIndex] = match.label;
                 matches[matchIndex] = 1;
+                if (matchIndex != 0) {
+                    matchesSize++;
+                    labels = realloc(labels, matchesSize * sizeof(char));
+                    matches = realloc(matches, matchesSize * sizeof(int));
+                }
                 break;
             }
         }
-        if (matchIndex >= matchesSize) {
-            matchesSize += 3;
-            // printf("reallocate match map %d\n", matchesSize);
-            labels = realloc(labels, matchesSize * sizeof(char));
-            matches = realloc(matches, matchesSize* sizeof(int));
-        }
     }
+    fclose(kyotoOnl);
+    //
     int total = 0;
     printf("label \tmatches\n");
     for (int i = 0; i < matchesSize && labels[i] != 0; i++) {
