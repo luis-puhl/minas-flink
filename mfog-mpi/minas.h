@@ -24,6 +24,7 @@ typedef struct match
     unsigned int clusterId;
     char label;
     float distance;
+    float radius;
 } Match;
 
 int MNS_dimesion;

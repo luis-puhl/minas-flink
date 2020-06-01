@@ -9,6 +9,7 @@ run:
 clean:
 	@-rm target/*
 
-target/minas:
+target/minas: minas.c
 	gcc -lm -std=c2x -Wall minas.c -o target/minas
-	./target/minas datasets/model.csv datasets/test.csv
+runMinas:
+	./target/minas datasets/model.csv datasets/test.csv > out/classify.csv
