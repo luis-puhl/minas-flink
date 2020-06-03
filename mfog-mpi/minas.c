@@ -3,8 +3,10 @@
 #include <math.h>
 #include <time.h>
 #include <err.h>
+#include <string.h>
 
 #include "minas.h"
+#include "strsep.c"
 
 extern int MNS_dimesion;
 
@@ -57,7 +59,7 @@ int printPoint(Point *point) {
 }
 int printCluster(Cluster *cl) {
     if (cl == NULL) return 0;
-    int pr = printf("Cluster(id=%d, lbl=%c, tm=%ld, r=%f, value=[", cl->id, cl->label, cl->lastTMS, cl->radius);
+    int pr = printf("Cluster(id=%d, lbl=%c, tm=%ld, r=%f, center=[", cl->id, cl->label, cl->lastTMS, cl->radius);
     pr += printFloatArr(cl->center);
     pr += printf("])\n");
     return pr;
@@ -91,43 +93,47 @@ int main(int argc, char const *argv[]) {
         errx(EXIT_FAILURE, "bad file open '%s'", argv[1]);
     }
     // id,label,category,matches,time,meanDistance,radius,center
-    // 0,N,normal,502,0,0.04553028494064095,0.1736759823342961,[2.888834262948207E-4, 0.020268260292164667,0.04161011127902189, 0.020916334661354643, 1.0, 0.0, 0.0026693227091633474, 0.516593625498008, 0.5267529880478092, 1.9920318725099602E-4, 0.0, 7.968127490039841E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+    // 0,N,normal,1,0,0.0,0.1,[2.8E-4, 0.02, 0.0, 0.0, 1.0, 0.0, 0.0, 0.5, 0.5, 1.9E-4, 0.0, 7.9E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
     Model *model = malloc(sizeof(Model));
-    model->vals = malloc(1 * sizeof(Cluster));
     model->size = 1;
+    model->vals = malloc(model->size * sizeof(Cluster));
     //
-    char category[1024];
-    if (!fscanf(modelFile, "%s\n", category)) {
-        errx(EXIT_FAILURE, "bad csv header '%s'\n", argv[1]);
-    }
-    int matches, time, i;
+    Cluster *cl;
+    int i, matches;
     float meanDistance;
-    while (!feof(modelFile)) {
-        Cluster* cl = &(model->vals[model->size - 1]);
-        fscanf(modelFile, "%d,%c,", &(cl->id), &(cl->label));
-        i = 0;
-        fscanf(modelFile, "%c", &(category[i]));
-        while (category[i] != ',') {
-            fscanf(modelFile, "%c", &(category[++i]));
-        }
-        category[i] = '\0';
-        //
-        fscanf(modelFile, "%d,%d,%f,%f,[", &matches, &time, &meanDistance, &(cl->radius));
-        model->vals[i].lastTMS = clock();
-        //
+    //
+    cl = &(model->vals[model->size - 1]);
+    char *searators = strdup("\n, []");
+    char *ptr;
+    //
+    #define line_len 10 * 1024
+    char line[line_len];
+    fgets(line, line_len, modelFile);
+    // printf("%s", line);
+    while (fgets(line, line_len, modelFile)) {
+        // printf("'%s'\n", line);
+        cl->id = atoi(strtok_r(line, searators, &ptr));
+        char *label = strtok_r(NULL, searators, &ptr);
+        cl->label = label[0];
+        char *category = strtok_r(NULL, searators, &ptr);
+        matches = atoi(strtok_r(NULL, searators, &ptr));
+        cl->lastTMS = atoi(strtok_r(NULL, searators, &ptr));
+        meanDistance = atof(strtok_r(NULL, searators, &ptr));
+        cl->radius = atof(strtok_r(NULL, searators, &ptr));
+        cl->radius = 22.0;
         cl->center = malloc(MNS_dimesion * sizeof(float));
-        for (i = 0; i < (MNS_dimesion -1); i++) {
-            fscanf(modelFile, "%f, ", &(cl->center[i]));
+        for (i = 0; i < MNS_dimesion; i++) {
+            cl->center[i] = atof(strtok_r(NULL, searators, &ptr));
         }
-        fscanf(modelFile, "%f]\n", &(cl->center[MNS_dimesion - 1]));
-        //
-        if (!feof(modelFile)) {
-            model->vals = realloc(model->vals, (++model->size) * sizeof(Cluster));
-        }
+        // printCluster(cl);
+        // printf("%d,%c,%s,%d,%ld,%f,%f,[", cl->id, cl->label, category, matches, cl->lastTMS, meanDistance, cl->radius);
+        // for (i = 0; i < MNS_dimesion; i++) printf("%f, ", cl->center[i]);
+        // printf("]\n");
     }
-    fclose(modelFile);
     fprintf(stderr, "Model read in \t%fs\n", ((double)(clock() - start)) / ((double)1000000));
+    fclose(modelFile);
     // printModel(model);
+    // exit(EXIT_SUCCESS);
     //
     Point example;
     example.value = malloc(MNS_dimesion * sizeof(float));
@@ -147,6 +153,9 @@ int main(int argc, char const *argv[]) {
         fscanf(kyotoOnl, "%c\n", &l);
         // printPoint(example);
         hasMatch = classify(model, &example, &match);
+        if (match.label == '\0') {
+            errx(EXIT_FAILURE, "bad match label '%c'\n", match.label);
+        }
         printf("%d,%c,%d,%c,%f,%f\n", match.pointId, hasMatch ? 'y' : 'n', match.clusterId, match.label, match.distance, match.radius);
         example.id++;
     }
@@ -159,6 +168,6 @@ int main(int argc, char const *argv[]) {
     }
     free(model->vals);
     free(model);
-    fprintf(stderr, "Done in \t%fs\n", ((double)(clock() - start)) / ((double)1000000));
+    fprintf(stderr, "Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
     exit(EXIT_SUCCESS);
 }

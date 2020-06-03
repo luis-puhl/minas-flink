@@ -1,0 +1,16 @@
+Reading model from 	'datasets/model.csv'
+Reading test from 	'datasets/test.csv'
+Model read in 	0.000513s
+Total examples 	653457
+Done ./target/minas in 	2.816812s
+Reading test from 	'./datasets/test.csv'
+Reading output from 	'./out/classify.csv'
+Done ./target/eval in 	2.324123s
+		|	Classes
+Labels	|	         -	         A	         N	
+     -	|	         0	         0	         0	
+     A	|	         0	         0	         0	
+     N	|	         0	    447179	    206278	
+Total 	653457
+Hits 	206278 (31.567188%)
+Misses 	447179 (68.432812%)

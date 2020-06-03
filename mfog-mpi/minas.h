@@ -22,6 +22,7 @@ typedef struct match
 {
     unsigned int pointId;
     unsigned int clusterId;
+    char isMatch;
     char label;
     float distance;
     float radius;
