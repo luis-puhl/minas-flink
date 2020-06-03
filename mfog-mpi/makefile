@@ -10,12 +10,12 @@ clean:
 	@-rm target/*
 
 target/minas: minas.c
-	gcc -lm -std=c2x -Wall minas.c -o target/minas
+	gcc -lm -std=c2x -Wall -g minas.c -o target/minas
 target/eval: evaluate.c
-	gcc -lm -std=c2x -Wall evaluate.c -o target/eval
-runMinas: target/minas
+	gcc -lm -std=c2x -Wall -g evaluate.c -o target/eval
+out/classify.csv: target/minas datasets/model.csv datasets/test.csv
 	./target/minas datasets/model.csv datasets/test.csv > out/classify.csv 2>eval.log
-runEval: target/eval
+eval.log: target/eval datasets/test.csv out/classify.csv
 	./target/eval ./datasets/test.csv ./out/classify.csv >> eval.log 2>>eval.log
 
 copyAlmoco:

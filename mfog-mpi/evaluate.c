@@ -33,13 +33,13 @@ int printMatrix(int *confusionSize, char **labels, int ***confusionMatrix) {
         "\t\t|\tClasses\n"
         "Labels\t|\t");
     int i, j;
-    for (i = 0; i < (*confusionSize); i++) {
+    for (i = 1; i < (*confusionSize); i++) {
         printf("%10c\t", (*labels)[i]);
     }
     printf("\n");
     for (i = 0; i < (*confusionSize); i++) {
         printf("%6c\t|\t", (*labels)[i]);
-        for (j = 0; j < (*confusionSize); j++) {
+        for (j = 1; j < (*confusionSize); j++) {
             printf("%10d\t", (*confusionMatrix)[i][j]);
         }
         printf("\n");

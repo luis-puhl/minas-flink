@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "gdb",
+            "request": "launch",
+            "name": "GDB Minas",
+            "target": "${fileDirname}/target/${fileBasenameNoExtension}",
+            "arguments": "datasets/model.csv datasets/test.csv",
+            "cwd": "${workspaceRoot}",
+            "valuesFormatting": "parseText"
+        },
+        {
             "name": "gcc - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
