@@ -158,7 +158,7 @@ int MNS_readExample(char *line, Point *ex, const char *filename, const char *sep
     return 1;
 }
 
-int main(int argc, char const *argv[]) {
+int MNS_classifier(int argc, char const *argv[]) {
     if (argc != 3) {
         errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
     }

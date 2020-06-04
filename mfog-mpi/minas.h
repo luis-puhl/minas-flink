@@ -30,3 +30,7 @@ int MNS_printFloatArr(float* value);
 int MNS_printPoint(Point *point);
 int MNS_printCluster(Cluster *cl);
 int MNS_printModel(Model* model);
+char* tokenOrFail(const char *restrict sep, char **restrict p, const char *filename);
+int MNS_readCluster(char *line, Cluster *cl, const char *filename, const char *sep);
+Model *MNS_readModelFile(const char *filename);
+int MNS_readExample(char *line, Point *ex, const char *filename, const char *sep);
