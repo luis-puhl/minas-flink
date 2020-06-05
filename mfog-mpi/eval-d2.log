@@ -1,0 +1,37 @@
+Reading model from 	'datasets/model.csv'
+Reading test from 	'datasets/test.csv'
+Using Square distance (d²) # 0.95908489539260411% diff
+Model read in 	0.000655s
+Total examples 	1306914
+Done ./target/minas in 	8.774774s
+
+ Performance counter stats for './target/minas datasets/model.csv datasets/test.csv':
+
+          8,796.83 msec task-clock:u              #    0.996 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+                73      page-faults:u             #    0.008 K/sec                  
+    25,011,801,841      cycles:u                  #    2.843 GHz                    
+    10,345,739,520      stalled-cycles-frontend:u #   41.36% frontend cycles idle   
+    52,263,613,415      instructions:u            #    2.09  insn per cycle         
+                                                  #    0.20  stalled cycles per insn
+     5,102,116,615      branches:u                #  579.995 M/sec                  
+        17,213,872      branch-misses:u           #    0.34% of all branches        
+
+       8.835014784 seconds time elapsed
+
+       8.633125000 seconds user
+       0.142713000 seconds sys
+
+
+Reading test from 	'./datasets/test.csv'
+Reading output from 	'./out/classify.csv'
+Done ./target/eval in 	2.620452s
+		|	Classes
+Labels	|	         A	         N	
+     -	|	     19677	       318	
+     A	|	         0	         0	
+     N	|	    427502	    205960	
+Total 	653457
+Hits 	205960 (31.518524%)
+Misses 	447497 (68.481476%)

@@ -10,13 +10,19 @@
 
 extern int MNS_dimesion;
 
+// #define SQR_DISTANCE 1
+
 double MNS_distance(float a[], float b[]) {
     double distance = 0;
     for (int i = 0; i < MNS_dimesion; i++) {
         float diff = a[i] - b[i];
         distance += diff * diff;
     }
-    return sqrt(distance);
+    #ifdef SQR_DISTANCE
+        return distance;
+    #else
+        return sqrt(distance);
+    #endif // SQR_DISTANCE
 }
 
 int MNS_classify(Model* model, Point *example, Match *match) {
@@ -114,6 +120,9 @@ Model *MNS_readModelFile(const char *filename) {
         if (assigned != 29) {
             break;
         }
+        #ifdef SQR_DISTANCE
+            cl->radius *= cl->radius;
+        #endif // SQR_DISTANCE
     }
     fclose(modelFile);
     return model;
@@ -146,6 +155,9 @@ int main(int argc, char const *argv[]) {
         errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
     }
     fprintf(stderr, "Reading model from \t'%s'\nReading test from \t'%s'\n", argv[1], argv[2]);
+    #ifdef SQR_DISTANCE
+        fprintf(stderr, "Using Square distance (d²)\n");
+    #endif // SQR_DISTANCE
     MNS_dimesion = 22;
     clock_t start = clock();
     srand(time(0));
