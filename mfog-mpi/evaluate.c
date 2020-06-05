@@ -6,8 +6,6 @@
 
 #include "minas.h"
 
-extern int MNS_dimesion;
-
 int findLabelIndex(int *confusionSize, char **labels, int ***confusionMatrix, char newLabel) {
     int i;
     for (i = 0; i < (*confusionSize); i++) {
@@ -30,7 +28,7 @@ int findLabelIndex(int *confusionSize, char **labels, int ***confusionMatrix, ch
 
 int printMatrix(int *confusionSize, char **labels, int ***confusionMatrix) {
     printf(
-        "\t\t|\tClasses\n"
+        "      \t|\tClasses\n"
         "Labels\t|\t");
     int i, j;
     for (i = 1; i < (*confusionSize); i++) {
@@ -52,7 +50,7 @@ int main(int argc, char const *argv[]) {
         errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
     }
     fprintf(stderr, "Reading test from \t'%s'\nReading output from \t'%s'\n", argv[1], argv[2]);
-    MNS_dimesion = 22;
+    int dimension = 22;
     clock_t start = clock();
     int confusionSize = 1;
     char *labels = malloc(confusionSize * sizeof(char));
@@ -61,7 +59,7 @@ int main(int argc, char const *argv[]) {
     confusionMatrix[0] = malloc(confusionSize * sizeof(int));
     //
     Point example;
-    example.value = malloc(MNS_dimesion * sizeof(float));
+    example.value = malloc(dimension * sizeof(float));
     example.id = 0;
     Match match;
     //
@@ -78,14 +76,13 @@ int main(int argc, char const *argv[]) {
     char l;
     int i, j, hits;
     while (!(feof(test) || feof(class))) {
-        for (int i = 0; i < MNS_dimesion; i++) {
+        for (int i = 0; i < dimension; i++) {
             fscanf(test, "%f,", &(example.value[i]));
         }
         fscanf(test, "%c\n", &l);
         example.id++;
         //
-        match.label = malloc(2 * sizeof(char));
-        fscanf(class, "%d,%c,%d,%c,%f,%f\n", &(match.pointId), &(match.isMatch), &(match.clusterId), &(match.label[0]), &(match.distance), &(match.radius));
+        fscanf(class, "%d,%c,%d,%c,%f,%f\n", &(match.pointId), &(match.isMatch), &(match.clusterId), &(match.label), &(match.distance), &(match.radius));
         //
         // printMatrix(&confusionSize, &labels, &confusionMatrix);
         // printf("(%c-%d, %c-%d, %c-%d,)\n", l, l, match.isMatch, match.isMatch, match.label, match.label);
@@ -94,7 +91,7 @@ int main(int argc, char const *argv[]) {
         //     break;
         // }
         i = findLabelIndex(&confusionSize, &labels, &confusionMatrix, l);
-        j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label[0] : '-');
+        j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label : '-');
         //
         confusionMatrix[j][i]++;
         if (i == j) hits++;

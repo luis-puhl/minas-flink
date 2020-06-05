@@ -1,36 +1,36 @@
 Reading model from 	datasets/model-clean.csv      
-Model read took 	0.000734                      s
+Model read took 	0.001191                      s
 Reading test from              datasets/test.csv
 Total examples 	653456 =? 653456
-Done MNS_classifier in 	9.997927s
+Done MNS_classifier in 	9.056809s
 
  Performance counter stats for './target/minas datasets/model.csv datasets/test.csv':
 
-         10,066.62 msec task-clock:u              #    0.997 CPUs utilized          
+          9,077.53 msec task-clock:u              #    0.995 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-                78      page-faults:u             #    0.008 K/sec                  
-    28,357,134,294      cycles:u                  #    2.817 GHz                    
-    13,651,202,082      stalled-cycles-frontend:u #   48.14% frontend cycles idle   
-    53,154,260,607      instructions:u            #    1.87  insn per cycle         
-                                                  #    0.26  stalled cycles per insn
-     5,426,424,632      branches:u                #  539.051 M/sec                  
-        18,323,421      branch-misses:u           #    0.34% of all branches        
+                78      page-faults:u             #    0.009 K/sec                  
+    25,852,610,561      cycles:u                  #    2.848 GHz                    
+    10,867,330,123      stalled-cycles-frontend:u #   42.04% frontend cycles idle   
+    53,154,258,959      instructions:u            #    2.06  insn per cycle         
+                                                  #    0.20  stalled cycles per insn
+     5,426,423,638      branches:u                #  597.786 M/sec                  
+        16,948,286      branch-misses:u           #    0.31% of all branches        
 
-      10.099650400 seconds time elapsed
+       9.127465073 seconds time elapsed
 
-       9.794879000 seconds user
-       0.204108000 seconds sys
+       8.948744000 seconds user
+       0.109742000 seconds sys
 
 
 Reading test from 	'./datasets/test.csv'
 Reading output from 	'./out/classify.csv'
-Done ./target/eval in 	2.860954s
-		|	Classes
+Done ./target/eval in 	2.531690s
+      	|	Classes
 Labels	|	         A	         N	
      -	|	     19677	       318	
      A	|	         0	         0	
      N	|	    427502	    205960	
 Total 	653457
-Hits 	205960 (31.518524%)
-Misses 	447497 (68.481476%)
+Hits 	205964 (31.519136%)
+Misses 	447493 (68.480864%)

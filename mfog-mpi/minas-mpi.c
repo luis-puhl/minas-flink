@@ -13,6 +13,12 @@ int main(int argc, char **argv) {
     int clRank, clSize;
     MPI_Comm_size(MPI_COMM_WORLD, &clSize);
     MPI_Comm_rank(MPI_COMM_WORLD, &clRank);
+    if (clRank == 0) {
+        char processor_name[MPI_MAX_PROCESSOR_NAME];
+        int name_len;
+        MPI_Get_processor_name(processor_name, &name_len);
+        fprintf(stderr, "Processor %s, Rank %d out of %d processors\n", processor_name, clRank, clSize);
+    }
     //
     char *modelName = "datasets/model-clean.csv";
     char *testName = "datasets/test.csv";
@@ -26,7 +32,7 @@ int main(int argc, char **argv) {
     model.size = 0;
     model.vals = malloc(1 * sizeof(Cluster));
     if (clRank == 0) {
-        fprintf(stderr, "Reading model from \t%-30s\n", modelName);
+        fprintf(stderr, "[%d] Reading model from \t%s\n", clRank, modelName);
         file = fopen(modelName, "r");
         if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", modelName);
         while (fgets(line, line_len, file)) {
@@ -50,7 +56,32 @@ int main(int argc, char **argv) {
             if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format  '%s'", testName);
         }
         fclose(file);
-        fprintf(stderr, "Model with %d clusters took \t%-30fs\n", model.size, ((double)(clock() - start)) / ((double)1000000));
+        fprintf(stderr, "[%d] Model with %d clusters took \t%fs\n", clRank, model.size, ((double)(clock() - start)) / ((double)1000000));
+        //
+        for (int dest = 1; dest < clSize; dest++) {
+            fprintf(stderr, "[%d] Sending to %d\n", clRank, dest);
+            MPI_Send(&model, sizeof(Model), MPI_BYTE, dest, 2000, MPI_COMM_WORLD);
+            for (int i = 0; i < model.size; i++) {
+                Cluster *cl = &(model.vals[i]);
+                MPI_Send(&cl, sizeof(Cluster), MPI_BYTE, dest, 2002, MPI_COMM_WORLD);
+                MPI_Send(&(cl->center), dimension, MPI_FLOAT, dest, 2003, MPI_COMM_WORLD);
+            }
+        }
+        fprintf(stderr, "[%d] Model sent in \t%fs\n", clRank, ((double)(clock() - start)) / ((double)1000000));
+    } else {
+        fprintf(stderr, "[%d] Waiting for model\n", clRank);
+        MPI_Status status;
+        MPI_Recv(&model, sizeof(Model), MPI_BYTE, MPI_ANY_SOURCE, 2000, MPI_COMM_WORLD, &status);
+        model.vals = malloc(model.size * sizeof(Cluster));
+        fprintf(stderr, "[%d] Model size to recv %d\n", clRank, model.size);
+        for (int i = 0; i < model.size; i++) {
+            Cluster *cl = &(model.vals[i]);
+            MPI_Recv(cl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
+            float *center = malloc((dimension + 1) * sizeof(float));
+            MPI_Recv(&center, dimension, MPI_FLOAT, MPI_ANY_SOURCE, 2003, MPI_COMM_WORLD, &status);
+            cl->center = center;
+        }
+        fprintf(stderr, "[%d] Model recv in \t%fs\n", clRank, ((double)(clock() - start)) / ((double)1000000));
     }
 
     Point ex;
@@ -58,8 +89,8 @@ int main(int argc, char **argv) {
     ex.id = -1;
     Match match;
     if (clRank == 0) {
-        printf("id,isMach,clusterId,label,distance,radius\n");
-        fprintf(stderr, "Reading test from %20s\n", testName);
+        printf("#id,isMach,clusterId,label,distance,radius\n");
+        fprintf(stderr, "[%d] Reading test from %20s\n", clRank, testName);
         file = fopen(testName, "r");
         if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", testName);
         while (fgets(line, line_len, file)) {
@@ -99,52 +130,37 @@ int main(int argc, char **argv) {
                 match.label, match.distance, match.radius);
         }
         fclose(file);
+    } else {
+        
+    //         match.distance = (float) dimension;
+    //         match.pointId = ex.id;
+    //         for (int i = 0; i < model.size; i++) {
+    //             double distance = 0;
+    //             for (int j = 0; j < dimension; j++) {
+    //                 float diff = model.vals[i].center[j] - ex.value[j];
+    //                 distance += diff * diff;
+    //             }
+    //             if (match.distance > distance) {
+    //                 match.clusterId = model.vals[i].id;
+    //                 match.label = model.vals[i].label;
+    //                 match.radius = model.vals[i].radius;
+    //                 match.distance = distance;
+    //             }
+    //         }
+    //         match.isMatch = match.distance <= match.radius ? 'y' : 'n';
+            
+    //         printf("%d,%c,%d,%c,%f,%f\n",
+    //             match.pointId, match.isMatch, match.clusterId,
+    //             match.label, match.distance, match.radius);
+    // }
     }
     
-    fprintf(stderr, "Finalizing\n");
+    fprintf(stderr, "[%d] Finalizing\n", clRank);
     MPI_Finalize();
     
-    fprintf(stderr, "Classifier with %d examples took \t%-30fs\n", ex.id, ((double)(clock() - start)) / ((double)1000000));
+    fprintf(stderr, "[%d] Classifier with %d examples took \t%fs\n", clRank, ex.id, ((double)(clock() - start)) / ((double)1000000));
     return 0;
 }
-
-// void distribute(int clRank, int clSize, char *testName, int dimension) {
-//     clock_t start = clock();
-//     char *modelName = "datasets/model-clean.csv";
-//     Model *model;
-//     // read and Broadcast Model
-//     if (clRank == 0) {
-//         model = MNS_readModelFile(modelName);
-//         //
-//         for (int dest = 1; dest < clSize; dest++) {
-//             fprintf(stderr, "Sending to %d\n", dest);
-//             MPI_Send(&model->size, 1, MPI_INT, dest, 2000, MPI_COMM_WORLD);
-//             for (int i = 0; i < model->size; i++) {
-//                 Cluster *cl = &(model->vals[i]);
-//                 MPI_Send(&cl, sizeof(Cluster), MPI_BYTE, dest, 2002, MPI_COMM_WORLD);
-//                 MPI_Send(cl->center, dimension, MPI_FLOAT, dest, 2002, MPI_COMM_WORLD);
-//             }
-//         }
-//         fprintf(stderr, "Model sent in \t%fs\n", ((double)(clock() - start)) / ((double)1000000));
-//     } else {
-//         fprintf(stderr, "Waiting for model\n");
-//         MPI_Status status;
-//         model = malloc(sizeof(Model));
-//         MPI_Recv(&(model->size), 1, MPI_INT, MPI_ANY_SOURCE, 2000, MPI_COMM_WORLD, &status);
-//         model->vals = malloc(model->size * sizeof(Cluster));
-//         for (int i = 0; i < model->size; i++) {
-//             Cluster *cl = &(model->vals[i]);
-//             MPI_Recv(&cl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-//             cl->center = malloc(dimension * sizeof(float));
-//             MPI_Recv(cl->center, dimension, MPI_FLOAT, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-//         }
-//         fprintf(stderr, "Model recv in \t%fs\n", ((double)(clock() - start)) / ((double)1000000));
-//     }
-//     fprintf(stderr, "Finalizing\n");
-//     MPI_Finalize();
-//     exit(EXIT_SUCCESS);
-// }
-
 
 // int classifier(int clRank, int clSize, char *testName, Model *model, int dimension) {
 //     clock_t start = clock();

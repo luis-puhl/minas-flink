@@ -1,42 +1,56 @@
-Reading model from 	datasets/model-clean.csv      
-Finalizing
-Finalizing
-Finalizing
-Model with 100 clusters took 	0.000653                      s
-Reading test from    datasets/test.csv
-Finalizing
-Classifier with -1 examples took 	0.836506                      s
-Classifier with -1 examples took 	0.822019                      s
-Classifier with -1 examples took 	0.833302                      s
-Classifier with 653456 examples took 	12.492927                     s
+Processor pokebola, Rank 0 out of 4 processors
+[0] Reading model from 	datasets/model-clean.csv
+[3] Waiting for model
+[2] Waiting for model
+[0] Model with 100 clusters took 	0.000719s
+[0] Sending to 1
+[1] Waiting for model
+[1] Model size to recv 100
+[0] Sending to 2
+[1] Model recv in 	0.000248s
+[1] Finalizing
+[2] Model size to recv 100
+[0] Sending to 3
+[2] Model recv in 	0.004525s
+[2] Finalizing
+[3] Model size to recv 100
+[0] Model sent in 	0.004905s
+[3] Model recv in 	0.004869s
+[3] Finalizing
+[0] Reading test from    datasets/test.csv
+[0] Finalizing
+[1] Classifier with -1 examples took 	0.960674s
+[2] Classifier with -1 examples took 	0.960942s
+[3] Classifier with -1 examples took 	0.970918s
+[0] Classifier with 653456 examples took 	13.434129s
 
  Performance counter stats for 'mpiexec ./target/minas-mpi':
 
-         24,280.01 msec task-clock:u              #    1.904 CPUs utilized          
+         25,965.95 msec task-clock:u              #    1.906 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-             8,558      page-faults:u             #    0.352 K/sec                  
-    37,822,488,497      cycles:u                  #    1.558 GHz                    
-    48,411,245,012      stalled-cycles-frontend:u #  128.00% frontend cycles idle   
-    65,825,103,709      instructions:u            #    1.74  insn per cycle         
-                                                  #    0.74  stalled cycles per insn
-     5,905,352,792      branches:u                #  243.219 M/sec                  
-        37,244,522      branch-misses:u           #    0.63% of all branches        
+             8,630      page-faults:u             #    0.332 K/sec                  
+    40,428,311,778      cycles:u                  #    1.557 GHz                    
+    53,158,087,979      stalled-cycles-frontend:u #  131.49% frontend cycles idle   
+    65,793,588,101      instructions:u            #    1.63  insn per cycle         
+                                                  #    0.81  stalled cycles per insn
+     5,896,037,305      branches:u                #  227.068 M/sec                  
+        37,975,093      branch-misses:u           #    0.64% of all branches        
 
-      12.750505944 seconds time elapsed
+      13.620345933 seconds time elapsed
 
-      13.613634000 seconds user
-      12.564653000 seconds sys
+      14.651146000 seconds user
+      13.265538000 seconds sys
 
 
 Reading test from 	'./datasets/test.csv'
 Reading output from 	'./out/classify.csv'
-Done ./target/eval in 	2.688902s
-		|	Classes
+Done ./target/eval in 	2.616013s
+      	|	Classes
 Labels	|	         A	         N	
      -	|	     19677	       318	
      A	|	         0	         0	
      N	|	    427502	    205960	
 Total 	653457
-Hits 	205960 (31.518524%)
-Misses 	447497 (68.481476%)
+Hits 	205964 (31.519136%)
+Misses 	447493 (68.480864%)
