@@ -13,7 +13,9 @@ target/mfog: mfog.c
 	mpicc -lm -std=c2x -Wall -g -o target/mfog mfog.c
 
 target/minas-mpi: minas-mpi.c
-	mpicc -lm -std=c2x -Wall -g -o target/minas-mpi minas-mpi.c
+	clang-tidy minas-mpi.c
+	# mpicc minas-mpi.c -lm -std=c2x -Wall -g -o target/minas-mpi
+	gcc minas-mpi.c -pthread -Wl,-rpath -Wl,/usr/lib/openmpi -Wl,--enable-new-dtags -L/usr/lib/openmpi -lmpi -lm -std=c2x -Wall -g -o target/minas-mpi
 
 run:
 	mpiexec ./target/mfog
@@ -33,7 +35,7 @@ eval.log: target/eval datasets/test.csv out/classify.csv
 	./target/eval ./datasets/test.csv ./out/classify.csv >> eval.log 2>>eval.log
 
 out/classify-mpi.csv: target/minas-mpi datasets/model.csv datasets/test.csv
-	mpiexec ./target/minas-mpi datasets/model.csv datasets/test.csv #> out/classify-mpi.csv 2>eval-mpi.log
+	perf stat mpiexec ./target/minas-mpi > out/classify-mpi.csv 2>eval-mpi.log
 eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv
 	./target/eval ./datasets/test.csv ./out/classify.csv >> eval-mpi.log 2>>eval-mpi.log
 

@@ -1,10 +1,37 @@
+Reading model from 	datasets/model-clean.csv      
 Finalizing
 Finalizing
 Finalizing
+Model with 100 clusters took 	0.000653                      s
+Reading test from    datasets/test.csv
 Finalizing
+Classifier with -1 examples took 	0.836506                      s
+Classifier with -1 examples took 	0.822019                      s
+Classifier with -1 examples took 	0.833302                      s
+Classifier with 653456 examples took 	12.492927                     s
+
+ Performance counter stats for 'mpiexec ./target/minas-mpi':
+
+         24,280.01 msec task-clock:u              #    1.904 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+             8,558      page-faults:u             #    0.352 K/sec                  
+    37,822,488,497      cycles:u                  #    1.558 GHz                    
+    48,411,245,012      stalled-cycles-frontend:u #  128.00% frontend cycles idle   
+    65,825,103,709      instructions:u            #    1.74  insn per cycle         
+                                                  #    0.74  stalled cycles per insn
+     5,905,352,792      branches:u                #  243.219 M/sec                  
+        37,244,522      branch-misses:u           #    0.63% of all branches        
+
+      12.750505944 seconds time elapsed
+
+      13.613634000 seconds user
+      12.564653000 seconds sys
+
+
 Reading test from 	'./datasets/test.csv'
 Reading output from 	'./out/classify.csv'
-Done ./target/eval in 	2.750773s
+Done ./target/eval in 	2.688902s
 		|	Classes
 Labels	|	         A	         N	
      -	|	     19677	       318	
