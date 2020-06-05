@@ -60,7 +60,7 @@ int MNS_printPoint(Point *point) {
 }
 int MNS_printCluster(Cluster *cl) {
     if (cl == NULL) return 0;
-    int pr = printf("Cluster(id=%d, lbl=%s, tm=%ld, r=%f, center=[", cl->id, cl->label, cl->lastTMS, cl->radius);
+    int pr = printf("Cluster(id=%d, lbl=%c, tm=%d, r=%f, center=[", cl->id, cl->label, cl->time, cl->radius);
     pr += MNS_printFloatArr(cl->center);
     pr += printf("])\n");
     return pr;
@@ -69,7 +69,7 @@ int MNS_printModel(Model* model) {
     char *labels;
     labels = (char *) malloc(model->size * 3 * sizeof(char));
     for (int i = 0; i < model->size * 3; i += 3){
-        labels[i] = model->vals[i].label[0];
+        labels[i] = model->vals[i].label;
         labels[i + 1] = ',';
         labels[i + 2] = ' ';
     }
@@ -81,38 +81,6 @@ int MNS_printModel(Model* model) {
     return pr;
 }
 
-char* tokenOrFail(const char *restrict sep, char **restrict p, const char *filename) {
-    char *token;
-    token = strtok_r(NULL, sep, p);
-    if (!token) errx(EXIT_FAILURE, "Missing token in file '%s'", filename);
-    return token;
-}
-
-/**
- * Fills a cluster from a line in the format:
- * id,label,category,matches,time,meanDistance,radius,center
- * 0,N,normal,1,0,0.0,0.1,[2.8E-4, 0.02, 0.0, 0.0, 1.0, 0.0, 0.0, 0.5, 0.5, 1.9E-4, 0.0, 7.9E-5, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
- */
-int MNS_readCluster(char *line, Cluster *cl, const char *filename, const char *sep) {
-    char *ptr, *token;
-    token = strtok_r(line, sep, &ptr);
-    if (!token) return 0;
-    cl->id = atoi(token);
-    cl->label = (char *) strdup(tokenOrFail(sep, &ptr, filename));
-    cl->category = (char *) strdup(tokenOrFail(sep, &ptr, filename));
-    cl->matches = atoi(tokenOrFail(sep, &ptr, filename));
-    cl->lastTMS = atoi(tokenOrFail(sep, &ptr, filename));
-    cl->meanDistance = atof(tokenOrFail(sep, &ptr, filename));
-    cl->radius = atof(tokenOrFail(sep, &ptr, filename));
-    if (cl->center == NULL) {
-        cl->center = malloc(MNS_dimesion * sizeof(float));
-    }
-    for (int i = 0; i < MNS_dimesion; i++) {
-        cl->center[i] = atof(tokenOrFail(sep, &ptr, filename));
-    }
-    return 1;
-}
-
 Model *MNS_readModelFile(const char *filename) {
     FILE *modelFile = fopen(filename, "r");
     if (modelFile == NULL) {
@@ -120,14 +88,30 @@ Model *MNS_readModelFile(const char *filename) {
     }
     Model *model = malloc(sizeof(Model));
     model->vals = malloc(1 * sizeof(Cluster));
-    char *separators = strdup("\n, []");
+    // char *separators = strdup("\n, []");
     #define line_len 10 * 1024
     char line[line_len];
-    fgets(line, line_len, modelFile);
     model->size = 0;
     while (fgets(line, line_len, modelFile)) {
+        if (*line == '#') continue;
         model->vals = realloc(model->vals, (++model->size) * sizeof(Cluster));
-        if (!MNS_readCluster(line, &(model->vals[model->size - 1]), filename, separators)) {
+        Cluster *cl = &(model->vals[model->size - 1]);
+        if (cl->center == NULL) {
+            cl->center = malloc(MNS_dimesion * sizeof(float));
+        }
+        int assigned = sscanf(line,
+            "%d,%c,%c,"
+            "%d,%d,%f,%f,"
+            "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+            &cl->id, &cl->label, &cl->category,
+            &cl->matches, &cl->time, &cl->meanDistance, &cl->radius,
+            &cl->center[0], &cl->center[1], &cl->center[2], &cl->center[3], &cl->center[4],
+            &cl->center[5], &cl->center[6], &cl->center[7], &cl->center[8], &cl->center[9],
+            &cl->center[10], &cl->center[11], &cl->center[12], &cl->center[13], &cl->center[14],
+            &cl->center[15], &cl->center[16], &cl->center[17], &cl->center[18], &cl->center[19],
+            &cl->center[20], &cl->center[21]
+        );
+        if (assigned != 29) {
             break;
         }
     }
@@ -139,26 +123,25 @@ Model *MNS_readModelFile(const char *filename) {
  * Fills an Point with the string format
  * 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
  */
-int MNS_readExample(char *line, Point *ex, const char *filename, const char *sep) {
-    char *ptr, *token;
-    token = strtok_r(line, sep, &ptr);
-    if (!token) return 0;
-    printf("line='%s'\n", line);
+int MNS_readExample(Point *ex, FILE *file) {
+    #define line_len 10 * 1024
+    char line[line_len];
+    if (feof(file) || fgets(line, line_len, file) == 0) return 0;
+    // while (line[0] == '#') if (!fgets(line, line_len, file)) return 0;
+    int assigned = sscanf(line,
+        "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f"
+        "%c\n",
+        &ex->value[0], &ex->value[1], &ex->value[2], &ex->value[3], &ex->value[4],
+        &ex->value[5], &ex->value[6], &ex->value[7], &ex->value[8], &ex->value[9],
+        &ex->value[10], &ex->value[11], &ex->value[12], &ex->value[13], &ex->value[14],
+        &ex->value[15], &ex->value[16], &ex->value[17], &ex->value[18], &ex->value[19],
+        &ex->value[20], &ex->value[21], &ex->label
+    );
     ex->id++;
-    if (ex->value == NULL) {
-        ex->value = malloc(MNS_dimesion * sizeof(float));
-    }
-    for (int i = 0; i < MNS_dimesion; i++) {
-        token = strtok_r(NULL, sep, &ptr);
-        printf("token='%s'\n", token);
-        if (!token) errx(EXIT_FAILURE, "Missing token in file '%s'", filename);
-        ex->value[i] = atof(token);
-    }
-    ex->label = strdup(tokenOrFail(sep, &ptr, filename));
-    return 1;
+    return !feof(file) && (assigned == 23);
 }
 
-int MNS_classifier(int argc, char const *argv[]) {
+int main(int argc, char const *argv[]) {
     if (argc != 3) {
         errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
     }
@@ -167,7 +150,7 @@ int MNS_classifier(int argc, char const *argv[]) {
     clock_t start = clock();
     srand(time(0));
     //
-    Model *model = MNS_readModelFile(argv[1]);
+    Model *model = MNS_readModelFile("datasets/model-clean.csv");
     fprintf(stderr, "Model read in \t%fs\n", ((double)(clock() - start)) / ((double)1000000));
     //
     Point example;
@@ -178,19 +161,11 @@ int MNS_classifier(int argc, char const *argv[]) {
     FILE *kyotoOnl = fopen(argv[2], "r");
     if (kyotoOnl == NULL) errx(EXIT_FAILURE, "bad file open '%s'", argv[2]);
     // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
-    char l;
     printf("id,isMach,clusterId,label,distance,radius\n");
-    while (!feof(kyotoOnl)) {
-        for (int i = 0; i < MNS_dimesion; i++) {
-            fscanf(kyotoOnl, "%f,", &(example.value[i]));
-        }
-        fscanf(kyotoOnl, "%c\n", &l);
-        // printPoint(example);
+    while (MNS_readExample(&example, kyotoOnl)) {
         MNS_classify(model, &example, &match);
-        // if (match.label == '\0') {
-        //     errx(EXIT_FAILURE, "bad match label '%c'\n", match.label);
-        // }
-        printf("%d,%c,%d,%s,%f,%f\n",
+        
+        printf("%d,%c,%d,%c,%f,%f\n",
             match.pointId, match.isMatch, match.clusterId,
             match.label, match.distance, match.radius);
         example.id++;

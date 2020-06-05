@@ -28,19 +28,12 @@ int main(int argc, char **argv) {
         model = MNS_readModelFile(argv[1]);
         fprintf(stderr, "Model read in \t%fs\n", ((double)(clock() - start)) / ((double)1000000));
         //
-        int len;
         for (int dest = 1; dest < clSize; dest++) {
             fprintf(stderr, "Sending to %d\n", dest);
             MPI_Send(&model->size, 1, MPI_INT, dest, 2000, MPI_COMM_WORLD);
             for (int i = 0; i < model->size; i++) {
                 Cluster *cl = &(model->vals[i]);
                 MPI_Send(&cl, sizeof(Cluster), MPI_BYTE, dest, 2002, MPI_COMM_WORLD);
-                len = strlen(cl->label) + 1;
-                MPI_Send(&len, 1, MPI_INT, dest, 2002, MPI_COMM_WORLD);
-                MPI_Send(&(cl->label), len, MPI_CHAR, dest, 2002, MPI_COMM_WORLD);
-                len = strlen(cl->category) + 1;
-                MPI_Send(&len, 1, MPI_INT, dest, 2002, MPI_COMM_WORLD);
-                MPI_Send(&(cl->category), len, MPI_CHAR, dest, 2002, MPI_COMM_WORLD);;
                 MPI_Send(cl->center, MNS_dimesion, MPI_FLOAT, dest, 2002, MPI_COMM_WORLD);
             }
         }
@@ -51,17 +44,9 @@ int main(int argc, char **argv) {
         model = malloc(sizeof(Model));
         MPI_Recv(&(model->size), 1, MPI_INT, MPI_ANY_SOURCE, 2000, MPI_COMM_WORLD, &status);
         model->vals = malloc(model->size * sizeof(Cluster));
-        int len;
         for (int i = 0; i < model->size; i++) {
             Cluster *cl = &(model->vals[i]);
             MPI_Recv(&cl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-            MPI_Recv(&len, 1, MPI_INT, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-            printf("len=%d\n", len);
-            cl->label = malloc(len * sizeof(char));
-            MPI_Recv(cl->label, len, MPI_CHAR, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-            MPI_Recv(&len, 1, MPI_INT, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-            cl->category = malloc(len * sizeof(char));
-            MPI_Recv(cl->category, len, MPI_CHAR, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
             cl->center = malloc(MNS_dimesion * sizeof(float));
             MPI_Recv(cl->center, MNS_dimesion, MPI_FLOAT, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
         }
@@ -98,7 +83,7 @@ int main(int argc, char **argv) {
             // if (match.label == '\0') {
             //     errx(EXIT_FAILURE, "bad match label '%c'\n", match.label);
             // }
-            printf("%d,%c,%d,%s,%f,%f\n",
+            printf("%d,%c,%d,%c,%f,%f\n",
                 match.pointId, match.isMatch, match.clusterId,
                 match.label, match.distance, match.radius);
             example.id++;
@@ -110,7 +95,7 @@ int main(int argc, char **argv) {
         MPI_Recv(example.value, MNS_dimesion, MPI_FLOAT, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, &status);
         //
         MNS_classify(model, &example, &match);
-        printf("%d,%c,%d,%s,%f,%f\n",
+        printf("%d,%c,%d,%c,%f,%f\n",
             match.pointId, match.isMatch, match.clusterId,
             match.label, match.distance, match.radius);
     }

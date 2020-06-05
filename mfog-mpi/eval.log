@@ -14,3 +14,14 @@ Labels	|	         A	         N
 Total 	653457
 Hits 	205960 (31.518524%)
 Misses 	447497 (68.481476%)
+Reading test from 	'./datasets/test.csv'
+Reading output from 	'./out/classify.csv'
+Done ./target/eval in 	2.393995s
+		|	Classes
+Labels	|	         A	         N	
+     -	|	     19677	       318	
+     A	|	         0	         0	
+     N	|	    427502	    205960	
+Total 	653457
+Hits 	205960 (31.518524%)
+Misses 	447497 (68.481476%)

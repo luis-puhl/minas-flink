@@ -84,16 +84,17 @@ int main(int argc, char const *argv[]) {
         fscanf(test, "%c\n", &l);
         example.id++;
         //
-        fscanf(class, "%d,%c,%d,%c,%f,%f\n", &(match.pointId), &(match.isMatch), &(match.clusterId), &(match.label), &(match.distance), &(match.radius));
+        match.label = malloc(2 * sizeof(char));
+        fscanf(class, "%d,%c,%d,%c,%f,%f\n", &(match.pointId), &(match.isMatch), &(match.clusterId), &(match.label[0]), &(match.distance), &(match.radius));
         //
         // printMatrix(&confusionSize, &labels, &confusionMatrix);
         // printf("(%c-%d, %c-%d, %c-%d,)\n", l, l, match.isMatch, match.isMatch, match.label, match.label);
-        if (l == '\0' || match.label == '\0') {
-            printf("stupid label %c_%d %c_%d\n", l, l, match.label, match.label);
-            break;
-        }
+        // if (l == '\0' || match.label == '\0') {
+        //     printf("stupid label %c_%d %c_%d\n", l, l, match.label, match.label);
+        //     break;
+        // }
         i = findLabelIndex(&confusionSize, &labels, &confusionMatrix, l);
-        j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label : '-');
+        j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label[0] : '-');
         //
         confusionMatrix[j][i]++;
         if (i == j) hits++;

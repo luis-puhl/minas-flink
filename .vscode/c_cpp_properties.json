@@ -3,11 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/glib/*",
+                "./mfog-mpi/ref/musl/src"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c11",
+            "cStandard": "c2x",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "clang-x64"
         }
