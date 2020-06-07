@@ -56,18 +56,18 @@ int main(int argc, char **argv) {
             if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format  '%s'", testName);
         }
         fclose(file);
-        fprintf(stderr, "[%d] Model with %d clusters took \t%fs\n", clRank, model.size, ((double)(clock() - start)) / ((double)1000000));
+        fprintf(stderr, "[%d] Read model with %d clusters took \t%fs\n", clRank, model.size, ((double)(clock() - start)) / ((double)1000000));
         //
         for (int dest = 1; dest < clSize; dest++) {
             fprintf(stderr, "[%d] Sending to %d\n", clRank, dest);
             MPI_Send(&model, sizeof(Model), MPI_BYTE, dest, 2000, MPI_COMM_WORLD);
             for (int i = 0; i < model.size; i++) {
                 Cluster *cl = &(model.vals[i]);
-                MPI_Send(&cl, sizeof(Cluster), MPI_BYTE, dest, 2002, MPI_COMM_WORLD);
-                MPI_Send(&(cl->center), dimension, MPI_FLOAT, dest, 2003, MPI_COMM_WORLD);
+                MPI_Send(cl, sizeof(Cluster), MPI_BYTE, dest, 2002, MPI_COMM_WORLD);
+                MPI_Send(cl->center, dimension, MPI_FLOAT, dest, 2003, MPI_COMM_WORLD);
             }
         }
-        fprintf(stderr, "[%d] Model sent in \t%fs\n", clRank, ((double)(clock() - start)) / ((double)1000000));
+        fprintf(stderr, "[%d] Send model with %d clusters took \t%fs\n", clRank, model.size, ((double)(clock() - start)) / ((double)1000000));
     } else {
         fprintf(stderr, "[%d] Waiting for model\n", clRank);
         MPI_Status status;
@@ -77,25 +77,44 @@ int main(int argc, char **argv) {
         for (int i = 0; i < model.size; i++) {
             Cluster *cl = &(model.vals[i]);
             MPI_Recv(cl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-            float *center = malloc((dimension + 1) * sizeof(float));
-            MPI_Recv(&center, dimension, MPI_FLOAT, MPI_ANY_SOURCE, 2003, MPI_COMM_WORLD, &status);
+            float *center = malloc(dimension * sizeof(float));
+            MPI_Recv(center, dimension, MPI_FLOAT, MPI_ANY_SOURCE, 2003, MPI_COMM_WORLD, &status);
             cl->center = center;
+            // fprintf(stderr,
+            //     "[%d]%d cluster \t id=%d lbl=%c, cat=%c\n",
+            //     clRank, __LINE__,
+            //     cl->id, cl->label, cl->category
+            // );
+            // fflush(stderr);
+            // fprintf(stderr,
+            //     "\t%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+            //     center[0], center[1], center[2], center[3], center[4],
+            //     center[5], center[6], center[7], center[8], center[9],
+            //     center[10], center[11], center[12], center[13], center[14],
+            //     center[15], center[16], center[17], center[18], center[19],
+            //     center[20], center[21]
+            // );
         }
-        fprintf(stderr, "[%d] Model recv in \t%fs\n", clRank, ((double)(clock() - start)) / ((double)1000000));
+        fprintf(stderr, "[%d] Recv model with %d clusters took \t%fs\n", clRank, model.size, ((double)(clock() - start)) / ((double)1000000));
     }
 
+    fprintf(stderr, "\n");
+
     Point ex;
-    ex.value = malloc(dimension * sizeof(float));
+    ex.value = malloc((dimension +1) * sizeof(float));
     ex.id = -1;
     Match match;
+    int exampleCounter = 0;
     if (clRank == 0) {
         printf("#id,isMach,clusterId,label,distance,radius\n");
-        fprintf(stderr, "[%d] Reading test from %20s\n", clRank, testName);
+        fprintf(stderr, "[%d]%d Reading test from %20s\n", clRank, __LINE__, testName);
         file = fopen(testName, "r");
         if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", testName);
+        int dest = 1, hasRemaining = 1;
         while (fgets(line, line_len, file)) {
             if (line[0] == '#') continue;
             // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
+            // fprintf(stderr, "[%d]%d sending line=%s", clRank, __LINE__, line);
             int assigned = sscanf(line,
                 "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
                 "%c\n",
@@ -108,12 +127,78 @@ int main(int argc, char **argv) {
             ex.id++;
             if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format  '%s'", testName);
             //
+            // fprintf(stderr, "[%d]%d Sending ex.id=%d to %d\n", clRank, __LINE__, ex.id, dest);
+            MPI_Send(&hasRemaining, 1, MPI_INT, dest, 2004, MPI_COMM_WORLD);
+            MPI_Send(&ex, sizeof(Point), MPI_BYTE, dest, 2005, MPI_COMM_WORLD);
+            MPI_Send(ex.value, dimension, MPI_FLOAT, dest, 2006, MPI_COMM_WORLD);
+            exampleCounter++;
+            //
+            dest = ++dest < clSize ? dest : 1;
+            // break;
+            /*
+                match.distance = (float) dimension;
+                match.pointId = ex.id;
+                for (int i = 0; i < model.size; i++) {
+                    double distance = 0;
+                    for (int j = 0; j < dimension; j++) {
+                        float diff = model.vals[i].center[j] - ex.value[j];
+                        distance += diff * diff;
+                    }
+                    if (match.distance > distance) {
+                        match.clusterId = model.vals[i].id;
+                        match.label = model.vals[i].label;
+                        match.radius = model.vals[i].radius;
+                        match.distance = distance;
+                    }
+                }
+                match.isMatch = match.distance <= match.radius ? 'y' : 'n';
+                
+                printf("%d,%c,%d,%c,%f,%f\n",
+                    match.pointId, match.isMatch, match.clusterId,
+                    match.label, match.distance, match.radius
+                );
+            */
+        }
+        fclose(file);
+        hasRemaining = 0;
+        for (int dest = 1; dest < clSize; dest++) {
+            // fprintf(stderr, "[%d]%d Sending DONE to %d\n", clRank, __LINE__, dest);
+            MPI_Send(&hasRemaining, 1, MPI_INT, dest, 2004, MPI_COMM_WORLD);
+        }
+        fprintf(stderr, "[%d] Send Test with %d examples took \t%fs\n", clRank, exampleCounter, ((double)(clock() - start)) / ((double)1000000));
+    } else {
+        // fprintf(stderr, "[%d]%d Waiting for examples\n", clRank, __LINE__);
+        MPI_Status status;
+        int hasRemaining = 1;
+        float *value = ex.value;
+        MPI_Recv(&hasRemaining, 1, MPI_INT, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, &status);
+        // fprintf(stderr, "[%d]%d remaining %d\n", clRank, __LINE__, hasRemaining);
+        while (hasRemaining) {
+            MPI_Recv(&ex, sizeof(Point), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &status);
+            MPI_Recv(value, dimension, MPI_FLOAT, MPI_ANY_SOURCE, 2006, MPI_COMM_WORLD, &status);
+            ex.value = value;
+            // fprintf(stderr, "[%d]%d ex=%d \n", clRank, __LINE__, ex.id);
+            //
             match.distance = (float) dimension;
             match.pointId = ex.id;
+            // fprintf(stderr, "[%d]%d matching\n", clRank, __LINE__);
+            float *center;
             for (int i = 0; i < model.size; i++) {
+                // fprintf(stderr, "[%d]%d eval model %d\n", clRank, __LINE__, i);
+                center = model.vals[i].center;
+                // fprintf(stderr, "[%d]%d eval model %d %p %c\n", clRank, __LINE__, model.vals[i].id, &(model.vals[i]), model.vals[i].label);
+                // fprintf(stderr,
+                //     "cluster \t %f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
+                //     "%c\n",
+                //     center[0], center[1], center[2], center[3], center[4],
+                //     center[5], center[6], center[7], center[8], center[9],
+                //     center[10], center[11], center[12], center[13], center[14],
+                //     center[15], center[16], center[17], center[18], center[19],
+                //     center[20], center[21], model.vals[i].label);
                 double distance = 0;
+                // fprintf(stderr, "[%d]%d distance=0\n", clRank, __LINE__);
                 for (int j = 0; j < dimension; j++) {
-                    float diff = model.vals[i].center[j] - ex.value[j];
+                    float diff = center[j] - ex.value[j];
                     distance += diff * diff;
                 }
                 if (match.distance > distance) {
@@ -127,38 +212,17 @@ int main(int argc, char **argv) {
             
             printf("%d,%c,%d,%c,%f,%f\n",
                 match.pointId, match.isMatch, match.clusterId,
-                match.label, match.distance, match.radius);
+                match.label, match.distance, match.radius
+            );
+            exampleCounter++;
+            //
+            MPI_Recv(&hasRemaining, 1, MPI_INT, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, &status);
         }
-        fclose(file);
-    } else {
-        
-    //         match.distance = (float) dimension;
-    //         match.pointId = ex.id;
-    //         for (int i = 0; i < model.size; i++) {
-    //             double distance = 0;
-    //             for (int j = 0; j < dimension; j++) {
-    //                 float diff = model.vals[i].center[j] - ex.value[j];
-    //                 distance += diff * diff;
-    //             }
-    //             if (match.distance > distance) {
-    //                 match.clusterId = model.vals[i].id;
-    //                 match.label = model.vals[i].label;
-    //                 match.radius = model.vals[i].radius;
-    //                 match.distance = distance;
-    //             }
-    //         }
-    //         match.isMatch = match.distance <= match.radius ? 'y' : 'n';
-            
-    //         printf("%d,%c,%d,%c,%f,%f\n",
-    //             match.pointId, match.isMatch, match.clusterId,
-    //             match.label, match.distance, match.radius);
-    // }
+        fprintf(stderr, "[%d] Rcv/Classify Test with %d examples took \t%fs\n", clRank, exampleCounter, ((double)(clock() - start)) / ((double)1000000));
     }
     
-    fprintf(stderr, "[%d] Finalizing\n", clRank);
+    fprintf(stderr, "[%d] Finalizing in \t%fs\n", clRank, ((double)(clock() - start)) / ((double)1000000));
     MPI_Finalize();
-    
-    fprintf(stderr, "[%d] Classifier with %d examples took \t%fs\n", clRank, ex.id, ((double)(clock() - start)) / ((double)1000000));
     return 0;
 }
 

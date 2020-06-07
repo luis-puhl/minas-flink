@@ -37,7 +37,7 @@ eval.log: target/eval datasets/test.csv out/classify.csv
 out/classify-mpi.csv: target/minas-mpi datasets/model.csv datasets/test.csv
 	perf stat mpiexec ./target/minas-mpi > out/classify-mpi.csv 2>eval-mpi.log
 eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv
-	./target/eval ./datasets/test.csv ./out/classify.csv >> eval-mpi.log 2>>eval-mpi.log
+	./target/eval ./datasets/test.csv ./out/classify-mpi.csv >> eval-mpi.log 2>>eval-mpi.log
 
 copyAlmoco:
 	scp target/minas pi@almoco:/home/pi/
@@ -53,3 +53,6 @@ minas.asm: minas.c
 # Building rule for .o files and its .c/.cpp in combination with all .h
 $(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
 	$(CC) $(CXXFLAGS) -o $@ -c $<
+
+watch:
+	for i in 1 2 3 4 5; do make eval-mpi.log ; echo "done"; inotifywait -qre close_write . ; done
