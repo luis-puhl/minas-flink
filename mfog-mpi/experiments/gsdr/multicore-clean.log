@@ -1,0 +1,31 @@
+Processor gsdr, Rank 0 out of 2 processors
+[1] Finalizing in 	40.521927s
+Total 	653457
+Hits 	205821 (31.497252%)
+Misses 	447636 (68.502748%)
+
+Processor gsdr, Rank 0 out of 4 processors
+[1] Finalizing in 	21.704829s
+Total 	653457
+Hits 	205294 (31.416604%)
+Misses 	448163 (68.583396%)
+
+Processor gsdr, Rank 0 out of 8 processors
+[1] Finalizing in 	31.715524s
+Total 	653457
+Hits 	205294 (31.416604%)
+Misses 	448163 (68.583396%)
+
+
+Processor gsdr, Rank 0 out of 16 processors
+[1] Finalizing in 	110.685521s
+Total 	653457
+Hits 	205260 (31.411401%)
+Misses 	448197 (68.588599%)
+
+
+Processor gsdr, Rank 0 out of 32 processors
+[1] Finalizing in 	137.402321s
+Total 	653457
+Hits 	205301 (31.417676%)
+Misses 	448156 (68.582324%)

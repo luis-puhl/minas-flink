@@ -18,7 +18,7 @@ target/mfog: mfog.c
 
 target/minas-mpi: minas-mpi.c
 	clang-tidy minas-mpi.c
-	# mpicc minas-mpi.c -lm -std=c1x -Wall -g -o target/minas-mpi
+	# mpicc minas-mpi.c -o target/minas-mpi -lm -Wall -g
 	gcc minas-mpi.c -pthread -Wl,-rpath -Wl,/usr/lib/openmpi -Wl,--enable-new-dtags -L/usr/lib/openmpi -lmpi -lm -std=c1x -Wall -g -o target/minas-mpi
 
 run:

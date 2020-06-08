@@ -49,6 +49,20 @@ int main(int argc, char **argv) {
     model.size = 0;
     model.vals = malloc(1 * sizeof(Cluster));
     if (clRank == 0) {
+        /*
+         # Root:
+            - Read Model
+            - Broadcast Model
+            - Read Examples
+            - Start Timer
+            - Send Examples Loop
+            - Close/clean-up
+         # Dispatcher
+         # Workers:
+            - Rcv Model
+            - Rcv Example
+            - Classify
+        */
         fprintf(stderr, "[%d] Reading model from \t%s\n", clRank, modelName);
         file = fopen(modelName, "r");
         if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", modelName);
@@ -75,6 +89,8 @@ int main(int argc, char **argv) {
         fclose(file);
         fprintf(stderr, "[%d] Read model with %d clusters took \t%fs\n", clRank, model.size, __ELAPSED__);
         //
+        // MPI_Broadcast
+        // MPI_Pack
         for (int dest = 1; dest < clSize; dest++) {
             fprintf(stderr, "[%d] Sending to %d\n", clRank, dest);
             MPI_Send(&model, sizeof(Model), MPI_BYTE, dest, 2000, MPI_COMM_WORLD);
@@ -112,6 +128,7 @@ int main(int argc, char **argv) {
         file = fopen(testName, "r");
         if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", testName);
         int dest = 1, hasRemaining = 1;
+        // for (examples)
         while (fgets(line, line_len, file)) {
             if (line[0] == '#') continue;
             // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
@@ -127,6 +144,7 @@ int main(int argc, char **argv) {
             ex.id++;
             if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format  '%s'", testName);
             //
+            // master
             MPI_Send(&hasRemaining, 1, MPI_INT, dest, 2004, MPI_COMM_WORLD);
             MPI_Send(&ex, sizeof(Point), MPI_BYTE, dest, 2005, MPI_COMM_WORLD);
             MPI_Send(ex.value, dimension, MPI_FLOAT, dest, 2006, MPI_COMM_WORLD);
@@ -165,6 +183,7 @@ int main(int argc, char **argv) {
         }
         fprintf(stderr, "[%d] Send Test with %d examples took \t%fs\n", clRank, exampleCounter, __ELAPSED__);
     } else {
+        // slave
         MPI_Status status;
         int hasRemaining = 1;
         float *value = ex.value;
