@@ -1,0 +1,36 @@
+Reading model from 	datasets/model-clean.csv      
+Model read took 	0.000755                      s
+Reading test from              datasets/test.csv
+Total examples 	653456 =? 653456
+Done MNS_classifier in 	9.188549s
+
+ Performance counter stats for './target/minas datasets/model.csv datasets/test.csv':
+
+          9,206.93 msec task-clock:u              #    0.999 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+                76      page-faults:u             #    0.008 K/sec                  
+    26,251,673,208      cycles:u                  #    2.851 GHz                    
+    11,220,119,156      stalled-cycles-frontend:u #   42.74% frontend cycles idle   
+    52,945,070,396      instructions:u            #    2.02  insn per cycle         
+                                                  #    0.21  stalled cycles per insn
+     5,416,379,551      branches:u                #  588.294 M/sec                  
+        17,469,913      branch-misses:u           #    0.32% of all branches        
+
+       9.212541498 seconds time elapsed
+
+       9.076310000 seconds user
+       0.113176000 seconds sys
+
+
+Reading test from 	'./datasets/test.csv'
+Reading output from 	'./out/classify.csv'
+Done ./target/eval in 	2.581630s
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     19677	       318	
+     A	|	         0	         0	
+     N	|	    427502	    205960	
+Total 	653457
+Hits 	205964 (31.519136%)
+Misses 	447493 (68.480864%)

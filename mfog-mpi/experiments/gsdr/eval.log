@@ -1,0 +1,16 @@
+Reading model from 	datasets/model-clean.csv      
+Model read took 	0.001236                      s
+Reading test from              datasets/test.csv
+Total examples 	653456 =? 653456
+Done MNS_classifier in 	14.288492s
+Reading test from 	'./datasets/test.csv'
+Reading output from 	'./out/classify.csv'
+Done ./target/eval in 	6.685842s
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     19677	       318	
+     A	|	         0	         0	
+     N	|	    427502	    205960	
+Total 	653457
+Hits 	205963 (31.518983%)
+Misses 	447494 (68.481017%)

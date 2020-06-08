@@ -28,15 +28,7 @@ typedef struct match {
 
 #ifndef MINAS_FUNCS
 #define MINAS_FUNCS
-double MNS_distance(float a[], float b[]);
-int MNS_readExample(Point *ex, FILE *file);
-int MNS_printFloatArr(float* value);
-int MNS_printPoint(Point *point);
-int MNS_printCluster(Cluster *cl);
-int MNS_printModel(Model* model);
-int MNS_readCluster(char *line, Cluster *cl, const char *filename, const char *sep);
-int MNS_classify(Model* model, Point *example, Match *match);
-Model *MNS_readModelFile(const char *filename);
+double MNS_distance(float a[], float b[], int dimension);
 #endif // MINAS_FUNCS
 
 #endif // MINAS_H

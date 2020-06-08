@@ -8,7 +8,6 @@
 #include <err.h>
 #include <string.h>
 
-#include "./strsep.c"
 #include "./minas.h"
 
 // #define SQR_DISTANCE 1
@@ -24,30 +23,6 @@ double MNS_distance(float a[], float b[], int dimension) {
     #else
         return sqrt(distance);
     #endif // SQR_DISTANCE
-}
-
-int MNS_classify(Model* model, Point *example, Match *match, int dimension) {
-    // since most problems are in the range [0,1], max distance is sqrt(dimesion)
-    match->distance = (float) dimension;
-    match->pointId = example->id;
-    for (int i = 0; i < model->size; i++) {
-        float distance = MNS_distance(model->vals[i].center, example->value, dimension);
-        if (match->distance > distance) {
-            match->clusterId = model->vals[i].id;
-            match->label = model->vals[i].label;
-            match->radius = model->vals[i].radius;
-            match->distance = distance;
-        }
-    }
-    /*
-    printf(
-        "classify x_%d [0]=%f => min=%e, max=%e, (c0=%e, c=%d, r=%e, m=%d, l=%c)\n",
-        example->id, example->value[0], min, max, minCluster->center[0], minCluster->id,
-        minCluster->radius, min <= minCluster->radius, minCluster->label
-    );
-    */
-    match->isMatch = match->distance <= match->radius ? 'y' : 'n';
-    return match->isMatch;
 }
 
 int MNS_printFloatArr(float* value, int dimension) {
@@ -88,19 +63,27 @@ int MNS_printModel(Model* model, int dimension) {
     return pr;
 }
 
-Model *MNS_readModelFile(const char *filename, int dimension) {
+int MNS_classifier() {
+    char *modelName = "datasets/model-clean.csv";
+    char *testName = "datasets/test.csv";
+    #ifdef SQR_DISTANCE
+        fprintf(stderr, "Using Square distance (d²)\n");
+    #endif // SQR_DISTANCE
+    int dimension = 22;
     clock_t start = clock();
-    fprintf(stderr, "Reading model from \t%-30s\n", filename);
-    //
-    FILE *modelFile = fopen(filename, "r");
-    if (modelFile == NULL) {
-        errx(EXIT_FAILURE, "bad file open '%s'", filename);
-    }
-    Model *model = malloc(sizeof(Model));
-    model->vals = malloc(1 * sizeof(Cluster));
-    // char *separators = strdup("\n, []");
     #define line_len 10 * 1024
     char line[line_len];
+    //
+    Model *model;
+    //
+    fprintf(stderr, "Reading model from \t%-30s\n", modelName);
+    //
+    FILE *modelFile = fopen(modelName, "r");
+    if (modelFile == NULL) {
+        errx(EXIT_FAILURE, "bad file open '%s'", modelName);
+    }
+    model = malloc(sizeof(Model));
+    model->vals = malloc(1 * sizeof(Cluster));
     model->size = 0;
     while (fgets(line, line_len, modelFile)) {
         if (*line == '#') continue;
@@ -130,55 +113,52 @@ Model *MNS_readModelFile(const char *filename, int dimension) {
     }
     fclose(modelFile);
     fprintf(stderr, "Model read took \t%-30fs\n", ((double)(clock() - start)) / ((double)1000000));
-    return model;
-}
-
-/**
- * Fills an Point with the string format
- * 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
- */
-int MNS_readExample(Point *ex, FILE *file) {
-    #define line_len 10 * 1024
-    char line[line_len];
-    if (feof(file) || fgets(line, line_len, file) == 0) return 0;
-    // while (line[0] == '#') if (!fgets(line, line_len, file)) return 0;
-    int assigned = sscanf(line,
-        "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f"
-        "%c\n",
-        &ex->value[0], &ex->value[1], &ex->value[2], &ex->value[3], &ex->value[4],
-        &ex->value[5], &ex->value[6], &ex->value[7], &ex->value[8], &ex->value[9],
-        &ex->value[10], &ex->value[11], &ex->value[12], &ex->value[13], &ex->value[14],
-        &ex->value[15], &ex->value[16], &ex->value[17], &ex->value[18], &ex->value[19],
-        &ex->value[20], &ex->value[21], &ex->label
-    );
-    ex->id++;
-    return !feof(file) && (assigned == 23);
-}
-
-int MNS_classifier() {
-    char *modelName = "datasets/model-clean.csv";
-    char *testName = "datasets/test.csv";
-    #ifdef SQR_DISTANCE
-        fprintf(stderr, "Using Square distance (d²)\n");
-    #endif // SQR_DISTANCE
-    int dimension = 22;
-    clock_t start = clock();
     //
-    Model *model;
-    model = MNS_readModelFile(modelName, dimension);
-    //
-    Point example;
-    example.value = malloc(dimension * sizeof(float));
-    example.id = -1;
+    Point ex;
+    ex.value = malloc(dimension * sizeof(float));
+    ex.id = -1;
     Match match;
     //
     fprintf(stderr, "Reading test from %30s\n", testName);
     FILE *kyotoOnl = fopen(testName, "r");
     if (kyotoOnl == NULL) errx(EXIT_FAILURE, "bad file open '%s'", testName);
-    // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
     printf("#id,isMach,clusterId,label,distance,radius\n");
-    while (MNS_readExample(&example, kyotoOnl)) {
-        MNS_classify(model, &example, &match, dimension);
+    while (fgets(line, line_len, kyotoOnl)) {
+        if (line[0] == '#') continue;
+        // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
+        int assigned = sscanf(line,
+            "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f"
+            "%c\n",
+            &ex.value[0], &ex.value[1], &ex.value[2], &ex.value[3], &ex.value[4],
+            &ex.value[5], &ex.value[6], &ex.value[7], &ex.value[8], &ex.value[9],
+            &ex.value[10], &ex.value[11], &ex.value[12], &ex.value[13], &ex.value[14],
+            &ex.value[15], &ex.value[16], &ex.value[17], &ex.value[18], &ex.value[19],
+            &ex.value[20], &ex.value[21], &ex.label
+        );
+        if (assigned != 23) break;
+        ex.id++;
+        //
+        // since most problems are in the range [0,1], max distance is sqrt(dimesion)
+        match.distance = (float) dimension;
+        match.pointId = ex.id;
+        for (int i = 0; i < model->size; i++) {
+            float distance = MNS_distance(model->vals[i].center, ex.value, dimension);
+            if (match.distance > distance) {
+                match.clusterId = model->vals[i].id;
+                match.label = model->vals[i].label;
+                match.radius = model->vals[i].radius;
+                match.distance = distance;
+            }
+        }
+        /*
+        printf(
+            "classify x_%d [0]=%f => min=%e, max=%e, (c0=%e, c=%d, r=%e, m=%d, l=%c)\n",
+            ex.id, ex.value[0], min, max, minCluster->center[0], minCluster->id,
+            minCluster->radius, min <= minCluster->radius, minCluster->label
+        );
+        */
+        match.isMatch = match.distance <= match.radius ? 'y' : 'n';
+        //
         
         printf("%d,%c,%d,%c,%f,%f\n",
             match.pointId, match.isMatch, match.clusterId,
@@ -186,7 +166,7 @@ int MNS_classifier() {
     }
     fclose(kyotoOnl);
     // MNS_classifier(model, argv[2]);
-    fprintf(stderr, "Total examples \t%d =? 653456\n", example.id);
+    fprintf(stderr, "Total examples \t%d =? 653456\n", ex.id);
 
     for (int i = 0; i < model->size; i++) {
         free(model->vals[i].center);

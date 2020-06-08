@@ -1,0 +1,5 @@
+Reading model from 	datasets/model-clean.csv      
+Model read took 	0.007944                      s
+Reading test from              datasets/test.csv
+Total examples 	653456 =? 653456
+Done MNS_classifier in 	81.737736s

@@ -94,7 +94,7 @@ int main(int argc, char const *argv[]) {
         j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label : '-');
         //
         confusionMatrix[j][i]++;
-        if (i == j) hits++;
+        if (match.isMatch == 'y' && l == match.label) hits++;
         // if (i > 1) break;
     }
     fclose(test);

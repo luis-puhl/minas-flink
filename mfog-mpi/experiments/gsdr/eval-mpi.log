@@ -1,0 +1,252 @@
+Processor gsdr, Rank 0 out of 40 processors
+[0] Reading model from 	datasets/model-clean.csv
+[0] Read model with 100 clusters took 	0.001187s
+[0] Sending to 1
+[14] Waiting for model
+[16] Waiting for model
+[18] Waiting for model
+[13] Waiting for model
+[3] Waiting for model
+[8] Waiting for model
+[6] Waiting for model
+[9] Waiting for model
+[10] Waiting for model
+[15] Waiting for model
+[17] Waiting for model
+[21] Waiting for model
+[24] Waiting for model
+[26] Waiting for model
+[30] Waiting for model
+[38] Waiting for model
+[39] Waiting for model
+[37] Waiting for model
+[19] Waiting for model
+[4] Waiting for model
+[7] Waiting for model
+[20] Waiting for model
+[22] Waiting for model
+[23] Waiting for model
+[32] Waiting for model
+[35] Waiting for model
+[36] Waiting for model
+[1] Waiting for model
+[1] Model size to recv 100
+[0] Sending to 2
+[34] Waiting for model
+[1] Recv model with 100 clusters took 	0.000324s
+[31] Waiting for model
+[33] Waiting for model
+[0] Sending to 3
+[0] Sending to 4
+[0] Sending to 5
+[2] Waiting for model
+[2] Model size to recv 100
+[2] Recv model with 100 clusters took 	0.000274s
+[3] Model size to recv 100
+[3] Recv model with 100 clusters took 	0.033849s
+[4] Model size to recv 100
+[4] Recv model with 100 clusters took 	0.030506s
+[5] Waiting for model
+[11] Waiting for model
+[12] Waiting for model
+[25] Waiting for model
+[27] Waiting for model
+[28] Waiting for model
+[29] Waiting for model
+[0] Sending to 6
+[0] Sending to 7
+[0] Sending to 8
+[5] Model size to recv 100
+[5] Recv model with 100 clusters took 	0.037557s
+[6] Model size to recv 100
+[6] Recv model with 100 clusters took 	0.072063s
+[7] Model size to recv 100
+[7] Recv model with 100 clusters took 	0.075750s
+[8] Model size to recv 100
+[0] Sending to 9
+[8] Recv model with 100 clusters took 	0.101059s
+[0] Sending to 10
+[0] Sending to 11
+[9] Model size to recv 100
+[9] Recv model with 100 clusters took 	0.110033s
+[10] Model size to recv 100
+[10] Recv model with 100 clusters took 	0.121318s
+[0] Sending to 12
+[0] Sending to 13
+[0] Sending to 14
+[0] Sending to 15
+[0] Sending to 16
+[0] Sending to 17
+[11] Model size to recv 100
+[11] Recv model with 100 clusters took 	0.102850s
+[12] Model size to recv 100
+[12] Recv model with 100 clusters took 	0.091486s
+[13] Model size to recv 100
+[13] Recv model with 100 clusters took 	0.150974s
+[14] Model size to recv 100
+[14] Recv model with 100 clusters took 	0.155562s
+[15] Model size to recv 100
+[15] Recv model with 100 clusters took 	0.149983s
+[16] Model size to recv 100
+[16] Recv model with 100 clusters took 	0.156068s
+[17] Model size to recv 100
+[0] Sending to 18
+[17] Recv model with 100 clusters took 	0.180252s
+[18] Model size to recv 100
+[0] Sending to 19
+[0] Sending to 20
+[18] Recv model with 100 clusters took 	0.293308s
+[19] Model size to recv 100
+[19] Recv model with 100 clusters took 	0.267885s
+[20] Model size to recv 100
+[0] Sending to 21
+[20] Recv model with 100 clusters took 	0.384696s
+[21] Model size to recv 100
+[0] Sending to 22
+[0] Sending to 23
+[21] Recv model with 100 clusters took 	0.430944s
+[22] Model size to recv 100
+[22] Recv model with 100 clusters took 	0.425358s
+[23] Model size to recv 100
+[0] Sending to 24
+[23] Recv model with 100 clusters took 	0.442339s
+[24] Model size to recv 100
+[0] Sending to 25
+[24] Recv model with 100 clusters took 	0.454399s
+[25] Model size to recv 100
+[0] Sending to 26
+[25] Recv model with 100 clusters took 	0.426587s
+[26] Model size to recv 100
+[0] Sending to 27
+[0] Sending to 28
+[27] Model size to recv 100
+[27] Recv model with 100 clusters took 	0.521622s
+[28] Model size to recv 100
+[26] Recv model with 100 clusters took 	0.568468s
+[0] Sending to 29
+[28] Recv model with 100 clusters took 	0.599568s
+[29] Model size to recv 100
+[0] Sending to 30
+[30] Model size to recv 100
+[0] Sending to 31
+[30] Recv model with 100 clusters took 	0.717849s
+[31] Model size to recv 100
+[0] Sending to 32
+[31] Recv model with 100 clusters took 	0.698477s
+[0] Sending to 33
+[0] Sending to 34
+[0] Sending to 35
+[0] Sending to 36
+[29] Recv model with 100 clusters took 	0.686041s
+[32] Model size to recv 100
+[32] Recv model with 100 clusters took 	0.704701s
+[33] Model size to recv 100
+[33] Recv model with 100 clusters took 	0.709420s
+[34] Model size to recv 100
+[34] Recv model with 100 clusters took 	0.714753s
+[35] Model size to recv 100
+[35] Recv model with 100 clusters took 	0.727519s
+[36] Model size to recv 100
+[0] Sending to 37
+[0] Sending to 38
+[0] Sending to 39
+[36] Recv model with 100 clusters took 	0.745428s
+[37] Model size to recv 100
+[37] Recv model with 100 clusters took 	0.755943s
+[38] Model size to recv 100
+[38] Recv model with 100 clusters took 	0.758535s
+[39] Model size to recv 100
+[0] Send model with 100 clusters took 	0.860082s
+[0]108 Reading test from    datasets/test.csv
+[39] Recv model with 100 clusters took 	0.862428s
+[1] Rcv/Classify Test with 16756 examples took 	204.983726s
+[1] Finalizing in 	204.983732s
+[3] Rcv/Classify Test with 16756 examples took 	206.445200s
+[3] Finalizing in 	206.445209s
+[7] Rcv/Classify Test with 16756 examples took 	206.904135s
+[7] Finalizing in 	206.904145s
+[8] Rcv/Classify Test with 16756 examples took 	204.688812s
+[8] Finalizing in 	204.688824s
+[9] Rcv/Classify Test with 16756 examples took 	206.147537s
+[9] Finalizing in 	206.147550s
+[13] Rcv/Classify Test with 16755 examples took 	205.996719s
+[13] Finalizing in 	205.996727s
+[15] Rcv/Classify Test with 16755 examples took 	206.426238s
+[15] Finalizing in 	206.426249s
+[17] Rcv/Classify Test with 16755 examples took 	205.695433s
+[17] Finalizing in 	205.695441s
+[19] Rcv/Classify Test with 16755 examples took 	207.036590s
+[19] Finalizing in 	207.036599s
+[20] Rcv/Classify Test with 16755 examples took 	204.974667s
+[20] Finalizing in 	204.974675s
+[21] Rcv/Classify Test with 16755 examples took 	205.541818s
+[21] Finalizing in 	205.541829s
+[23] Rcv/Classify Test with 16755 examples took 	206.641957s
+[23] Finalizing in 	206.641964s
+[25] Rcv/Classify Test with 16755 examples took 	206.791566s
+[25] Finalizing in 	206.791573s
+[26] Rcv/Classify Test with 16755 examples took 	205.970868s
+[26] Finalizing in 	205.970876s
+[27] Rcv/Classify Test with 16755 examples took 	206.178281s
+[27] Finalizing in 	206.178288s
+[11] Rcv/Classify Test with 16756 examples took 	205.076343s
+[11] Finalizing in 	205.076350s
+[2] Rcv/Classify Test with 16756 examples took 	206.561425s
+[2] Finalizing in 	206.561436s
+[6] Rcv/Classify Test with 16756 examples took 	206.467126s
+[6] Finalizing in 	206.467133s
+[4] Rcv/Classify Test with 16756 examples took 	206.931825s
+[4] Finalizing in 	206.931832s
+[12] Rcv/Classify Test with 16756 examples took 	206.993894s
+[12] Finalizing in 	206.993902s
+[5] Rcv/Classify Test with 16756 examples took 	206.201925s
+[5] Finalizing in 	206.201931s
+[22] Rcv/Classify Test with 16755 examples took 	204.718209s
+[24] Rcv/Classify Test with 16755 examples took 	205.160455s
+[24] Finalizing in 	205.160471s
+[22] Finalizing in 	204.718226s
+[14] Rcv/Classify Test with 16755 examples took 	205.974475s
+[14] Finalizing in 	205.974483s
+[0] Send Test with 653457 examples took 	207.469217s
+[0] Finalizing in 	207.469231s
+[31] Rcv/Classify Test with 16755 examples took 	207.104123s
+[33] Rcv/Classify Test with 16755 examples took 	206.457543s
+[33] Finalizing in 	206.457555s
+[34] Rcv/Classify Test with 16755 examples took 	204.351258s
+[34] Finalizing in 	204.351269s
+[36] Rcv/Classify Test with 16755 examples took 	206.128868s
+[36] Finalizing in 	206.128883s
+[31] Finalizing in 	207.104132s
+[30] Rcv/Classify Test with 16755 examples took 	207.136344s
+[30] Finalizing in 	207.136359s
+[29] Rcv/Classify Test with 16755 examples took 	205.432195s
+[29] Finalizing in 	205.432206s
+[35] Rcv/Classify Test with 16755 examples took 	206.157820s
+[35] Finalizing in 	206.157836s
+[37] Rcv/Classify Test with 16755 examples took 	205.486331s
+[37] Finalizing in 	205.486347s
+[39] Rcv/Classify Test with 16755 examples took 	206.287002s
+[39] Finalizing in 	206.287018s
+[38] Rcv/Classify Test with 16755 examples took 	206.470286s
+[38] Finalizing in 	206.470308s
+[10] Rcv/Classify Test with 16756 examples took 	206.699326s
+[10] Finalizing in 	206.699333s
+[28] Rcv/Classify Test with 16755 examples took 	206.560963s
+[28] Finalizing in 	206.560971s
+[32] Rcv/Classify Test with 16755 examples took 	207.437625s
+[32] Finalizing in 	207.437730s
+[16] Rcv/Classify Test with 16755 examples took 	205.193799s
+[16] Finalizing in 	205.193806s
+[18] Rcv/Classify Test with 16755 examples took 	205.721484s
+[18] Finalizing in 	205.721495s
+Reading test from 	'./datasets/test.csv'
+Reading output from 	'./out/classify-mpi.csv'
+Done ./target/eval in 	9.637536s
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	      3224	       994	
+     A	|	         0	         0	
+     N	|	    443955	    205284	
+Total 	653457
+Hits 	205287 (31.415533%)
+Misses 	448170 (68.584467%)
