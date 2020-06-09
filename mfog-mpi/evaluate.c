@@ -49,7 +49,7 @@ int main(int argc, char const *argv[]) {
     if (argc != 3) {
         errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
     }
-    fprintf(stderr,
+    printf("\n"
         "Reading test from      '%s'\n"
         "Reading output from    '%s'\n",
         argv[1], argv[2]
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[]) {
     confusionMatrix[0] = malloc(confusionSize * sizeof(int));
     //
     Point example;
-    example.value = malloc(dimension * sizeof(float));
+    example.value = malloc(dimension * sizeof(double));
     example.id = 0;
     Match match;
     //
@@ -81,25 +81,21 @@ int main(int argc, char const *argv[]) {
     int i, j, hits = 0;
     while (!(feof(test) || feof(class))) {
         for (int i = 0; i < dimension; i++) {
-            fscanf(test, "%f,", &(example.value[i]));
+            fscanf(test, "%lf,", &(example.value[i]));
         }
         fscanf(test, "%c\n", &l);
         example.id++;
         //
-        fscanf(class, "%d,%c,%d,%c,%f,%f\n", &(match.pointId), &(match.isMatch), &(match.clusterId), &(match.label), &(match.distance), &(match.radius));
+        fscanf(class, "%d,%c,%d,%c,%lf,%lf\n",
+            &(match.pointId), &(match.isMatch), &(match.clusterId),
+            &(match.label), &(match.distance), &(match.radius)
+        );
         //
-        // printMatrix(&confusionSize, &labels, &confusionMatrix);
-        // printf("(%c-%d, %c-%d, %c-%d,)\n", l, l, match.isMatch, match.isMatch, match.label, match.label);
-        // if (l == '\0' || match.label == '\0') {
-        //     printf("stupid label %c_%d %c_%d\n", l, l, match.label, match.label);
-        //     break;
-        // }
         i = findLabelIndex(&confusionSize, &labels, &confusionMatrix, l);
         j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label : '-');
         //
         confusionMatrix[j][i]++;
         if (match.isMatch == 'y' && l == match.label) hits++;
-        // if (i > 1) break;
     }
     fclose(test);
     fclose(class);
