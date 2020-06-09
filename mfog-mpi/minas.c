@@ -25,43 +25,6 @@ double MNS_distance(float a[], float b[], int dimension) {
     #endif // SQR_DISTANCE
 }
 
-int MNS_printFloatArr(float* value, int dimension) {
-    if (value == NULL) return 0;
-    int pr = 0;
-    for (int i = 0; i < dimension; i++) {
-        pr += printf("%f, ", value[i]);
-    }
-    return pr;
-}
-int MNS_printPoint(Point *point, int dimension) {
-    if (point == NULL) return 0;
-    int pr = printf("Point(id=%d, value=[", point->id);
-    pr += MNS_printFloatArr(point->value, dimension);
-    pr += printf("])\n");
-    return pr;
-}
-int MNS_printCluster(Cluster *cl, int dimension) {
-    if (cl == NULL) return 0;
-    int pr = printf("Cluster(id=%d, lbl=%c, tm=%d, r=%f, center=[", cl->id, cl->label, cl->time, cl->radius);
-    pr += MNS_printFloatArr(cl->center, dimension);
-    pr += printf("])\n");
-    return pr;
-}
-int MNS_printModel(Model* model, int dimension) {
-    char *labels;
-    labels = (char *) malloc(model->size * 3 * sizeof(char));
-    for (int i = 0; i < model->size * 3; i += 3){
-        labels[i] = model->vals[i].label;
-        labels[i + 1] = ',';
-        labels[i + 2] = ' ';
-    }
-    int pr = printf("Model(size=%d, labels=[%s])\n", model->size, labels);
-    free(labels);
-    for (int i = 0; i < model->size; i++){
-        pr += MNS_printCluster(&(model->vals[i]), dimension);
-    }
-    return pr;
-}
 
 int MNS_classifier() {
     char *modelName = "datasets/model-clean.csv";
@@ -160,7 +123,7 @@ int MNS_classifier() {
         match.isMatch = match.distance <= match.radius ? 'y' : 'n';
         //
         
-        printf("%d,%c,%d,%c,%f,%f\n",
+        printf("%d,%c,%d,%c,%e,%e\n",
             match.pointId, match.isMatch, match.clusterId,
             match.label, match.distance, match.radius);
     }

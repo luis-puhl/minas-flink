@@ -14,12 +14,12 @@ install:
 	mkdir out target experiments
 
 target/mfog: mfog.c
-	mpicc mfog.c -o target/mfog $(CXXFLAGS)
+	mpicc mfog.c -o target/mfog -lm -std=c1x -Wall -g
 
-target/minas-mpi: minas-mpi.c
-	clang-tidy minas-mpi.c
-	# mpicc minas-mpi.c -o target/minas-mpi -lm -Wall -g
-	gcc minas-mpi.c -pthread -Wl,-rpath -Wl,/usr/lib/openmpi -Wl,--enable-new-dtags -L/usr/lib/openmpi -lmpi -lm -std=c1x -Wall -g -o target/minas-mpi
+target/mfog: mfog.c
+	clang-tidy mfog.c
+	# mpicc mfog.c -o target/mfog -lm -Wall -g
+	gcc mfog.c -pthread -Wl,-rpath -Wl,/usr/lib/openmpi -Wl,--enable-new-dtags -L/usr/lib/openmpi -lmpi -lm -std=c1x -Wall -g -o target/mfog
 
 run:
 	mpiexec ./target/mfog
@@ -29,17 +29,17 @@ clean:
 
 target/minas: minas.c
 	# clang-tidy minas.c
-	gcc minas.c -o target/minas $(CXXFLAGS)
+	gcc minas.c -o target/minas -lm -std=c1x -Wall -g 
 target/eval: evaluate.c
-	gcc evaluate.c -o target/eval $(CXXFLAGS)
+	gcc evaluate.c -o target/eval -lm -std=c1x -Wall -g 
 
 out/classify.csv: target/minas
 	$(PERF)./target/minas > out/classify.csv 2>experiments/eval.log
 experiments/eval.log: target/eval datasets/test.csv out/classify.csv
 	./target/eval ./datasets/test.csv ./out/classify.csv >> experiments/eval.log 2>>experiments/eval.log
 
-out/classify-mpi.csv: target/minas-mpi
-	$(PERF)mpiexec ./target/minas-mpi > out/classify-mpi.csv 2>experiments/eval-mpi.log
+out/classify-mpi.csv: target/mfog
+	$(PERF)mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
 experiments/eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv
 	./target/eval ./datasets/test.csv ./out/classify-mpi.csv >> experiments/eval-mpi.log 2>>experiments/eval-mpi.log
 
@@ -64,10 +64,10 @@ watch:
 cluster:
 	# mpirun [ -np X ] [ --hostfile <filename> ]  <program>
 	# --map-by ppr:n:node
-	mpirun -np 4 --host localhost,192.168.15.10 target/minas-mpi
+	mpirun -np 4 --host localhost,192.168.15.10 target/mfog
 
-cloud/minas.tar: minas.c minas.h minas-mpi.c makefile evaluate.c
-	tar -cvf cloud/minas.tar minas.c minas.h minas-mpi.c makefile evaluate.c
+cloud/minas.tar: minas.c minas.h mfog.c makefile evaluate.c
+	tar -cvf cloud/minas.tar minas.c minas.h mfog.c makefile evaluate.c
 
-gsdr/minas-mpi.o: minas-mpi.c
-	gcc minas-mpi.c -o gsdr/minas-mpi.o -Wl,-Bsymbolic-functions -Wl,-z,relro -I/usr/include/mpich -L/usr/lib/x86_64-linux-gnu -lmpich
+gsdr/mfog.o: mfog.c
+	gcc mfog.c -o gsdr/mfog.o -Wl,-Bsymbolic-functions -Wl,-z,relro -I/usr/include/mpich -L/usr/lib/x86_64-linux-gnu -lmpich

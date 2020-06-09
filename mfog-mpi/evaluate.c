@@ -49,7 +49,11 @@ int main(int argc, char const *argv[]) {
     if (argc != 3) {
         errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
     }
-    fprintf(stderr, "Reading test from \t'%s'\nReading output from \t'%s'\n", argv[1], argv[2]);
+    fprintf(stderr,
+        "Reading test from      '%s'\n"
+        "Reading output from    '%s'\n",
+        argv[1], argv[2]
+    );
     int dimension = 22;
     clock_t start = clock();
     int confusionSize = 1;
@@ -74,7 +78,7 @@ int main(int argc, char const *argv[]) {
         errx(EXIT_FAILURE, "bad file format '%s'", argv[2]);
     }// else { printf("%s\n", header); }
     char l;
-    int i, j, hits;
+    int i, j, hits = 0;
     while (!(feof(test) || feof(class))) {
         for (int i = 0; i < dimension; i++) {
             fscanf(test, "%f,", &(example.value[i]));
