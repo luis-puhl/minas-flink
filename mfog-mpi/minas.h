@@ -3,13 +3,13 @@
 #include <stdio.h>
 
 typedef struct point {
-    unsigned int id;
+    int id;
     double *value;
     char label;
 } Point;
 
 typedef struct cluster {
-    unsigned int id, matches;
+    int id, matches;
     char label, category;
     double radius, meanDistance, *center;
     int time;
@@ -17,11 +17,11 @@ typedef struct cluster {
 
 typedef struct model {
     Cluster* vals;
-    int size;
+    int size, dimension;
 } Model;
 
 typedef struct match {
-    unsigned int pointId, clusterId;
+    int pointId, clusterId;
     char isMatch, label;
     double distance, radius;
 } Match;

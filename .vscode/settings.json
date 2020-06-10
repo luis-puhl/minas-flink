@@ -4,7 +4,8 @@
     "files.associations": {
         "cstdlib": "c",
         "*.tcc": "c",
-        "memory": "c"
+        "memory": "c",
+        "random": "c"
     },
     "cSpell.words": [
         "MFOG",

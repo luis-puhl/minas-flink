@@ -90,6 +90,14 @@ int main(int argc, char const *argv[]) {
             &(match.pointId), &(match.isMatch), &(match.clusterId),
             &(match.label), &(match.distance), &(match.radius)
         );
+        if (match.pointId != example.id) {
+            fflush(stderr);
+            fflush(stdout);
+            errx( EXIT_FAILURE,
+                "Source and test stream are not aligned. Expected id %d and got %d.\n",
+                example.id, match.pointId
+            );
+        }
         //
         i = findLabelIndex(&confusionSize, &labels, &confusionMatrix, l);
         j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label : '-');
@@ -112,6 +120,6 @@ int main(int argc, char const *argv[]) {
     }
     free(confusionMatrix);
     free(labels);
-    fprintf(stderr, "Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
+    printf("Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
     exit(EXIT_SUCCESS);
 }

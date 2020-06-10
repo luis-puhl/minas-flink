@@ -16,11 +16,11 @@ target/eval: evaluate.c
 targets: target/mfog target/minas target/eval
 
 out/classify.csv: target/minas datasets/model-clean.csv datasets/test.csv
-	# perf stat ./target/minas > out/classify.csv 2>experiments/eval.log
-	./target/minas > out/classify.csv 2>experiments/eval.log
+	perf stat ./target/minas > out/classify.csv 2>experiments/eval.log
+	# ./target/minas > out/classify.csv 2>experiments/eval.log
 out/classify-mpi.csv: target/mfog datasets/model-clean.csv datasets/test.csv
-	# perf stat mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
-	mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
+	perf stat mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
+	# mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
 experiments/eval.log: target/eval datasets/test.csv out/classify.csv
 	./target/eval datasets/test.csv out/classify.csv >> experiments/eval.log 2>&1
 experiments/eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv

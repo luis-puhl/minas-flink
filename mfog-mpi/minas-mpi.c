@@ -8,37 +8,51 @@
 
 #include "./minas.h"
 
+#define MFOG_MASTER_RANK 0
+
 void sendModel(int dimension, Model *model, int clRank, int clSize) {
     // MPI_Broadcast
     // MPI_Pack
     clock_t start = clock();
-    for (int dest = 1; dest < clSize; dest++) {
-        // fprintf(stderr, "[%d] Sending to %d\n", clRank, dest);
-        MPI_Send(model, sizeof(Model), MPI_BYTE, dest, 2000, MPI_COMM_WORLD);
-        for (int i = 0; i < model->size; i++) {
-            Cluster *cl = &(model->vals[i]);
-            MPI_Send(cl, sizeof(Cluster), MPI_BYTE, dest, 2002, MPI_COMM_WORLD);
-            MPI_Send(cl->center, dimension, MPI_DOUBLE, dest, 2003, MPI_COMM_WORLD);
-        }
+    
+    int bufferSize = sizeof(Model) +
+        (model->size) * sizeof(Cluster) +
+        dimension * (model->size) * sizeof(double);
+    char *buffer = malloc(bufferSize);
+    int position = 0;
+    MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    MPI_Pack(model->vals, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    for (int i = 0; i < model->size; i++) {
+        MPI_Pack(model->vals[i].center, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
     }
-    fprintf(stderr, "[%d] Send model with %d clusters took \t%lfs\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
+    // position = bufferSize
+    if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
+    MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    // MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    free(buffer);
+    fprintf(stderr, "[%d] Send model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
 }
 
 void receiveModel(int dimension, Model *model, int clRank) {
     clock_t start = clock();
-    // fprintf(stderr, "[%d] Waiting for model\n", clRank);
-    MPI_Status status;
-    MPI_Recv(model, sizeof(Model), MPI_BYTE, MPI_ANY_SOURCE, 2000, MPI_COMM_WORLD, &status);
+    int bufferSize;
+    MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    // fprintf(stderr, "[%d] Model size to recv %d\n", clRank, bufferSize);
+    char *buffer = malloc(bufferSize);
+    // MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+
+    int position = 0;
+    MPI_Unpack(buffer, bufferSize, &position, model, sizeof(Model), MPI_BYTE, MPI_COMM_WORLD);
     model->vals = malloc(model->size * sizeof(Cluster));
-    // fprintf(stderr, "[%d] Model size to recv %d\n", clRank, model->size);
+    MPI_Unpack(buffer, bufferSize, &position, model->vals, model->size * sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD);
     for (int i = 0; i < model->size; i++) {
-        Cluster *cl = &(model->vals[i]);
-        MPI_Recv(cl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, 2002, MPI_COMM_WORLD, &status);
-        double *center = malloc(dimension * sizeof(double));
-        MPI_Recv(center, dimension, MPI_DOUBLE, MPI_ANY_SOURCE, 2003, MPI_COMM_WORLD, &status);
-        cl->center = center;
+        model->vals[i].center = malloc(model->dimension * sizeof(double));
+        MPI_Unpack(buffer, bufferSize, &position, model->vals[i].center, model->dimension, MPI_DOUBLE, MPI_COMM_WORLD);
     }
-    fprintf(stderr, "[%d] Recv model with %d clusters took \t%lfs\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
+    free(buffer);
+    fprintf(stderr, "[%d] Recv model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
 }
 
 int sendExamples(int dimension, Point *examples, int clSize) {
@@ -100,51 +114,43 @@ int MFOG_main(int argc, char **argv) {
     if (clSize <= 1) {
         errx(EXIT_FAILURE, "Cluster with only one node.");
     }
-    //
-    int dimension = 22;
-
     /*
-        # Root:
+    # Root:
         - Read Model
         - Broadcast Model
         - Read Examples
         - Start Timer
         - Send Examples Loop
         - Close/clean-up
-        # Dispatcher
-        # Workers:
+    # Dispatcher
+    # Workers:
         - Rcv Model
         - Rcv Example
         - Classify
     */
+    Model model;
+    model.dimension = 22;
     if (clRank == 0) {
-        Model model;
         char *modelName = "datasets/model-clean.csv";
-        readModel(dimension, modelName, &model);
-        sendModel(dimension, &model, clRank, clSize);
+        readModel(model.dimension, modelName, &model);
+        sendModel(model.dimension, &model, clRank, clSize);
 
         char *testName = "datasets/test.csv";
         Point *examples;
-        examples = readExamples(dimension, testName);
+        examples = readExamples(model.dimension, testName);
         
         clock_t start = clock();
         printf("#id,isMach,clusterId,label,distance,radius\n");
-        int exampleCounter = sendExamples(dimension, examples, clSize);
+        int exampleCounter = sendExamples(model.dimension, examples, clSize);
         
-        int eofMarker;
-        MPI_Status status;
-        for (int dest = 1; dest < clSize; dest++) {
-            MPI_Recv(&eofMarker, 1, MPI_INT, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, &status);
-        }
+        MPI_Barrier(MPI_COMM_WORLD);
         fprintf(stderr, "Classification with %d examples took \t%lfs\n", exampleCounter, ((double)(clock() - start)) / ((double)1000000));
     } else {
-        Model model;
-        receiveModel(dimension, &model, clRank);
+        receiveModel(model.dimension, &model, clRank);
         
-        receiveExamples(dimension, &model, clRank);
-
-        int eofMarker = EOF;
-        MPI_Send(&eofMarker, 1, MPI_INT, 0, 2004, MPI_COMM_WORLD);
+        receiveExamples(model.dimension, &model, clRank);
+        
+        MPI_Barrier(MPI_COMM_WORLD);
     }
     
     MPI_Finalize();
@@ -154,7 +160,9 @@ int MFOG_main(int argc, char **argv) {
 #ifndef MAIN
 #define MAIN
 int main(int argc, char **argv) {
+    clock_t start = clock();
     MFOG_main(argc, argv);
+    fprintf(stderr, "Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
     return 0;
 }
 #endif
