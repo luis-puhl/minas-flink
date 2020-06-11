@@ -147,7 +147,7 @@ int MFOG_main(int argc, char **argv) {
         char *testName = "datasets/test.csv";
         Point *examples;
         examples = readExamples(model.dimension, testName);
-        
+
         clock_t start = clock();
         printf("#id,isMach,clusterId,label,distance,radius\n");
         int exampleCounter = sendExamples(model.dimension, examples, clSize);
