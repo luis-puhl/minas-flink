@@ -95,7 +95,7 @@ int main(int argc, char const *argv[]) {
         if (match.pointId != example.id) {
             int i = 0;
             // after buffer is too big, reuse addresses
-            if (mathcesBufferSize > 1000) {
+            if (mathcesBufferSize > 100) {
                 // try to replace an deleted buffer entry
                 for (i = 0; i < mathcesBufferSize; i++) {
                     if (mathcesBuffer[i].pointId == -1) {
@@ -103,11 +103,13 @@ int main(int argc, char const *argv[]) {
                         break;
                     }
                 }
-                // if no deleted entry has been found, realloc
-                if (i >= mathcesBufferSize) {
-                    mathcesBuffer = realloc(mathcesBuffer, ++mathcesBufferSize * sizeof(Match));
-                    mathcesBuffer[mathcesBufferSize -1] = match;
-                }
+            }
+            // if no deleted entry has been found, realloc
+            if (i >= mathcesBufferSize) {
+                mathcesBuffer = realloc(mathcesBuffer, ++mathcesBufferSize * sizeof(Match));
+                mathcesBuffer[mathcesBufferSize -1] = match;
+            }
+            if (mathcesBufferSize > 100) {
                 // try to replace an deleted buffer entry
                 for (i = 0; i < examplesBufferSize; i++) {
                     if (examplesBuffer[i].id == -1) {
@@ -126,6 +128,9 @@ int main(int argc, char const *argv[]) {
                     if (mathcesBuffer[i].pointId == examplesBuffer[j].id) {
                         match = mathcesBuffer[i];
                         example = examplesBuffer[j];
+                        // delete
+                        mathcesBuffer[i].pointId = -1;
+                        examplesBuffer[j].id = -1;
                         // break outer
                         i = mathcesBufferSize;
                         break;

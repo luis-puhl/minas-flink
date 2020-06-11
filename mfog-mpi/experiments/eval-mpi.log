@@ -1,39 +1,39 @@
 Processor pokebola, Rank 0 out of 4 processors
 Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	1.147000e-03s
-[0] Send model with 100 clusters took 	1.720000e-04s
+Read model with 100 clusters took 	1.042000e-03s
+[1] Recv model with 100 clusters took 	1.143000e-03s
+[2] Recv model with 100 clusters took 	1.149000e-03s
+[3] Recv model with 100 clusters took 	1.234000e-03s
+[0] Send model with 100 clusters took 	1.450000e-04s
 Reading test from     'datasets/test.csv'
-[1] Recv model with 100 clusters took 	1.491000e-03s
-[2] Recv model with 100 clusters took 	1.478000e-03s
-[3] Recv model with 100 clusters took 	1.498000e-03s
-Read test with 653458 examples took 	2.459410e+00s
-Send Test with 653457 examples took 	5.303534s
-[3] Worker classify Test with 217819 examples took 	5.222015s
-[1] Worker classify Test with 217819 examples took 	5.201674s
-[2] Worker classify Test with 217819 examples took 	5.195026s
-Classification with 653457 examples took 	5.303965s
-Done ./target/mfog in 	7.704757s
-Done ./target/mfog in 	7.673646s
-Done ./target/mfog in 	7.689853s
-Done ./target/mfog in 	7.789745s
+Read test with 653458 examples took 	2.184357e+00s
+[1] Worker classify Test with 217820 examples took 	5.106861s
+Send Test with 653457 examples took 	5.131573s
+[2] Worker classify Test with 217820 examples took 	5.093779s
+[3] Worker classify Test with 217820 examples took 	5.067982s
+Classification with 653457 examples took 	5.131635s
+Done ./target/mfog in 	7.271441s
+Done ./target/mfog in 	7.311558s
+Done ./target/mfog in 	7.340196s
+Done ./target/mfog in 	7.300438s
 
  Performance counter stats for 'mpiexec ./target/mfog':
 
-         34,770.89 msec task-clock:u              #    4.323 CPUs utilized          
+         32,849.07 msec task-clock:u              #    4.306 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,497      page-faults:u             #    0.001 M/sec                  
-    83,971,954,716      cycles:u                  #    2.415 GHz                      (60.06%)
-    59,592,899,275      stalled-cycles-frontend:u #   70.97% frontend cycles idle     (60.05%)
-   134,563,885,744      instructions:u            #    1.60  insn per cycle         
-                                                  #    0.44  stalled cycles per insn  (59.90%)
-    23,129,189,427      branches:u                #  665.188 M/sec                    (59.97%)
-        33,846,382      branch-misses:u           #    0.15% of all branches          (60.02%)
+            43,569      page-faults:u             #    0.001 M/sec                  
+    79,089,646,511      cycles:u                  #    2.408 GHz                      (60.00%)
+    56,501,406,570      stalled-cycles-frontend:u #   71.44% frontend cycles idle     (59.98%)
+   127,017,030,400      instructions:u            #    1.61  insn per cycle         
+                                                  #    0.44  stalled cycles per insn  (59.94%)
+    21,665,628,376      branches:u                #  659.551 M/sec                    (60.05%)
+        31,450,611      branch-misses:u           #    0.15% of all branches          (60.03%)
 
-       8.042681666 seconds time elapsed
+       7.628529521 seconds time elapsed
 
-      29.251500000 seconds user
-       5.769241000 seconds sys
+      27.444946000 seconds user
+       5.524305000 seconds sys
 
 
 
@@ -41,10 +41,10 @@ Reading test from      'datasets/test.csv'
 Reading output from    'out/classify-mpi.csv'
       	|	Classes
 Labels	|	         A	         N	
-     -	|	       426	       141	
+     -	|	         5	         2	
      A	|	         0	         0	
-     N	|	    446753	    206137	
+     N	|	    447174	    206276	
 Total 	653457
-Hits 	206137 (31.545610%)
-Misses 	447320 (68.454390%)
-Done ./target/eval in 	2.218666s
+Hits 	206276 (31.566882%)
+Misses 	447181 (68.433118%)
+Done ./target/eval in 	2.366343s
