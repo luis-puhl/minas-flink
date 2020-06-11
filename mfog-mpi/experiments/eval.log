@@ -1,26 +1,26 @@
 Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	1.127000e-03s
+Read model with 100 clusters took 	7.550000e-04s
 Reading test from     'datasets/test.csv'
-Read test with 653458 examples took 	1.865970e+00s
-Done MNS_classifier in 	6.356739s
+Read test with 653458 examples took 	1.918005e+00s
+Done MNS_classifier in 	6.556341s
 
  Performance counter stats for './target/minas':
 
-          8,268.78 msec task-clock:u              #    1.000 CPUs utilized          
+          8,533.32 msec task-clock:u              #    0.999 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
             34,545      page-faults:u             #    0.004 M/sec                  
-    23,607,742,319      cycles:u                  #    2.855 GHz                      (59.99%)
-     9,407,091,333      stalled-cycles-frontend:u #   39.85% frontend cycles idle     (60.02%)
-    52,102,579,693      instructions:u            #    2.21  insn per cycle         
-                                                  #    0.18  stalled cycles per insn  (60.02%)
-     5,534,586,023      branches:u                #  669.335 M/sec                    (60.00%)
-        17,831,871      branch-misses:u           #    0.32% of all branches          (59.97%)
+    24,170,906,132      cycles:u                  #    2.833 GHz                      (60.00%)
+    10,010,935,417      stalled-cycles-frontend:u #   41.42% frontend cycles idle     (59.97%)
+    52,132,930,764      instructions:u            #    2.16  insn per cycle         
+                                                  #    0.19  stalled cycles per insn  (60.00%)
+     5,529,375,728      branches:u                #  647.975 M/sec                    (60.03%)
+        16,735,093      branch-misses:u           #    0.30% of all branches          (60.00%)
 
-       8.270611026 seconds time elapsed
+       8.538861071 seconds time elapsed
 
-       8.091582000 seconds user
-       0.139272000 seconds sys
+       8.322046000 seconds user
+       0.162402000 seconds sys
 
 
 
@@ -34,4 +34,4 @@ Labels	|	         A	         N
 Total 	653457
 Hits 	205961 (31.518677%)
 Misses 	447496 (68.481323%)
-Done ./target/eval in 	2.485386s
+Done ./target/eval in 	2.742512s

@@ -78,7 +78,9 @@ int main(int argc, char const *argv[]) {
         errx(EXIT_FAILURE, "bad file format '%s'", argv[2]);
     }// else { printf("%s\n", header); }
     char l;
-    int i, j, hits = 0;
+    int i, j, hits = 0, mathcesBufferSize = 0, examplesBufferSize = 0;
+    Match *mathcesBuffer = malloc(1 * sizeof(Match));
+    Point *examplesBuffer = malloc(1 * sizeof(Point));
     while (!(feof(test) || feof(class))) {
         for (int i = 0; i < dimension; i++) {
             fscanf(test, "%lf,", &(example.value[i]));
@@ -91,12 +93,45 @@ int main(int argc, char const *argv[]) {
             &(match.label), &(match.distance), &(match.radius)
         );
         if (match.pointId != example.id) {
-            fflush(stderr);
-            fflush(stdout);
-            errx( EXIT_FAILURE,
-                "Source and test stream are not aligned. Expected id %d and got %d.\n",
-                example.id, match.pointId
-            );
+            int i = 0;
+            // after buffer is too big, reuse addresses
+            if (mathcesBufferSize > 1000) {
+                // try to replace an deleted buffer entry
+                for (i = 0; i < mathcesBufferSize; i++) {
+                    if (mathcesBuffer[i].pointId == -1) {
+                        mathcesBuffer[i] = match;
+                        break;
+                    }
+                }
+                // if no deleted entry has been found, realloc
+                if (i >= mathcesBufferSize) {
+                    mathcesBuffer = realloc(mathcesBuffer, ++mathcesBufferSize * sizeof(Match));
+                    mathcesBuffer[mathcesBufferSize -1] = match;
+                }
+                // try to replace an deleted buffer entry
+                for (i = 0; i < examplesBufferSize; i++) {
+                    if (examplesBuffer[i].id == -1) {
+                        examplesBuffer[i] = example;
+                        break;
+                    }
+                }
+            }
+            // if no deleted entry has been found, realloc
+            if (i >= mathcesBufferSize) {
+                examplesBuffer = realloc(examplesBuffer, ++examplesBufferSize * sizeof(Point));
+                examplesBuffer[examplesBufferSize - 1] = example;
+            }
+            for (int i = 0; i < mathcesBufferSize; i++) {
+                for (int j = 0; j < examplesBufferSize; j++) {
+                    if (mathcesBuffer[i].pointId == examplesBuffer[j].id) {
+                        match = mathcesBuffer[i];
+                        example = examplesBuffer[j];
+                        // break outer
+                        i = mathcesBufferSize;
+                        break;
+                    }
+                }
+            }
         }
         //
         i = findLabelIndex(&confusionSize, &labels, &confusionMatrix, l);

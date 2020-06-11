@@ -1,41 +1,50 @@
 Processor pokebola, Rank 0 out of 4 processors
 Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	1.153000e-03s
-[0] Send model with 100 clusters took 	1.370000e-04s
+Read model with 100 clusters took 	1.147000e-03s
+[0] Send model with 100 clusters took 	1.720000e-04s
 Reading test from     'datasets/test.csv'
-[1] Recv model with 100 clusters took 	1.509000e-03s
-[3] Recv model with 100 clusters took 	1.368000e-03s
-[2] Recv model with 100 clusters took 	1.416000e-03s
-Read test with 653458 examples took 	1.966358e+00s
-Send Test with 653457 examples took 	4.781232s
-[3] Worker classify Test with 217819 examples took 	4.757187s
-[2] Worker classify Test with 217819 examples took 	4.760339s
-[1] Worker classify Test with 217819 examples took 	4.772139s
-Classification with 653457 examples took 	4.781340s
-Done ./target/mfog in 	6.759497s
-Done ./target/mfog in 	6.767355s
-Done ./target/mfog in 	6.751075s
-Done ./target/mfog in 	6.747201s
+[1] Recv model with 100 clusters took 	1.491000e-03s
+[2] Recv model with 100 clusters took 	1.478000e-03s
+[3] Recv model with 100 clusters took 	1.498000e-03s
+Read test with 653458 examples took 	2.459410e+00s
+Send Test with 653457 examples took 	5.303534s
+[3] Worker classify Test with 217819 examples took 	5.222015s
+[1] Worker classify Test with 217819 examples took 	5.201674s
+[2] Worker classify Test with 217819 examples took 	5.195026s
+Classification with 653457 examples took 	5.303965s
+Done ./target/mfog in 	7.704757s
+Done ./target/mfog in 	7.673646s
+Done ./target/mfog in 	7.689853s
+Done ./target/mfog in 	7.789745s
 
  Performance counter stats for 'mpiexec ./target/mfog':
 
-         31,362.26 msec task-clock:u              #    4.532 CPUs utilized          
+         34,770.89 msec task-clock:u              #    4.323 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,269      page-faults:u             #    0.001 M/sec                  
-    74,530,089,324      cycles:u                  #    2.376 GHz                      (59.99%)
-    51,926,434,163      stalled-cycles-frontend:u #   69.67% frontend cycles idle     (60.00%)
-   128,846,373,735      instructions:u            #    1.73  insn per cycle         
-                                                  #    0.40  stalled cycles per insn  (60.05%)
-    21,989,790,383      branches:u                #  701.155 M/sec                    (59.99%)
-        31,886,526      branch-misses:u           #    0.15% of all branches          (59.96%)
+            43,497      page-faults:u             #    0.001 M/sec                  
+    83,971,954,716      cycles:u                  #    2.415 GHz                      (60.06%)
+    59,592,899,275      stalled-cycles-frontend:u #   70.97% frontend cycles idle     (60.05%)
+   134,563,885,744      instructions:u            #    1.60  insn per cycle         
+                                                  #    0.44  stalled cycles per insn  (59.90%)
+    23,129,189,427      branches:u                #  665.188 M/sec                    (59.97%)
+        33,846,382      branch-misses:u           #    0.15% of all branches          (60.02%)
 
-       6.919695022 seconds time elapsed
+       8.042681666 seconds time elapsed
 
-      26.177481000 seconds user
-       5.270674000 seconds sys
+      29.251500000 seconds user
+       5.769241000 seconds sys
+
 
 
 Reading test from      'datasets/test.csv'
 Reading output from    'out/classify-mpi.csv'
-eval: Source and test stream are not aligned. Expected id 3 and got 4.
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	       426	       141	
+     A	|	         0	         0	
+     N	|	    446753	    206137	
+Total 	653457
+Hits 	206137 (31.545610%)
+Misses 	447320 (68.454390%)
+Done ./target/eval in 	2.218666s
