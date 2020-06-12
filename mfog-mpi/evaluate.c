@@ -27,6 +27,7 @@ int findLabelIndex(int *confusionSize, char **labels, int ***confusionMatrix, ch
 }
 
 int main(int argc, char *argv[], char **envp) {
+    char *executable = argv[0];
     char *matchesCsv, *examplesCsv, *evaluateLog, *timingLog;
     FILE *matches, *examples, *evaluate, *timing;
     #define VARS_SIZE 4
@@ -161,7 +162,7 @@ int main(int argc, char *argv[], char **envp) {
     // # source, executable, build_date-time, wall-clock, function, elapsed, cores
     double elapsed = ((double)(clock() - start)) / 1000000.0;
     fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, argv[0], __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
     fclose(timing);
     fclose(evaluate);
     exit(EXIT_SUCCESS);

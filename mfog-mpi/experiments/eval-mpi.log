@@ -1,46 +1,35 @@
 Processor pokebola, Rank 0 out of 4 processors
-Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	6.450000e-04s
-[0] Send model with 100 clusters took 	1.280000e-04s
-Reading test from     'datasets/test.csv'
-[2] Recv model with 100 clusters took 	7.270000e-04s
-[1] Recv model with 100 clusters took 	6.660000e-04s
-[3] Recv model with 100 clusters took 	6.590000e-04s
-Read test with 653458 examples took 	2.059316e+00s
-Send Test with 653457 examples took 	6.140238s
-[2] Worker classify Test with 217819 examples took 	6.101179s
-[3] Worker classify Test with 217819 examples took 	6.095317s
-[1] Worker classify Test with 217819 examples took 	6.068513s
-Classification with 653457 examples took 	6.140838s
-Done ./target/mfog in 	8.222834s
-Done ./target/mfog in 	8.170226s
-Done ./target/mfog in 	8.199444s
-Done ./target/mfog in 	8.204996s
+[1] Recv model with 100 clusters took 	2.576194e+00s
+[2] Recv model with 100 clusters took 	2.594506e+00s
+[3] Recv model with 100 clusters took 	2.558549e+00s
+[1] Worker classify Test with 217819 examples took 	4.806811s
+[2] Worker classify Test with 217819 examples took 	4.815932s
+[3] Worker classify Test with 217819 examples took 	4.784924s
 
- Performance counter stats for 'mpiexec ./target/mfog':
+ Performance counter stats for 'mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
 
-         37,429.95 msec task-clock:u              #    4.429 CPUs utilized          
+         29,747.72 msec task-clock:u              #    3.919 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,489      page-faults:u             #    0.001 M/sec                  
-    76,461,499,806      cycles:u                  #    2.043 GHz                    
-    54,137,687,431      stalled-cycles-frontend:u #   70.80% frontend cycles idle   
-   125,963,536,527      instructions:u            #    1.65  insn per cycle         
-                                                  #    0.43  stalled cycles per insn
-    21,487,918,212      branches:u                #  574.083 M/sec                  
-        31,990,440      branch-misses:u           #    0.15% of all branches        
+            43,153      page-faults:u             #    0.001 M/sec                  
+    76,425,476,142      cycles:u                  #    2.569 GHz                    
+    45,695,104,026      stalled-cycles-frontend:u #   59.79% frontend cycles idle   
+   133,728,679,511      instructions:u            #    1.75  insn per cycle         
+                                                  #    0.34  stalled cycles per insn
+    23,080,200,677      branches:u                #  775.864 M/sec                  
+        26,714,521      branch-misses:u           #    0.12% of all branches        
 
-       8.452044964 seconds time elapsed
+       7.590470563 seconds time elapsed
 
-      31.053564000 seconds user
-       6.591132000 seconds sys
+      26.912158000 seconds user
+       2.760956000 seconds sys
 
 
       	|	Classes
 Labels	|	         A	         N	
-     -	|	        12	         8	
+     -	|	    447179	    206278	
      A	|	         0	         0	
-     N	|	    447167	    206270	
+     N	|	         0	         0	
 Total 	653457
-Hits 	206270 (31.565964%)
-Misses 	447187 (68.434036%)
+Hits 	0 (0.000000%)
+Misses 	653457 (100.000000%)

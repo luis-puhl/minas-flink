@@ -25,18 +25,17 @@ double MNS_distance(double a[], double b[], int dimension) {
     #endif // SQR_DISTANCE
 }
 
-void readModel(int dimension, char *modelName, Model *model) {
+void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable) {
+    if (file == NULL) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     char line[line_len + 1];
     //
     model->size = 0;
     model->vals = malloc(1 * sizeof(Cluster));
+    int lines = 0;
     //
-    FILE *file;
-    fprintf(stderr, "Reading model from    '%s'\n", modelName);
-    file = fopen(modelName, "r");
-    if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", modelName);
     while (fgets(line, line_len, file)) {
+        lines++;
         if (line[0] == '#') continue;
         model->vals = realloc(model->vals, (++model->size) * sizeof(Cluster));
         Cluster *cl = &(model->vals[model->size - 1]);
@@ -57,13 +56,19 @@ void readModel(int dimension, char *modelName, Model *model) {
         #ifdef SQR_DISTANCE
             cl->radius *= cl->radius;
         #endif // SQR_DISTANCE
-        if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format  '%s'", modelName);
+        if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", lines, line);
     }
     fclose(file);
-    fprintf(stderr, "Read model with %d clusters took \t%es\n", model->size, ((double)(clock() - start)) / ((double)1000000));
+    if (timing) {
+        // # source, executable, build_date-time, wall-clock, function, elapsed, cores
+        double elapsed = ((double)(clock() - start)) / 1000000.0;
+        fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+    }
 }
 
-Point *readExamples(int dimension, char *testName) {
+Point *readExamples(int dimension, FILE *file, FILE *timing, char *executable) {
+    if (file == NULL) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     char line[line_len + 1];
     //
@@ -71,12 +76,10 @@ Point *readExamples(int dimension, char *testName) {
     unsigned int exSize = 1;
     exs = malloc(exSize * sizeof(Point));
     //
-    FILE *file;
-    fprintf(stderr, "Reading test from     '%s'\n", testName);
-    file = fopen(testName, "r");
-    if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", testName);
     // for (examples)
+    int lines = 0;
     while (fgets(line, line_len, file)) {
+        lines++;
         if (line[0] == '#') continue;
         // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
         Point *ex = &(exs[exSize-1]);
@@ -91,7 +94,7 @@ Point *readExamples(int dimension, char *testName) {
             &ex->value[20], &ex->value[21], &ex->label
         );
         ex->id = exSize;
-        if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format  '%s'", testName);
+        if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", lines, line);
         //
         exs = realloc(exs, (++exSize) * sizeof(Point));
     }
@@ -100,7 +103,12 @@ Point *readExamples(int dimension, char *testName) {
     ex->id = -1;
     ex->value = NULL;
     ex->label = '\0';
-    fprintf(stderr, "Read test with %d examples took \t%es\n", exSize, ((double)(clock() - start)) / ((double)1000000));
+    if (timing) {
+        // # source, executable, build_date-time, wall-clock, function, elapsed, cores
+        double elapsed = ((double)(clock() - start)) / 1000000.0;
+        fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+    }
     return exs;
 }
 
@@ -118,10 +126,10 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     }
     match->isMatch = match->distance <= match->radius ? 'y' : 'n';
     
-    printf("%d,%c,%d,%c,%e,%e\n",
-        match->pointId, match->isMatch, match->clusterId,
-        match->label, match->distance, match->radius
-    );
+    // printf("%d,%c,%d,%c,%e,%e\n",
+    //     match->pointId, match->isMatch, match->clusterId,
+    //     match->label, match->distance, match->radius
+    // );
 }
 
 #endif // MINAS_FUNCS

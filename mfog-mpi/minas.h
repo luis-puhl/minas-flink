@@ -31,8 +31,8 @@ typedef struct match {
 // double MNS_distance(double a[], double b[], int dimension);
 // #endif // MINAS_FUNCS
 double MNS_distance(double a[], double b[], int dimension);
-void readModel(int dimension, char *modelName, Model *model);
-Point *readExamples(int dimension, char *testName);
+void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable);
+Point *readExamples(int dimension, FILE *file, FILE *timing, char *executable);
 void classify(int dimension, Model *model, Point *ex, Match *match);
 
 #endif // MINAS_H

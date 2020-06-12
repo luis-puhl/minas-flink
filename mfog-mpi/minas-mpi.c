@@ -6,11 +6,12 @@
 #include <string.h>
 #include <mpi.h>
 
-#include "./minas.h"
+#include "minas.h"
+#include "loadenv.h"
 
 #define MFOG_MASTER_RANK 0
 
-void sendModel(int dimension, Model *model, int clRank, int clSize) {
+void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing, char *executable) {
     clock_t start = clock();
     int bufferSize = sizeof(Model) +
         (model->size) * sizeof(Cluster) +
@@ -26,7 +27,10 @@ void sendModel(int dimension, Model *model, int clRank, int clSize) {
     MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     free(buffer);
-    fprintf(stderr, "[%d] Send model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
+    // # source, executable, build_date-time, wall-clock, function, elapsed, cores
+    double elapsed = ((double)(clock() - start)) / 1000000.0;
+    fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
 }
 
 void receiveModel(int dimension, Model *model, int clRank) {
@@ -48,13 +52,14 @@ void receiveModel(int dimension, Model *model, int clRank) {
     fprintf(stderr, "[%d] Recv model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
 }
 
-int sendExamples(int dimension, Point *examples, int clSize) {
+int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE *timing, char *executable) {
     int dest = 1, exampleCounter = 0;
     clock_t start = clock();
     int bufferSize = sizeof(Point) + dimension * sizeof(double);
     char *buffer = malloc(bufferSize);
     MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     //
+    Match match;
 
     for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
         Point *ex = &(examples[exampleCounter]);
@@ -62,6 +67,12 @@ int sendExamples(int dimension, Point *examples, int clSize) {
         MPI_Pack(ex, sizeof(Point), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Pack(ex->value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
+        //
+        // MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        // fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
+        //         match.pointId, match.isMatch, match.clusterId,
+        //         match.label, match.distance, match.radius);
+        //
         dest = ++dest < clSize ? dest : 1;
     }
     Point ex;
@@ -75,11 +86,14 @@ int sendExamples(int dimension, Point *examples, int clSize) {
     }
     free(buffer);
     free(ex.value);
-    fprintf(stderr, "Send Test with %d examples took \t%lfs\n", exampleCounter, ((double)(clock() - start)) / ((double)1000000));
+    // # source, executable, build_date-time, wall-clock, function, elapsed, cores
+    double elapsed = ((double)(clock() - start)) / 1000000.0;
+    fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
     return exampleCounter;
 }
 
-int receiveExamples(int dimension, Model *model, int clRank) {
+int receiveExamples(int dimension, Model *model, int clRank, FILE *matches) {
     Point ex;
     double *valuePtr = malloc((dimension + 1) * sizeof(double));
     ex.id = 0;
@@ -100,6 +114,11 @@ int receiveExamples(int dimension, Model *model, int clRank) {
         ex.value = valuePtr;
         //
         classify(dimension, model, &ex, &match);
+        // MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_MASTER_RANK, 2005, MPI_COMM_WORLD);
+        fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
+                match.pointId, match.isMatch, match.clusterId,
+                match.label, match.distance, match.radius);
+        fflush(matches);
         //
         exampleCounter++;
     }
@@ -109,7 +128,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     return exampleCounter;
 }
 
-int MFOG_main(int argc, char **argv) {
+int MFOG_main(int argc, char *argv[], char **envp) {
     MPI_Init(&argc, &argv);
     int clRank, clSize;
     MPI_Comm_size(MPI_COMM_WORLD, &clSize);
@@ -123,6 +142,24 @@ int MFOG_main(int argc, char **argv) {
     if (clSize <= 1) {
         errx(EXIT_FAILURE, "Cluster with only one node.");
     }
+    char *executable = argv[0]; 
+    char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
+    FILE *modelFile, *examplesFile, *matches, *timing;
+    #define VARS_SIZE 4
+    loadEnv(argc, argv, envp, VARS_SIZE,
+        (char*[]) {"MODEL_CSV", "EXAMPLES_CSV", "MATCHES_CSV", "TIMING_LOG"},
+        (char**[]) { &modelCsv, &examplesCsv, &matchesCsv, &timingLog },
+        (FILE**[]) { &modelFile, &examplesFile, &matches, &timing },
+        (char*[]) { "r", "r", "w", "a" }
+    );
+    printf(
+        "Reading examples from  '%s'\n"
+        "Reading model from     '%s'\n"
+        "Writing matches to     '%s'\n"
+        "Writing timing to      '%s'\n",
+        examplesCsv, modelCsv, matchesCsv, timingLog
+    );
+    //
     /*
     # Root:
         - Read Model
@@ -140,25 +177,45 @@ int MFOG_main(int argc, char **argv) {
     Model model;
     model.dimension = 22;
     if (clRank == 0) {
-        char *modelName = "datasets/model-clean.csv";
-        readModel(model.dimension, modelName, &model);
-        sendModel(model.dimension, &model, clRank, clSize);
-
-        char *testName = "datasets/test.csv";
+        // char *executable = argv[0]; 
+        // char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
+        // FILE *modelFile, *examplesFile, *matches, *timing;
+        // #define VARS_SIZE 4
+        // loadEnv(argc, argv, envp, VARS_SIZE,
+        //     (char*[]) {"MODEL_CSV", "EXAMPLES_CSV", "MATCHES_CSV", "TIMING_LOG"},
+        //     (char**[]) { &modelCsv, &examplesCsv, &matchesCsv, &timingLog },
+        //     (FILE**[]) { &modelFile, &examplesFile, &matches, &timing },
+        //     (char*[]) { "r", "r", "w", "a" }
+        // );
+        // printf(
+        //     "Reading examples from  '%s'\n"
+        //     "Reading model from     '%s'\n"
+        //     "Writing matches to     '%s'\n"
+        //     "Writing timing to      '%s'\n",
+        //     examplesCsv, modelCsv, matchesCsv, timingLog
+        // );
+        //
+        readModel(model.dimension, modelFile, &model, timing, executable);
         Point *examples;
-        examples = readExamples(model.dimension, testName);
+        examples = readExamples(model.dimension, examplesFile, timing, executable);
+        //
+        sendModel(model.dimension, &model, clRank, clSize, timing, executable);
 
         clock_t start = clock();
-        printf("#id,isMach,clusterId,label,distance,radius\n");
-        int exampleCounter = sendExamples(model.dimension, examples, clSize);
-        
+        fprintf(matches, "#id,isMach,clusterId,label,distance,radius\n");
+        int exampleCounter = sendExamples(model.dimension, examples, clSize, matches, timing, executable);
+
         MPI_Barrier(MPI_COMM_WORLD);
-        fprintf(stderr, "Classification with %d examples took \t%lfs\n", exampleCounter, ((double)(clock() - start)) / ((double)1000000));
+        // # source, executable, build_date-time, wall-clock, function, elapsed, cores
+        double elapsed = ((double)(clock() - start)) / 1000000.0;
+        fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
+        fclose(timing);
     } else {
         receiveModel(model.dimension, &model, clRank);
-        
-        receiveExamples(model.dimension, &model, clRank);
-        
+
+        receiveExamples(model.dimension, &model, clRank, matches);
+
         MPI_Barrier(MPI_COMM_WORLD);
     }
     
@@ -168,10 +225,7 @@ int MFOG_main(int argc, char **argv) {
 
 #ifndef MAIN
 #define MAIN
-int main(int argc, char **argv) {
-    clock_t start = clock();
-    MFOG_main(argc, argv);
-    fprintf(stderr, "Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
-    return 0;
+int main(int argc, char *argv[], char **envp) {
+    return MFOG_main(argc, argv, envp);
 }
 #endif

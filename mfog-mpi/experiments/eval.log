@@ -1,27 +1,21 @@
-Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	1.157000e-03s
-Reading test from     'datasets/test.csv'
-Read test with 653458 examples took 	2.000131e+00s
-Done MNS_classifier in 	6.735419s
-Done ./target/minas in 	8.737959s
 
- Performance counter stats for './target/minas':
+ Performance counter stats for 'target/minas':
 
-          8,763.48 msec task-clock:u              #    1.000 CPUs utilized          
+          9,243.72 msec task-clock:u              #    0.996 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
             34,545      page-faults:u             #    0.004 M/sec                  
-    24,835,579,313      cycles:u                  #    2.834 GHz                    
-    10,691,897,658      stalled-cycles-frontend:u #   43.05% frontend cycles idle   
-    52,193,202,272      instructions:u            #    2.10  insn per cycle         
-                                                  #    0.20  stalled cycles per insn
-     5,529,393,528      branches:u                #  630.959 M/sec                  
-        16,706,233      branch-misses:u           #    0.30% of all branches        
+    25,881,529,903      cycles:u                  #    2.800 GHz                    
+    11,917,364,193      stalled-cycles-frontend:u #   46.05% frontend cycles idle   
+    52,188,093,120      instructions:u            #    2.02  insn per cycle         
+                                                  #    0.23  stalled cycles per insn
+     5,529,388,706      branches:u                #  598.178 M/sec                  
+        17,218,830      branch-misses:u           #    0.31% of all branches        
 
-       8.766201143 seconds time elapsed
+       9.283481510 seconds time elapsed
 
-       8.589085000 seconds user
-       0.156383000 seconds sys
+       8.941746000 seconds user
+       0.268837000 seconds sys
 
 
       	|	Classes
