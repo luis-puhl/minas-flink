@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <time.h>
 #include <err.h>
 
 #include "minas.h"
+#include "loadenv.h"
 
 int findLabelIndex(int *confusionSize, char **labels, int ***confusionMatrix, char newLabel) {
     int i;
@@ -26,34 +26,24 @@ int findLabelIndex(int *confusionSize, char **labels, int ***confusionMatrix, ch
     return i;
 }
 
-int printMatrix(int *confusionSize, char **labels, int ***confusionMatrix) {
-    printf(
-        "      \t|\tClasses\n"
-        "Labels\t|\t");
-    int i, j;
-    for (i = 1; i < (*confusionSize); i++) {
-        printf("%10c\t", (*labels)[i]);
-    }
-    printf("\n");
-    for (i = 0; i < (*confusionSize); i++) {
-        printf("%6c\t|\t", (*labels)[i]);
-        for (j = 1; j < (*confusionSize); j++) {
-            printf("%10d\t", (*confusionMatrix)[i][j]);
-        }
-        printf("\n");
-    }
-    return i;
-}
-
-int main(int argc, char const *argv[]) {
-    if (argc != 3) {
-        errx(EXIT_FAILURE, "Missing arguments, expected 2, got %d\n", argc - 1);
-    }
-    printf("\n"
-        "Reading test from      '%s'\n"
-        "Reading output from    '%s'\n",
-        argv[1], argv[2]
+int main(int argc, char *argv[], char **envp) {
+    char *matchesCsv, *examplesCsv, *evaluateLog, *timingLog;
+    FILE *matches, *examples, *evaluate, *timing;
+    #define VARS_SIZE 4
+    loadEnv(argc, argv, envp, VARS_SIZE,
+        (char*[]) {"MATCHES_CSV", "EXAMPLES_CSV", "EVALUATE_LOG", "TIMING_LOG"},
+        (char**[]) { &matchesCsv, &examplesCsv, &evaluateLog, &timingLog },
+        (FILE**[]) { &matches, &examples, &evaluate, &timing },
+        (char*[]) { "r", "r", "a", "a" }
     );
+    printf(
+        "Reading examples from   '%s'\n"
+        "Reading matches from    '%s'\n"
+        "Writing evaluation to   '%s'\n"
+        "Writing timing to       '%s'\n",
+        examplesCsv, matchesCsv, evaluateLog, timingLog
+    );
+    //
     int dimension = 22;
     clock_t start = clock();
     int confusionSize = 1;
@@ -67,28 +57,22 @@ int main(int argc, char const *argv[]) {
     example.id = 0;
     Match match;
     //
-    FILE *test = fopen(argv[1], "r");
-    if (test == NULL) errx(EXIT_FAILURE, "bad file open '%s'", argv[1]);
-    // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
-    FILE *class = fopen(argv[2], "r");
-    if (class == NULL) errx(EXIT_FAILURE, "bad file open '%s'", argv[2]);
-    // id,isMach,clusterId,label,distance,radius
     char header[1024];
-    if (!fscanf(class, "%s\n", header)) {
-        errx(EXIT_FAILURE, "bad file format '%s'", argv[2]);
-    }// else { printf("%s\n", header); }
+    if (!fscanf(matches, "%s\n", header)) {
+        errx(EXIT_FAILURE, "bad file format '%s'", matchesCsv);
+    }
     char l;
     int i, j, hits = 0, mathcesBufferSize = 0, examplesBufferSize = 0;
     Match *mathcesBuffer = malloc(1 * sizeof(Match));
     Point *examplesBuffer = malloc(1 * sizeof(Point));
-    while (!(feof(test) || feof(class))) {
+    while (!(feof(examples) || feof(matches))) {
         for (int i = 0; i < dimension; i++) {
-            fscanf(test, "%lf,", &(example.value[i]));
+            fscanf(examples, "%lf,", &(example.value[i]));
         }
-        fscanf(test, "%c\n", &l);
+        fscanf(examples, "%c\n", &l);
         example.id++;
         //
-        fscanf(class, "%d,%c,%d,%c,%lf,%lf\n",
+        fscanf(matches, "%d,%c,%d,%c,%lf,%lf\n",
             &(match.pointId), &(match.isMatch), &(match.clusterId),
             &(match.label), &(match.distance), &(match.radius)
         );
@@ -145,21 +129,40 @@ int main(int argc, char const *argv[]) {
         confusionMatrix[j][i]++;
         if (match.isMatch == 'y' && l == match.label) hits++;
     }
-    fclose(test);
-    fclose(class);
+    fclose(examples);
+    fclose(matches);
     //
     double hitPC = ((double) hits) / ((double) example.id);
     
-    printMatrix(&confusionSize, &labels, &confusionMatrix);
-    printf("Total \t%d\n", example.id);
-    printf("Hits \t%d (%f%%)\n", hits, hitPC * 100.0);
-    printf("Misses \t%d (%f%%)\n", example.id - hits, (1 - hitPC) * 100.0);
+    // printMatrix(&confusionSize, &labels, &confusionMatrix);
+    fprintf(evaluate,
+        "      \t|\tClasses\n"
+        "Labels\t|\t");
+    for (i = 1; i < (confusionSize); i++) {
+        fprintf(evaluate, "%10c\t", labels[i]);
+    }
+    fprintf(evaluate, "\n");
+    for (i = 0; i < (confusionSize); i++) {
+        fprintf(evaluate, "%6c\t|\t", labels[i]);
+        for (j = 1; j < confusionSize; j++) {
+            fprintf(evaluate, "%10d\t", confusionMatrix[i][j]);
+        }
+        fprintf(evaluate, "\n");
+    }
+    fprintf(evaluate, "Total \t%d\n", example.id);
+    fprintf(evaluate, "Hits \t%d (%f%%)\n", hits, hitPC * 100.0);
+    fprintf(evaluate, "Misses \t%d (%f%%)\n", example.id - hits, (1 - hitPC) * 100.0);
     //
     for (i = 0; i < confusionSize; i++) {
         free(confusionMatrix[i]);
     }
     free(confusionMatrix);
     free(labels);
-    printf("Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
+    // # source, executable, build_date-time, wall-clock, function, elapsed, cores
+    double elapsed = ((double)(clock() - start)) / 1000000.0;
+    fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+            __FILE__, argv[0], __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+    fclose(timing);
+    fclose(evaluate);
     exit(EXIT_SUCCESS);
 }

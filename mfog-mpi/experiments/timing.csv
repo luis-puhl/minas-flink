@@ -1,0 +1,8 @@
+# source, executable, build_date time, wall-clock, function, elapsed, cores
+evaluate.c,target/eval,Jun 11 2020 20:51:17,1591919480,main,2.591643e+00,1
+evaluate.c,target/eval,Jun 11 2020 21:03:41,1591920224,main,2.763863e+00,1
+evaluate.c,target/eval,Jun 11 2020 21:13:26,1591920809,main,2.697150e+00,1
+evaluate.c,target/eval,Jun 11 2020 21:15:36,1591920948,main,2.973559e+00,1
+evaluate.c,target/eval,Jun 11 2020 21:15:36,1591920960,main,2.341540e+00,1
+evaluate.c,target/eval,Jun 11 2020 21:20:46,1591921258,main,2.670744e+00,1
+evaluate.c,target/eval,Jun 11 2020 21:20:46,1591921270,main,3.063238e+00,1

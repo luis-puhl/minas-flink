@@ -1,50 +1,46 @@
 Processor pokebola, Rank 0 out of 4 processors
 Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	9.350000e-04s
-[0] Send model with 100 clusters took 	2.060000e-04s
-[1] Recv model with 100 clusters took 	1.505000e-03s
-[3] Recv model with 100 clusters took 	1.628000e-03s
+Read model with 100 clusters took 	6.450000e-04s
+[0] Send model with 100 clusters took 	1.280000e-04s
 Reading test from     'datasets/test.csv'
-[2] Recv model with 100 clusters took 	1.659000e-03s
-Read test with 653458 examples took 	2.153605e+00s
-Send Test with 653457 examples took 	5.116846s
-Classification with 653457 examples took 	5.116880s
-[1] Worker classify Test with 217819 examples took 	5.029569s
-[2] Worker classify Test with 217819 examples took 	5.088254s
-[3] Worker classify Test with 217819 examples took 	5.066106s
-Done ./target/mfog in 	7.240881s
-Done ./target/mfog in 	7.193237s
-Done ./target/mfog in 	7.255527s
-Done ./target/mfog in 	7.291977s
+[2] Recv model with 100 clusters took 	7.270000e-04s
+[1] Recv model with 100 clusters took 	6.660000e-04s
+[3] Recv model with 100 clusters took 	6.590000e-04s
+Read test with 653458 examples took 	2.059316e+00s
+Send Test with 653457 examples took 	6.140238s
+[2] Worker classify Test with 217819 examples took 	6.101179s
+[3] Worker classify Test with 217819 examples took 	6.095317s
+[1] Worker classify Test with 217819 examples took 	6.068513s
+Classification with 653457 examples took 	6.140838s
+Done ./target/mfog in 	8.222834s
+Done ./target/mfog in 	8.170226s
+Done ./target/mfog in 	8.199444s
+Done ./target/mfog in 	8.204996s
 
  Performance counter stats for 'mpiexec ./target/mfog':
 
-         32,813.44 msec task-clock:u              #    4.398 CPUs utilized          
+         37,429.95 msec task-clock:u              #    4.429 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,645      page-faults:u             #    0.001 M/sec                  
-    78,455,735,717      cycles:u                  #    2.391 GHz                      (59.88%)
-    55,968,799,523      stalled-cycles-frontend:u #   71.34% frontend cycles idle     (59.98%)
-   127,407,146,966      instructions:u            #    1.62  insn per cycle         
-                                                  #    0.44  stalled cycles per insn  (60.04%)
-    21,920,717,674      branches:u                #  668.041 M/sec                    (60.08%)
-        30,736,939      branch-misses:u           #    0.14% of all branches          (60.02%)
+            43,489      page-faults:u             #    0.001 M/sec                  
+    76,461,499,806      cycles:u                  #    2.043 GHz                    
+    54,137,687,431      stalled-cycles-frontend:u #   70.80% frontend cycles idle   
+   125,963,536,527      instructions:u            #    1.65  insn per cycle         
+                                                  #    0.43  stalled cycles per insn
+    21,487,918,212      branches:u                #  574.083 M/sec                  
+        31,990,440      branch-misses:u           #    0.15% of all branches        
 
-       7.461674520 seconds time elapsed
+       8.452044964 seconds time elapsed
 
-      27.301859000 seconds user
-       5.602742000 seconds sys
+      31.053564000 seconds user
+       6.591132000 seconds sys
 
 
-
-Reading test from      'datasets/test.csv'
-Reading output from    'out/classify-mpi.csv'
       	|	Classes
 Labels	|	         A	         N	
-     -	|	        14	         6	
+     -	|	        12	         8	
      A	|	         0	         0	
-     N	|	    447165	    206272	
+     N	|	    447167	    206270	
 Total 	653457
-Hits 	206272 (31.566270%)
-Misses 	447185 (68.433730%)
-Done ./target/eval in 	2.184843s
+Hits 	206270 (31.565964%)
+Misses 	447187 (68.434036%)

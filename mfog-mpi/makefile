@@ -3,7 +3,7 @@ all: clean experiments/eval.log experiments/eval-mpi.log
 install:
 	mkdir -p out target $$EXPE
 clean:
-	@-rm target/* 
+	@-rm target/* out/*
 
 target/mfog: minas-mpi.c minas-funcs.c
 	# gcc mfog.c -pthread -Wl,-rpath -Wl,/usr/lib/openmpi -Wl,--enable-new-dtags -L/usr/lib/openmpi -lmpi -lm -std=c1x -Wall -g -o target/mfog
@@ -11,7 +11,7 @@ target/mfog: minas-mpi.c minas-funcs.c
 target/minas: minas.c
 	gcc minas.c minas-funcs.c -o target/minas -lm -Wall -g
 target/eval: evaluate.c
-	gcc evaluate.c -o target/eval -lm -Wall -g
+	gcc evaluate.c loadenv.c -o target/eval -lm -Wall -g
 
 targets: target/mfog target/minas target/eval
 
@@ -22,9 +22,17 @@ out/classify-mpi.csv: target/mfog datasets/model-clean.csv datasets/test.csv
 	perf stat mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
 	# mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
 experiments/eval.log: target/eval datasets/test.csv out/classify.csv
-	./target/eval datasets/test.csv out/classify.csv >> experiments/eval.log 2>&1
+	target/eval \
+		MATCHES_CSV out/classify.csv \
+		EXAMPLES_CSV datasets/test.csv \
+		EVALUATE_LOG experiments/eval.log \
+		TIMING_LOG experiments/timing.csv
 experiments/eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv
-	./target/eval datasets/test.csv out/classify-mpi.csv >> experiments/eval-mpi.log 2>&1
+	target/eval \
+		MATCHES_CSV out/classify-mpi.csv \
+		EXAMPLES_CSV datasets/test.csv \
+		EVALUATE_LOG experiments/eval-mpi.log \
+		TIMING_LOG experiments/timing.csv
 
 cluster:
 	# mpirun [ -np X ] [ --hostfile <filename> ]  <program>
