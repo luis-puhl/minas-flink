@@ -15,12 +15,11 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
     char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
     FILE *modelFile, *examplesFile, *matches, *timing;
     #define VARS_SIZE 4
-    loadEnv(argc, argv, envp, VARS_SIZE,
-        (char*[]) {"MODEL_CSV", "EXAMPLES_CSV", "MATCHES_CSV", "TIMING_LOG"},
-        (char**[]) { &modelCsv, &examplesCsv, &matchesCsv, &timingLog },
-        (FILE**[]) { &modelFile, &examplesFile, &matches, &timing },
-        (char*[]) { "r", "r", "w", "a" }
-    );
+    char *varNames[] = { "MODEL_CSV", "EXAMPLES_CSV", "MATCHES_CSV", "TIMING_LOG"};
+    char **fileNames[] = { &modelCsv, &examplesCsv, &matchesCsv, &timingLog };
+    FILE **files[] = { &modelFile, &examplesFile, &matches, &timing };
+    char *fileModes[] = { "r", "r", "w", "a" };
+    loadEnv(argc, argv, envp, VARS_SIZE, varNames, fileNames, files, fileModes);
     printf(
         "Reading examples from  '%s'\n"
         "Reading model from     '%s'\n"
@@ -55,7 +54,9 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
     double elapsed = ((double)(clock() - start)) / 1000000.0;
     fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
             __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
-    fclose(timing);
+    fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
+            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+    closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
 
     for (int i = 0; i < model.size; i++) {
         free(model.vals[i].center);

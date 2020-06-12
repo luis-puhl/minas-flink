@@ -78,3 +78,26 @@ minas-mpi.c,./target/mfog,Jun 12 2020 01:09:25,1591934968,sendModel,2.120000e-04
 minas-mpi.c,./target/mfog,Jun 12 2020 01:09:25,1591934973,sendExamples,4.818352e+00,4
 minas-mpi.c,./target/mfog,Jun 12 2020 01:09:25,1591934973,MFOG_main,4.818722e+00,1
 evaluate.c,target/eval,Jun 12 2020 01:09:13,1591934975,main,2.328355e+00,1
+# 377dda188850b69ab4c5158e1b07c55a404da86f
+minas-funcs.c,target/minas,Jun 12 2020 15:11:17,1591985477,readModel,1.022000e-03,1
+minas-funcs.c,target/minas,Jun 12 2020 15:11:17,1591985479,readExamples,2.030175e+00,1
+minas.c,target/minas,Jun 12 2020 15:11:17,1591985486,MNS_classifier,6.805318e+00,1
+evaluate.c,target/eval,Jun 12 2020 15:11:17,1591985489,main,2.774371e+00,1
+minas-funcs.c,./target/mfog,Jun 12 2020 15:11:29,1591985489,readModel,1.166000e-03,1
+minas-funcs.c,./target/mfog,Jun 12 2020 15:11:29,1591985491,readExamples,2.244387e+00,1
+minas-mpi.c,./target/mfog,Jun 12 2020 15:11:29,1591985491,sendModel,1.480000e-04,4
+minas-mpi.c,./target/mfog,Jun 12 2020 15:11:29,1591985495,sendExamples,3.329411e+00,4
+minas-mpi.c,./target/mfog,Jun 12 2020 15:11:29,1591985495,MFOG_main,3.329449e+00,4
+evaluate.c,target/eval,Jun 12 2020 15:11:17,1591985498,main,2.806810e+00,1
+# 
+minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003508,readModel,7.060000e-04,1
+minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003510,readExamples,2.008522e+00,1
+minas.c,target/minas,Jun 12 2020 20:11:48,1592003517,MNS_classifier,6.775540e+00,1
+evaluate.c,target/eval,Jun 12 2020 20:11:48,1592003519,main,2.674399e+00,1
+minas-funcs.c,./target/mfog,Jun 12 2020 20:12:00,1592003520,readModel,7.540000e-04,1
+minas-funcs.c,./target/mfog,Jun 12 2020 20:12:00,1592003522,readExamples,2.169067e+00,1
+minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003522,sendModel,1.660000e-04,4
+minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,sendExamples,3.074154e+00,4
+minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,MFOG_main,3.074173e+00,4
+evaluate.c,target/eval,Jun 12 2020 20:11:48,1592003528,main,2.673139e+00,1
+#

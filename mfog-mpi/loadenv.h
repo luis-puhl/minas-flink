@@ -5,5 +5,6 @@
 
 int assingVarFromEnvArg(char *varName, char **varPtr, char *envOrArg, char *nextArg);
 int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]);
+void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]);
 
 #endif // !_LOAD_ENV_H

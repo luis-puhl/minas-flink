@@ -1,28 +1,33 @@
+minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003508,readModel,7.060000e-04,1
+minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003510,readExamples,2.008522e+00,1
+minas.c,target/minas,Jun 12 2020 20:11:48,1592003517,MNS_classifier,6.775540e+00,1
 
  Performance counter stats for 'target/minas':
 
-          9,243.72 msec task-clock:u              #    0.996 CPUs utilized          
+          8,851.92 msec task-clock:u              #    1.000 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            34,545      page-faults:u             #    0.004 M/sec                  
-    25,881,529,903      cycles:u                  #    2.800 GHz                    
-    11,917,364,193      stalled-cycles-frontend:u #   46.05% frontend cycles idle   
-    52,188,093,120      instructions:u            #    2.02  insn per cycle         
-                                                  #    0.23  stalled cycles per insn
-     5,529,388,706      branches:u                #  598.178 M/sec                  
-        17,218,830      branch-misses:u           #    0.31% of all branches        
+            34,546      page-faults:u             #    0.004 M/sec                  
+    24,921,990,733      cycles:u                  #    2.815 GHz                      (60.00%)
+    10,826,138,152      stalled-cycles-frontend:u #   43.44% frontend cycles idle     (60.01%)
+    52,098,952,630      instructions:u            #    2.09  insn per cycle         
+                                                  #    0.21  stalled cycles per insn  (60.02%)
+     5,526,697,579      branches:u                #  624.350 M/sec                    (60.00%)
+        16,758,037      branch-misses:u           #    0.30% of all branches          (59.97%)
 
-       9.283481510 seconds time elapsed
+       8.853889342 seconds time elapsed
 
-       8.941746000 seconds user
-       0.268837000 seconds sys
+       8.611169000 seconds user
+       0.182117000 seconds sys
 
 
+Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
      -	|	     19677	       317	
      A	|	         0	         0	
      N	|	    427502	    205961	
-Total 	653457
-Hits 	205961 (31.518677%)
-Misses 	447496 (68.481323%)
+Total examples     653457
+Total matches      653457
+Hits               205961 ( 31.518677%)
+Misses             447496 ( 68.481323%)

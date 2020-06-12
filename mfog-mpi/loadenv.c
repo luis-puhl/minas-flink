@@ -39,16 +39,32 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
             if (assingVarFromEnvArg(varNames[var], varPtrs[var], argv[arg], argv[arg+1])) break;
         }
     }
+    //
+    const char *stdoutName = "stdout";
+    const char *stderrName = "stderr";
     int failures = 0;
     for (int var = 0; var < varsSize; var++) {
-        if (*(varPtrs[var]) == NULL) {
+        char *fileName = *(varPtrs[var]);
+        if (fileName == NULL) {
             printf("Expected argument or environment '%s' to be defined\n", varNames[var]);
             failures++;
             continue;
         }
-        *(filePtrs[var]) = fopen(*(varPtrs[var]), fileModes[var]);
+        int isStdout = 0;
+        for (int i = 0; stdoutName[i] != '\0' && isStdout == 0; i++) isStdout += stdoutName[i] - fileName[i];
+        int isStderr = 0;
+        for (int i = 0; stderrName[i] != '\0' && isStderr == 0; i++) isStderr += stderrName[i] - fileName[i];
+        if (isStdout == 0) {
+            // printf("Set var '%s' to stdout.\n", varNames[var]);
+            *(filePtrs[var]) = stdout;
+        } else if (isStderr == 0) {
+            // printf("Set var '%s' to stderr.\n", varNames[var]);
+            *(filePtrs[var]) = stderr;
+        } else {
+            *(filePtrs[var]) = fopen(fileName, fileModes[var]);
+        }
         if (*(filePtrs[var]) == NULL) {
-            printf("Expected argument '%s' set to '%s' to be '%s'-able file.\n", varNames[var], *(varPtrs[var]), fileModes[var]);
+            printf("Expected argument '%s' set to '%s' to be '%s'-able file.\n", varNames[var], fileName, fileModes[var]);
             failures++;
         }
     }
@@ -56,6 +72,23 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
         errx(EXIT_FAILURE, "Missing %d arguments.\n", failures);
     }
     return varsSize;
+}
+
+void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]) {
+    const char *stdoutName = "stdout";
+    const char *stderrName = "stderr";
+    for (int var = 0; var < varsSize; var++) {
+        char *fileName = *(varPtrs[var]);
+        int isStdout = 0;
+        for (int i = 0; stdoutName[i] != '\0' && isStdout == 0; i++) isStdout += stdoutName[i] - fileName[i];
+        int isStderr = 0;
+        for (int i = 0; stderrName[i] != '\0' && isStderr == 0; i++) isStderr += stderrName[i] - fileName[i];
+        if (isStdout || isStderr) {
+            continue;
+        } else {
+            fclose(*(filePtrs[var]));
+        }
+    }
 }
 
 #endif // !_LOAD_ENV_C

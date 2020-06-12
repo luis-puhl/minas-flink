@@ -1,35 +1,42 @@
 Processor pokebola, Rank 0 out of 4 processors
-[1] Recv model with 100 clusters took 	2.576194e+00s
-[2] Recv model with 100 clusters took 	2.594506e+00s
-[3] Recv model with 100 clusters took 	2.558549e+00s
-[1] Worker classify Test with 217819 examples took 	4.806811s
-[2] Worker classify Test with 217819 examples took 	4.815932s
-[3] Worker classify Test with 217819 examples took 	4.784924s
+minas-funcs.c,./target/mfog,Jun 12 2020 20:12:00,1592003520,readModel,7.540000e-04,1
+minas-funcs.c,./target/mfog,Jun 12 2020 20:12:00,1592003522,readExamples,2.169067e+00,1
+minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003522,sendModel,1.660000e-04,4
+[3] Recv model with 100 clusters took 	2.218130e+00s
+[1] Recv model with 100 clusters took 	2.218629e+00s
+[2] Recv model with 100 clusters took 	2.219493e+00s
+[3] Worker classify Test with 217819 examples took 	3.162095s
+[1] Worker classify Test with 217819 examples took 	3.163495s
+minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,sendExamples,3.074154e+00,4
+minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,MFOG_main,3.074173e+00,4
+[2] Worker classify Test with 217819 examples took 	3.164036s
 
  Performance counter stats for 'mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
 
-         29,747.72 msec task-clock:u              #    3.919 CPUs utilized          
+         21,755.78 msec task-clock:u              #    3.908 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,153      page-faults:u             #    0.001 M/sec                  
-    76,425,476,142      cycles:u                  #    2.569 GHz                    
-    45,695,104,026      stalled-cycles-frontend:u #   59.79% frontend cycles idle   
-   133,728,679,511      instructions:u            #    1.75  insn per cycle         
-                                                  #    0.34  stalled cycles per insn
-    23,080,200,677      branches:u                #  775.864 M/sec                  
-        26,714,521      branch-misses:u           #    0.12% of all branches        
+            43,228      page-faults:u             #    0.002 M/sec                  
+    61,449,096,009      cycles:u                  #    2.824 GHz                      (59.95%)
+    30,172,182,267      stalled-cycles-frontend:u #   49.10% frontend cycles idle     (59.99%)
+   112,741,250,288      instructions:u            #    1.83  insn per cycle         
+                                                  #    0.27  stalled cycles per insn  (60.02%)
+    18,219,296,400      branches:u                #  837.446 M/sec                    (60.06%)
+        27,490,282      branch-misses:u           #    0.15% of all branches          (59.98%)
 
-       7.590470563 seconds time elapsed
+       5.567173428 seconds time elapsed
 
-      26.912158000 seconds user
-       2.760956000 seconds sys
+      21.244658000 seconds user
+       0.307802000 seconds sys
 
 
+Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	    447179	    206278	
+     -	|	     17445	      2549	
      A	|	         0	         0	
-     N	|	         0	         0	
-Total 	653457
-Hits 	0 (0.000000%)
-Misses 	653457 (100.000000%)
+     N	|	    429734	    203729	
+Total examples     653457
+Total matches      653457
+Hits               203729 ( 31.177109%)
+Misses             449728 ( 68.822891%)
