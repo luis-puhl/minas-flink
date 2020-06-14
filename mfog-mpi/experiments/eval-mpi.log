@@ -1,42 +1,56 @@
 Processor pokebola, Rank 0 out of 4 processors
-minas-funcs.c,./target/mfog,Jun 12 2020 20:12:00,1592003520,readModel,7.540000e-04,1
-minas-funcs.c,./target/mfog,Jun 12 2020 20:12:00,1592003522,readExamples,2.169067e+00,1
-minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003522,sendModel,1.660000e-04,4
-[3] Recv model with 100 clusters took 	2.218130e+00s
-[1] Recv model with 100 clusters took 	2.218629e+00s
-[2] Recv model with 100 clusters took 	2.219493e+00s
-[3] Worker classify Test with 217819 examples took 	3.162095s
-[1] Worker classify Test with 217819 examples took 	3.163495s
-minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,sendExamples,3.074154e+00,4
-minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,MFOG_main,3.074173e+00,4
-[2] Worker classify Test with 217819 examples took 	3.164036s
+minas-funcs.c,./target/mfog,Jun 13 2020 12:57:59,1592063879,readModel,7.940000e-04,1
+minas-funcs.c,./target/mfog,Jun 13 2020 12:57:59,1592063882,readExamples,2.477382e+00,1
+minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063882,sendModel,2.870000e-04,4
+[1] Recv model with 100 clusters took 	2.472839e+00s
+[3] Recv model with 100 clusters took 	2.476998e+00s
+[2] Recv model with 100 clusters took 	2.472057e+00s
+[3] Worker classify Test with 217819 examples took 	3.760652s
+[1] Worker classify Test with 217819 examples took 	3.741927s
+[2] Worker classify Test with 217819 examples took 	3.740925s
+minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063886,sendExamples,3.753637e+00,4
+minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063886,MFOG_main,3.753658e+00,4
 
  Performance counter stats for 'mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
 
-         21,755.78 msec task-clock:u              #    3.908 CPUs utilized          
+         25,150.37 msec task-clock:u              #    3.911 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,228      page-faults:u             #    0.002 M/sec                  
-    61,449,096,009      cycles:u                  #    2.824 GHz                      (59.95%)
-    30,172,182,267      stalled-cycles-frontend:u #   49.10% frontend cycles idle     (59.99%)
-   112,741,250,288      instructions:u            #    1.83  insn per cycle         
-                                                  #    0.27  stalled cycles per insn  (60.02%)
-    18,219,296,400      branches:u                #  837.446 M/sec                    (60.06%)
-        27,490,282      branch-misses:u           #    0.15% of all branches          (59.98%)
+            43,310      page-faults:u             #    0.002 M/sec                  
+    68,131,961,610      cycles:u                  #    2.709 GHz                    
+    36,569,648,232      stalled-cycles-frontend:u #   53.67% frontend cycles idle   
+   112,034,566,255      instructions:u            #    1.64  insn per cycle         
+                                                  #    0.33  stalled cycles per insn
+    18,020,410,285      branches:u                #  716.507 M/sec                  
+        28,526,403      branch-misses:u           #    0.16% of all branches        
 
-       5.567173428 seconds time elapsed
+       6.430051612 seconds time elapsed
 
-      21.244658000 seconds user
-       0.307802000 seconds sys
+      24.743040000 seconds user
+       0.338670000 seconds sys
 
 
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     17445	      2549	
+     -	|	     17482	      2512	
      A	|	         0	         0	
-     N	|	    429734	    203729	
+     N	|	    429697	    203766	
 Total examples     653457
 Total matches      653457
-Hits               203729 ( 31.177109%)
-Misses             449728 ( 68.822891%)
+Hits               203766 ( 31.182771%)
+Misses             449691 ( 68.817229%)
+Processor pokebola, Rank 0 out of 4 processors
+mfog: Missing 2 arguments.
+
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpiexec detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[17403,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------

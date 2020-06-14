@@ -1,24 +1,24 @@
-minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003508,readModel,7.060000e-04,1
-minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003510,readExamples,2.008522e+00,1
-minas.c,target/minas,Jun 12 2020 20:11:48,1592003517,MNS_classifier,6.775540e+00,1
+minas-funcs.c,target/minas,Jun 13 2020 12:57:46,1592063866,readModel,1.236000e-03,1
+minas-funcs.c,target/minas,Jun 13 2020 12:57:46,1592063869,readExamples,2.234329e+00,1
+minas.c,target/minas,Jun 13 2020 12:57:46,1592063876,MNS_classifier,7.287320e+00,1
 
  Performance counter stats for 'target/minas':
 
-          8,851.92 msec task-clock:u              #    1.000 CPUs utilized          
+          9,564.33 msec task-clock:u              #    0.999 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            34,546      page-faults:u             #    0.004 M/sec                  
-    24,921,990,733      cycles:u                  #    2.815 GHz                      (60.00%)
-    10,826,138,152      stalled-cycles-frontend:u #   43.44% frontend cycles idle     (60.01%)
-    52,098,952,630      instructions:u            #    2.09  insn per cycle         
-                                                  #    0.21  stalled cycles per insn  (60.02%)
-     5,526,697,579      branches:u                #  624.350 M/sec                    (60.00%)
-        16,758,037      branch-misses:u           #    0.30% of all branches          (59.97%)
+            34,547      page-faults:u             #    0.004 M/sec                  
+    26,687,475,653      cycles:u                  #    2.790 GHz                    
+    12,880,803,001      stalled-cycles-frontend:u #   48.27% frontend cycles idle   
+    52,194,088,339      instructions:u            #    1.96  insn per cycle         
+                                                  #    0.25  stalled cycles per insn
+     5,529,803,487      branches:u                #  578.170 M/sec                  
+        17,551,996      branch-misses:u           #    0.32% of all branches        
 
-       8.853889342 seconds time elapsed
+       9.574452669 seconds time elapsed
 
-       8.611169000 seconds user
-       0.182117000 seconds sys
+       9.281953000 seconds user
+       0.252566000 seconds sys
 
 
 Confusion Matrix

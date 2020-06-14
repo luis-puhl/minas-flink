@@ -171,12 +171,7 @@ int main(int argc, char *argv[], char **envp) {
     }
     free(confusionMatrix);
     free(labels);
-    // # source, executable, build_date-time, wall-clock, function, elapsed, cores
-    double elapsed = ((double)(clock() - start)) / 1000000.0;
-    fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
-    fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+    PRINT_TIMING(timing, executable, 1, start);
     closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
     exit(EXIT_SUCCESS);
 }

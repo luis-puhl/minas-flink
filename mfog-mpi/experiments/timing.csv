@@ -89,7 +89,7 @@ minas-mpi.c,./target/mfog,Jun 12 2020 15:11:29,1591985491,sendModel,1.480000e-04
 minas-mpi.c,./target/mfog,Jun 12 2020 15:11:29,1591985495,sendExamples,3.329411e+00,4
 minas-mpi.c,./target/mfog,Jun 12 2020 15:11:29,1591985495,MFOG_main,3.329449e+00,4
 evaluate.c,target/eval,Jun 12 2020 15:11:17,1591985498,main,2.806810e+00,1
-# 
+# f941f099801765ae6adead8966c9ee812f054138
 minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003508,readModel,7.060000e-04,1
 minas-funcs.c,target/minas,Jun 12 2020 20:11:48,1592003510,readExamples,2.008522e+00,1
 minas.c,target/minas,Jun 12 2020 20:11:48,1592003517,MNS_classifier,6.775540e+00,1
@@ -101,3 +101,38 @@ minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,sendExamples,3.074154e
 minas-mpi.c,./target/mfog,Jun 12 2020 20:11:59,1592003525,MFOG_main,3.074173e+00,4
 evaluate.c,target/eval,Jun 12 2020 20:11:48,1592003528,main,2.673139e+00,1
 #
+minas-funcs.c,target/minas,Jun 12 2020 21:03:52,1592006633,readModel,7.180000e-04,1
+minas-funcs.c,target/minas,Jun 12 2020 21:03:52,1592006635,readExamples,1.988740e+00,1
+minas.c,target/minas,Jun 12 2020 21:03:52,1592006642,MNS_classifier,7.042915e+00,1
+evaluate.c,target/eval,Jun 12 2020 21:03:52,1592006644,main,2.652616e+00,1
+minas-funcs.c,./target/mfog,Jun 12 2020 21:04:04,1592006645,readModel,7.770000e-04,1
+minas-funcs.c,./target/mfog,Jun 12 2020 21:04:04,1592006647,readExamples,2.111730e+00,1
+minas-mpi.c,./target/mfog,Jun 12 2020 21:04:04,1592006647,sendModel,1.800000e-04,4
+minas-mpi.c,./target/mfog,Jun 12 2020 21:04:04,1592006650,sendExamples,3.530612e+00,4
+minas-mpi.c,./target/mfog,Jun 12 2020 21:04:04,1592006650,MFOG_main,3.530630e+00,4
+evaluate.c,target/eval,Jun 12 2020 21:03:52,1592006653,main,2.678005e+00,1
+minas-funcs.c,target/mfog,Jun 12 2020 21:04:04,1592006884,readModel,1.128000e-03,1
+minas-funcs.c,target/mfog,Jun 12 2020 21:04:04,1592006887,readExamples,2.164682e+00,1
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592006887,sendModel,1.960000e-04,4
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592006890,sendExamples,3.035171e+00,4
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592006890,MFOG_main,3.035187e+00,4
+minas-funcs.c,target/mfog,Jun 12 2020 21:04:04,1592007249,readModel,6.570000e-04,1
+minas-funcs.c,target/mfog,Jun 12 2020 21:04:04,1592007252,readExamples,2.230374e+00,1
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592007252,sendModel,1.270000e-04,2
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592007259,sendExamples,7.397015e+00,2
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592007259,MFOG_main,7.397033e+00,2
+minas-funcs.c,target/mfog,Jun 12 2020 21:04:04,1592007274,readModel,1.155000e-03,1
+minas-funcs.c,target/mfog,Jun 12 2020 21:04:04,1592007276,readExamples,2.196826e+00,1
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592007276,sendModel,1.100000e-04,3
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592007280,sendExamples,4.490970e+00,3
+minas-mpi.c,target/mfog,Jun 12 2020 21:04:04,1592007280,MFOG_main,4.490988e+00,3
+minas-funcs.c,target/minas,Jun 13 2020 12:57:46,1592063866,readModel,1.184000e-03,1
+minas-funcs.c,target/minas,Jun 13 2020 12:57:46,1592063869,readExamples,2.234319e+00,1
+minas.c,target/minas,Jun 13 2020 12:57:46,1592063876,MNS_classifier,7.287317e+00,1
+evaluate.c,target/eval,Jun 13 2020 12:57:46,1592063879,main,2.857320e+00,1
+minas-funcs.c,./target/mfog,Jun 13 2020 12:57:59,1592063879,readModel,7.850000e-04,1
+minas-funcs.c,./target/mfog,Jun 13 2020 12:57:59,1592063882,readExamples,2.477372e+00,1
+minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063882,sendModel,2.800000e-04,4
+minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063886,sendExamples,3.753632e+00,4
+minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063886,MFOG_main,3.753656e+00,4
+evaluate.c,target/eval,Jun 13 2020 12:57:46,1592063889,main,2.850379e+00,1

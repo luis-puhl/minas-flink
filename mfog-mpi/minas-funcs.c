@@ -7,7 +7,8 @@
 #include <time.h>
 #include <err.h>
 
-#include "./minas.h"
+#include "minas.h"
+#include "loadenv.h"
 
 // #define SQR_DISTANCE 1
 #define line_len 10 * 1024
@@ -60,12 +61,7 @@ void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *exec
     }
     fclose(file);
     if (timing) {
-        // # source, executable, build_date-time, wall-clock, function, elapsed, cores
-        double elapsed = ((double)(clock() - start)) / 1000000.0;
-        fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
-        fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+        PRINT_TIMING(timing, executable, 1, start);
     }
 }
 
@@ -106,12 +102,7 @@ Point *readExamples(int dimension, FILE *file, FILE *timing, char *executable) {
     ex->value = NULL;
     ex->label = '\0';
     if (timing) {
-        // # source, executable, build_date-time, wall-clock, function, elapsed, cores
-        double elapsed = ((double)(clock() - start)) / 1000000.0;
-        fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
-        fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, 1);
+        PRINT_TIMING(timing, executable, 1, start);
     }
     return exs;
 }

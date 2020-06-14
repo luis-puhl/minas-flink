@@ -7,7 +7,7 @@ clean:
 
 target/mfog: minas-mpi.c minas-funcs.c loadenv.c
 	# gcc mfog.c -pthread -Wl,-rpath -Wl,/usr/lib/openmpi -Wl,--enable-new-dtags -L/usr/lib/openmpi -lmpi -lm -std=c1x -Wall -g -o target/mfog
-	mpicc minas-mpi.c minas-funcs.c loadenv.c -o target/mfog -lm -Wall -g
+	~/usr/local/bin/mpicc minas-mpi.c minas-funcs.c loadenv.c -o target/mfog -lm -Wall -g
 target/minas: minas.c minas-funcs.c loadenv.c
 	gcc minas.c minas-funcs.c loadenv.c -o target/minas -lm -Wall -g
 target/eval: evaluate.c loadenv.c
@@ -26,7 +26,7 @@ out/classify.csv: target/minas datasets/model-clean.csv datasets/test.csv
 	perf stat target/minas 2>>experiments/eval.log
 	# ./target/minas > out/classify.csv 2>experiments/eval.log
 out/classify-mpi.csv: target/mfog datasets/model-clean.csv datasets/test.csv
-	perf stat mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv 2>>experiments/eval-mpi.log
+	perf stat ~/usr/local/bin/mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv 2>>experiments/eval-mpi.log
 	# mpiexec ./target/mfog > out/classify-mpi.csv 2>experiments/eval-mpi.log
 experiments/eval.log: target/eval datasets/test.csv out/classify.csv
 	target/eval EVALUATE_LOG=experiments/eval.log
@@ -36,7 +36,9 @@ experiments/eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv
 cluster:
 	# mpirun [ -np X ] [ --hostfile <filename> ]  <program>
 	# --map-by ppr:n:node
-	mpirun -np 4 --host localhost,192.168.15.10 target/mfog
+	# mpirun -np 4 --host localhost,192.168.15.10 target/mfog
+	# usr/local/bin/mpiexec --prefix /home/pi/usr/local/ --host 192.168.15.10 ls
+	usr/local/bin/mpiexec --prefix /home/pi/usr/local/  -np 4 --host localhost,192.168.15.10 target/mfog
 cloud/minas.tar: minas.c minas.h mfog.c makefile evaluate.c
 	tar -cvf cloud/minas.tar minas.c minas.h mfog.c makefile evaluate.c
 copyAlmoco:

@@ -27,12 +27,7 @@ void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing
     MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     free(buffer);
-    // # source, executable, build_date-time, wall-clock, function, elapsed, cores
-    double elapsed = ((double)(clock() - start)) / 1000000.0;
-    fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
-    fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
+    PRINT_TIMING(timing, executable, clSize, start);
 }
 
 void receiveModel(int dimension, Model *model, int clRank) {
@@ -105,12 +100,7 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
     }
     free(buffer);
     free(ex.value);
-    // # source, executable, build_date-time, wall-clock, function, elapsed, cores
-    double elapsed = ((double)(clock() - start)) / 1000000.0;
-    fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
-    fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-            __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
+    PRINT_TIMING(timing, executable, clSize, start);
     return exampleCounter;
 }
 
@@ -208,12 +198,7 @@ int MFOG_main(int argc, char *argv[], char **envp) {
         int exampleCounter = sendExamples(model.dimension, examples, clSize, matches, timing, executable);
 
         MPI_Barrier(MPI_COMM_WORLD);
-        // # source, executable, build_date-time, wall-clock, function, elapsed, cores
-        double elapsed = ((double)(clock() - start)) / 1000000.0;
-        fprintf(timing, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
-        fprintf(stderr, "%s,%s,%s %s,%ld,%s,%e,%d\n",
-                __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, elapsed, clSize);
+        PRINT_TIMING(timing, executable, clSize, start);
         closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
     } else {
         receiveModel(model.dimension, &model, clRank);
