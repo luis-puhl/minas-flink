@@ -1,56 +1,25 @@
 Processor pokebola, Rank 0 out of 4 processors
-[0] Reading model from 	datasets/model-clean.csv
-[3] Waiting for model
-[1] Waiting for model
-[2] Waiting for model
-[0] Read model with 100 clusters took 	0.001115s
-[0] Sending to 1
-[1] Model size to recv 100
-[0] Sending to 2
-[1] Recv model with 100 clusters took 	0.001285s
-[2] Model size to recv 100
-[0] Sending to 3
-[2] Recv model with 100 clusters took 	0.001410s
-[3] Model size to recv 100
-[0] Send model with 100 clusters took 	0.001626s
-[0]110 Reading test from    datasets/test.csv
-[3] Recv model with 100 clusters took 	0.001663s
-[0] Send Test with 653457 examples took 	4.909375s
-[0] Finalizing in 	4.909385s
-[2] Rcv/Classify Test with 217819 examples took 	4.869335s
-[2] Finalizing in 	4.869341s
-[3] Rcv/Classify Test with 217819 examples took 	4.905268s
-[3] Finalizing in 	4.905274s
-[1] Rcv/Classify Test with 217819 examples took 	4.905071s
-[1] Finalizing in 	4.905075s
-
- Performance counter stats for 'mpiexec ./target/minas-mpi':
-
-         23,579.99 msec task-clock:u              #    4.635 CPUs utilized          
-                 0      context-switches:u        #    0.000 K/sec                  
-                 0      cpu-migrations:u          #    0.000 K/sec                  
-             8,754      page-faults:u             #    0.371 K/sec                  
-    53,173,216,100      cycles:u                  #    2.255 GHz                    
-    47,012,401,129      stalled-cycles-frontend:u #   88.41% frontend cycles idle   
-    67,163,929,030      instructions:u            #    1.26  insn per cycle         
-                                                  #    0.70  stalled cycles per insn
-     8,239,430,417      branches:u                #  349.425 M/sec                  
-        30,788,183      branch-misses:u           #    0.37% of all branches        
-
-       5.087511600 seconds time elapsed
-
-      18.630407000 seconds user
-       5.137739000 seconds sys
-
-
-Reading test from 	'./datasets/test.csv'
-Reading output from 	'./out/classify-mpi.csv'
-Done ./target/eval in 	2.071965s
+Reading model from    'datasets/model-clean.csv'
+Read model with 100 clusters took 	0.001148s
+[1] Recv model with 100 clusters took 	0.001430s
+[2] Recv model with 100 clusters took 	0.001411s
+[0] Send model with 100 clusters took 	0.000498s
+[3] Recv model with 100 clusters took 	0.001640s
+Reading test from     'datasets/test.csv'
+Read test with 653458 examples took 	2.281014s
+Send Test with 653457 examples took 	5.059360s
+[2] Worker classify Test with 217819 examples took 	4.949767s
+[3] Worker classify Test with 217819 examples took 	4.993618s
+[1] Worker classify Test with 217819 examples took 	5.018073s
+Classification with 653457 examples took 	5.059620s
+Reading test from      'datasets/test.csv'
+Reading output from    'out/classify-mpi.csv'
+Done ./target/eval in 	2.276389s
       	|	Classes
 Labels	|	         A	         N	
-     -	|	        19	        11	
+     -	|	        13	         3	
      A	|	         0	         0	
-     N	|	    447160	    206267	
+     N	|	    447166	    206275	
 Total 	653457
-Hits 	206271 (31.566117%)
-Misses 	447186 (68.433883%)
+Hits 	206275 (31.566729%)
+Misses 	447182 (68.433271%)
