@@ -21,10 +21,10 @@ typedef struct model {
 } Model;
 
 typedef struct match {
-    int pointId;
-    Cluster *cluster;
-    char isMatch;
-    double distance;
+    int pointId, clusterId;
+    char isMatch, label;
+    double distance, radius;
+    // Cluster *cluster;
 } Match;
 
 // #ifndef MINAS_FUNCS

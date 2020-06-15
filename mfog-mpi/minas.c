@@ -47,8 +47,8 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
     for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
         classify(dimension, &model, &(examples[exampleCounter]), &match);
         fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
-            match.pointId, match.isMatch, match.cluster->id,
-            match.cluster->label, match.distance, match.cluster->radius
+            match.pointId, match.isMatch, match.clusterId,
+            match.label, match.distance, match.radius
         );
     }
     PRINT_TIMING(timing, executable, 1, start);

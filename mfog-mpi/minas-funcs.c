@@ -54,12 +54,14 @@ Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int 
     //
     double globalDistance = dimension * 2.0, prevGlobalDistance, diffGD = 1.0;
     double newCenters[nClusters][dimension], distances[nClusters], sqrDistances[nClusters];
+    int matches[nClusters];
     int maxIterations = 10;
     while (diffGD > 0.00001 && maxIterations-- > 0) {
         // setup
         prevGlobalDistance = globalDistance;
         globalDistance = 0.0;
         for (int i = 0; i < model->size; i++) {
+            matches[model->vals[i].id] = 0;
             distances[model->vals[i].id] = 0.0;
             sqrDistances[model->vals[i].id] = 0.0;
             for (int d = 0; d < dimension; d++) {
@@ -70,16 +72,17 @@ Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int 
         for (int i = 0; i < nExamples; i++) {
             classify(dimension, model, &(examples[i]), &match);
             globalDistance += match.distance;
-            distances[match.cluster->id] += match.distance;
-            sqrDistances[match.cluster->id] += match.distance * match.distance;
+            distances[match.clusterId] += match.distance;
+            sqrDistances[match.clusterId] += match.distance * match.distance;
             for (int d = 0; d < dimension; d++) {
-                newCenters[match.cluster->id][d] += examples[i].value[d];
+                newCenters[match.clusterId][d] += examples[i].value[d];
             }
-            match.cluster->matches++;
+            matches[match.clusterId]++;
         }
         // new centers and radius
         for (int i = 0; i < model->size; i++) {
             Cluster *cl = &(model->vals[i]);
+            cl->matches = matches[cl->id];
             // skip clusters that didn't move
             if (cl->matches == 0) continue;
             cl->time++;
@@ -197,11 +200,14 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     for (int i = 0; i < model->size; i++) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
         if (match->distance > distance) {
-            match->cluster = &(model->vals[i]);
+            // match->cluster = &(model->vals[i]);
+            match->clusterId = model->vals[i].id;
+            match->label = model->vals[i].label;
+            match->radius = model->vals[i].radius;
             match->distance = distance;
         }
     }
-    match->isMatch = match->distance <= match->cluster->radius ? 'y' : 'n';
+    match->isMatch = match->distance <= match->radius ? 'y' : 'n';
     
     // printf("%d,%c,%d,%c,%e,%e\n",
     //     match->pointId, match->isMatch, match->clusterId,

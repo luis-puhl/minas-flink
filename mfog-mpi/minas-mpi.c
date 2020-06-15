@@ -70,6 +70,8 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
         while (hasMessage) {
             MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
+                    // match.pointId, match.isMatch, match.cluster->id,
+                    // match.cluster->label, match.distance, match.cluster->radius
                     match.pointId, match.isMatch, match.clusterId,
                     match.label, match.distance, match.radius
             );
@@ -93,6 +95,8 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
     while (hasMessage) {
         MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
+                // match.pointId, match.isMatch, match.cluster->id,
+                // match.cluster->label, match.distance, match.cluster->radius
                 match.pointId, match.isMatch, match.clusterId,
                 match.label, match.distance, match.radius
         );
@@ -189,7 +193,8 @@ int MFOG_main(int argc, char *argv[], char **envp) {
         
         readModel(model.dimension, modelFile, &model, timing, executable);
         Point *examples;
-        examples = readExamples(model.dimension, examplesFile, timing, executable);
+        int nExamples;
+        examples = readExamples(model.dimension, examplesFile, &nExamples, timing, executable);
         //
         sendModel(model.dimension, &model, clRank, clSize, timing, executable);
 
