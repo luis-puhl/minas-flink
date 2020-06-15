@@ -1,0 +1,317 @@
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ vim /etc/lxc/lxc-usernet
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ vim /etc/lxc^C
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ vim /etc/lxc/lxc-usernet
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ sudo vim /etc/lxc/lxc-usernet
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ mkdir -p .config/lxc
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ cp /etc/lxc/
+default.conf  lxc-usernet   
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ cp /etc/lxc/default.conf .config/lxc/
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ ^Cdefault.conf .config/lxc/
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ vim .config/lxc/default.conf
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ cat /etc/subuid /etc/subgid
+pi:100000:65536
+pi:100000:65536
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ vim .config/lxc/default.conf
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ cat /etc/subuid /etc/subgid^C
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ systemd-run --unit=myshell --user --scope -p "Delegate=yes" lxc-start acontainer
+Running scope as unit: myshell.scope
+lxc-start: missing container name, use --name option
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ systemd-run --unit=myshell --user --scope -p "Delegate=yes" lxc-start ^Container
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ sudo usermod -a -G lxc $USER
+usermod: group 'lxc' does not exist
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ sudo usermod -a -G lx $USER
+dusermod: group 'lx' does not exist
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ sudo reboot 
+Connection to 192.168.15.16 closed by remote host.
+Connection to 192.168.15.16 closed.
+git_prompt_info:5: character not in range                                                                                                                                                     
+
+ 13:26:41  ✘  puhl@pokebola  ...project/minas-flink/mfog-mpi  ✭  2h3m46s 
+$ ssh jantar
+Linux hermes-pi-1 4.19.66-v7+ #1253 SMP Thu Aug 15 11:49:46 BST 2019 armv7l
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Jun 15 14:22:56 2020 from 192.168.15.14
+pi@hermes-pi-1:~ $ ls
+cloud  cpuinfo  Desktop  Documents  Downloads  luis  monitor  Music  oldconffiles  Pictures  project  Public  python_games  sources.list  Templates  usr  Videos  www
+pi@hermes-pi-1:~ $ sudo usermod -a -G lxc $USER
+usermod: group 'lxc' does not exist
+pi@hermes-pi-1:~ $ lxc-create -t download -n acontainer
+lxc-create: conf.c: chown_mapped_root: 3478 No mapping for container root
+lxc-create: lxccontainer.c: do_bdev_create: 1054 Error chowning /home/pi/.local/share/lxc/acontainer/rootfs to container root
+lxc-create: conf.c: suggest_default_idmap: 4594 You must either run as root, or define uid mappings
+lxc-create: conf.c: suggest_default_idmap: 4595 To pass uid mappings to lxc-create, you could create
+lxc-create: conf.c: suggest_default_idmap: 4596 ~/.config/lxc/default.conf:
+lxc-create: conf.c: suggest_default_idmap: 4597 lxc.include = /etc/lxc/default.conf
+lxc-create: conf.c: suggest_default_idmap: 4598 lxc.id_map = u 0 100000 65536
+lxc-create: conf.c: suggest_default_idmap: 4599 lxc.id_map = g 0 100000 65536
+lxc-create: lxccontainer.c: do_lxcapi_create: 1518 Error creating backing store type (none) for acontainer
+lxc-create: tools/lxc_create.c: main: 318 Error creating container acontainer
+pi@hermes-pi-1:~ $ sudo lxc-create -t download -n acontainer
+Setting up the GPG keyring
+Downloading the image index
+
+---
+DIST	RELEASE	ARCH	VARIANT	BUILD
+---
+alpine	3.10	amd64	default	20200615_13:00
+alpine	3.10	arm64	default	20200615_13:00
+alpine	3.10	armhf	default	20200615_13:00
+alpine	3.10	i386	default	20200615_13:00
+alpine	3.10	ppc64el	default	20200615_13:00
+alpine	3.10	s390x	default	20200615_13:00
+alpine	3.11	amd64	default	20200615_13:02
+alpine	3.11	arm64	default	20200615_13:00
+alpine	3.11	armhf	default	20200615_13:00
+alpine	3.11	i386	default	20200615_13:02
+alpine	3.11	ppc64el	default	20200615_13:00
+alpine	3.11	s390x	default	20200615_13:00
+alpine	3.9	amd64	default	20200615_13:00
+alpine	3.9	arm64	default	20200615_13:00
+alpine	3.9	armhf	default	20200615_13:00
+alpine	3.9	i386	default	20200615_13:00
+alpine	3.9	ppc64el	default	20200615_13:00
+alpine	3.9	s390x	default	20200615_13:00
+alpine	edge	amd64	default	20200615_13:00
+alpine	edge	arm64	default	20200615_13:00
+alpine	edge	armhf	default	20200615_13:00
+alpine	edge	i386	default	20200615_13:00
+alpine	edge	ppc64el	default	20200615_13:00
+alpine	edge	s390x	default	20200615_13:00
+alt	Sisyphus	amd64	default	20200615_01:17
+alt	Sisyphus	arm64	default	20200615_01:17
+alt	Sisyphus	i386	default	20200615_01:17
+alt	Sisyphus	ppc64el	default	20200615_01:17
+alt	p9	amd64	default	20200615_01:17
+alt	p9	arm64	default	20200615_01:17
+alt	p9	i386	default	20200615_01:17
+apertis	v2019.2	amd64	default	20200615_10:53
+apertis	v2019.2	arm64	default	20200615_10:53
+apertis	v2019.2	armhf	default	20200615_10:53
+apertis	v2020.0	amd64	default	20200615_10:53
+apertis	v2020.0	arm64	default	20200615_10:53
+apertis	v2020.0	armhf	default	20200615_10:53
+archlinux	current	amd64	default	20200615_04:18
+archlinux	current	arm64	default	20200615_04:18
+archlinux	current	armhf	default	20200615_04:18
+centos	6	amd64	default	20200615_07:08
+centos	6	i386	default	20200615_07:08
+centos	7	amd64	default	20200615_07:08
+centos	7	armhf	default	20200615_07:08
+centos	7	i386	default	20200615_07:09
+centos	8-Stream	amd64	default	20200615_07:08
+centos	8-Stream	arm64	default	20200615_07:08
+centos	8-Stream	ppc64el	default	20200615_07:08
+centos	8	amd64	default	20200615_07:08
+centos	8	arm64	default	20200615_07:08
+centos	8	ppc64el	default	20200615_07:08
+debian	bullseye	amd64	default	20200615_05:24
+debian	bullseye	arm64	default	20200615_05:24
+debian	bullseye	armel	default	20200615_05:24
+debian	bullseye	armhf	default	20200615_05:24
+debian	bullseye	i386	default	20200615_05:24
+debian	bullseye	ppc64el	default	20200615_05:24
+debian	bullseye	s390x	default	20200615_05:24
+debian	buster	amd64	default	20200615_05:24
+debian	buster	arm64	default	20200615_05:24
+debian	buster	armel	default	20200615_05:41
+debian	buster	armhf	default	20200615_05:38
+debian	buster	i386	default	20200615_05:24
+debian	buster	ppc64el	default	20200615_05:24
+debian	buster	s390x	default	20200615_05:24
+debian	jessie	amd64	default	20200615_05:24
+debian	jessie	armel	default	20200615_05:24
+debian	jessie	armhf	default	20200615_05:24
+debian	jessie	i386	default	20200615_05:24
+debian	sid	amd64	default	20200615_05:24
+debian	sid	arm64	default	20200615_05:24
+debian	sid	armel	default	20200615_05:24
+debian	sid	armhf	default	20200615_05:24
+debian	sid	i386	default	20200615_05:24
+debian	sid	ppc64el	default	20200615_05:24
+debian	sid	s390x	default	20200615_05:24
+debian	stretch	amd64	default	20200615_05:24
+debian	stretch	arm64	default	20200615_05:24
+debian	stretch	armel	default	20200615_05:45
+debian	stretch	armhf	default	20200615_05:24
+debian	stretch	i386	default	20200615_05:24
+debian	stretch	ppc64el	default	20200615_05:24
+debian	stretch	s390x	default	20200615_05:24
+devuan	ascii	amd64	default	20200615_11:50
+devuan	ascii	arm64	default	20200615_11:50
+devuan	ascii	armel	default	20200615_11:50
+devuan	ascii	armhf	default	20200615_11:50
+devuan	ascii	i386	default	20200615_11:50
+devuan	beowulf	amd64	default	20200615_11:50
+devuan	beowulf	arm64	default	20200615_11:50
+devuan	beowulf	armel	default	20200615_11:50
+devuan	beowulf	armhf	default	20200615_11:50
+devuan	beowulf	i386	default	20200615_11:50
+fedora	30	amd64	default	20200614_20:33
+fedora	30	arm64	default	20200614_20:33
+fedora	30	ppc64el	default	20200614_20:33
+fedora	30	s390x	default	20200614_20:33
+fedora	31	amd64	default	20200614_20:33
+fedora	31	arm64	default	20200614_20:33
+fedora	31	ppc64el	default	20200614_20:33
+fedora	31	s390x	default	20200614_20:33
+fedora	32	amd64	default	20200614_20:33
+fedora	32	arm64	default	20200614_20:33
+fedora	32	ppc64el	default	20200614_20:33
+fedora	32	s390x	default	20200614_20:33
+funtoo	1.4	amd64	default	20200614_16:45
+funtoo	1.4	armhf	default	20200614_16:45
+funtoo	1.4	i386	default	20200614_16:45
+gentoo	current	amd64	default	20200614_16:07
+gentoo	current	armhf	default	20200615_16:07
+gentoo	current	i386	default	20200615_16:07
+gentoo	current	ppc64el	default	20200615_16:07
+gentoo	current	s390x	default	20200615_16:07
+kali	current	amd64	default	20200614_17:14
+kali	current	arm64	default	20200614_17:14
+kali	current	armel	default	20200614_17:14
+kali	current	armhf	default	20200614_17:14
+kali	current	i386	default	20200614_17:14
+mint	sarah	amd64	default	20200615_08:51
+mint	sarah	i386	default	20200615_08:51
+mint	serena	amd64	default	20200615_08:51
+mint	serena	i386	default	20200615_08:51
+mint	sonya	amd64	default	20200615_08:51
+mint	sonya	i386	default	20200615_08:51
+mint	sylvia	amd64	default	20200615_08:51
+mint	sylvia	i386	default	20200615_08:51
+mint	tara	amd64	default	20200615_08:51
+mint	tara	i386	default	20200615_08:51
+mint	tessa	amd64	default	20200615_08:51
+mint	tessa	i386	default	20200615_08:51
+mint	tina	amd64	default	20200615_08:51
+mint	tina	i386	default	20200615_08:51
+mint	tricia	amd64	default	20200615_08:51
+mint	tricia	i386	default	20200615_08:51
+opensuse	15.1	amd64	default	20200615_05:00
+opensuse	15.1	arm64	default	20200615_04:20
+opensuse	15.1	ppc64el	default	20200615_04:20
+opensuse	tumbleweed	amd64	default	20200615_04:20
+opensuse	tumbleweed	arm64	default	20200615_04:20
+opensuse	tumbleweed	i386	default	20200610_04:20
+opensuse	tumbleweed	ppc64el	default	20200526_04:20
+openwrt	18.06	amd64	default	20200615_11:57
+openwrt	19.07	amd64	default	20200615_11:57
+openwrt	snapshot	amd64	default	20200615_11:57
+oracle	6	amd64	default	20200615_07:46
+oracle	6	i386	default	20200615_07:46
+oracle	7	amd64	default	20200615_07:46
+oracle	8	amd64	default	20200615_07:46
+plamo	6.x	amd64	default	20200615_01:33
+plamo	6.x	i386	default	20200615_01:33
+plamo	7.x	amd64	default	20200615_01:33
+pld	current	amd64	default	20200614_20:46
+pld	current	i386	default	20200614_20:46
+ubuntu	bionic	amd64	default	20200615_07:42
+ubuntu	bionic	arm64	default	20200615_07:42
+ubuntu	bionic	armhf	default	20200615_07:42
+ubuntu	bionic	i386	default	20200615_07:42
+ubuntu	bionic	ppc64el	default	20200615_07:42
+ubuntu	bionic	s390x	default	20200615_07:42
+ubuntu	eoan	amd64	default	20200615_07:42
+ubuntu	eoan	arm64	default	20200615_07:42
+ubuntu	eoan	armhf	default	20200615_07:42
+ubuntu	eoan	i386	default	20200615_07:42
+ubuntu	eoan	ppc64el	default	20200615_07:55
+ubuntu	eoan	s390x	default	20200615_07:42
+ubuntu	focal	amd64	default	20200615_07:42
+ubuntu	focal	arm64	default	20200615_07:42
+ubuntu	focal	armhf	default	20200615_07:42
+ubuntu	focal	ppc64el	default	20200615_07:58
+ubuntu	focal	s390x	default	20200615_07:42
+ubuntu	groovy	amd64	default	20200615_07:42
+ubuntu	groovy	arm64	default	20200615_07:42
+ubuntu	groovy	armhf	default	20200615_07:42
+ubuntu	groovy	ppc64el	default	20200615_07:42
+ubuntu	groovy	s390x	default	20200615_07:42
+ubuntu	trusty	amd64	default	20200615_07:42
+ubuntu	trusty	arm64	default	20200615_07:42
+ubuntu	trusty	armhf	default	20200615_08:02
+ubuntu	trusty	i386	default	20200615_07:42
+ubuntu	trusty	ppc64el	default	20200615_07:42
+ubuntu	xenial	amd64	default	20200615_07:42
+ubuntu	xenial	arm64	default	20200615_07:42
+ubuntu	xenial	armhf	default	20200615_07:42
+ubuntu	xenial	i386	default	20200615_07:42
+ubuntu	xenial	ppc64el	default	20200615_07:42
+ubuntu	xenial	s390x	default	20200615_07:50
+voidlinux	current	amd64	default	20200614_17:10
+voidlinux	current	arm64	default	20200614_17:10
+voidlinux	current	armhf	default	20200614_17:10
+voidlinux	current	i386	default	20200614_17:10
+---
+
+Distribution: archlinux
+Release: current
+Architecture: armhf
+
+Downloading the image index
+Downloading the rootfs
+Downloading the metadata
+The image cache is now ready
+Unpacking the rootfs
+
+---
+You just created an Archlinux  armv7 (20200615_04:18) container.
+pi@hermes-pi-1:~ $ sudo lxc-start -n acontainer -d
+pi@hermes-pi-1:~ $ lxc-info -n my-container
+my-container doesn't exist
+pi@hermes-pi-1:~ $ lxc-info -n my-container
+my-container doesn't exist
+pi@hermes-pi-1:~ $ lxc-info -n acontainer
+acontainer doesn't exist
+pi@hermes-pi-1:~ $ sudo lxc-info -n acontainer
+Name:           acontainer
+State:          RUNNING
+PID:            2178
+CPU use:        2.95 seconds
+BlkIO use:      5.18 MiB
+Memory use:     20.67 MiB
+KMem use:       5.01 MiB
+pi@hermes-pi-1:~ $ sudo lxc-ls -f
+NAME         STATE   AUTOSTART GROUPS IPV4 IPV6 
+acontainer   RUNNING 0         -      -    -    
+my-container STOPPED 0         -      -    -    
+pi@hermes-pi-1:~ $ sudo lxc-attach -n acontainer
+[root@acontainer /]# ls
+bin  boot  dev	etc  home  lib	mnt  opt  proc	root  run  sbin  srv  sys  tmp	usr  var
+[root@acontainer /]# pacman -Syu 
+:: Synchronizing package databases...
+error: failed retrieving file 'core.db' from mirror.archlinuxarm.org : Could not resolve host: mirror.archlinuxarm.org
+error: failed to update core (invalid url for server)
+error: failed retrieving file 'extra.db' from mirror.archlinuxarm.org : Could not resolve host: mirror.archlinuxarm.org
+error: failed to update extra (invalid url for server)
+error: failed retrieving file 'community.db' from mirror.archlinuxarm.org : Could not resolve host: mirror.archlinuxarm.org
+error: failed to update community (invalid url for server)
+error: failed retrieving file 'alarm.db' from mirror.archlinuxarm.org : Could not resolve host: mirror.archlinuxarm.org
+error: failed to update alarm (invalid url for server)
+error: failed retrieving file 'aur.db' from mirror.archlinuxarm.org : Could not resolve host: mirror.archlinuxarm.org
+error: failed to update aur (invalid url for server)
+error: failed to synchronize all databases
+[root@acontainer /]# lscpu
+Architecture:        armv7l
+Byte Order:          Little Endian
+CPU(s):              4
+On-line CPU(s) list: 0-3
+Thread(s) per core:  1
+Core(s) per socket:  4
+Socket(s):           1
+Vendor ID:           ARM
+Model:               4
+Model name:          Cortex-A53
+Stepping:            r0p4
+CPU max MHz:         1200.0000
+CPU min MHz:         600.0000
+BogoMIPS:            38.40
+Flags:               half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32
+[root@acontainer /]# 

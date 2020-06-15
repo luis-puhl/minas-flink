@@ -1,0 +1,103 @@
+pi@almoco:~ $ uname -a
+Linux almoco 4.19.118-v7+ #1311 SMP Mon Apr 27 14:21:24 BST 2020 armv7l GNU/Linux
+pi@almoco:~ $ lscpu
+Architecture:        armv7l
+Byte Order:          Little Endian
+CPU(s):              4
+On-line CPU(s) list: 0-3
+Thread(s) per core:  1
+Core(s) per socket:  4
+Socket(s):           1
+Vendor ID:           ARM
+Model:               4
+Model name:          Cortex-A53
+Stepping:            r0p4
+CPU max MHz:         1200.0000
+CPU min MHz:         600.0000
+BogoMIPS:            38.40
+Flags:               half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32
+pi@almoco:~ $ 
+
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ lscpu 
+Architecture:          armv7l
+Byte Order:            Little Endian
+CPU(s):                4
+On-line CPU(s) list:   0-3
+Thread(s) per core:    1
+Core(s) per socket:    4
+Socket(s):             1
+Model:                 4
+Model name:            ARMv7 Processor rev 4 (v7l)
+CPU max MHz:           1200.0000
+CPU min MHz:           600.0000
+BogoMIPS:              38.40
+Flags:                 half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ ls
+ls           lsattr       lsblk        lsb_release  lscpu        lsinitramfs  lsipc        lslocks      lslogins     lsmod        lsns         lspgpot      lsusb        
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ lsmod 
+Module                  Size  Used by
+fuse                  110592  3
+sha256_generic         20480  0
+cfg80211              614400  0
+rfkill                 28672  2 cfg80211
+ip6table_filter        16384  1
+ip6t_MASQUERADE        16384  1
+ip6table_nat           16384  1
+nf_nat_ipv6            20480  2 ip6t_MASQUERADE,ip6table_nat
+ip6_tables             24576  2 ip6table_filter,ip6table_nat
+ipt_MASQUERADE         16384  2
+iptable_nat            16384  1
+nf_nat_ipv4            16384  2 ipt_MASQUERADE,iptable_nat
+nf_nat                 36864  2 nf_nat_ipv6,nf_nat_ipv4
+xt_CHECKSUM            16384  1
+iptable_mangle         16384  1
+xt_comment             16384  19
+xt_tcpudp              16384  14
+xt_conntrack           16384  1
+nf_conntrack          135168  6 ipt_MASQUERADE,nf_nat_ipv6,ip6t_MASQUERADE,xt_conntrack,nf_nat_ipv4,nf_nat
+nf_defrag_ipv6         20480  1 nf_conntrack
+nf_defrag_ipv4         16384  1 nf_conntrack
+iptable_filter         16384  1
+bcm2835_codec          36864  0
+bcm2835_v4l2           45056  0
+v4l2_mem2mem           24576  1 bcm2835_codec
+bcm2835_mmal_vchiq     32768  2 bcm2835_codec,bcm2835_v4l2
+v4l2_common            16384  1 bcm2835_v4l2
+videobuf2_dma_contig    20480  1 bcm2835_codec
+videobuf2_vmalloc      16384  1 bcm2835_v4l2
+videobuf2_memops       16384  2 videobuf2_dma_contig,videobuf2_vmalloc
+videobuf2_v4l2         24576  3 bcm2835_codec,bcm2835_v4l2,v4l2_mem2mem
+videobuf2_common       45056  4 bcm2835_codec,bcm2835_v4l2,v4l2_mem2mem,videobuf2_v4l2
+snd_bcm2835            24576  1
+videodev              200704  6 bcm2835_codec,v4l2_common,videobuf2_common,bcm2835_v4l2,v4l2_mem2mem,videobuf2_v4l2
+snd_pcm               102400  1 snd_bcm2835
+media                  36864  2 videodev,v4l2_mem2mem
+raspberrypi_hwmon      16384  0
+snd_timer              32768  1 snd_pcm
+snd                    73728  5 snd_timer,snd_bcm2835,snd_pcm
+hwmon                  16384  1 raspberrypi_hwmon
+vc_sm_cma              36864  1 bcm2835_mmal_vchiq
+uio_pdrv_genirq        16384  0
+uio                    20480  1 uio_pdrv_genirq
+fixed                  16384  0
+squashfs               45056  2
+i2c_dev                20480  0
+ip_tables              24576  3 iptable_mangle,iptable_filter,iptable_nat
+x_tables               32768  11 xt_comment,iptable_mangle,ip_tables,iptable_filter,xt_tcpudp,ipt_MASQUERADE,xt_CHECKSUM,ip6table_filter,ip6t_MASQUERADE,xt_conntrack,ip6_tables
+ipv6                  450560  25 nf_nat_ipv6
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ lscpu 
+Architecture:          armv7l
+Byte Order:            Little Endian
+CPU(s):                4
+On-line CPU(s) list:   0-3
+Thread(s) per core:    1
+Core(s) per socket:    4
+Socket(s):             1
+Model:                 4
+Model name:            ARMv7 Processor rev 4 (v7l)
+CPU max MHz:           1200.0000
+CPU min MHz:           600.0000
+BogoMIPS:              38.40
+Flags:                 half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32
+pi@hermes-pi-1:~/cloud/openmpi-4.0.4 $ uname -a
+Linux hermes-pi-1 4.19.66-v7+ #1253 SMP Thu Aug 15 11:49:46 BST 2019 armv7l GNU/Linux
