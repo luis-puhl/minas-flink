@@ -136,3 +136,7 @@ minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063882,sendModel,2.800000e-04
 minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063886,sendExamples,3.753632e+00,4
 minas-mpi.c,./target/mfog,Jun 13 2020 12:57:59,1592063886,MFOG_main,3.753656e+00,4
 evaluate.c,target/eval,Jun 13 2020 12:57:46,1592063889,main,2.850379e+00,1
+# 
+minas-funcs.c,target/minas,Jun 15 2020 00:33:25,1592192005,readModel,7.170000e-04,1
+minas-funcs.c,target/minas,Jun 15 2020 00:33:25,1592192007,readExamples,1.952735e+00,1
+minas.c,target/minas,Jun 15 2020 00:33:25,1592192014,MNS_classifier,6.720806e+00,1

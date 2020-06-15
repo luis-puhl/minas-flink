@@ -21,9 +21,10 @@ typedef struct model {
 } Model;
 
 typedef struct match {
-    int pointId, clusterId;
-    char isMatch, label;
-    double distance, radius;
+    int pointId;
+    Cluster *cluster;
+    char isMatch;
+    double distance;
 } Match;
 
 // #ifndef MINAS_FUNCS
@@ -32,7 +33,7 @@ typedef struct match {
 // #endif // MINAS_FUNCS
 double MNS_distance(double a[], double b[], int dimension);
 void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable);
-Point *readExamples(int dimension, FILE *file, FILE *timing, char *executable);
+Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable);
 void classify(int dimension, Model *model, Point *ex, Match *match);
 
 #endif // MINAS_H
