@@ -60,7 +60,7 @@ void readModel(int dimension, char *modelName, Model *model) {
         if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format  '%s'", modelName);
     }
     fclose(file);
-    fprintf(stderr, "Read model with %d clusters took \t%lfs\n", model->size, ((double)(clock() - start)) / ((double)1000000));
+    fprintf(stderr, "Read model with %d clusters took \t%es\n", model->size, ((double)(clock() - start)) / ((double)1000000));
 }
 
 Point *readExamples(int dimension, char *testName) {
@@ -100,7 +100,7 @@ Point *readExamples(int dimension, char *testName) {
     ex->id = -1;
     ex->value = NULL;
     ex->label = '\0';
-    fprintf(stderr, "Read test with %d examples took \t%lfs\n", exSize, ((double)(clock() - start)) / ((double)1000000));
+    fprintf(stderr, "Read test with %d examples took \t%es\n", exSize, ((double)(clock() - start)) / ((double)1000000));
     return exs;
 }
 

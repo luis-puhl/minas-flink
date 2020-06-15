@@ -78,7 +78,9 @@ int main(int argc, char const *argv[]) {
         errx(EXIT_FAILURE, "bad file format '%s'", argv[2]);
     }// else { printf("%s\n", header); }
     char l;
-    int i, j, hits = 0;
+    int i, j, hits = 0, mathcesBufferSize = 0, examplesBufferSize = 0;
+    Match *mathcesBuffer = malloc(1 * sizeof(Match));
+    Point *examplesBuffer = malloc(1 * sizeof(Point));
     while (!(feof(test) || feof(class))) {
         for (int i = 0; i < dimension; i++) {
             fscanf(test, "%lf,", &(example.value[i]));
@@ -90,6 +92,52 @@ int main(int argc, char const *argv[]) {
             &(match.pointId), &(match.isMatch), &(match.clusterId),
             &(match.label), &(match.distance), &(match.radius)
         );
+        if (match.pointId != example.id) {
+            int i = 0;
+            // after buffer is too big, reuse addresses
+            if (mathcesBufferSize > 100) {
+                // try to replace an deleted buffer entry
+                for (i = 0; i < mathcesBufferSize; i++) {
+                    if (mathcesBuffer[i].pointId == -1) {
+                        mathcesBuffer[i] = match;
+                        break;
+                    }
+                }
+            }
+            // if no deleted entry has been found, realloc
+            if (i >= mathcesBufferSize) {
+                mathcesBuffer = realloc(mathcesBuffer, ++mathcesBufferSize * sizeof(Match));
+                mathcesBuffer[mathcesBufferSize -1] = match;
+            }
+            if (mathcesBufferSize > 100) {
+                // try to replace an deleted buffer entry
+                for (i = 0; i < examplesBufferSize; i++) {
+                    if (examplesBuffer[i].id == -1) {
+                        examplesBuffer[i] = example;
+                        break;
+                    }
+                }
+            }
+            // if no deleted entry has been found, realloc
+            if (i >= mathcesBufferSize) {
+                examplesBuffer = realloc(examplesBuffer, ++examplesBufferSize * sizeof(Point));
+                examplesBuffer[examplesBufferSize - 1] = example;
+            }
+            for (int i = 0; i < mathcesBufferSize; i++) {
+                for (int j = 0; j < examplesBufferSize; j++) {
+                    if (mathcesBuffer[i].pointId == examplesBuffer[j].id) {
+                        match = mathcesBuffer[i];
+                        example = examplesBuffer[j];
+                        // delete
+                        mathcesBuffer[i].pointId = -1;
+                        examplesBuffer[j].id = -1;
+                        // break outer
+                        i = mathcesBufferSize;
+                        break;
+                    }
+                }
+            }
+        }
         //
         i = findLabelIndex(&confusionSize, &labels, &confusionMatrix, l);
         j = findLabelIndex(&confusionSize, &labels, &confusionMatrix, match.isMatch == 'y' ? match.label : '-');
@@ -112,6 +160,6 @@ int main(int argc, char const *argv[]) {
     }
     free(confusionMatrix);
     free(labels);
-    fprintf(stderr, "Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
+    printf("Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
     exit(EXIT_SUCCESS);
 }

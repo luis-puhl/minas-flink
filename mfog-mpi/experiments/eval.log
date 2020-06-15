@@ -1,11 +1,32 @@
 Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	0.000702s
+Read model with 100 clusters took 	8.410000e-04s
 Reading test from     'datasets/test.csv'
-Read test with 653458 examples took 	2.042116s
-Done MNS_classifier in 	6.889390s
+Read test with 653458 examples took 	2.059919e+00s
+Done MNS_classifier in 	6.955677s
+Done ./target/minas in 	9.017875s
+
+ Performance counter stats for './target/minas':
+
+          9,093.35 msec task-clock:u              #    0.999 CPUs utilized          
+                 0      context-switches:u        #    0.000 K/sec                  
+                 0      cpu-migrations:u          #    0.000 K/sec                  
+            34,545      page-faults:u             #    0.004 M/sec                  
+    25,478,546,269      cycles:u                  #    2.802 GHz                      (59.99%)
+    11,455,328,145      stalled-cycles-frontend:u #   44.96% frontend cycles idle     (60.01%)
+    52,220,755,722      instructions:u            #    2.05  insn per cycle         
+                                                  #    0.22  stalled cycles per insn  (60.02%)
+     5,543,176,556      branches:u                #  609.586 M/sec                    (60.01%)
+        17,163,508      branch-misses:u           #    0.31% of all branches          (59.98%)
+
+       9.099668392 seconds time elapsed
+
+       8.798214000 seconds user
+       0.228288000 seconds sys
+
+
+
 Reading test from      'datasets/test.csv'
 Reading output from    'out/classify.csv'
-Done ./target/eval in 	2.704333s
       	|	Classes
 Labels	|	         A	         N	
      -	|	     19677	       317	
@@ -14,3 +35,4 @@ Labels	|	         A	         N
 Total 	653457
 Hits 	205961 (31.518677%)
 Misses 	447496 (68.481323%)
+Done ./target/eval in 	2.673279s

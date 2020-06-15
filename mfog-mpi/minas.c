@@ -37,13 +37,15 @@ int MNS_classifier() {
     }
     free(model.vals);
     free(examples);
-    exit(EXIT_SUCCESS);
+    return 0;
 }
 
 #ifndef MAIN
 #define MAIN
-int main(int argc, char const *argv[]) {
+int main(int argc, char **argv) {
+    clock_t start = clock();
     MNS_classifier();
+    fprintf(stderr, "Done %s in \t%fs\n", argv[0], ((double)(clock() - start)) / ((double)1000000));
     return 0;
 }
 #endif
