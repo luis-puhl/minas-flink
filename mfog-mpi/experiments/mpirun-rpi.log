@@ -1,75 +1,33 @@
-orted: Error: unknown option "--tree-spawn"
-Type 'orted --help' for usage.
-Usage: orted [OPTION]...
--d|--debug               Debug the OpenRTE
-   --daemonize           Daemonize the orted into the background
-   --debug-daemons       Enable debugging of OpenRTE daemons
-   --debug-daemons-file  Enable debugging of OpenRTE daemons, storing output
-                         in files
--h|--help                This help message
-   --hnp                 Direct the orted to act as the HNP
-   --hnp-uri <arg0>      URI for the HNP
-   -nodes|--nodes <arg0>  
-                         Regular expression defining nodes in system
-   -output-filename|--output-filename <arg0>  
-                         Redirect output from application processes into
-                         filename.rank
-   --parent-uri <arg0>   URI for the parent if tree launch is enabled.
-   -report-bindings|--report-bindings 
-                         Whether to report process bindings to stderr
-   --report-uri <arg0>   Report this process' uri on indicated pipe
--s|--spin                Have the orted spin until we can connect a debugger
-                         to it
-   --set-sid             Direct the orted to separate from the current
-                         session
-   --singleton-died-pipe <arg0>  
-                         Watch on indicated pipe for singleton termination
-   --test-suicide <arg0>  
-                         Suicide instead of clean abort after delay
-   --tmpdir <arg0>       Set the root for the session directory tree
-   -xterm|--xterm <arg0>  
-                         Create a new xterm window and display output from
-                         the specified ranks there
-
-For additional mpirun arguments, run 'mpirun --help <category>'
-
-The following categories exist: general (Defaults to this option), debug,
-    output, input, mapping, ranking, binding, devel (arguments useful to OMPI
-    Developers), compatibility (arguments supported for backwards compatibility),
-    launch (arguments to modify launch options), and dvm (Distributed Virtual
-    Machine arguments).
---------------------------------------------------------------------------
-ORTE was unable to reliably start one or more daemons.
-This usually is caused by:
-
-* not finding the required libraries and/or binaries on
-  one or more nodes. Please check your PATH and LD_LIBRARY_PATH
-  settings, or configure OMPI with --enable-orterun-prefix-by-default
-
-* lack of authority to execute on one or more specified nodes.
-  Please verify your allocation and authorities.
-
-* the inability to write startup files into /tmp (--tmpdir/orte_tmpdir_base).
-  Please check with your sys admin to determine the correct location to use.
-
-*  compilation of the orted with dynamic libraries when static are required
-  (e.g., on Cray). Please check your configure cmd line and consider using
-  one of the contrib/platform definitions for your system type.
-
-* an inability to create a connection back to mpirun due to a
-  lack of common network interfaces and/or no route found between
-  them. Please check network connectivity (including firewalls
-  and network routing requirements).
---------------------------------------------------------------------------
-
-
-pi@almoco:~ $ mpirun.openmpi --version
-mpirun.openmpi (OpenRTE) 3.1.3
+$ mpirun --version
+mpirun (Open MPI) 4.0.4
 
 Report bugs to http://www.open-mpi.org/community/help/
 
- 21:32:57  ✘  puhl@pokebola  ~ 
-$ mpirun --version
-mpirun (Open MPI) 4.0.3
+$ mpirun -np 2 -host localhost:2,almoco:2 hostname 
+pokebola
+pokebola
+[almoco:02266] [[14530,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[almoco:02266] [[14530,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+[almoco:02266] [[14530,0],1] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+
+$ mpirun -np 2 -host almoco:2 hostname 
+almoco
+almoco
+
+$ mpirun -np 2 -host localhost:2 hostname
+pokebola
+pokebola
+
+$ mpirun -np 2 -host localhost:2,almoco:2 hostname
+pokebola
+[almoco:02339] [[15030,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[almoco:02339] [[15030,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+pokebola
+[almoco:02339] [[15030,0],1] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+
+$ mpirun -np 2 -host localhost:2,almoco:2 hostname
+
+$ ssh almoco mpirun --version
+mpirun (Open MPI) 4.0.4
 
 Report bugs to http://www.open-mpi.org/community/help/
