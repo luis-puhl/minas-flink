@@ -36,4 +36,7 @@ void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *exec
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable);
 void classify(int dimension, Model *model, Point *ex, Match *match);
 
+Model *kMeansInit(int nClusters, int dimension, Point examples[]);
+Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable);
+
 #endif // MINAS_H

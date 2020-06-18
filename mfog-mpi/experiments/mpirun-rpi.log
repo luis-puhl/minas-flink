@@ -31,3 +31,85 @@ $ ssh almoco mpirun --version
 mpirun (Open MPI) 4.0.4
 
 Report bugs to http://www.open-mpi.org/community/help/
+
+$ ompi_info | head 
+                 Package: Open MPI puhl@pokebola Distribution
+                Open MPI: 4.0.4
+  Open MPI repo revision: v4.0.4
+   Open MPI release date: Jun 10, 2020
+                Open RTE: 4.0.4
+  Open RTE repo revision: v4.0.4
+   Open RTE release date: Jun 10, 2020
+                    OPAL: 4.0.4
+      OPAL repo revision: v4.0.4
+       OPAL release date: Jun 10, 2020
+
+$ ssh almoco ompi_info | head
+                 Package: Open MPI pi@almoco Distribution
+                Open MPI: 4.0.4
+  Open MPI repo revision: v4.0.4
+   Open MPI release date: Jun 10, 2020
+                Open RTE: 4.0.4
+  Open RTE repo revision: v4.0.4
+   Open RTE release date: Jun 10, 2020
+                    OPAL: 4.0.4
+      OPAL repo revision: v4.0.4
+       OPAL release date: Jun 10, 2020
+
+$ mpirun -npernode 1 -mca plm_base_verbose 5 hostname
+[pokebola:32590] [[9800,0],0] complete_setup on job [9800,1]
+pokebola
+
+$ mpirun -npernode 1 -mca plm_base_verbose 5 -host localhost,almoco hostname
+[pokebola:33059] [[55333,0],0] plm:rsh: final template argv:
+        /usr/bin/ssh <template>  orted -mca ess "env" -mca ess_base_jobid "3626303488" -mca ess_base_vpid "<template>" -mca ess_base_num_procs "2" -mca orte_node_regex "pokebola,almoco@0(2)" -mca orte_hnp_uri "3626303488.0;tcp://192.168.15.14:33899" -mca plm_base_verbose "5" -mca plm "rsh" --tree-spawn -mca routed "radix" -mca orte_parent_uri "3626303488.0;tcp://192.168.15.14:33899" -mca rmaps_ppr_n_pernode "1" -mca pmix "^s1,s2,cray,isolated"
+[pokebola:33059] [[55333,0],0] complete_setup on job [55333,1]
+pokebola
+[almoco:05033] [[55333,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[almoco:05033] [[55333,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+[almoco:05033] [[55333,0],1] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[55333,0],0] on node pokebola
+  Remote daemon: [[55333,0],1] on node almoco
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------
+
+
+$ mpirun -host localhost hostname
+pokebola
+
+ 17:49:36  puhl@pokebola  ...mfog-mpi/experiments/rpi  ✹ ✭ 
+$ mpirun -host almoco hostname
+almoco
+
+ 17:49:43  puhl@pokebola  ...mfog-mpi/experiments/rpi  ✹ ✭ 
+$ mpirun -host almoco,jantar hostname
+jantar
+almoco
+
+ 17:49:47  puhl@pokebola  ...mfog-mpi/experiments/rpi  ✹ ✭ 
+$ mpirun -host almoco,jantar,localhost hostname
+pokebola
+[almoco:17803] [[16560,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[almoco:17803] [[16560,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+[almoco:17803] [[16560,0],1] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+[jantar:03197] [[16560,0],2] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[jantar:03197] [[16560,0],2] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+[jantar:03197] [[16560,0],2] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[16560,0],0] on node pokebola
+  Remote daemon: [[16560,0],1] on node almoco
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------

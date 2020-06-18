@@ -44,8 +44,32 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
     int exampleCounter = 0;
     clock_t start = clock();
     Match match;
+    Point unkBuffer[nExamples];
+    int nUnk = 0;
     for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
+        printf("%d\n", __LINE__);
+        fflush(stdout);
         classify(dimension, &model, &(examples[exampleCounter]), &match);
+        printf("%d\n", __LINE__);
+        if (match.isMatch == 'n') {
+            // unkown
+            unkBuffer[nUnk] = examples[exampleCounter];
+            nUnk++;
+        }
+        printf("%d\n", __LINE__);
+        if (nUnk > 100 && nUnk % 100 == 0) {
+            // retrain
+            Model m;
+            m.dimension = 22;
+            m.size = 10;
+            m.vals = malloc(m.size * sizeof(Cluster));
+            for (int i = 0; i < m.size; i++) {
+                m.vals[i].id = i;
+                m.vals[i].center = malloc(m.dimension * sizeof(double));
+            }
+            // kMeans(&m, m.size, dimension, unkBuffer, nUnk, timing, executable);
+            printf("%d\n", __LINE__);
+        }
         fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
             match.pointId, match.isMatch, match.clusterId,
             match.label, match.distance, match.radius

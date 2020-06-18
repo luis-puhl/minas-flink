@@ -22,6 +22,8 @@ MFOG_EXAMPLES_CSV=datasets/test.csv
 MFOG_MATCHES_CSV=out/classify.csv
 MFOG_TIMING_LOG=experiments/timing.csv
 
+# MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv MATCHES_CSV=out/classify.csv TIMING_LOG=experiments/timing.csv
+
 out/classify.csv: target/minas datasets/model-clean.csv datasets/test.csv
 	perf stat target/minas 2>>experiments/eval.log
 	# ./target/minas > out/classify.csv 2>experiments/eval.log

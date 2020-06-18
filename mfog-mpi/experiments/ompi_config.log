@@ -1,0 +1,675 @@
+`configure' configures Open MPI 4.0.4 to adapt to many kinds of systems.
+
+Usage: ./cloud/openmpi-4.0.4/configure [OPTION]... [VAR=VALUE]...
+
+To assign environment variables (e.g., CC, CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+      --help=short        display options specific to this package
+      --help=recursive    display the short help of all the included packages
+  -V, --version           display version information and exit
+  -q, --quiet, --silent   do not print `checking ...' messages
+      --cache-file=FILE   cache test results in FILE [disabled]
+  -C, --config-cache      alias for `--cache-file=config.cache'
+  -n, --no-create         do not create output files
+      --srcdir=DIR        find the sources in DIR [configure dir or `..']
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [/usr/local]
+  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+                          [PREFIX]
+
+By default, `make install' will install all the files in
+`/usr/local/bin', `/usr/local/lib' etc.  You can specify
+an installation prefix other than `/usr/local' using `--prefix',
+for instance `--prefix=$HOME'.
+
+For better control, use the options below.
+
+Fine tuning of the installation directories:
+  --bindir=DIR            user executables [EPREFIX/bin]
+  --sbindir=DIR           system admin executables [EPREFIX/sbin]
+  --libexecdir=DIR        program executables [EPREFIX/libexec]
+  --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+  --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+  --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --libdir=DIR            object code libraries [EPREFIX/lib]
+  --includedir=DIR        C header files [PREFIX/include]
+  --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
+  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR]
+  --infodir=DIR           info documentation [DATAROOTDIR/info]
+  --localedir=DIR         locale-dependent data [DATAROOTDIR/locale]
+  --mandir=DIR            man documentation [DATAROOTDIR/man]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/openmpi]
+  --htmldir=DIR           html documentation [DOCDIR]
+  --dvidir=DIR            dvi documentation [DOCDIR]
+  --pdfdir=DIR            pdf documentation [DOCDIR]
+  --psdir=DIR             ps documentation [DOCDIR]
+
+Program names:
+  --program-prefix=PREFIX            prepend PREFIX to installed program names
+  --program-suffix=SUFFIX            append SUFFIX to installed program names
+  --program-transform-name=PROGRAM   run sed PROGRAM on installed program names
+
+X features:
+  --x-includes=DIR    X include files are in DIR
+  --x-libraries=DIR   X library files are in DIR
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
+
+Optional Features:
+  --disable-option-checking  ignore unrecognized --enable/--with options
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-dependency-tracking
+                          do not reject slow dependency extractors
+  --disable-dependency-tracking
+                          speeds up one-time build
+  --enable-silent-rules   less verbose build output (undo: "make V=1")
+  --disable-silent-rules  verbose build output (undo: "make V=0")
+  --enable-coverage       enable code coverage files to be generated
+  --enable-branch-probabilities
+                          enable profile arcs and branch probability
+                          optimization
+  --enable-mem-debug      enable memory debugging (not for general MPI users!)
+                          (default: disabled)
+  --enable-mem-profile    enable memory profiling (not for general MPI users!)
+                          (default: disabled)
+  --enable-picky          enable developer-level compiler pickyness when
+                          building Open MPI (default: disabled, unless a .git
+                          directory is found in the build tree)
+  --enable-debug          enable developer-level debugging code (not for
+                          general MPI users!) (default: disabled)
+  --enable-timing         enable developer-level timing code (not for general
+                          MPI users!) (default: disabled)
+  --disable-debug-symbols Disable adding compiler flags to enable debugging
+                          symbols if --enable-debug is specified. For
+                          non-debugging builds, this flag has no effect.
+  --enable-pretty-print-stacktrace
+                          Pretty print stacktrace on process signal (default:
+                          enabled)
+  --enable-pty-support    Enable/disable PTY support for STDIO forwarding.
+                          (default: enabled)
+  --enable-weak-symbols   use weak symbols, if available (default: enabled)
+  --enable-dlopen         Whether build should attempt to use dlopen (or
+                          similar) to dynamically load components. Disabling
+                          dlopen implies --disable-mca-dso. (default: enabled)
+  --enable-show-load-errors-by-default
+                          Set the default value for the MCA parameter
+                          mca_base_component_show_load_errors (but can be
+                          overridden at run time by the usual
+                          MCA-variable-setting mechansism). This MCA variable
+                          controls whether warnings are displayed when an MCA
+                          component fails to load at run time due to an error.
+                          (default: enabled, meaning that
+                          mca_base_component_show_load_errors is enabled by
+                          default
+  --enable-heterogeneous  Enable features required for heterogeneous platform
+                          support (default: disabled)
+  --enable-binaries       Build and install binaries required for Open MPI,
+                          such as the wrapper compilers. Useful for multi-lib
+                          installations. (default: enabled)
+  --enable-script-wrapper-compilers
+                          Use less featured script-based wrapper compilers
+                          instead of the standard C-based wrapper compilers.
+                          This option ignores the --disable-binaries option
+                          and is mainly useful in cross-compile environments
+  --enable-per-user-config-files
+                          Disable per-user configuration files, to save disk
+                          accesses during job start-up. This is likely
+                          desirable for large jobs. Note that this can also be
+                          achieved by environment variables at run-time.
+                          (default: enabled)
+  --enable-ipv6           Enable IPv6 support, but only if the underlying
+                          system supports it (default: disabled)
+  --disable-getpwuid      Disable getpwuid support (default: enabled)
+  --enable-orterun-prefix-by-default
+                          Make "orterun ..." behave exactly the same as
+                          "orterun --prefix \$prefix" (where \$prefix is the
+                          value given to --prefix in configure)
+  --enable-mpirun-prefix-by-default
+                          Synonym for --enable-orterun-prefix-by-default
+  --disable-mpi           Disable building the MPI layer (default:enabled)
+  --enable-mpi-interface-warning
+                          enable compile-time warnings when deprecated MPI
+                          functions are used (default: enabled)
+  --enable-sparse-groups  enable sparse process groups (default: not enabled)
+  --enable-peruse         enable PERUSE interface (default: disabled)
+  --enable-mpi-fortran    specify which Fortran MPI bindings to build: yes,
+                          none (or no), best-effort, mpifh (build only mpif.h
+                          support), usempi (build mpif.h and the mpi module),
+                          or usempif08 (or all, build mpifh, the mpi module,
+                          and the mpi_f08 module) (default: "yes" if Fortran
+                          compiler found)
+  --enable-mpi-cxx        enable C++ MPI bindings (default: disabled)
+  --enable-mpi-cxx-seek   enable support for MPI::SEEK_SET, MPI::SEEK_END, and
+                          MPI::SEEK_POS in C++ bindings (default: enabled)
+  --enable-mpi1-compatibility
+                          Enable support for MPI-1.x functions removed from
+                          the current MPI standard (MPI-3.x). This option will
+                          go away in a future release of Open MPI (default:
+                          disabled)
+  --enable-grequest-extensions
+                          Enable support for Grequest extensions (default:
+                          disabled)
+  --disable-io-ompio      Disable the ompio MPI-IO component
+  --enable-oshmem         Enable building the OpenSHMEM interface (available
+                          on Linux only, where it is enabled by default)
+  --enable-oshmem-compat  enable compatibility mode (default: enabled)
+  --enable-oshmem-profile enable OSHMEM profiling (default: enabled)
+  --enable-oshmem-fortran enable OSHMEM Fortran bindings (default: enabled if
+                          Fortran compiler found)
+  --enable-spc            Enable software-based performance counters
+                          capability (default: disabled)
+  --enable-shared[=PKGS]  build shared libraries [default=yes]
+  --enable-static[=PKGS]  build static libraries [default=no]
+  --enable-wrapper-rpath  enable rpath/runpath support in the wrapper
+                          compilers (default=yes)
+  --enable-wrapper-runpath
+                          enable runpath in the wrapper compilers if linker
+                          supports it (default: enabled, unless wrapper-rpath
+                          is disabled).
+  --enable-cxx-exceptions enable support for C++ exceptions (default:
+                          disabled)
+  --enable-mpi-java       enable Java MPI bindings (default: disabled)
+  --enable-builtin-atomics
+                          Enable use of __sync builtin atomics (default:
+                          enabled)
+  --enable-mca-no-build=LIST
+                          Comma-separated list of <type>-<component> pairs
+                          that will not be built. Example:
+                          "--enable-mca-no-build=btl-portals,oob-ud" will
+                          disable building the "portals" btl and the "ud" oob
+                          components.
+  --enable-mca-dso=LIST   Comma-separated list of types and/or type-component
+                          pairs that will be built as run-time loadable
+                          components (as opposed to statically linked in), if
+                          supported on this platform. The default is to build
+                          all components as DSOs.
+  --enable-mca-static=LIST
+                          Comma-separated list of types and/or type-component
+                          pairs that will be built statically linked into the
+                          library. The default (if DSOs are supported) is to
+                          build all components as DSOs. Enabling a component
+                          as static disables it building as a DSO.
+  --enable-mca-direct=LIST
+                          Comma-separated list of type-component pairs that
+                          will be hard coded as the one component to use for a
+                          given component type, saving the (small) overhead of
+                          the component architecture. LIST must not be empty
+                          and implies given component pairs are build as
+                          static components.
+  --enable-openib-control-hdr-padding
+                          Add padding bytes to the openib BTL control header
+                          (default:disabled)
+  --enable-openib-dynamic-sl
+                          Enable openib BTL to query Subnet Manager for IB SL
+                          (default: enabled)
+  --enable-openib-udcm    Enable datagram connection support in openib BTL
+                          (default: enabled)
+  --enable-openib-rdmacm  Enable Open Fabrics RDMACM support in openib BTL
+                          (default: enabled)
+  --enable-openib-rdmacm-ibaddr
+                          Enable Open Fabrics RDMACM with IB addressing
+                          support in openib BTL (default: disabled)
+  --enable-btl-portals4-flow-control
+                          enable flow control for Portals 4 BTL (default:
+                          disabled)
+  --enable-uct-version-check
+                          enable UCT version check (default: enabled)
+  --enable-opal-btl-usnic-unit-tests
+                          build unit tests for the usnic BTL, including the
+                          test runner program, opal_btl_usnic_run_tests
+  --disable-dl-dlopen     Disable the "dlopen" DL component (and probably
+                          force the use of the "libltdl" DL component). This
+                          option should really only be used by Open MPI
+                          developers. You are probably actually looking for
+                          the "--disable-dlopen" option, which disables all
+                          dlopen-like functionality from Open MPI.
+
+  --enable-event-rtsig    enable support for real time signals (experimental)
+  --disable-event-select  disable select support
+  --disable-event-poll    disable poll support
+  --disable-event-devpoll disable devpoll support
+  --disable-event-kqueue  disable kqueue support
+  --disable-event-epoll   disable epoll support
+  --enable-event-evport   enable evport support
+  --disable-event-signal  disable signal support
+  --enable-event-debug    enable event library debug output
+  --enable-hwloc-pci      When building the embedded hwloc, whether to
+                          explicitly enable or disable PCI device support. By
+                          default Open MPI will build support for PCI device
+                          detection if libpciaccess is available (including
+                          its header files)
+  --enable-visibility     enable visibility feature of certain
+                          compilers/linkers (default: enabled on platforms
+                          that support it)
+  --enable-memchecker     Enable memory and buffer checks. Note that disabling
+                          will *also* add "memchecker" to the
+                          --enable-mca-no-build list (default: disabled)
+  --enable-install-libpmix
+                          Enable a native PMIx library and headers in the OMPI
+                          install location (default: disabled)
+  --enable-pmix-timing    Enable PMIx timing measurements (default: disabled)
+  --disable-mmap-shmem    disable mmap shared memory support (default:
+                          enabled)
+  --disable-posix-shmem   disable posix shared memory support (default:
+                          enabled)
+  --disable-sysv-shmem    disable sysv shared memory support (default:
+                          enabled)
+  --disable-io-romio      Disable the ROMIO MPI-IO component
+  --enable-mtl-portals4-flow-control
+                          enable flow control for Portals 4 MTL (default:
+                          disabled)
+  --disable-mmap-sshmem   disable mmap shared memory support (default:
+                          enabled)
+  --disable-sysv-sshmem   disable sysv shared memory support (default:
+                          enabled)
+  --disable-verbs-sshmem  disable verbs shared memory support (default:
+                          enabled)
+  --enable-mpi-ext=LIST   Comma-separated list of extensions that should be
+                          built. Possible values: affinity, cr, cuda, pcollreq. Example:
+                          "--enable-mpi-ext=foo,bar" will enable building the
+                          MPI extensions "foo" and "bar". If LIST is empty or
+                          the special value "all", then all available MPI
+                          extensions will be built (default: all).
+  --enable-contrib-no-build=LIST
+                          Comma-separated list of contributed package names
+                          that will not be built. Possible values:
+                          libompitrace. Example:
+                          "--enable-contrib-no-build=foo,bar" will disable
+                          building both the "foo" and "bar" contributed
+                          software packages (default: none -- i.e., build all
+                          possible contrib packages)
+  --disable-libompitrace  disable support for contributed package libompitrace
+                          (default: enabled)
+  --enable-visibility     enable visibility feature of certain
+                          compilers/linkers (default: enabled)
+  --enable-fast-install[=PKGS]
+                          optimize for fast installation [default=yes]
+  --disable-libtool-lock  avoid locking (might break parallel builds)
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-platform-patches-dir=DIR
+                          Location of the platform patches directory. If you
+                          use this option, you must also use --with-platform.
+  --with-platform=FILE    Load options for build from FILE. Options on the
+                          command line not in FILE are used. Options on the
+                          command line and in FILE are replaced by what is in
+                          FILE.
+  --with-libnl(=DIR)      Directory prefix for libnl (typically only necessary
+                          if libnl is installed in a location that the
+                          compiler/linker will not search by default)
+  --with-devel-headers    normal MPI users/applications do not need this
+                          (mpi.h and mpif.h are ALWAYS installed). Developer
+                          headers are only necessary for MCA module authors
+                          (default: disabled).
+  --with-cross=FILE       Specify configure values that can not be determined
+                          in a cross-compilation environment. See the Open MPI
+                          FAQ.
+  --with-package-string=STRING
+                          Use a branding string throughout Open MPI
+  --with-ident-string=STRING
+                          Embed an ident string into Open MPI object files
+  --with-dst-checksum     Use an alternative checksum algorithm for messages
+  --with-max-processor-name=VALUE
+                          maximum length of processor names. VALUE argument
+                          has to be specified (default: [256]).
+  --with-max-error-string=VALUE
+                          maximum length of error strings. VALUE argument has
+                          to be specified (default: [256]).
+  --with-max-object-name=VALUE
+                          maximum length of object names. VALUE argument has
+                          to be specified (default: [64]).
+  --with-max-info-key=VALUE
+                          maximum length of info keys. VALUE argument has to
+                          be specified (default: [36]).
+  --with-max-info-val=VALUE
+                          maximum length of info vals. VALUE argument has to
+                          be specified (default: [256]).
+  --with-max-port-name=VALUE
+                          maximum length of port names. VALUE argument has to
+                          be specified (default: [1024]).
+  --with-max-datarep-string=VALUE
+                          maximum length of datarep strings. VALUE argument
+                          has to be specified (default: [128]).
+  --with-zlib=DIR         Search for zlib headers and libraries in DIR
+  --with-zlib-libdir=DIR  Search for zlib libraries in DIR
+  --with-cuda(=DIR)       Build cuda support, optionally adding DIR/include
+  --with-pmi(=DIR)        Build PMI support, optionally adding DIR to the
+                          search path (default: no)
+  --with-pmi-libdir=DIR   Look for libpmi or libpmi2 in the given directory
+                          DIR, DIR/lib or DIR/lib64
+  --with-pmix(=DIR)       Build PMIx support. DIR can take one of three
+                          values: "internal", "external", or a valid directory
+                          name. "internal" (or no DIR value) forces Open MPI
+                          to use its internal copy of PMIx. "external" forces
+                          Open MPI to use an external installation of PMIx.
+                          Supplying a valid directory name also forces Open
+                          MPI to use an external installation of PMIx, and
+                          adds DIR/include, DIR/lib, and DIR/lib64 to the
+                          search path for headers and libraries. Note that
+                          Open MPI does not support --without-pmix.
+  --with-pmix-libdir=DIR  Look for libpmix the given directory DIR, DIR/lib or
+                          DIR/lib64
+  --with-mpi-param-check(=VALUE)
+                          behavior of MPI function parameter checking. Valid
+                          values are: always, never, runtime. If
+                          --with-mpi-param-check is specified with no VALUE
+                          argument, it is equivalent to a VALUE of "always";
+                          --without-mpi-param-check is equivalent to "never"
+                          (default: runtime).
+  --with-oshmem-param-check(=VALUE)
+                          behavior of OSHMEM API function parameter checking.
+                          Valid values are: always, never. If
+                          --with-oshmem-param-check is specified with no VALUE
+                          argument, it is equivalent to a VALUE of "always";
+                          --without-oshmem-param-check is equivalent to
+                          "never" (default: always).
+  --with-libmpi-name=STRING
+                          "Replace \"libmpi(_FOO)\" with \"libSTRING(_FOO)\"
+                          (default=mpi)"
+  --with-wrapper-cflags   Extra flags to add to CFLAGS when using mpicc
+  --with-wrapper-cflags-prefix
+                          Extra flags (before user flags) to add to CFLAGS
+                          when using mpicc
+  --with-wrapper-cxxflags Extra flags to add to CXXFLAGS when using
+                          mpiCC/mpic++
+  --with-wrapper-cxxflags-prefix
+                          Extra flags to add to CXXFLAGS when using
+                          mpiCC/mpic++
+  --with-wrapper-fcflags  Extra flags to add to FCFLAGS when using mpifort
+  --with-wrapper-fcflags-prefix
+                          Extra flags (before user flags) to add to FCFLAGS
+                          when using mpifort
+  --with-wrapper-ldflags  Extra flags to add to LDFLAGS when using wrapper
+                          compilers
+  --with-wrapper-libs     Extra flags to add to LIBS when using wrapper
+                          compilers
+  --with-exflags          Specify flags necessary to enable C++ exceptions
+  --with-jdk-dir(=DIR)    Location of the JDK header directory. If you use
+                          this option, do not specify --with-jdk-bindir or
+                          --with-jdk-headers.
+  --with-jdk-bindir(=DIR) Location of the JDK bin directory. If you use this
+                          option, you must also use --with-jdk-headers (and
+                          you must NOT use --with-jdk-dir)
+  --with-jdk-headers(=DIR)
+                          Location of the JDK header directory. If you use
+                          this option, you must also use --with-jdk-bindir
+                          (and you must NOT use --with-jdk-dir)
+  --with-broken-qsort     Build with FreeBSD qsort instead of native qsort
+                          (default: no)
+  --with-cs-fs            Destination FS is case sensitive (default: set to
+                          value of the build FS's case sensitivity)
+  --with-ucx(=DIR)        Build with Unified Communication X library support
+  --with-ucx-libdir=DIR   Search for Unified Communication X libraries in DIR
+  --with-verbs(=DIR)      Build verbs support, optionally adding DIR/include,
+                          DIR/lib, and DIR/lib64 to the search path for
+                          headers and libraries
+  --with-verbs-libdir=DIR Search for verbs libraries in DIR
+  --with-verbs-usnic      Add support in Open MPI to defeat a seemingly dire
+                          warning message from libibverbs that Cisco usNIC
+                          devices are not supported. This support is not
+                          compiled by default because you can also avoid this
+                          libibverbs bug by installing the libibverbs_usnic
+                          "no no" plugin, available from
+                          https://github.com/cisco/libusnic_verbs or in binary
+                          form from cisco.com
+  --with-portals4(=DIR)   Build Portals4 support, optionally adding
+                          DIR/include, DIR/lib, and DIR/lib64 to the search
+                          path for headers and libraries
+  --with-portals4-libdir=DIR
+                          Search for Portals4 libraries in DIR
+  --with-portals4-max-md-size=SIZE
+                          Log base 2 of the maximum size in bytes of a memory
+                          descriptor. Should only be set for implementations
+                          which do not support binding all of virtual address
+                          space.
+  --with-portals4-max-va-size=SIZE
+                          Log base 2 of the maximum size in bytes of the user
+                          virtual address space. Should only be set for
+                          implementations which do not support binding all of
+                          virtual address space.
+  --with-ugni             Build support for Cray GNI. Set PKG_CONFIG_PATH env.
+                          variable to specify alternate path.
+  --with-usnic            If specified, cause an error if usNIC support cannot
+                          be built
+  --with-libfabric=DIR    Deprecated synonym for --with-ofi
+  --with-libfabric-libdir=DIR
+                          Deprecated synonym for --with-ofi-libdir
+  --with-ofi=DIR          Specify location of OFI libfabric installation,
+                          adding DIR/include to the default search location
+                          for libfabric headers, and DIR/lib or DIR/lib64 to
+                          the default search location for libfabric libraries.
+                          Error if libfabric support cannot be found.
+  --with-ofi-libdir=DIR   Search for OFI libfabric libraries in DIR
+  --with-cray-xpmem(=yes/no)
+                          Build Cray XPMEM support(default: auto)
+  --with-xpmem(=DIR)      Build with XPMEM kernel module support, searching
+                          for headers in DIR
+  --with-xpmem-libdir=DIR Search for XPMEM library in DIR
+  --with-knem(=DIR)       Build knem Linux kernel module support, searching
+                          for headers in DIR/include
+  --with-cma              Build Cross Memory Attach support (default:
+                          autodetect)
+  --with-libltdl(=DIR)    Build libltdl support, optionally adding
+                          DIR/include, DIR/lib, and DIR/lib64 to the search
+                          path for headers and libraries
+  --with-libltdl-libdir=DIR
+                          Search for libltdl libraries in DIR
+  --with-libevent=DIR     Search for libevent headers and libraries in DIR.
+                          Should only be used if an external copy of libevent
+                          is being used.
+  --with-libevent-libdir=DIR
+                          Search for libevent libraries in DIR. Should only be
+                          used if an external copy of libevent is being used.
+  --with-hwloc(=DIR)      Build hwloc support. DIR can take one of three
+                          values: "internal", "external", or a valid directory
+                          name. "internal" (or no DIR value) forces Open MPI
+                          to use its internal copy of hwloc. "external" forces
+                          Open MPI to use an external installation of hwloc.
+                          Supplying a valid directory name also forces Open
+                          MPI to use an external installation of hwloc, and
+                          adds DIR/include, DIR/lib, and DIR/lib64 to the
+                          search path for headers and libraries. Note that
+                          Open MPI no longer supports --without-hwloc.
+  --with-hwloc-libdir=DIR Search for hwloc libraries in DIR. Should only be
+                          used if an external copy of hwloc is being used.
+  --with-x                use the X Window System
+  --with-hwloc-plugins-path=dir:...
+                          Colon-separated list of plugin directories. Default:
+                          "$prefix/lib/hwloc". Plugins will be installed in
+                          the first directory. They will be loaded from all of
+                          them, in order.
+  --with-valgrind(=DIR)   Directory where the valgrind software is installed
+  --with-memory-manager=TYPE
+                          Use TYPE for intercepting memory management calls to
+                          control memory pinning.
+  --with-memkind(=DIR)    ,
+		Build with MEMKIND, searching for headers in DIR)
+  --with-cray-pmi(=DIR)   Build Cray PMI support, optionally adding DIR to the
+                          search path (default: auto)
+  --with-alps(=DIR|yes|no)
+                          Build with ALPS scheduler component, optionally
+                          adding DIR/include, DIR/lib, and DIR/lib64 to the
+                          search path for headers and libraries (default:
+                          auto)
+  --with-alps-libdir=DIR  Location of alps libraries (alpslli, alpsutil)
+                          (default: /usr/lib/alps
+                          (/opt/cray/xe-sysroot/default/user on eslogin
+                          nodes))
+  --with-flux-pmi         Build Flux PMI support (default: yes)
+  --with-flux-pmi-library Link Flux PMI support with PMI library at build
+                          time. Otherwise the library is opened at runtime at
+                          location specified by FLUX_PMI_LIBRARY_PATH
+                          environment variable. Use this option to enable Flux
+                          support when building statically or without dlopen
+                          support (default: no)
+  --with-udreg            Build support for Cray udreg support. Set
+                          PKG_CONFIG_PATH env. variable to specify alternate
+                          path.
+  --with-timer=TYPE       Build high resolution timer component TYPE
+  --with-lsf(=DIR)        Build LSF support
+  --with-lsf-libdir=DIR   Search for LSF libraries in DIR
+  --with-slurm            Build SLURM scheduler component (default: yes)
+  --with-tm(=DIR)         Build TM (Torque, PBSPro, and compatible) support,
+                          optionally adding DIR/include, DIR/lib, and
+                          DIR/lib64 to the search path for headers and
+                          libraries
+  --with-sge              Build SGE or Grid Engine support (default: no)
+  --with-moab             Build MOAB scheduler component (default: yes)
+  --with-moab-libdir=DIR  Search for Moab libraries in DIR
+  --with-singularity(=DIR)
+                          Build support for the Singularity container,
+                          optionally adding DIR to the search path
+  --with-fca(=DIR)        Build fca (Mellanox Fabric Collective Accelerator)
+                          support, optionally adding DIR/include and DIR/lib
+                          or DIR/lib64 to the search path for headers and
+                          libraries
+  --with-hcoll(=DIR)      Build hcoll (Mellanox Hierarchical Collectives)
+                          support, optionally adding DIR/include and DIR/lib
+                          or DIR/lib64 to the search path for headers and
+                          libraries
+  --with-pvfs2(=DIR)      Build Pvfs2 support, optionally adding DIR/include,
+                          DIR/lib, and DIR/lib64 to the search path for
+                          headers and libraries
+  --with-lustre(=DIR)     Build Lustre support, optionally adding DIR/include,
+                          DIR/lib, and DIR/lib64 to the search path for
+                          headers and libraries
+  --with-io-romio-flags=FLAGS
+                          Pass FLAGS to the ROMIO distribution configuration
+                          script
+  --with-psm(=DIR)        Build PSM (Qlogic InfiniPath) support, optionally
+                          adding DIR/include, DIR/lib, and DIR/lib64 to the
+                          search path for headers and libraries
+  --with-psm-libdir=DIR   Search for PSM (QLogic InfiniPath PSM) libraries in
+                          DIR
+  --with-psm2(=DIR)       Build PSM2 (Intel PSM2) support, optionally adding
+                          DIR/include, DIR/lib, and DIR/lib64 to the search
+                          path for headers and libraries
+  --with-psm2-libdir=DIR  Search for PSM (Intel PSM2) libraries in DIR
+  --with-mxm(=DIR)        Build Mellanox Messaging support, optionally adding
+                          DIR/include and DIR/lib or DIR/lib64 to the search
+                          path for headers and libraries
+  --with-mxm-libdir=DIR   Search for Mellanox MXM libraries in DIR
+  --with-ompi-pmix-rte    Use PMIx as the OMPI run-time environment (default:
+                          no)
+  --with-orte             Use ORTE run-time environment (default: yes)
+  --with-treematch(=DIR)  Build TreeMatch topology support, optionally adding
+                          DIR/include, DIR/lib, and DIR/lib64 to the search
+                          path for headers and libraries
+  --with-treematch-include(=DIR)
+                          "Search for TreeMatch headers in DIR"
+  --with-treematch-libdir(=DIR)
+                          "Search for TreeMatch libraries in DIR"
+  --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
+                          both]
+  --with-aix-soname=aix|svr4|both
+                          shared library versioning (aka "SONAME") variant to
+                          provide on AIX, [default=aix].
+  --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
+  --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
+                          compiler's sysroot if not specified).
+
+Some influential environment variables:
+  CC          C compiler command
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  LIBS        libraries to pass to the linker, e.g. -l<library>
+  CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+              you have headers in a nonstandard directory <include dir>
+  CPP         C preprocessor
+  CXX         C++ compiler command
+  CXXFLAGS    C++ compiler flags
+  CXXCPP      C++ preprocessor
+  CCAS        assembler compiler command (defaults to CC)
+  CCASFLAGS   assembler compiler flags (defaults to CFLAGS)
+  FC          Fortran compiler command
+  FCFLAGS     Fortran compiler flags
+  PKG_CONFIG  path to pkg-config utility
+  PKG_CONFIG_PATH
+              directories to add to pkg-config's search path
+  PKG_CONFIG_LIBDIR
+              path overriding pkg-config's built-in search path
+  ucx_CFLAGS  C compiler flags for ucx, overriding pkg-config
+  ucx_LIBS    linker flags for ucx, overriding pkg-config
+  ucx_STATIC_LIBS
+              static linker flags for ucx, overriding pkg-config
+  CRAY_UGNI_CFLAGS
+              C compiler flags for CRAY_UGNI, overriding pkg-config
+  CRAY_UGNI_LIBS
+              linker flags for CRAY_UGNI, overriding pkg-config
+  CRAY_XPMEM_CFLAGS
+              C compiler flags for CRAY_XPMEM, overriding pkg-config
+  CRAY_XPMEM_LIBS
+              linker flags for CRAY_XPMEM, overriding pkg-config
+  CRAY_XPMEM_STATIC_LIBS
+              static linker flags for CRAY_XPMEM, overriding pkg-config
+  HWLOC_MS_LIB
+              Path to Microsoft's Visual Studio `lib' tool
+  HWLOC_PCIACCESS_CFLAGS
+              C compiler flags for PCIACCESS, overriding pkg-config
+  HWLOC_PCIACCESS_LIBS
+              linker flags for PCIACCESS, overriding pkg-config
+  XMKMF       Path to xmkmf, Makefile generator for X Window System
+  HWLOC_LIBXML2_CFLAGS
+              C compiler flags for LIBXML2, overriding pkg-config
+  HWLOC_LIBXML2_LIBS
+              linker flags for LIBXML2, overriding pkg-config
+  CRAY_PMI_CFLAGS
+              C compiler flags for CRAY_PMI, overriding pkg-config
+  CRAY_PMI_LIBS
+              linker flags for CRAY_PMI, overriding pkg-config
+  CRAY_PMI_STATIC_LIBS
+              static linker flags for CRAY_PMI, overriding pkg-config
+  CRAY_ALPSLLI_CFLAGS
+              C compiler flags for CRAY_ALPSLLI, overriding pkg-config
+  CRAY_ALPSLLI_LIBS
+              linker flags for CRAY_ALPSLLI, overriding pkg-config
+  CRAY_ALPSLLI_STATIC_LIBS
+              static linker flags for CRAY_ALPSLLI, overriding pkg-config
+  CRAY_ALPSUTIL_CFLAGS
+              C compiler flags for CRAY_ALPSUTIL, overriding pkg-config
+  CRAY_ALPSUTIL_LIBS
+              linker flags for CRAY_ALPSUTIL, overriding pkg-config
+  CRAY_ALPSUTIL_STATIC_LIBS
+              static linker flags for CRAY_ALPSUTIL, overriding pkg-config
+  CRAY_ALPS_CFLAGS
+              C compiler flags for CRAY_ALPS, overriding pkg-config
+  CRAY_ALPS_LIBS
+              linker flags for CRAY_ALPS, overriding pkg-config
+  CRAY_ALPS_STATIC_LIBS
+              static linker flags for CRAY_ALPS, overriding pkg-config
+  CRAY_WLM_DETECT_CFLAGS
+              C compiler flags for CRAY_WLM_DETECT, overriding pkg-config
+  CRAY_WLM_DETECT_LIBS
+              linker flags for CRAY_WLM_DETECT, overriding pkg-config
+  CRAY_WLM_DETECT_STATIC_LIBS
+              static linker flags for CRAY_WLM_DETECT, overriding pkg-config
+  FLUX_PMI_CFLAGS
+              C compiler flags for FLUX_PMI, overriding pkg-config
+  FLUX_PMI_LIBS
+              linker flags for FLUX_PMI, overriding pkg-config
+  CRAY_UDREG_CFLAGS
+              C compiler flags for CRAY_UDREG, overriding pkg-config
+  CRAY_UDREG_LIBS
+              linker flags for CRAY_UDREG, overriding pkg-config
+  LT_SYS_LIBRARY_PATH
+              User-defined run-time library search path.
+
+Use these variables to override the choices made by `configure' or to help
+it to find libraries and programs with nonstandard names/locations.
+
+Report bugs to <http://www.open-mpi.org/community/help/>.
