@@ -1,0 +1,9 @@
+--------------------------------------------------------------------------
+mpiexec was unable to launch the specified application as it could not access
+or execute an executable:
+
+Executable: ./target/mfog
+Node: jantar
+
+while attempting to start process rank 4.
+--------------------------------------------------------------------------

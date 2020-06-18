@@ -1,42 +1,42 @@
 Processor pokebola, Rank 0 out of 4 processors
-minas-funcs.c,./target/mfog,Jun 15 2020 01:10:44,1592194244,readModel,1.116000e-03,1
-minas-funcs.c,./target/mfog,Jun 15 2020 01:10:44,1592194247,readExamples,2.751038e+00,1
-minas-mpi.c,./target/mfog,Jun 15 2020 01:10:43,1592194247,sendModel,2.320000e-04,4
-[1] Recv model with 100 clusters took 	2.750584e+00s
-[3] Recv model with 100 clusters took 	2.733375e+00s
-[2] Recv model with 100 clusters took 	2.731139e+00s
-[3] Worker classify Test with 217819 examples took 	3.159759s
-[1] Worker classify Test with 217819 examples took 	3.156835s
-[2] Worker classify Test with 217819 examples took 	3.157433s
-minas-mpi.c,./target/mfog,Jun 15 2020 01:10:43,1592194250,sendExamples,3.153970e+00,4
-minas-mpi.c,./target/mfog,Jun 15 2020 01:10:43,1592194250,MFOG_main,3.153987e+00,4
+minas-funcs.c,./target/mfog,Jun 18 2020 10:25:30,1592486730,readModel,7.940000e-04,1
+minas-funcs.c,./target/mfog,Jun 18 2020 10:25:30,1592486732,readExamples,2.008476e+00,1
+minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486732,sendModel,2.530000e-04,4
+[1] Recv model with 100 clusters took 	2.010423e+00s
+[2] Recv model with 100 clusters took 	2.010375e+00s
+[3] Recv model with 100 clusters took 	2.008580e+00s
+[1] Worker classify Test with 217819 examples took 	2.810740s
+[2] Worker classify Test with 217819 examples took 	2.810673s
+[3] Worker classify Test with 217819 examples took 	2.809829s
+minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486735,sendExamples,2.809885e+00,4
+minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486735,MFOG_main,2.809902e+00,4
 
- Performance counter stats for '/home/puhl/usr/local/bin/mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
+ Performance counter stats for 'mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
 
-         23,814.20 msec task-clock:u              #    3.916 CPUs utilized          
+         19,467.92 msec task-clock:u              #    3.882 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,437      page-faults:u             #    0.002 M/sec                  
-    67,797,577,943      cycles:u                  #    2.847 GHz                    
-    34,217,877,550      stalled-cycles-frontend:u #   50.47% frontend cycles idle   
-   114,549,372,325      instructions:u            #    1.69  insn per cycle         
-                                                  #    0.30  stalled cycles per insn
-    19,613,505,582      branches:u                #  823.605 M/sec                  
-        35,079,938      branch-misses:u           #    0.18% of all branches        
+            43,508      page-faults:u             #    0.002 M/sec                  
+    55,436,698,828      cycles:u                  #    2.848 GHz                    
+    24,499,153,530      stalled-cycles-frontend:u #   44.19% frontend cycles idle   
+   106,891,096,798      instructions:u            #    1.93  insn per cycle         
+                                                  #    0.23  stalled cycles per insn
+    17,854,568,818      branches:u                #  917.128 M/sec                  
+        31,824,484      branch-misses:u           #    0.18% of all branches        
 
-       6.080609350 seconds time elapsed
+       5.014517611 seconds time elapsed
 
-      23.443977000 seconds user
-       0.317757000 seconds sys
+      19.188222000 seconds user
+       0.256487000 seconds sys
 
 
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     17463	      2531	
+     -	|	     17376	      2618	
      A	|	         0	         0	
-     N	|	    429716	    203747	
+     N	|	    429803	    203660	
 Total examples     653457
 Total matches      653457
-Hits               203747 ( 31.179863%)
-Misses             449710 ( 68.820137%)
+Hits               203660 ( 31.166550%)
+Misses             449797 ( 68.833450%)
