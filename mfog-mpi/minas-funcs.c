@@ -7,7 +7,8 @@
 #include <time.h>
 #include <err.h>
 
-#include "./minas.h"
+#include "minas.h"
+#include "loadenv.h"
 
 // #define SQR_DISTANCE 1
 #define line_len 10 * 1024
@@ -25,18 +26,104 @@ double MNS_distance(double a[], double b[], int dimension) {
     #endif // SQR_DISTANCE
 }
 
-void readModel(int dimension, char *modelName, Model *model) {
+Model *kMeansInit(int nClusters, int dimension, Point examples[]) {
+    Model *model = malloc(sizeof(Model));
+    model->size = nClusters;
+    model->dimension = dimension;
+    model->vals = malloc(model->size * sizeof(Cluster));
+    for (int i = 0; i < model->size; i++) {
+        model->vals[i].id = i;
+        model->vals[i].center = malloc(model->dimension * sizeof(double));
+        for (int j = 0; j < model->dimension; j++) {
+            model->vals[i].center[j] = examples[i].value[j];
+        }
+        model->vals[i].label = examples[i].label;
+        model->vals[i].category = 'n';
+        model->vals[i].time = 0;
+        model->vals[i].matches = 0;
+        model->vals[i].meanDistance = 0.0;
+        model->vals[i].radius = 0.0;
+    }
+    return model;
+}
+
+Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable) {
+    // Model *model = kMeansInit(nClusters, dimension, examples);
+    Match match;
+    clock_t start = clock();
+    //
+    double globalDistance = dimension * 2.0, prevGlobalDistance, diffGD = 1.0;
+    double newCenters[nClusters][dimension], distances[nClusters], sqrDistances[nClusters];
+    int matches[nClusters];
+    int maxIterations = 10;
+    while (diffGD > 0.00001 && maxIterations-- > 0) {
+        // setup
+        prevGlobalDistance = globalDistance;
+        globalDistance = 0.0;
+        for (int i = 0; i < model->size; i++) {
+            matches[model->vals[i].id] = 0;
+            distances[model->vals[i].id] = 0.0;
+            sqrDistances[model->vals[i].id] = 0.0;
+            for (int d = 0; d < dimension; d++) {
+                newCenters[model->vals[i].id][d] = 0.0;
+            }
+        }
+        // distances
+        for (int i = 0; i < nExamples; i++) {
+            classify(dimension, model, &(examples[i]), &match);
+            globalDistance += match.distance;
+            distances[match.clusterId] += match.distance;
+            sqrDistances[match.clusterId] += match.distance * match.distance;
+            for (int d = 0; d < dimension; d++) {
+                newCenters[match.clusterId][d] += examples[i].value[d];
+            }
+            matches[match.clusterId]++;
+        }
+        // new centers and radius
+        for (int i = 0; i < model->size; i++) {
+            Cluster *cl = &(model->vals[i]);
+            cl->matches = matches[cl->id];
+            // skip clusters that didn't move
+            if (cl->matches == 0) continue;
+            cl->time++;
+            // avg of examples in the cluster
+            double maxDistance = -1.0;
+            for (int d = 0; d < dimension; d++) {
+                cl->center[d] = newCenters[cl->id][d] / cl->matches;
+                if (distances[cl->id] > maxDistance) {
+                    maxDistance = distances[cl->id];
+                }
+            }
+            cl->meanDistance = distances[cl->id] / cl->matches;
+            /**
+             * Radius is not clearly defined in the papers and original source code
+             * So here is defined as max distance
+             *  OR square distance sum divided by matches.
+             **/
+            // cl->radius = sqrDistances[cl->id] / cl->matches;
+            cl->radius = maxDistance;
+        }
+        //
+        diffGD = globalDistance / prevGlobalDistance;
+        fprintf(stderr, "%s iter=%d, diff%%=%e (%e -> %e)\n", __FILE__, maxIterations, diffGD, prevGlobalDistance, globalDistance);
+    }
+    if (timing) {
+        PRINT_TIMING(timing, executable, 1, start);
+    }
+    return model;
+}
+
+void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable) {
+    if (file == NULL) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     char line[line_len + 1];
     //
     model->size = 0;
     model->vals = malloc(1 * sizeof(Cluster));
+    int lines = 0;
     //
-    FILE *file;
-    fprintf(stderr, "Reading model from    '%s'\n", modelName);
-    file = fopen(modelName, "r");
-    if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", modelName);
     while (fgets(line, line_len, file)) {
+        lines++;
         if (line[0] == '#') continue;
         model->vals = realloc(model->vals, (++model->size) * sizeof(Cluster));
         Cluster *cl = &(model->vals[model->size - 1]);
@@ -57,13 +144,16 @@ void readModel(int dimension, char *modelName, Model *model) {
         #ifdef SQR_DISTANCE
             cl->radius *= cl->radius;
         #endif // SQR_DISTANCE
-        if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format  '%s'", modelName);
+        if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", lines, line);
     }
     fclose(file);
-    fprintf(stderr, "Read model with %d clusters took \t%es\n", model->size, ((double)(clock() - start)) / ((double)1000000));
+    if (timing) {
+        PRINT_TIMING(timing, executable, 1, start);
+    }
 }
 
-Point *readExamples(int dimension, char *testName) {
+Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable) {
+    if (file == NULL) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     char line[line_len + 1];
     //
@@ -71,12 +161,10 @@ Point *readExamples(int dimension, char *testName) {
     unsigned int exSize = 1;
     exs = malloc(exSize * sizeof(Point));
     //
-    FILE *file;
-    fprintf(stderr, "Reading test from     '%s'\n", testName);
-    file = fopen(testName, "r");
-    if (file == NULL) errx(EXIT_FAILURE, "bad file open '%s'", testName);
     // for (examples)
+    (*nExamples) = 0;
     while (fgets(line, line_len, file)) {
+        (*nExamples)++;
         if (line[0] == '#') continue;
         // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
         Point *ex = &(exs[exSize-1]);
@@ -91,7 +179,7 @@ Point *readExamples(int dimension, char *testName) {
             &ex->value[20], &ex->value[21], &ex->label
         );
         ex->id = exSize;
-        if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format  '%s'", testName);
+        if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", (*nExamples), line);
         //
         exs = realloc(exs, (++exSize) * sizeof(Point));
     }
@@ -100,7 +188,9 @@ Point *readExamples(int dimension, char *testName) {
     ex->id = -1;
     ex->value = NULL;
     ex->label = '\0';
-    fprintf(stderr, "Read test with %d examples took \t%es\n", exSize, ((double)(clock() - start)) / ((double)1000000));
+    if (timing) {
+        PRINT_TIMING(timing, executable, 1, start);
+    }
     return exs;
 }
 
@@ -110,6 +200,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     for (int i = 0; i < model->size; i++) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
         if (match->distance > distance) {
+            // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
             match->label = model->vals[i].label;
             match->radius = model->vals[i].radius;
@@ -118,10 +209,10 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     }
     match->isMatch = match->distance <= match->radius ? 'y' : 'n';
     
-    printf("%d,%c,%d,%c,%e,%e\n",
-        match->pointId, match->isMatch, match->clusterId,
-        match->label, match->distance, match->radius
-    );
+    // printf("%d,%c,%d,%c,%e,%e\n",
+    //     match->pointId, match->isMatch, match->clusterId,
+    //     match->label, match->distance, match->radius
+    // );
 }
 
 #endif // MINAS_FUNCS

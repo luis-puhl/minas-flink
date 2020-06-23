@@ -1,0 +1,503 @@
+sudo apt update
+nstp
+exit
+sudo apt update
+sudo apt upgrade 
+ifconfig 
+startx 
+reboot 
+sudo reboot 
+startx
+wget http://mirror.nbtelecom.com.br/apache/flink/flink-1.10.0/flink-1.10.0-bin-scala_2.11.tgz
+tar xzf flink-1.10.0-bin-scala_2.11.tgz 
+cd flink-1.10.0/
+htop
+ls conf/
+head conf/flink-conf.yaml 
+cat conf/flink-conf.yaml 
+less conf/flink-conf.yaml 
+cd ..
+cp flink-1.10.0/conf/flink-conf.yaml .
+vim flink-conf.yaml 
+sudo apt update 
+sudo apt upgrade 
+sudo apt install vim
+vi flink-conf.yaml 
+flink-1.10.0/bin/config.sh 
+sudo apt install openjdk-8-jdk
+flink-1.10.0/bin/config.sh 
+flink-1.10.0/bin/taskmanager.sh start --config=~
+flink-1.10.0/bin/taskmanager.sh stop all
+flink-1.10.0/bin/taskmanager.sh stop-all
+flink-1.10.0/bin/taskmanager.sh start --config=/home/pi
+flink-1.10.0/bin/taskmanager.sh start-foreground --config=/home/pi
+flink-1.10.0/bin/taskmanager.sh stop-all
+flink-1.10.0/bin/taskmanager.sh start-foreground --configDir=/home/pi
+ls
+mv flink-1.10.0-bin-scala_2.11.tgz Downloads/
+cp flink-1.10.0/conf/ .
+cp -r flink-1.10.0/conf/ .
+l
+ls
+mv flink-conf.yaml conf/
+exit
+vim /etc/hostname 
+sudo apt install vim
+vim /etc/hostname 
+sudo vim /etc/dhcp/dhclient.conf 
+gethostname() ;
+gethostname
+head /etc/dhcp/dhclient.conf 
+less /etc/dhcp/dhclient.conf 
+sudo dhclient eth0 
+sudo systemctl daemon-reload 
+exit
+sudo ifdown wlan0
+ifconfig 
+sudo ifdown wlan0
+sudo vim /boot/config.txt 
+sudo reboot 
+exit
+reboot 
+sudo reboot 
+cat /boot/config.txt 
+exit
+curl -sSL https://install.pi-hole.net | bash
+sudo reboot 
+ls
+mv conf flink-cluster
+mv flink-cluster flink-config
+ls flink-config/
+vim flink-config/flink-conf.yaml 
+cd flink-1.10.0/
+ls
+mv conf conf.old
+ln --symbolic /home/pi/flink-config $PWD/conf
+l
+ls 
+bin/start-cluster.sh 
+cd ..
+ls
+vim flink-config/slaves 
+flink-1.10.0/bin/stop-cluster.sh 
+vim flink-config/slaves 
+flink-1.10.0/bin/star
+sudo vim /etc/dhcpcd.conf 
+ssh hermes-pi-1
+ssh pi@hermes-pi-1
+sudo vim /etc/dhcpcd.conf 
+sudo service dhcpcd restart
+ssh pi@hermes-pi-1
+vim flink-config/
+vim flink-config/flink-conf.yaml 
+vim flink-config/slaves 
+ssh pi@192.168.15.16
+ls .ssh/
+ssh-keygen 
+hs
+exit
+ssh pi@192.168.15.16
+flink-1.10.0/bin/start-cluster.sh 
+ssh-copy-id pi@192.168.15.10
+ssh pi@192.168.15.16
+flink-1.10.0/bin/start-cluster.sh 
+flink-1.10.0/bin/stop-cluster.sh 
+vim flink-config/slaves 
+flink-1.10.0/bin/start-cluster.sh 
+vim flink-config/flink-conf.yaml 
+flink-1.10.0/bin/stop-cluster.sh 
+flink-1.10.0/bin/start-cluster.sh 
+vim flink-config/log4j.properties 
+tar -czf flink-config flink-config.tar.gz
+tar -czf flink-config.tar.gz flink-config
+ls flink-config
+sudo reboot 
+vim flink-config/slaves 
+cat flink-config/slaves 
+vim flink-config/slaves 
+vim flink-config/slaves
+sudo reboot 
+vim flink-config/slaves
+rm flink-config/.slaves.sw*
+vim flink-config/slaves
+flink-1.10.0/bin/start-cluster.sh 
+exit
+sudo apt update 
+sudo apt upgrade 
+ls
+flink-1.10.0/bin/start-cluster.sh 
+flink-1.10.0/bin/flink run flink run --class br.ufscar.dc.gsdr.mfog.Classifier mfog-0.5.jar 
+flink-1.10.0/bin/flink run flink run --class br.ufscar.dc.gsdr.mfog.Classifier ./mfog-0.5.jar 
+flink-1.10.0/bin/flink run flink run -h --class br.ufscar.dc.gsdr.mfog.Classifier ./mfog-0.5.jar 
+flink-1.10.0/bin/flink run --class br.ufscar.dc.gsdr.mfog.Classifier ./mfog-0.5.jar 
+exit
+sudo swapoff  -a
+fdisk 
+exit
+ls
+vim /etc/fstab 
+sudo fdisk 
+ls /dev
+man mount
+du
+df 
+sudo swapon
+sudo swaplabel 
+sudo swapoff
+sudo swapoff --help
+df
+sudo swapoff --helpsudo dphys-swapfile swapoff
+sudo dphys-swapfile uninstall
+sudo update-rc.d dphys-swapfile remove
+sudo dphys-swapfile swapoff
+sudo dphys-swapfile uninstall
+sudo update-rc.d dphys-swapfile remove
+sudo apt purge dphys-swapfile
+rm -f flink-1.10.0/log/*
+df -h
+sudo reboot 
+htop
+vim flink-1.10.0/conf/log4j.properties 
+vim flink-1.10.0/conf/
+vim flink-1.10.0/conf/flink-conf.yaml 
+exit
+htop
+sudo apt update 
+sudo apt upgrade 
+git clone https://github.com/rfjakob/earlyoom.git
+cd earlyoom
+make
+make test
+sudo make install
+cd ..
+sudo apt install earlyoom
+sudo systemctl enable earlyoom
+sudo systemctl start earlyoom
+rm /home/pi/flink-1.10.0/log/*
+flink-1.10.0/bin/start-cluster.sh 
+git init
+git add .
+gst
+git status
+git commit -m "Initial commit
+"
+gst
+git config --global user.email "luispuhl@gmail.com"
+git config --global user.name "Luis Puhl"
+git commit -m "Initial commit
+"
+rm conf
+mv conf.old conf
+git add .
+gst
+git commit -m "restore original config"
+gst
+git commit -am "clean comments"
+bin/taskmanager.sh foreground
+bin/taskmanager.sh start-foreground
+bin/taskmanager.sh start-foreground | cat
+bin/stop-cluster.sh 
+htop
+bin/start-cluster.
+bin/start-cluster.sh 
+
+git checkout b7eeb7552d6fa364f0d0e31a2d23940fee995f85 conf/slaves
+bin/stop-cluster.sh 
+bin/start-cluster.sh
+bin/stop-cluster.sh 
+bin/start-cluster.sh
+bin/stop-cluster.sh
+bin/start-cluster.sh
+sudo apt update 
+sudo apt upgrade 
+htop
+flink-1.10.0/bin/stop-cluster.sh 
+vim flink-1.10.0/conf/flink-conf.yaml 
+vim flink-1.10.0/conf/slaves 
+cat flink-1.10.0/conf/slaves 
+ssh pi@192.168.15.16
+flink-1.10.0/bin/start-cluster.sh
+vim flink-1.10.0/conf/flink-conf.yaml 
+flink-1.10.0/bin/taskmanager.sh
+flink-1.10.0/bin/taskmanager.sh start-foreground
+vim flink-1.10.0/conf/flink-conf.yaml 
+flink-1.10.0/bin/taskmanager.sh start-foreground
+vim flink-1.10.0/conf/flink-conf.yaml 
+flink-1.10.0/bin/taskmanager.sh start-foreground
+vim flink-1.10.0/conf/flink-conf.yaml 
+fg
+flink-1.10.0/bin/taskmanager.sh start-foreground
+vim flink-1.10.0/conf/flink-conf.yaml 
+flink-1.10.0/bin/taskmanager.sh start-foreground
+htop
+flink-1.10.0/bin/stop-cluster.sh
+flink-1.10.0/bin/start-cluster.sh
+flink-1.10.0/bin/stop-cluster.sh
+flink-1.10.0/bin/start-cluster.sh
+htop
+flink-1.10.0/bin/stop-cluster.sh
+sudo reboot 
+flink-1.10.0/bin/start-cluster.sh
+scp -r flink-1.10.0/conf/* pi@192.168.15.16:/home/pi/project/flink-1.10.0/conf/
+htop
+flink-1.10.0/bin/start-cluster.sh
+htop
+gst
+git status
+git rm -rf log
+gst
+git status
+git add conf/
+git commit  -m "reconfigure
+"
+scp -r conf/* pi@192.168.15.16:/home/pi/project/flink-1.10.0/conf/
+exit
+flink-1.10.0/bin/start-cluster.sh
+htop
+sudo reboot 
+flink-1.10.0/bin/start-cluster.sh
+flink-1.10.0/bin/stop-cluster.sh 
+flink-1.10.0/bin/start-cluster.sh
+htop
+flink-1.10.0/bin/taskmanager.sh stop
+flink-1.10.0/bin/taskmanager.sh start
+htop
+sudo apt update 
+sudo apt install numactl
+sudo apt upgrade &
+numactl -H
+numactl --hardware
+fg
+exit
+htop
+numactl --hardware
+exit
+uname
+uname -a
+lscpu 
+exit
+sudo apt update 
+sudo apt upgrade 
+sudo apt install nfs-common
+mkdir cloud
+cd cloud/
+tar -xf minas.tar 
+l
+ls
+make eval.log
+gcc --version
+gcc -v
+make eval.log
+make experiments/eval.log
+mkdir experiments
+make experiments/eval.log
+mkdir target
+ls
+make experiments/eval.log
+tar -xf minas.tar 
+
+make experiments/eval.log
+./target/minas > out/classify.csv 2>experiments/eval.log
+mkdir out
+./target/minas > out/classify.csv 2>experiments/eval.log
+perf stat
+sudo apt install binutils
+sudo apt autoremove 
+make experiments/eval.log 
+rm experiments/eval.log 
+make experiments/eval.log 
+cat experiments/eval.log 
+sudo apt install mpich
+mpicc --show
+mpicc -show
+mkdir experiments/rpi
+mpicc -show > experiments/rpi/mpicc-show
+mpicc minas-mpi.c  -o target/minas-mpi 
+mpicc minas-mpi.c  -o target/minas-mpi  -lm
+mpicc --version
+mpicc --version >> experiments/rpi/mpicc-show
+mpicc -v >> experiments/rpi/mpicc-show
+mpicc -v 2>> experiments/rpi/mpicc-show
+
+mpiexec -np 4 ./target/minas-mpi #> out/classify-mpi.csv 2>experiments/rpi/eval-mpi.log
+coredumpclt
+./target/minas-mpi 
+l
+ls
+ls datasets/
+ls target/
+ls -lah .
+ls -lah target/
+
+mpicc minas-mpi.c  -o target/minas-mpi  -lm -g -Wall
+sudo apt install gdb
+gdb ./target/minas-mpi 
+sudo apt-get install openmpi-common openmpi-bin libopenmpi-dev
+mpicc --show
+mpicc minas-mpi.c  -o target/minas-mpi  -lm -g -Wall
+./target/minas-mpi 
+mpiexec -np 4 ./target/minas-mpi #> out/classify-mpi.csv 2>experiments/rpi/eval-mpi.log
+mpiexec -np 4 ./target/minas-mpi > out/classify-mpi.csv 2>experiments/rpi/eval-mpi.log
+./target/eval ./datasets/test.csv ./out/classify-mpi.csv >> experiments/eval-mpi.log 2>>experiments/eval-mpi.log
+./target/eval ./datasets/test.csv ./out/classify-mpi.csv >> experiments/rpi/eval-mpi.log 2>>experiments/rpi/eval-mpi.log
+mpiexec -np 4 ./target/minas-mpi > out/classify-mpi.csv 2>experiments/rpi/eval-mpi.log
+./target/eval ./datasets/test.csv ./out/classify-mpi.csv >> experiments/rpi/eval-mpi.log 2>>experiments/rpi/eval-mpi.log
+./target/minas > out/classify.csv 2>experiments/rpi/eval.log
+./target/eval ./datasets/test.csv ./out/classify-mpi.csv >> experiments/rpi/eval-mpi.log 2>>experiments/rpi/eval-mpi.log
+time ./target/minas > /dev/null 2>&1
+time ./target/minas-mpi > /dev/null 2>&1
+./target/minas-mpi
+time mpirun -np 4 ./target/minas-mpi > /dev/null 2>&1
+exit
+hto
+htop
+exit
+gcc -v
+exut
+exit
+history | less
+curl -sSL https://install.pi-hole.net | bash
+exit
+history
+q
+mpivars
+mpivars -v
+mpivars --version
+mpirun.openmpi -v
+mpirun.openmpi --version
+ls
+cd cloud/
+l
+ls
+make target/mfog
+ped
+pwd
+./target/mfog
+mpirun -v
+mpirun -V
+whereis mpirun
+exit
+l
+ls
+head hs_err_pid11218.log 
+head hs_err_*
+rm -rf *.log
+l
+s
+ls
+cd cloud/
+l
+ls
+make
+vim makefile 
+make
+history | less
+sudo apt remove mpich 
+sudo apt update 
+sudo apt upgrade 
+sudo apt autoremove 
+sudo apt help
+sudo apt search mpi
+sudo apt search mpi | less
+sudo apt search ' mpi' | less
+sudo apt search openmpi
+sudo apt install openmpi-bin openmpi-common openmpi-doc
+mpirun -h
+orted --help
+mpirun.openmpi --help
+mpirun.openmpi --version
+mpirun.openmpi --help launch
+tar -xf openmpi-4.0.4.tar.gz 
+cd openmpi-4.0.4/
+./configure 
+make -j 4 all
+l
+ls
+mkdir -p usr/local
+./configure --prefix=$PWD/usr/local
+make -j 4 all
+sudo make -j 4 install
+mv -r usr/ ~
+cp -r usr/ ~
+cd ..
+ls
+make target/mfog 
+usr/local/bin/mpiexec --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.10 target/mfog
+~/usr/local/bin/mpiexec --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.10 target/mfog
+~/usr/local/bin/mpiexec -np 4 --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.10 target/mfog
+~/usr/local/bin/mpiexec -np 4 --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.10:4 target/mfog
+l
+ls
+ping 192.168.15.14
+ssh 192.168.15.14
+ssh puhl@192.168.15.14
+ssh-copy-id puhl@192.168.15.14
+vim ~/.ssh/config
+ssh 192.168.15.14
+echo $HOST
+echo $HOSTNAME
+lscpu
+exit
+htop
+exit
+mpirun --version
+ls cloud/target/
+ln -s cloud/target/mfog
+l
+ls
+./mfog 
+exit
+hostname
+mpirun -np 4 hostname
+mpirun -np 5 hostname
+mpirun -np 2 mfog
+MFOG_MODEL_CSV=datasets/model-clean.csv
+MFOG_EXAMPLES_CSV=datasets/test.csv
+MFOG_MATCHES_CSV=out/classify.csv
+FOG_MODEL_CSV=datasets/model-clean.csv MFOG_EXAMPLES_CSV=datasets/test.csv MFOG_MATCHES_CSV=out/classify.csv MFOG_TIMING_LOG=experiments/timing.csv  mpirun -np 2 mfog]
+FOG_MODEL_CSV=datasets/model-clean.csv MFOG_EXAMPLES_CSV=datasets/test.csv MFOG_MATCHES_CSV=out/classify.csv MFOG_TIMING_LOG=experiments/timing.csv  mpirun -np 2 mfog
+ls cloud/datasets/
+cd cloud/
+MFOG_MODEL_CSV=datasets/model-clean.csv MFOG_EXAMPLES_CSV=datasets/test.csv MFOG_MATCHES_CSV=out/classify.csv MFOG_TIMING_LOG=experiments/timing.csv  mpirun -np 2 mfog
+MFOG_MODEL_CSV=datasets/model-clean.csv MFOG_EXAMPLES_CSV=datasets/test.csv MFOG_MATCHES_CSV=out/classify.csv MFOG_TIMING_LOG=experiments/timing.csv  mpirun -np 2 target/mfog
+npirun --version
+mpirun --version
+~/usr/local/bin/mpirun --version
+~/usr/local/bin/mpirun --host pokebola hostname
+~/usr/local/bin/mpirun --prefix /home/puhl/project/minas-flink/mfog-mpi/usr/local/ --host pokebola hostname
+ssh pokebola hostname
+ssh almoco hostname
+~/usr/local/bin/mpirun --prefix /home/puhl/project/minas-flink/mfog-mpi/usr/local/ --host pokebola ls
+~/usr/local/bin/mpirun --prefix /home/puhl/project/minas-flink/mfog-mpi/usr/local/ --host localhost ls
+~/usr/local/bin/mpirun --prefix /home/puhl/project/minas-flink/mfog-mpi/usr/local/ --host localhost,pokebola ls
+echo $LD_LIBRARY_PATH
+cat /etc/ld.so.conf
+cat /etc/ld.so.conf.d/
+ls /etc/ld.so.conf.d/
+cd openmpi-4.0.4/
+history | less
+cd /usr/local/
+ls
+ls ~/usr/local/
+ls ~/usr/local/bin/
+ls ~/usr/local/etc/
+cd -
+./configure
+make -j 4 all
+sudo make install
+mpirun --version
+sudo apt remove openmpi-*
+sudo make install
+mpirun --version
+sudo reboot 
+mpirun --version
+sudo apt remove openmpi-*
+sudo apt autoremove 
+mpirun --version
+exit
+history | less
+cat /etc/apt/sources.list
+ping raspbian.raspberrypi.org
+sudo apt update 
+sudo apt upgrade 
+exit

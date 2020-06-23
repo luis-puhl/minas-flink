@@ -1,0 +1,144 @@
+git_prompt_info:5: character not in range                                                                                                                                                     
+
+ 19:35:11  ✘  puhl@pokebola  ...project/minas-flink/mfog-mpi  ✖ ✹ ✚ ✭ 
+$ usr/local/bin/mpiexec --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.10 lscpu 
+Architecture:        armv7l
+Byte Order:          Little Endian
+CPU(s):              4
+On-line CPU(s) list: 0-3
+Thread(s) per core:  1
+Core(s) per socket:  4
+Socket(s):           1
+Vendor ID:           ARM
+Model:               4
+Model name:          Cortex-A53
+Stepping:            r0p4
+CPU max MHz:         1200.0000
+CPU min MHz:         600.0000
+BogoMIPS:            76.80
+Flags:               half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32
+git_prompt_info:5: character not in range                                                                                                                                                     
+
+ 19:35:32  puhl@pokebola  ...project/minas-flink/mfog-mpi  ✖ ✹ ✚ ✭ 
+$ usr/local/bin/mpiexec --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.14 lscpu
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   36 bits physical, 48 bits virtual
+CPU(s):                          8
+On-line CPU(s) list:             0-7
+Thread(s) per core:              2
+Core(s) per socket:              4
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           58
+Model name:                      Intel(R) Core(TM) i7-3632QM CPU @ 2.20GHz
+Stepping:                        9
+CPU MHz:                         2923.802
+CPU max MHz:                     3200.0000
+CPU min MHz:                     1200.0000
+BogoMIPS:                        4391.61
+Virtualization:                  VT-x
+L1d cache:                       128 KiB
+L1i cache:                       128 KiB
+L2 cache:                        1 MiB
+L3 cache:                        6 MiB
+NUMA node0 CPU(s):               0-7
+Vulnerability Itlb multihit:     KVM: Mitigation: Split huge pages
+Vulnerability L1tf:              Mitigation; PTE Inversion; VMX conditional cach
+                                 e flushes, SMT vulnerable
+Vulnerability Mds:               Vulnerable: Clear CPU buffers attempted, no mic
+                                 rocode; SMT vulnerable
+Vulnerability Meltdown:          Mitigation; PTI
+Vulnerability Spec store bypass: Vulnerable
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user
+                                  pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Full generic retpoline, STIBP disab
+                                 led, RSB filling
+Vulnerability Srbds:             Vulnerable: No microcode
+Vulnerability Tsx async abort:   Not affected
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
+                                 r pge mca cmov pat pse36 clflush dts acpi mmx f
+                                 xsr sse sse2 ss ht tm pbe syscall nx rdtscp lm 
+                                 constant_tsc arch_perfmon pebs bts rep_good nop
+                                 l xtopology nonstop_tsc cpuid aperfmperf pni pc
+                                 lmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3
+                                  cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcn
+                                 t tsc_deadline_timer aes xsave avx f16c rdrand 
+                                 lahf_lm cpuid_fault epb pti tpr_shadow vnmi fle
+                                 xpriority ept vpid fsgsbase smep erms xsaveopt 
+                                 dtherm ida arat pln pts
+git_prompt_info:5: character not in range                                                                                                                                                     
+
+ 19:35:35  puhl@pokebola  ...project/minas-flink/mfog-mpi  ✖ ✹ ✚ ✭ 
+$ usr/local/bin/mpiexec --prefix /home/pi/usr/local/ --path /home/pi/cloud/ --host 192.168.15.14,192.168.15.10 lscpu
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   36 bits physical, 48 bits virtual
+CPU(s):                          8
+On-line CPU(s) list:             0-7
+Thread(s) per core:              2
+Core(s) per socket:              4
+Socket(s):                       1
+NUMA node(s):                    1
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           58
+Model name:                      Intel(R) Core(TM) i7-3632QM CPU @ 2.20GHz
+Stepping:                        9
+CPU MHz:                         2906.985
+CPU max MHz:                     3200.0000
+CPU min MHz:                     1200.0000
+BogoMIPS:                        4391.61
+Virtualization:                  VT-x
+L1d cache:                       128 KiB
+L1i cache:                       128 KiB
+L2 cache:                        1 MiB
+L3 cache:                        6 MiB
+NUMA node0 CPU(s):               0-7
+Vulnerability Itlb multihit:     KVM: Mitigation: Split huge pages
+Vulnerability L1tf:              Mitigation; PTE Inversion; VMX conditional cach
+                                 e flushes, SMT vulnerable
+Vulnerability Mds:               Vulnerable: Clear CPU buffers attempted, no mic
+                                 rocode; SMT vulnerable
+Vulnerability Meltdown:          Mitigation; PTI
+Vulnerability Spec store bypass: Vulnerable
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user
+                                  pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Full generic retpoline, STIBP disab
+                                 led, RSB filling
+Vulnerability Srbds:             Vulnerable: No microcode
+Vulnerability Tsx async abort:   Not affected
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
+                                 r pge mca cmov pat pse36 clflush dts acpi mmx f
+                                 xsr sse sse2 ss ht tm pbe syscall nx rdtscp lm 
+                                 constant_tsc arch_perfmon pebs bts rep_good nop
+                                 l xtopology nonstop_tsc cpuid aperfmperf pni pc
+                                 lmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3
+                                  cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic popcn
+                                 t tsc_deadline_timer aes xsave avx f16c rdrand 
+                                 lahf_lm cpuid_fault epb pti tpr_shadow vnmi fle
+                                 xpriority ept vpid fsgsbase smep erms xsaveopt 
+                                 dtherm ida arat pln pts
+[almoco:14440] [[26244,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[almoco:14440] [[26244,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+[almoco:14440] [[26244,0],1] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[26244,0],0] on node pokebola
+  Remote daemon: [[26244,0],1] on node 192.168.15.10
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------
+git_prompt_info:5: character not in range                                                                                                                                                     
+
+ 19:35:47  ✘  puhl@pokebola  ...project/minas-flink/mfog-mpi  ✖ ✹ ✚ ✭ 
+$ 
+

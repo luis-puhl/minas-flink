@@ -1,50 +1,42 @@
 Processor pokebola, Rank 0 out of 4 processors
-Reading model from    'datasets/model-clean.csv'
-Read model with 100 clusters took 	9.350000e-04s
-[0] Send model with 100 clusters took 	2.060000e-04s
-[1] Recv model with 100 clusters took 	1.505000e-03s
-[3] Recv model with 100 clusters took 	1.628000e-03s
-Reading test from     'datasets/test.csv'
-[2] Recv model with 100 clusters took 	1.659000e-03s
-Read test with 653458 examples took 	2.153605e+00s
-Send Test with 653457 examples took 	5.116846s
-Classification with 653457 examples took 	5.116880s
-[1] Worker classify Test with 217819 examples took 	5.029569s
-[2] Worker classify Test with 217819 examples took 	5.088254s
-[3] Worker classify Test with 217819 examples took 	5.066106s
-Done ./target/mfog in 	7.240881s
-Done ./target/mfog in 	7.193237s
-Done ./target/mfog in 	7.255527s
-Done ./target/mfog in 	7.291977s
+minas-funcs.c,./target/mfog,Jun 15 2020 01:10:44,1592194244,readModel,1.116000e-03,1
+minas-funcs.c,./target/mfog,Jun 15 2020 01:10:44,1592194247,readExamples,2.751038e+00,1
+minas-mpi.c,./target/mfog,Jun 15 2020 01:10:43,1592194247,sendModel,2.320000e-04,4
+[1] Recv model with 100 clusters took 	2.750584e+00s
+[3] Recv model with 100 clusters took 	2.733375e+00s
+[2] Recv model with 100 clusters took 	2.731139e+00s
+[3] Worker classify Test with 217819 examples took 	3.159759s
+[1] Worker classify Test with 217819 examples took 	3.156835s
+[2] Worker classify Test with 217819 examples took 	3.157433s
+minas-mpi.c,./target/mfog,Jun 15 2020 01:10:43,1592194250,sendExamples,3.153970e+00,4
+minas-mpi.c,./target/mfog,Jun 15 2020 01:10:43,1592194250,MFOG_main,3.153987e+00,4
 
- Performance counter stats for 'mpiexec ./target/mfog':
+ Performance counter stats for '/home/puhl/usr/local/bin/mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
 
-         32,813.44 msec task-clock:u              #    4.398 CPUs utilized          
+         23,814.20 msec task-clock:u              #    3.916 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,645      page-faults:u             #    0.001 M/sec                  
-    78,455,735,717      cycles:u                  #    2.391 GHz                      (59.88%)
-    55,968,799,523      stalled-cycles-frontend:u #   71.34% frontend cycles idle     (59.98%)
-   127,407,146,966      instructions:u            #    1.62  insn per cycle         
-                                                  #    0.44  stalled cycles per insn  (60.04%)
-    21,920,717,674      branches:u                #  668.041 M/sec                    (60.08%)
-        30,736,939      branch-misses:u           #    0.14% of all branches          (60.02%)
+            43,437      page-faults:u             #    0.002 M/sec                  
+    67,797,577,943      cycles:u                  #    2.847 GHz                    
+    34,217,877,550      stalled-cycles-frontend:u #   50.47% frontend cycles idle   
+   114,549,372,325      instructions:u            #    1.69  insn per cycle         
+                                                  #    0.30  stalled cycles per insn
+    19,613,505,582      branches:u                #  823.605 M/sec                  
+        35,079,938      branch-misses:u           #    0.18% of all branches        
 
-       7.461674520 seconds time elapsed
+       6.080609350 seconds time elapsed
 
-      27.301859000 seconds user
-       5.602742000 seconds sys
+      23.443977000 seconds user
+       0.317757000 seconds sys
 
 
-
-Reading test from      'datasets/test.csv'
-Reading output from    'out/classify-mpi.csv'
+Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	        14	         6	
+     -	|	     17463	      2531	
      A	|	         0	         0	
-     N	|	    447165	    206272	
-Total 	653457
-Hits 	206272 (31.566270%)
-Misses 	447185 (68.433730%)
-Done ./target/eval in 	2.184843s
+     N	|	    429716	    203747	
+Total examples     653457
+Total matches      653457
+Hits               203747 ( 31.179863%)
+Misses             449710 ( 68.820137%)
