@@ -1,34 +1,33 @@
-minas-funcs.c,target/minas,Jun 15 2020 01:10:32,1592194232,readModel,6.500000e-04,1
-minas-funcs.c,target/minas,Jun 15 2020 01:10:32,1592194234,readExamples,1.987583e+00,1
-minas.c,target/minas,Jun 15 2020 01:10:32,1592194241,MNS_classifier,6.761506e+00,1
+minas-funcs.c,target/minas,Jun 23 2020 13:19:53,1592929193,readModel,7.290000e-04,1
+minas-funcs.c,target/minas,Jun 23 2020 13:19:53,1592929195,readExamples,2.015487e+00,1
+target/minas: Falha de segmentação
 
  Performance counter stats for 'target/minas':
 
-          8,779.03 msec task-clock:u              #    0.998 CPUs utilized          
+          2,210.62 msec task-clock:u              #    0.879 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            34,546      page-faults:u             #    0.004 M/sec                  
-    24,889,553,710      cycles:u                  #    2.835 GHz                    
-    10,748,449,652      stalled-cycles-frontend:u #   43.18% frontend cycles idle   
-    52,190,723,682      instructions:u            #    2.10  insn per cycle         
-                                                  #    0.21  stalled cycles per insn
-     5,529,391,310      branches:u                #  629.841 M/sec                  
-        16,877,197      branch-misses:u           #    0.31% of all branches        
+            34,548      page-faults:u             #    0.016 M/sec                  
+     5,572,850,930      cycles:u                  #    2.521 GHz                    
+     2,351,627,557      stalled-cycles-frontend:u #   42.20% frontend cycles idle   
+    12,276,996,361      instructions:u            #    2.20  insn per cycle         
+                                                  #    0.19  stalled cycles per insn
+     2,753,816,975      branches:u                # 1245.720 M/sec                  
+         9,445,357      branch-misses:u           #    0.34% of all branches        
 
-       8.795062573 seconds time elapsed
+       2.515848754 seconds time elapsed
 
-       8.547963000 seconds user
-       0.212749000 seconds sys
+       1.921231000 seconds user
+       0.283967000 seconds sys
 
 
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     19677	       317	
+     -	|	    447179	    206278	
      A	|	         0	         0	
-     N	|	    427502	    205961	
+     N	|	         0	         0	
 Total examples     653457
-Total matches      653457
-Hits               205961 ( 31.518677%)
-Misses             447496 ( 68.481323%)
-
+Total matches           0
+Hits                    0 (  0.000000%)
+Misses             653457 (100.000000%)

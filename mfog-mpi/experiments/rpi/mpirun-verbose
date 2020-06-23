@@ -1,0 +1,50 @@
+almoco
+jantar
+[almoco:12349] mca: base: components_register: registering framework plm components
+[almoco:12349] mca: base: components_register: found loaded component isolated
+[almoco:12349] mca: base: components_register: component isolated has no register or open function
+[almoco:12349] mca: base: components_register: found loaded component rsh
+[almoco:12349] mca: base: components_register: component rsh register function successful
+[almoco:12349] mca: base: components_register: found loaded component slurm
+[almoco:12349] mca: base: components_register: component slurm register function successful
+[almoco:12349] mca: base: components_open: opening plm components
+[almoco:12349] mca: base: components_open: found loaded component isolated
+[almoco:12349] mca: base: components_open: component isolated open function successful
+[almoco:12349] mca: base: components_open: found loaded component rsh
+[almoco:12349] mca: base: components_open: component rsh open function successful
+[almoco:12349] mca: base: components_open: found loaded component slurm
+[almoco:12349] mca: base: components_open: component slurm open function successful
+[almoco:12349] mca:base:select: Auto-selecting plm components
+[almoco:12349] mca:base:select:(  plm) Querying component [isolated]
+[almoco:12349] mca:base:select:(  plm) Query of component [isolated] set priority to 0
+[almoco:12349] mca:base:select:(  plm) Querying component [rsh]
+[almoco:12349] mca:base:select:(  plm) Query of component [rsh] set priority to 10
+[almoco:12349] mca:base:select:(  plm) Querying component [slurm]
+[almoco:12349] mca:base:select:(  plm) Selected component [rsh]
+[almoco:12349] mca: base: close: component isolated closed
+[almoco:12349] mca: base: close: unloading component isolated
+[almoco:12349] mca: base: close: component slurm closed
+[almoco:12349] mca: base: close: unloading component slurm
+[almoco:12349] [[34908,0],0] plm:rsh: final template argv:
+	/usr/bin/ssh <template>  orted -mca ess "env" -mca ess_base_jobid "-2007236608" -mca ess_base_vpid "<template>" -mca ess_base_num_procs "2" -mca orte_node_regex "almoco,jantar@0(2)" -mca orte_hnp_uri "2287730688.0;tcp://192.168.15.10:34297" --mca plm_base_verbose "10" -mca plm "rsh" --tree-spawn -mca routed "radix" -mca orte_parent_uri "2287730688.0;tcp://192.168.15.10:34297" -mca pmix "^s1,s2,cray,isolated"
+[jantar:05037] mca: base: components_register: registering framework plm components
+[jantar:05037] mca: base: components_register: found loaded component rsh
+[jantar:05037] mca: base: components_register: component rsh register function successful
+[jantar:05037] mca: base: components_open: opening plm components
+[jantar:05037] mca: base: components_open: found loaded component rsh
+[jantar:05037] mca: base: components_open: component rsh open function successful
+[jantar:05037] mca:base:select: Auto-selecting plm components
+[jantar:05037] mca:base:select:(  plm) Querying component [rsh]
+[jantar:05037] mca:base:select:(  plm) Query of component [rsh] set priority to 10
+[jantar:05037] mca:base:select:(  plm) Selected component [rsh]
+[almoco:12349] [[34908,0],0] complete_setup on job [34908,1]
+almoco
+[almoco:12349] [[34908,0],0] plm:base:receive update proc state command from [[34908,0],1]
+[almoco:12349] [[34908,0],0] plm:base:receive got update_proc_state for job [34908,1]
+jantar
+[almoco:12349] [[34908,0],0] plm:base:receive update proc state command from [[34908,0],1]
+[almoco:12349] [[34908,0],0] plm:base:receive got update_proc_state for job [34908,1]
+[jantar:05037] mca: base: close: component rsh closed
+[jantar:05037] mca: base: close: unloading component rsh
+[almoco:12349] mca: base: close: component rsh closed
+[almoco:12349] mca: base: close: unloading component rsh

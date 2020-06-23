@@ -1,22 +1,22 @@
 Processor almoco, Rank 0 out of 4 processors
-minas-funcs.c,./target/mfog,Jun 13 2020 11:56:18,1592060179,readModel,4.159000e-03,1
-minas-funcs.c,./target/mfog,Jun 13 2020 11:56:18,1592060193,readExamples,1.396657e+01,1
-minas-mpi.c,./target/mfog,Jun 13 2020 11:56:18,1592060193,sendModel,1.000000e-03,4
-[1] Recv model with 100 clusters took 	1.404365e+01s
-[2] Recv model with 100 clusters took 	1.404008e+01s
-[3] Recv model with 100 clusters took 	1.404365e+01s
-[3] Worker classify Test with 217819 examples took 	29.339426s
-[1] Worker classify Test with 217819 examples took 	29.261749s
-[2] Worker classify Test with 217819 examples took 	29.304277s
-minas-mpi.c,./target/mfog,Jun 13 2020 11:56:18,1592060222,sendExamples,2.692585e+01,4
-minas-mpi.c,./target/mfog,Jun 13 2020 11:56:18,1592060222,MFOG_main,2.692593e+01,4
+minas-funcs.c,./target/mfog,Jun 18 2020 10:49:47,1592488188,readModel,4.075000e-03,1
+minas-funcs.c,./target/mfog,Jun 18 2020 10:49:47,1592488202,readExamples,1.383812e+01,1
+minas-mpi.c,./target/mfog,Jun 18 2020 10:49:46,1592488202,sendModel,8.740000e-04,4
+[1] Recv model with 100 clusters took 	1.384823e+01s
+[3] Recv model with 100 clusters took 	1.381451e+01s
+[2] Recv model with 100 clusters took 	1.388950e+01s
+[3] Worker classify Test with 217819 examples took 	24.530226s
+[1] Worker classify Test with 217819 examples took 	24.486806s
+[2] Worker classify Test with 217819 examples took 	24.492159s
+minas-mpi.c,./target/mfog,Jun 18 2020 10:49:46,1592488226,sendExamples,2.422632e+01,4
+minas-mpi.c,./target/mfog,Jun 18 2020 10:49:46,1592488226,MFOG_main,2.422646e+01,4
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     18394	      1600	
+     -	|	     18373	      1621	
      A	|	         0	         0	
-     N	|	    428785	    204678	
+     N	|	    428806	    204657	
 Total examples     653457
 Total matches      653457
-Hits               204678 ( 31.322336%)
-Misses             448779 ( 68.677664%)
+Hits               204657 ( 31.319123%)
+Misses             448800 ( 68.680877%)

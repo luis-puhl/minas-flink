@@ -10,43 +10,75 @@
 #include "loadenv.h"
 
 #define MFOG_MASTER_RANK 0
+#define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
+#define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
 
 void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing, char *executable) {
+    int mpiReturn;
     clock_t start = clock();
     int bufferSize = sizeof(Model) +
         (model->size) * sizeof(Cluster) +
         dimension * (model->size) * sizeof(double);
     char *buffer = malloc(bufferSize);
     int position = 0;
-    MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
-    MPI_Pack(model->vals, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    DEBUG_LN mpiReturn = MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    MPI_RETURN
+    DEBUG_LN mpiReturn = MPI_Pack(model->vals, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    MPI_RETURN
     for (int i = 0; i < model->size; i++) {
-        MPI_Pack(model->vals[i].center, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        mpiReturn = MPI_Pack(model->vals[i].center, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        MPI_RETURN
     }
-    if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
-    MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
-    MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    DEBUG_LN if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
+    DEBUG_LN mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    MPI_RETURN
+    DEBUG_LN mpiReturn = MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    MPI_RETURN
+    DEBUG_LN 
     free(buffer);
     PRINT_TIMING(timing, executable, clSize, start);
 }
 
 void receiveModel(int dimension, Model *model, int clRank) {
     clock_t start = clock();
-    int bufferSize;
-    MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    int bufferSize, mpiReturn;
+    DEBUG_LN mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    MPI_RETURN
     char *buffer = malloc(bufferSize);
-    MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    DEBUG_LN mpiReturn = MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    MPI_RETURN
 
     int position = 0;
-    MPI_Unpack(buffer, bufferSize, &position, model, sizeof(Model), MPI_BYTE, MPI_COMM_WORLD);
+    DEBUG_LN mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model, sizeof(Model), MPI_BYTE, MPI_COMM_WORLD);
+    MPI_RETURN
     model->vals = malloc(model->size * sizeof(Cluster));
-    MPI_Unpack(buffer, bufferSize, &position, model->vals, model->size * sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD);
+    DEBUG_LN mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model->vals, model->size * sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD);
+    MPI_RETURN
     for (int i = 0; i < model->size; i++) {
         model->vals[i].center = malloc(model->dimension * sizeof(double));
-        MPI_Unpack(buffer, bufferSize, &position, model->vals[i].center, model->dimension, MPI_DOUBLE, MPI_COMM_WORLD);
+        mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model->vals[i].center, model->dimension, MPI_DOUBLE, MPI_COMM_WORLD);
+        MPI_RETURN
     }
     free(buffer);
     fprintf(stderr, "[%d] Recv model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
+}
+
+int receiveClassifications(FILE *matches) {
+    int hasMessage = 0, matchesCounter = 0;
+    Match match;
+    MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
+    while (hasMessage) {
+        MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
+                // match.pointId, match.isMatch, match.cluster->id,
+                // match.cluster->label, match.distance, match.cluster->radius
+                match.pointId, match.isMatch, match.clusterId,
+                match.label, match.distance, match.radius
+        );
+        matchesCounter++;
+        MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
+    }
+    return matchesCounter;
 }
 
 int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE *timing, char *executable) {
@@ -65,18 +97,7 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
         MPI_Pack(ex->value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
         //
-        int hasMessage = 0;
-        MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
-        while (hasMessage) {
-            MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
-                    // match.pointId, match.isMatch, match.cluster->id,
-                    // match.cluster->label, match.distance, match.cluster->radius
-                    match.pointId, match.isMatch, match.clusterId,
-                    match.label, match.distance, match.radius
-            );
-            MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
-        }
+        receiveClassifications(matches);
         //
         dest = ++dest < clSize ? dest : 1;
     }
@@ -90,18 +111,7 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
     }
     MPI_Barrier(MPI_COMM_WORLD);
-    int hasMessage = 0;
-    MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
-    while (hasMessage) {
-        MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
-                // match.pointId, match.isMatch, match.cluster->id,
-                // match.cluster->label, match.distance, match.cluster->radius
-                match.pointId, match.isMatch, match.clusterId,
-                match.label, match.distance, match.radius
-        );
-        MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
-    }
+    receiveClassifications(matches);
     free(buffer);
     free(ex.value);
     PRINT_TIMING(timing, executable, clSize, start);
@@ -196,7 +206,9 @@ int MFOG_main(int argc, char *argv[], char **envp) {
         int nExamples;
         examples = readExamples(model.dimension, examplesFile, &nExamples, timing, executable);
         //
+        printf("%d %s main send model\n", __LINE__, __FUNCTION__);fflush(stdout);
         sendModel(model.dimension, &model, clRank, clSize, timing, executable);
+        printf("%d %s main send model done\n", __LINE__, __FUNCTION__);fflush(stdout);
 
         clock_t start = clock();
         fprintf(matches, "#id,isMach,clusterId,label,distance,radius\n");
@@ -206,7 +218,9 @@ int MFOG_main(int argc, char *argv[], char **envp) {
         PRINT_TIMING(timing, executable, clSize, start);
         closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
     } else {
+        printf("%d %s worker rcv model\n", __LINE__, __FUNCTION__);fflush(stdout);
         receiveModel(model.dimension, &model, clRank);
+        printf("%d %s worker rcv model return\n", __LINE__, __FUNCTION__);fflush(stdout);
 
         receiveExamples(model.dimension, &model, clRank);
 
@@ -219,6 +233,16 @@ int MFOG_main(int argc, char *argv[], char **envp) {
 
 #ifndef MAIN
 #define MAIN
+
+// Define the function to be called when ctrl-c (SIGINT) signal is sent to process
+void signal_callback_handler(int signum) {
+    printf("\n\nCaught signal %d\n",signum);
+    fflush(stdout);
+    // Cleanup and close up stuff here
+    // Terminate program
+    exit(signum);
+}
+
 int main(int argc, char *argv[], char **envp) {
     return MFOG_main(argc, argv, envp);
 }
