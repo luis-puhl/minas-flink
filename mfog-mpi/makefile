@@ -42,6 +42,16 @@ experiments/eval.log: target/eval datasets/test.csv out/classify.csv
 experiments/eval-mpi.log: target/eval datasets/test.csv out/classify-mpi.csv
 	target/eval MATCHES_CSV=out/classify-mpi.csv EVALUATE_LOG=experiments/eval-mpi.log
 
+out/cluster.csv: target/minas datasets/model-clean.csv datasets/test.csv
+	mpirun --host almoco:4,jantar:4 $$PWD/target/mfog \
+		MODEL_CSV=datasets/model-clean.csv \
+		EXAMPLES_CSV=datasets/test.csv \
+		MATCHES_CSV=out/cluster.csv \
+		TIMING_LOG=experiments/timing.csv >> experiments/cluster.log
+experiments/cluster.log: target/eval datasets/test.csv out/cluster.csv
+	target/eval MATCHES_CSV=out/cluster.csv EVALUATE_LOG=experiments/cluster.log
+	# target/eval EXAMPLES_CSV=datasets/test.csv MATCHES_CSV=out/cluster.csv EVALUATE_LOG=experiments/cluster.log TIMING_LOG=stdout
+
 cluster:
 	mpiexec --host jantar:4,almoco:4 ./target/mfog \
 		MODEL_CSV=datasets/model-clean.csv \

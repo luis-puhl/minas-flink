@@ -1,42 +1,60 @@
 Processor pokebola, Rank 0 out of 4 processors
-minas-funcs.c,./target/mfog,Jun 18 2020 10:25:30,1592486730,readModel,7.940000e-04,1
-minas-funcs.c,./target/mfog,Jun 18 2020 10:25:30,1592486732,readExamples,2.008476e+00,1
-minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486732,sendModel,2.530000e-04,4
-[1] Recv model with 100 clusters took 	2.010423e+00s
-[2] Recv model with 100 clusters took 	2.010375e+00s
-[3] Recv model with 100 clusters took 	2.008580e+00s
-[1] Worker classify Test with 217819 examples took 	2.810740s
-[2] Worker classify Test with 217819 examples took 	2.810673s
-[3] Worker classify Test with 217819 examples took 	2.809829s
-minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486735,sendExamples,2.809885e+00,4
-minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486735,MFOG_main,2.809902e+00,4
+45 receiveModel
+45 receiveModel
+45 receiveModel
+minas-funcs.c,./target/mfog,Jun 23 2020 13:19:58,1592929198,readModel,6.920000e-04,1
+minas-funcs.c,./target/mfog,Jun 23 2020 13:19:58,1592929201,readExamples,2.347553e+00,1
+24 sendModel
+26 sendModel
+32 sendModel
+33 sendModel
+35 sendModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+37 sendModel
+minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929201,sendModel,2.970000e-04,4
+52 receiveModel
+55 receiveModel
+52 receiveModel
+52 receiveModel
+55 receiveModel
+55 receiveModel
+[3] Recv model with 100 clusters took 	2.336983e+00s
+[2] Recv model with 100 clusters took 	2.309114e+00s
+[1] Recv model with 100 clusters took 	2.355191e+00s
+[1] Worker classify Test with 217819 examples took 	3.250678s
+[3] Worker classify Test with 217819 examples took 	3.251615s
+[2] Worker classify Test with 217819 examples took 	3.251657s
+minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929204,sendExamples,3.242285e+00,4
+minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929204,MFOG_main,3.242305e+00,4
 
  Performance counter stats for 'mpiexec ./target/mfog MATCHES_CSV=out/classify-mpi.csv':
 
-         19,467.92 msec task-clock:u              #    3.882 CPUs utilized          
+         22,571.83 msec task-clock:u              #    3.903 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            43,508      page-faults:u             #    0.002 M/sec                  
-    55,436,698,828      cycles:u                  #    2.848 GHz                    
-    24,499,153,530      stalled-cycles-frontend:u #   44.19% frontend cycles idle   
-   106,891,096,798      instructions:u            #    1.93  insn per cycle         
-                                                  #    0.23  stalled cycles per insn
-    17,854,568,818      branches:u                #  917.128 M/sec                  
-        31,824,484      branch-misses:u           #    0.18% of all branches        
+            43,483      page-faults:u             #    0.002 M/sec                  
+    63,499,187,607      cycles:u                  #    2.813 GHz                    
+    31,816,256,918      stalled-cycles-frontend:u #   50.10% frontend cycles idle   
+   110,094,380,383      instructions:u            #    1.73  insn per cycle         
+                                                  #    0.29  stalled cycles per insn
+    18,572,974,886      branches:u                #  822.839 M/sec                  
+        37,232,489      branch-misses:u           #    0.20% of all branches        
 
-       5.014517611 seconds time elapsed
+       5.783621614 seconds time elapsed
 
-      19.188222000 seconds user
-       0.256487000 seconds sys
+      22.137607000 seconds user
+       0.392672000 seconds sys
 
 
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     17376	      2618	
+     -	|	     17274	      2720	
      A	|	         0	         0	
-     N	|	    429803	    203660	
+     N	|	    429905	    203558	
 Total examples     653457
 Total matches      653457
-Hits               203660 ( 31.166550%)
-Misses             449797 ( 68.833450%)
+Hits               203558 ( 31.150940%)
+Misses             449899 ( 68.849060%)

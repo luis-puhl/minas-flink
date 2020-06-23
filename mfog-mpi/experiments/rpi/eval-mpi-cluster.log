@@ -7,3 +7,77 @@ Node: jantar
 
 while attempting to start process rank 4.
 --------------------------------------------------------------------------
+220 MFOG_main worker rcv model
+44 receiveModel
+220 MFOG_main worker rcv model
+44 receiveModel
+220 MFOG_main worker rcv model
+44 receiveModel
+220 MFOG_main worker rcv model
+44 receiveModel
+220 MFOG_main worker rcv model
+44 receiveModel
+220 MFOG_main worker rcv model
+44 receiveModel
+220 MFOG_main worker rcv model
+44 receiveModel
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/classify.csv'
+Writing timing to      'experiments/timing.csv'
+208 MFOG_main main send model
+23 sendModel
+25 sendModel
+31 sendModel
+32 sendModel
+47 receiveModel
+47 receiveModel
+47 receiveModel
+47 receiveModel
+47 receiveModel
+47 receiveModel
+34 sendModel
+47 receiveModel
+36 sendModel
+210 MFOG_main main send model done
+51 receiveModel
+54 receiveModel
+51 receiveModel
+54 receiveModel
+222 MFOG_main worker rcv model return
+222 MFOG_main worker rcv model return
+51 receiveModel
+54 receiveModel
+222 MFOG_main worker rcv model return
+51 receiveModel
+54 receiveModel
+51 receiveModel
+54 receiveModel
+222 MFOG_main worker rcv model return
+222 MFOG_main worker rcv model return
+51 receiveModel
+54 receiveModel
+222 MFOG_main worker rcv model return
+51 receiveModel
+54 receiveModel
+222 MFOG_main worker rcv model return
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/classify.csv'
+Writing timing to      'experiments/timing.csv'
+209 MFOG_main main send model
+211 MFOG_main main send model done
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return

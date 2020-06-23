@@ -188,3 +188,17 @@ minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486732,sendModel,2.490000e-04
 minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486735,sendExamples,2.809881e+00,4
 minas-mpi.c,./target/mfog,Jun 18 2020 10:25:30,1592486735,MFOG_main,2.809900e+00,4
 evaluate.c,target/eval,Jun 18 2020 10:25:25,1592486737,main,2.403481e+00,1
+evaluate.c,target/eval,Jun 18 2020 17:28:33,1592512117,main,2.001448e+00,1
+minas-funcs.c,./target/mfog,Jun 18 2020 17:28:38,1592512118,readModel,1.053000e-03,1
+minas-funcs.c,./target/mfog,Jun 18 2020 17:28:38,1592512120,readExamples,1.985533e+00,1
+minas-mpi.c,./target/mfog,Jun 18 2020 17:28:38,1592512120,sendModel,2.230000e-04,4
+minas-mpi.c,./target/mfog,Jun 18 2020 17:28:38,1592512123,sendExamples,2.687621e+00,4
+minas-mpi.c,./target/mfog,Jun 18 2020 17:28:38,1592512123,MFOG_main,2.687642e+00,4
+evaluate.c,target/eval,Jun 18 2020 17:28:33,1592512125,main,2.408793e+00,1
+evaluate.c,target/eval,Jun 23 2020 13:19:53,1592929198,main,2.123404e+00,1
+minas-funcs.c,./target/mfog,Jun 23 2020 13:19:58,1592929198,readModel,6.840000e-04,1
+minas-funcs.c,./target/mfog,Jun 23 2020 13:19:58,1592929201,readExamples,2.347544e+00,1
+minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929201,sendModel,2.920000e-04,4
+minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929204,sendExamples,3.242281e+00,4
+minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929204,MFOG_main,3.242301e+00,4
+evaluate.c,target/eval,Jun 23 2020 13:19:53,1592929207,main,2.716907e+00,1

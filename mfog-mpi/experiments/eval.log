@@ -1,24 +1,24 @@
-minas-funcs.c,target/minas,Jun 18 2020 10:25:25,1592486725,readModel,9.000000e-04,1
-minas-funcs.c,target/minas,Jun 18 2020 10:25:25,1592486727,readExamples,1.875115e+00,1
+minas-funcs.c,target/minas,Jun 23 2020 13:19:53,1592929193,readModel,7.290000e-04,1
+minas-funcs.c,target/minas,Jun 23 2020 13:19:53,1592929195,readExamples,2.015487e+00,1
 target/minas: Falha de segmentação
 
  Performance counter stats for 'target/minas':
 
-          2,048.54 msec task-clock:u              #    0.883 CPUs utilized          
+          2,210.62 msec task-clock:u              #    0.879 CPUs utilized          
                  0      context-switches:u        #    0.000 K/sec                  
                  0      cpu-migrations:u          #    0.000 K/sec                  
-            34,546      page-faults:u             #    0.017 M/sec                  
-     5,365,377,092      cycles:u                  #    2.619 GHz                    
-     1,986,959,574      stalled-cycles-frontend:u #   37.03% frontend cycles idle   
-    12,276,995,448      instructions:u            #    2.29  insn per cycle         
-                                                  #    0.16  stalled cycles per insn
-     2,753,816,771      branches:u                # 1344.284 M/sec                  
-         9,240,265      branch-misses:u           #    0.34% of all branches        
+            34,548      page-faults:u             #    0.016 M/sec                  
+     5,572,850,930      cycles:u                  #    2.521 GHz                    
+     2,351,627,557      stalled-cycles-frontend:u #   42.20% frontend cycles idle   
+    12,276,996,361      instructions:u            #    2.20  insn per cycle         
+                                                  #    0.19  stalled cycles per insn
+     2,753,816,975      branches:u                # 1245.720 M/sec                  
+         9,445,357      branch-misses:u           #    0.34% of all branches        
 
-       2.320515256 seconds time elapsed
+       2.515848754 seconds time elapsed
 
-       1.792839000 seconds user
-       0.252729000 seconds sys
+       1.921231000 seconds user
+       0.283967000 seconds sys
 
 
 Confusion Matrix

@@ -1,0 +1,50 @@
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/classify.csv'
+Writing timing to      'experiments/timing.csv'
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+209 MFOG_main main send model
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+211 MFOG_main main send model done
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/cluster.csv'
+Writing timing to      'experiments/timing.csv'
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+221 MFOG_main worker rcv model
+209 MFOG_main main send model
+211 MFOG_main main send model done
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+223 MFOG_main worker rcv model return
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     16518	      3476	
+     A	|	         0	         0	
+     N	|	    430661	    202802	
+Total examples     653457
+Total matches      653457
+Hits               202802 ( 31.035248%)
+Misses             450655 ( 68.964752%)
