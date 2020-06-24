@@ -10,7 +10,10 @@
 #include "loadenv.h"
 
 #define MFOG_MASTER_RANK 0
+#define DEBUG_LN
+#ifdef DEBUG
 #define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
+#endif
 #define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
 
 void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing, char *executable) {
@@ -36,7 +39,7 @@ void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing
     MPI_RETURN
     DEBUG_LN 
     free(buffer);
-    PRINT_TIMING(timing, executable, clSize, start);
+    PRINT_TIMING(timing, executable, clSize, start, model->size);
 }
 
 void receiveModel(int dimension, Model *model, int clRank) {
@@ -114,7 +117,7 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
     receiveClassifications(matches);
     free(buffer);
     free(ex.value);
-    PRINT_TIMING(timing, executable, clSize, start);
+    PRINT_TIMING(timing, executable, clSize, start, exampleCounter);
     return exampleCounter;
 }
 
@@ -206,21 +209,17 @@ int MFOG_main(int argc, char *argv[], char **envp) {
         int nExamples;
         examples = readExamples(model.dimension, examplesFile, &nExamples, timing, executable);
         //
-        printf("%d %s main send model\n", __LINE__, __FUNCTION__);fflush(stdout);
         sendModel(model.dimension, &model, clRank, clSize, timing, executable);
-        printf("%d %s main send model done\n", __LINE__, __FUNCTION__);fflush(stdout);
 
         clock_t start = clock();
         fprintf(matches, "#id,isMach,clusterId,label,distance,radius\n");
         int exampleCounter = sendExamples(model.dimension, examples, clSize, matches, timing, executable);
 
         MPI_Barrier(MPI_COMM_WORLD);
-        PRINT_TIMING(timing, executable, clSize, start);
+        PRINT_TIMING(timing, executable, clSize, start, exampleCounter);
         closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
     } else {
-        printf("%d %s worker rcv model\n", __LINE__, __FUNCTION__);fflush(stdout);
         receiveModel(model.dimension, &model, clRank);
-        printf("%d %s worker rcv model return\n", __LINE__, __FUNCTION__);fflush(stdout);
 
         receiveExamples(model.dimension, &model, clRank);
 

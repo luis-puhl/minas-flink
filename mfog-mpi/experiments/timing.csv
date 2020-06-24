@@ -1,4 +1,4 @@
-# source, executable, build_date time, wall-clock, function, elapsed, cores
+# source, executable, build_date time, wall-clock, function, elapsed, cores, itens
 evaluate.c,target/eval,Jun 11 2020 20:51:17,1591919480,main,2.591643e+00,1
 evaluate.c,target/eval,Jun 11 2020 21:03:41,1591920224,main,2.763863e+00,1
 evaluate.c,target/eval,Jun 11 2020 21:13:26,1591920809,main,2.697150e+00,1
@@ -202,3 +202,11 @@ minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929201,sendModel,2.920000e-04
 minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929204,sendExamples,3.242281e+00,4
 minas-mpi.c,./target/mfog,Jun 23 2020 13:19:58,1592929204,MFOG_main,3.242301e+00,4
 evaluate.c,target/eval,Jun 23 2020 13:19:53,1592929207,main,2.716907e+00,1
+#
+evaluate.c,target/eval,Jun 24 2020 12:05:07,1593011113,main,2.411056e+00,1,653457
+minas-funcs.c,./target/mfog,Jun 24 2020 12:05:13,1593011113,readModel,1.109000e-03,1,100
+minas-funcs.c,./target/mfog,Jun 24 2020 12:05:13,1593011117,readExamples,3.684699e+00,1,653457
+minas-mpi.c,./target/mfog,Jun 24 2020 12:05:13,1593011117,sendModel,2.850000e-04,4,100
+minas-mpi.c,./target/mfog,Jun 24 2020 12:05:13,1593011120,sendExamples,2.854343e+00,4,653457
+minas-mpi.c,./target/mfog,Jun 24 2020 12:05:13,1593011120,MFOG_main,2.854374e+00,4,653457
+evaluate.c,target/eval,Jun 24 2020 12:05:07,1593011122,main,2.418113e+00,1,653457

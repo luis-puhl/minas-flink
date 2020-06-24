@@ -1,6 +1,6 @@
-minas-funcs.c,./target/minas,Jun 18 2020 10:48:05,1592488086,readModel,3.982000e-03,1
-minas-funcs.c,./target/minas,Jun 18 2020 10:48:05,1592488099,readExamples,1.365143e+01,1
-minas.c,./target/minas,Jun 18 2020 10:48:05,1592488168,MNS_classifier,6.899761e+01,1
+minas-funcs.c,./target/minas,Jun 24 2020 14:31:35,1593019896,readModel,3.949000e-03,1,100
+minas-funcs.c,./target/minas,Jun 24 2020 14:31:35,1593019910,readExamples,1.366865e+01,1,653457
+minas.c,./target/minas,Jun 24 2020 14:31:35,1593019978,MNS_classifier,6.871811e+01,1,653457
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	

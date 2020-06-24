@@ -10,7 +10,9 @@
 
 // #define SQR_DISTANCE 1
 
-int MNS_classifier(int argc, char *argv[], char **envp) {
+#ifndef MAIN
+#define MAIN
+int main(int argc, char *argv[], char **envp) {
     char *executable = argv[0];
     char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
     FILE *modelFile, *examplesFile, *matches, *timing;
@@ -47,16 +49,12 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
     Point unkBuffer[nExamples];
     int nUnk = 0;
     for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
-        printf("%d\n", __LINE__);
-        fflush(stdout);
         classify(dimension, &model, &(examples[exampleCounter]), &match);
-        printf("%d\n", __LINE__);
         if (match.isMatch == 'n') {
             // unkown
             unkBuffer[nUnk] = examples[exampleCounter];
             nUnk++;
         }
-        printf("%d\n", __LINE__);
         if (nUnk > 100 && nUnk % 100 == 0) {
             // retrain
             Model m;
@@ -68,14 +66,14 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
                 m.vals[i].center = malloc(m.dimension * sizeof(double));
             }
             // kMeans(&m, m.size, dimension, unkBuffer, nUnk, timing, executable);
-            printf("%d\n", __LINE__);
         }
         fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
             match.pointId, match.isMatch, match.clusterId,
             match.label, match.distance, match.radius
         );
     }
-    PRINT_TIMING(timing, executable, 1, start);
+    PRINT_TIMING(timing, executable, 1, start, exampleCounter);
+
     closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
 
     for (int i = 0; i < model.size; i++) {
@@ -84,11 +82,5 @@ int MNS_classifier(int argc, char *argv[], char **envp) {
     free(model.vals);
     free(examples);
     return 0;
-}
-
-#ifndef MAIN
-#define MAIN
-int main(int argc, char *argv[], char **envp) {
-    return MNS_classifier(argc, argv, envp);
 }
 #endif // MAIN

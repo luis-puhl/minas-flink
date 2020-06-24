@@ -10,12 +10,12 @@
   - done with ``` MPI_Barrier(MPI_COMM_WORLD); ```
 - 2020-06-08 [ ] Nó exclusivo para recebimento de alertas e repasse de desconhecidos para retreinamento na nuvem;
   - Send takes time, can do many sends before a rcv. Maybe master should do this comms.
+  - 2020-06-15 [ ] Processo exclusivo para alertas/ML/ND;
 - 2020-06-10 [x] Do it all in files, bash pipes may be source of some locks;
 - 2020-06-10 [ ] Integration test with small dataset:
   - [ ] Define dimension at runtime (that hardcoded 22 scanf...);
 - 2020-06-10 [ ] Optimizations with MPI I-Send/I-Recv or buffer (micro-batch, time, back-pressure);
 - 2020-06-12 [ ] Run on local<-->rpi, cloud<-->rpi;
-- 2020-06-15 [ ] Processo exclusivo para alertas/ML/ND;
 - 2020-06-15 [ ] Detecção de novidades;
 - 2020-06-15 [ ] Homogenização de ambientes (USER, PATH, ...);
-- 2020-06-15 [ ] Vazão (70k/5s), Latência (1/vazão), speedup (T_seq/T_parallel);
+- 2020-06-15 [ ] Vazão (Throughput) (70k/5s), Latência (1/vazão), speedup (T_seq/T_parallel);

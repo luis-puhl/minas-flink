@@ -108,7 +108,7 @@ Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int 
         fprintf(stderr, "%s iter=%d, diff%%=%e (%e -> %e)\n", __FILE__, maxIterations, diffGD, prevGlobalDistance, globalDistance);
     }
     if (timing) {
-        PRINT_TIMING(timing, executable, 1, start);
+        PRINT_TIMING(timing, executable, 1, start, nExamples);
     }
     return model;
 }
@@ -148,7 +148,7 @@ void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *exec
     }
     fclose(file);
     if (timing) {
-        PRINT_TIMING(timing, executable, 1, start);
+        PRINT_TIMING(timing, executable, 1, start, model->size);
     }
 }
 
@@ -189,7 +189,7 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
     ex->value = NULL;
     ex->label = '\0';
     if (timing) {
-        PRINT_TIMING(timing, executable, 1, start);
+        PRINT_TIMING(timing, executable, 1, start, (*nExamples));
     }
     return exs;
 }

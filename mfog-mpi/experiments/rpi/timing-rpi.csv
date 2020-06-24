@@ -1,0 +1,25 @@
+# source	 executable	 build_date time	 wall-clock	 function	 elapsed	 cores	 itens
+evaluate.c	target/eval	Jun 24 2020 12:05:07	1593011113	main	2.411056e+00	1	653457
+minas-funcs.c	./target/mfog	Jun 24 2020 12:05:13	1593011113	readModel	1.109000e-03	1	100
+minas-funcs.c	./target/mfog	Jun 24 2020 12:05:13	1593011117	readExamples	3.684699e+00	1	653457
+minas-mpi.c	./target/mfog	Jun 24 2020 12:05:13	1593011117	sendModel	2.850000e-04	4	100
+minas-mpi.c	./target/mfog	Jun 24 2020 12:05:13	1593011120	sendExamples	2.854343e+00	4	653457
+minas-mpi.c	./target/mfog	Jun 24 2020 12:05:13	1593011120	MFOG_main	2.854374e+00	4	653457
+evaluate.c	target/eval	Jun 24 2020 12:05:07	1593011122	main	2.418113e+00	1	653457
+#
+minas-funcs.c	./target/minas	Jun 24 2020 14:31:35	1593019896	readModel	3.921000e-03	1	100
+minas-funcs.c	./target/minas	Jun 24 2020 14:31:35	1593019910	readExamples	1.366862e+01	1	653457
+minas.c	./target/minas	Jun 24 2020 14:31:35	1593019978	MNS_classifier	6.871809e+01	1	653457
+evaluate.c	target/eval	Jun 24 2020 14:31:35	1593019996	main	1.780326e+01	1	653457
+minas-funcs.c	./target/mfog	Jun 24 2020 14:33:17	1593019998	readModel	4.004000e-03	1	100
+minas-funcs.c	./target/mfog	Jun 24 2020 14:33:17	1593020012	readExamples	1.380691e+01	1	653457
+minas-mpi.c	./target/mfog	Jun 24 2020 14:33:16	1593020012	sendModel	1.519000e-03	4	100
+minas-mpi.c	./target/mfog	Jun 24 2020 14:33:16	1593020036	sendExamples	2.432513e+01	4	653457
+minas-mpi.c	./target/mfog	Jun 24 2020 14:33:16	1593020036	MFOG_main	2.432520e+01	4	653457
+evaluate.c	target/eval	Jun 24 2020 14:31:35	1593020057	main	2.123853e+01	1	653457
+minas-funcs.c	./target/mfog	Jun 24 2020 14:33:17	1593020141	readModel	3.946000e-03	1	100
+minas-funcs.c	./target/mfog	Jun 24 2020 14:33:17	1593020154	readExamples	1.373874e+01	1	653457
+minas-mpi.c	./target/mfog	Jun 24 2020 14:33:16	1593020154	sendModel	1.899300e-02	8	100
+minas-mpi.c	./target/mfog	Jun 24 2020 14:33:16	1593020192	sendExamples	3.566717e+01	8	653457
+minas-mpi.c	./target/mfog	Jun 24 2020 14:33:16	1593020192	MFOG_main	3.566756e+01	8	653457
+evaluate.c	target/eval	Jun 24 2020 14:31:35	1593020213	main	2.118996e+01	1	653457

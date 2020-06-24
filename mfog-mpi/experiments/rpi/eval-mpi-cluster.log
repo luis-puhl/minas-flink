@@ -81,3 +81,132 @@ Writing timing to      'experiments/timing.csv'
 223 MFOG_main worker rcv model return
 223 MFOG_main worker rcv model return
 223 MFOG_main worker rcv model return
+Processor almoco, Rank 0 out of 8 processors
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+minas-funcs.c,./target/mfog,Jun 24 2020 14:33:17,1593020105,readModel,4.012000e-03,1,100
+minas-funcs.c,./target/mfog,Jun 24 2020 14:33:17,1593020119,readExamples,1.367182e+01,1,653457
+24 sendModel
+26 sendModel
+32 sendModel
+33 sendModel
+48 receiveModel
+48 receiveModel
+35 sendModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+37 sendModel
+minas-mpi.c,./target/mfog,Jun 24 2020 14:33:16,1593020119,sendModel,1.789500e-02,8,100
+52 receiveModel
+55 receiveModel
+52 receiveModel
+55 receiveModel
+[2] Recv model with 100 clusters took 	1.369393e+01s
+[1] Recv model with 100 clusters took 	1.365733e+01s
+48 receiveModel
+52 receiveModel
+52 receiveModel
+55 receiveModel
+52 receiveModel
+52 receiveModel
+55 receiveModel
+[5] Recv model with 100 clusters took 	1.367704e+01s
+[6] Recv model with 100 clusters took 	1.367257e+01s
+55 receiveModel
+[7] Recv model with 100 clusters took 	1.367543e+01s
+55 receiveModel
+52 receiveModel
+55 receiveModel
+[4] Recv model with 100 clusters took 	1.369711e+01s
+[3] Recv model with 100 clusters took 	1.369904e+01s
+[jantar:26616] PMIX ERROR: UNREACHABLE in file server/pmix_server.c at line 2193
+[jantar:26616] PMIX ERROR: UNREACHABLE in file server/pmix_server.c at line 2193
+--------------------------------------------------------------------------
+An MPI communication peer process has unexpectedly disconnected.  This
+usually indicates a failure in the peer process (e.g., a crash or
+otherwise exiting without calling MPI_FINALIZE first).
+
+Although this local MPI process will likely now behave unpredictably
+(it may even hang or crash), the root cause of this problem is the
+failure of the peer -- that is what you need to investigate.  For
+example, there may be a core file that you can examine.  More
+generally: such peer hangups are frequently caused by application bugs
+or other external events.
+
+  Local host: jantar
+  Local PID:  26623
+  Peer host:  almoco
+--------------------------------------------------------------------------
+[almoco:02549] 3 more processes have sent help message help-mpi-btl-tcp.txt / peer hung up
+[almoco:02549] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+Processor almoco, Rank 0 out of 8 processors
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+45 receiveModel
+minas-funcs.c,./target/mfog,Jun 24 2020 14:33:17,1593020141,readModel,3.977000e-03,1,100
+minas-funcs.c,./target/mfog,Jun 24 2020 14:33:17,1593020154,readExamples,1.373877e+01,1,653457
+24 sendModel
+26 sendModel
+32 sendModel
+33 sendModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+48 receiveModel
+35 sendModel
+48 receiveModel
+52 receiveModel
+55 receiveModel
+52 receiveModel
+55 receiveModel
+[2] Recv model with 100 clusters took 	1.376431e+01s
+[1] Recv model with 100 clusters took 	1.371937e+01s
+37 sendModel
+minas-mpi.c,./target/mfog,Jun 24 2020 14:33:16,1593020154,sendModel,1.902400e-02,8,100
+52 receiveModel
+55 receiveModel
+52 receiveModel
+55 receiveModel
+[6] Recv model with 100 clusters took 	1.373327e+01s
+[5] Recv model with 100 clusters took 	1.376494e+01s
+52 receiveModel
+55 receiveModel
+52 receiveModel
+55 receiveModel
+[4] Recv model with 100 clusters took 	1.376496e+01s
+[3] Recv model with 100 clusters took 	1.376184e+01s
+52 receiveModel
+55 receiveModel
+[7] Recv model with 100 clusters took 	1.375539e+01s
+[1] Worker classify Test with 93351 examples took 	36.914187s
+[3] Worker classify Test with 93351 examples took 	37.055859s
+[2] Worker classify Test with 93351 examples took 	37.071979s
+[7] Worker classify Test with 93351 examples took 	37.038900s
+minas-mpi.c,./target/mfog,Jun 24 2020 14:33:16,1593020192,sendExamples,3.566730e+01,8,653457
+[5] Worker classify Test with 93351 examples took 	37.012396s
+[4] Worker classify Test with 93351 examples took 	36.492852s
+[6] Worker classify Test with 93351 examples took 	36.738414s
+minas-mpi.c,./target/mfog,Jun 24 2020 14:33:16,1593020192,MFOG_main,3.566758e+01,8,653457
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     16871	      3123	
+     A	|	         0	         0	
+     N	|	    430308	    203155	
+Total examples     653457
+Total matches      653457
+Hits               203155 ( 31.089268%)
+Misses             450302 ( 68.910732%)

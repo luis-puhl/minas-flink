@@ -171,7 +171,7 @@ int main(int argc, char *argv[], char **envp) {
     }
     free(confusionMatrix);
     free(labels);
-    PRINT_TIMING(timing, executable, 1, start);
+    PRINT_TIMING(timing, executable, 1, start, totalExamples);
     closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
     exit(EXIT_SUCCESS);
 }
