@@ -23,33 +23,33 @@ int main(int argc, char *argv[], char **envp) {
     char *fileModes[] = { "r", "r", "w", "a" };
     loadEnv(argc, argv, envp, VARS_SIZE, varNames, fileNames, files, fileModes);
     printf(
-        "Reading examples from  '%s'\n"
         "Reading model from     '%s'\n"
+        "Reading examples from  '%s'\n"
         "Writing matches to     '%s'\n"
         "Writing timing to      '%s'\n",
-        examplesCsv, modelCsv, matchesCsv, timingLog
+        modelCsv, examplesCsv, matchesCsv, timingLog
     );
     //
     
-    #ifdef SQR_DISTANCE
-        printf(stderr, "Using Square distance (d²)\n");
-    #endif // SQR_DISTANCE
-    int dimension = 22;
-    //
     Model model;
-    readModel(dimension, modelFile, &model, timing, executable);
+    model.dimension = 22;
+    //
+    readModel(model.dimension, modelFile, &model, timing, executable);
     Point *examples;
     int nExamples;
-    examples = readExamples(dimension, examplesFile, &nExamples, timing, executable);
+    examples = readExamples(model.dimension, examplesFile, &nExamples, timing, executable);
+    // fprintf(stderr, "nExamples %d\n", nExamples);
 
     fprintf(matches, "#id,isMach,clusterId,label,distance,radius\n");
     int exampleCounter = 0;
     clock_t start = clock();
     Match match;
-    Point unkBuffer[nExamples];
+    Point *unkBuffer = malloc(nExamples * sizeof(Point));
     int nUnk = 0;
-    for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
-        classify(dimension, &model, &(examples[exampleCounter]), &match);
+    for (exampleCounter = 0; exampleCounter < nExamples; exampleCounter++) {
+        // fprintf(stderr, "%d/%d\n", exampleCounter, nExamples);
+        //
+        classify(model.dimension, &model, &(examples[exampleCounter]), &match);
         if (match.isMatch == 'n') {
             // unkown
             unkBuffer[nUnk] = examples[exampleCounter];

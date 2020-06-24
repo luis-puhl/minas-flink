@@ -68,10 +68,12 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
             failures++;
             continue;
         }
-        int isStdout = 0;
-        for (int i = 0; stdoutName[i] != '\0' && isStdout == 0; i++) isStdout += stdoutName[i] - fileName[i];
-        int isStderr = 0;
-        for (int i = 0; stderrName[i] != '\0' && isStderr == 0; i++) isStderr += stderrName[i] - fileName[i];
+        int isStdout = 0, isStderr = 0, i;
+        for (i = 0; stdoutName[i] != '\0'; i++) {
+            isStdout += stdoutName[i] - fileName[i];
+            isStderr += stderrName[i] - fileName[i];
+            if (fileName[i] == '\0') break;
+        }
         if (isStdout == 0) {
         // if (strcmp("stdout", fileName) == 0) {
             // printf("Set var '%s' to stdout.\n", varNames[var]);

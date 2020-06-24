@@ -155,7 +155,9 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     return exampleCounter;
 }
 
-int MFOG_main(int argc, char *argv[], char **envp) {
+#ifndef MAIN
+#define MAIN
+int main(int argc, char *argv[], char **envp) {
     MPI_Init(&argc, &argv);
     int clRank, clSize;
     MPI_Comm_size(MPI_COMM_WORLD, &clSize);
@@ -228,21 +230,5 @@ int MFOG_main(int argc, char *argv[], char **envp) {
     
     MPI_Finalize();
     return 0;
-}
-
-#ifndef MAIN
-#define MAIN
-
-// Define the function to be called when ctrl-c (SIGINT) signal is sent to process
-void signal_callback_handler(int signum) {
-    printf("\n\nCaught signal %d\n",signum);
-    fflush(stdout);
-    // Cleanup and close up stuff here
-    // Terminate program
-    exit(signum);
-}
-
-int main(int argc, char *argv[], char **envp) {
-    return MFOG_main(argc, argv, envp);
 }
 #endif
