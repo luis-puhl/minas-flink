@@ -2,6 +2,7 @@ all: clean experiments/serial.log experiments/mpi.log cluster@almoco
 
 clean:
 	@-rm target/* out/* experiments/serial.log experiments/eval-mpi.log 2>/dev/null
+	@-mkdir target out experiments 2>/dev/null
 
 target:
 	@-mkdir target out experiments 2>/dev/null
@@ -39,4 +40,5 @@ experiments/cluster.log: out/cluster.csv datasets/model-clean.csv datasets/test.
 cluster@almoco:
 	scp *.c *.h makefile almoco:~/cloud
 	ssh almoco "cd cloud && make clean experiments/serial.log experiments/mpi.log experiments/cluster.log"
+	mkdir -p experiments/rpi
 	scp almoco:~/cloud/experiments/* experiments/rpi/

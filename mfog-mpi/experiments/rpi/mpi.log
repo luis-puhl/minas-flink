@@ -1,30 +1,10 @@
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     18334	      1660	
+     -	|	     18371	      1623	
      A	|	         0	         0	
-     N	|	    428845	    204618	
+     N	|	    428808	    204655	
 Total examples     653457
 Total matches      653457
-Hits               204618 ( 31.313154%)
-Misses             448839 ( 68.686846%)
-Confusion Matrix
-      	|	Classes
-Labels	|	         A	         N	
-     -	|	     18348	      1646	
-     A	|	         0	         0	
-     N	|	    428831	    204632	
-Total examples     653457
-Total matches      653457
-Hits               204632 ( 31.315297%)
-Misses             448825 ( 68.684703%)
-Confusion Matrix
-      	|	Classes
-Labels	|	         A	         N	
-     -	|	     18300	      1694	
-     A	|	         0	         0	
-     N	|	    428879	    204584	
-Total examples     653457
-Total matches      653457
-Hits               204584 ( 31.307951%)
-Misses             448873 ( 68.692049%)
+Hits               204655 ( 31.318817%)
+Misses             448802 ( 68.681183%)
