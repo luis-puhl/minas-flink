@@ -1,10 +1,29 @@
-Confusion Matrix
-      	|	Classes
-Labels	|	         A	         N	
-     -	|	     16797	      3197	
-     A	|	         0	         0	
-     N	|	    430382	    203081	
-Total examples     653457
-Total matches      653457
-Hits               203081 ( 31.077944%)
-Misses             450376 ( 68.922056%)
+Processor almoco, Rank 0 out of 8 processors
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/cluster.csv'
+Writing timing to      'experiments/timing.csv'
+minas-funcs.c,./target/mfog,Jun 24 2020 19:33:45,1593038090,readModel,8.3.0,3.968000e-03,1,100
+minas-funcs.c,./target/mfog,Jun 24 2020 19:33:45,1593038104,readExamples,8.3.0,1.385097e+01,1,653457
+minas-mpi.c,./target/mfog,Jun 24 2020 19:33:45,1593038104,sendModel,8.3.0,2.015800e-02,8,100
+[1] Recv model with 100 clusters took 	1.379864e+01s
+[2] Recv model with 100 clusters took 	1.387440e+01s
+[7] Recv model with 100 clusters took 	1.392887e+01s
+[4] Recv model with 100 clusters took 	1.391028e+01s
+[5] Recv model with 100 clusters took 	1.391071e+01s
+[6] Recv model with 100 clusters took 	1.380351e+01s
+[3] Recv model with 100 clusters took 	1.389580e+01s
+[1] Worker classify Test with 93351 examples took 	26.965856s
+[2] Worker classify Test with 93351 examples took 	27.134291s
+[3] Worker classify Test with 93351 examples took 	26.381780s
+[4] Worker classify Test with 93351 examples took 	26.379615s
+[5] Worker classify Test with 93351 examples took 	27.222882s
+[7] Worker classify Test with 93351 examples took 	27.129886s
+[6] Worker classify Test with 93351 examples took 	26.920272s
+minas-mpi.c,./target/mfog,Jun 24 2020 19:33:45,1593038132,sendExamples,8.3.0,2.577604e+01,8,653457
+minas-mpi.c,./target/mfog,Jun 24 2020 19:33:45,1593038132,main,8.3.0,2.577619e+01,8,653457
+evaluate.c,target/eval,Jun 24 2020 19:32:03,1593038153,main,8.3.0,2.158979e+01,1,653457
+Reading examples from   'datasets/test.csv'
+Reading matches from    'out/cluster.csv'
+Writing evaluation to   'experiments/cluster-matrix.log'
+Writing timing to       'experiments/timing.csv'

@@ -1,10 +1,21 @@
-Confusion Matrix
-      	|	Classes
-Labels	|	         A	         N	
-     -	|	     17437	      2557	
-     A	|	         0	         0	
-     N	|	    429742	    203721	
-Total examples     653457
-Total matches      653457
-Hits               203721 ( 31.175885%)
-Misses             449736 ( 68.824115%)
+Processor pokebola, Rank 0 out of 4 processors
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/mpi.csv'
+Writing timing to      'experiments/timing.csv'
+minas-funcs.c,./target/mfog,Jun 24 2020 19:31:54,1593037914,readModel,10.1.0,6.670000e-04,1,100
+minas-funcs.c,./target/mfog,Jun 24 2020 19:31:54,1593037916,readExamples,10.1.0,2.144221e+00,1,653457
+minas-mpi.c,./target/mfog,Jun 24 2020 19:31:54,1593037916,sendModel,10.1.0,3.050000e-04,4,100
+[1] Recv model with 100 clusters took 	2.149816e+00s
+[2] Recv model with 100 clusters took 	2.131802e+00s
+[3] Recv model with 100 clusters took 	2.122601e+00s
+[2] Worker classify Test with 217819 examples took 	3.564995s
+[3] Worker classify Test with 217819 examples took 	3.589382s
+[1] Worker classify Test with 217819 examples took 	3.657215s
+minas-mpi.c,./target/mfog,Jun 24 2020 19:31:54,1593037920,sendExamples,10.1.0,3.623224e+00,4,653457
+minas-mpi.c,./target/mfog,Jun 24 2020 19:31:54,1593037920,main,10.1.0,3.623243e+00,4,653457
+evaluate.c,target/eval,Jun 24 2020 19:31:42,1593037923,main,10.1.0,2.663019e+00,1,653457
+Reading examples from   'datasets/test.csv'
+Reading matches from    'out/mpi.csv'
+Writing evaluation to   'experiments/mpi-matrix.log'
+Writing timing to       'experiments/timing.csv'

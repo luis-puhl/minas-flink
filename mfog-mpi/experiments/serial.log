@@ -1,10 +1,12 @@
-Confusion Matrix
-      	|	Classes
-Labels	|	         A	         N	
-     -	|	     19677	       317	
-     A	|	         0	         0	
-     N	|	    427502	    205961	
-Total examples     653457
-Total matches      653457
-Hits               205961 ( 31.518677%)
-Misses             447496 ( 68.481323%)
+minas-funcs.c,target/minas,Jun 24 2020 19:31:42,1593037902,readModel,10.1.0,6.660000e-04,1,100
+minas-funcs.c,target/minas,Jun 24 2020 19:31:42,1593037904,readExamples,10.1.0,1.999620e+00,1,653457
+minas.c,target/minas,Jun 24 2020 19:31:42,1593037911,main,10.1.0,6.585994e+00,1,653457
+Reading model from     'datasets/model-clean.csv'
+Reading examples from  'datasets/test.csv'
+Writing matches to     'out/serial.csv'
+Writing timing to      'experiments/timing.csv'
+evaluate.c,target/eval,Jun 24 2020 19:31:42,1593037914,main,10.1.0,2.634942e+00,1,653457
+Reading examples from   'datasets/test.csv'
+Reading matches from    'out/serial.csv'
+Writing evaluation to   'experiments/serial-matrix.log'
+Writing timing to       'experiments/timing.csv'

@@ -146,12 +146,12 @@ int receiveExamples(int dimension, Model *model, int clRank) {
         //
         exampleCounter++;
     }
+    fprintf(stderr, "[%d] Worker classify Test with %d examples took \t%lfs\n", clRank, exampleCounter, ((double)(clock() - start)) / ((double)1000000));
     MPI_Barrier(MPI_COMM_WORLD);
     // match.pointId = -1;
     // MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_MASTER_RANK, 2005, MPI_COMM_WORLD);
     free(buffer);
     free(valuePtr);
-    fprintf(stderr, "[%d] Worker classify Test with %d examples took \t%lfs\n", clRank, exampleCounter, ((double)(clock() - start)) / ((double)1000000));
     return exampleCounter;
 }
 
