@@ -1,10 +1,77 @@
+--np 2
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     18370	      1624	
+     -	|	     19677	       317	
      A	|	         0	         0	
-     N	|	    428809	    204654	
+     N	|	    427502	    205961	
 Total examples     653457
 Total matches      653457
-Hits               204654 ( 31.318664%)
-Misses             448803 ( 68.681336%)
+Hits               205961 ( 31.518677%)
+Misses             447496 ( 68.481323%)
+--np 3
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     16997	      2997	
+     A	|	         0	         0	
+     N	|	    430182	    203281	
+Total examples     653457
+Total matches      653457
+Hits               203281 ( 31.108550%)
+Misses             450176 ( 68.891450%)
+--np 4
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     18368	      1626	
+     A	|	         0	         0	
+     N	|	    428811	    204652	
+Total examples     653457
+Total matches      653457
+Hits               204652 ( 31.318358%)
+Misses             448805 ( 68.681642%)
+--np 5
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     16828	      3166	
+     A	|	         0	         0	
+     N	|	    430351	    203112	
+Total examples     653457
+Total matches      653457
+Hits               203112 ( 31.082688%)
+Misses             450345 ( 68.917312%)
+--np 6
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     16822	      3172	
+     A	|	         0	         0	
+     N	|	    430357	    203106	
+Total examples     653457
+Total matches      653457
+Hits               203106 ( 31.081770%)
+Misses             450351 ( 68.918230%)
+--np 7
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     15874	      4120	
+     A	|	         0	         0	
+     N	|	    431305	    202158	
+Total examples     653457
+Total matches      653457
+Hits               202158 ( 30.936695%)
+Misses             451299 ( 69.063305%)
+--np 8
+Confusion Matrix
+      	|	Classes
+Labels	|	         A	         N	
+     -	|	     16820	      3174	
+     A	|	         0	         0	
+     N	|	    430359	    203104	
+Total examples     653457
+Total matches      653457
+Hits               203104 ( 31.081464%)
+Misses             450353 ( 68.918536%)
