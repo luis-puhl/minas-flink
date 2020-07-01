@@ -12,6 +12,13 @@ target/minas: target src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/min
 	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c -o target/minas -lm -Wall -g
 target/eval: target src/minas/evaluate.c src/util/loadenv.c
 	gcc src/minas/evaluate.c src/util/loadenv.c -o target/eval -lm -Wall -g
+target/mpi-test: target src/util/mpi-test.c
+	mpicc src/util/mpi-test.c -o target/mpi-test -lm -Wall -g
+	cp target/mpi-test /home/pi/cloud/target/
+	scp src/util/mpi-test.c almoco:~/cloud/src/util/mpi-test.c
+	ssh almoco "mpicc ~/cloud/src/util/mpi-test.c -o ~/cloud/target/mpi-test -lm -Wall -g"
+	scp almoco:~/cloud/target/mpi-test jantar:~/cloud/target/mpi-test
+	echo "build complete\n"
 mfog@jantar: target/mfog
 	scp target/mfog jantar:/home/pi/cloud/target/
 
@@ -34,6 +41,18 @@ experiments/mpi-matrix.log: target/eval datasets/test.csv out/mpi.csv
 experiments/cluster-matrix.log: out/cluster.csv datasets/model-clean.csv datasets/test.csv
 	target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/cluster.csv \
 		EVALUATE_LOG=experiments/cluster-matrix.log >> experiments/cluster.log 2>&1
+experiments/mpi-test.log: target/mpi-test
+	echo "" > experiments/mpi-test.log
+	echo "$$ mpiexec --host localhost:2 /home/pi/cloud/target/mpi-test" >> experiments/mpi-test.log
+	mpiexec --host localhost:2 /home/pi/cloud/target/mpi-test >> experiments/mpi-test.log 2>&1
+	# 
+	echo "" >> experiments/mpi-test.log
+	echo "$$ mpiexec --host almoco:2 /home/pi/cloud/target/mpi-test" >> experiments/mpi-test.log
+	mpiexec --host almoco:2 /home/pi/cloud/target/mpi-test >> experiments/mpi-test.log 2>&1
+	# 
+	echo "" >> experiments/mpi-test.log
+	echo "$$ mpiexec --host localhost:1,almoco:1 /home/pi/cloud/target/mpi-test" >> experiments/mpi-test.log
+	mpiexec --host localhost:1,almoco:1 /home/pi/cloud/target/mpi-test >> experiments/mpi-test.log 2>&1
 
 cluster@almoco:
 	scp -r src makefile almoco:~/cloud

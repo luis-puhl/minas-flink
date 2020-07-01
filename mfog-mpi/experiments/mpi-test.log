@@ -1,0 +1,40 @@
+
+$ mpiexec --host localhost:2 /home/pi/cloud/target/mpi-test
+Hello World, from /home/pi/cloud/target/mpi-test with <3
+Hello World, from /home/pi/cloud/target/mpi-test with <3
+Processor pokebola, Rank 0 out of 2 processors
+MPI 3 1
+MPI arch = x86_64
+MPI host = pokebola
+MPI thread_level = MPI_THREAD_SINGLE
+pokebola (1) recebeu: pokebola
+pokebola enviou: pokebola
+
+$ mpiexec --host almoco:2 /home/pi/cloud/target/mpi-test
+Hello World, from /home/pi/cloud/target/mpi-test with <3
+Hello World, from /home/pi/cloud/target/mpi-test with <3
+Processor almoco, Rank 0 out of 2 processors
+MPI 3 1
+MPI arch = armv7l
+MPI host = almoco
+MPI thread_level = MPI_THREAD_SINGLE
+almoco enviou: almoco
+almoco (1) recebeu: almoco
+
+$ mpiexec --host localhost:1,almoco:1 /home/pi/cloud/target/mpi-test
+Hello World, from /home/pi/cloud/target/mpi-test with <3
+[almoco:08236] [[15996,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file base/regx_base_default_fns.c at line 727
+[almoco:08236] [[15996,0],1] ORTE_ERROR_LOG: Data unpack had inadequate space in file grpcomm_direct.c at line 440
+[almoco:08236] [[15996,0],1] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file base/odls_base_default_fns.c at line 486
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[15996,0],0] on node pokebola
+  Remote daemon: [[15996,0],1] on node almoco
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------
+[warn] Epoll MOD(1) on fd 33 failed. Old events were 6; read change was 0 (none); write change was 2 (del); close change was 0 (none): Bad file descriptor
