@@ -223,3 +223,33 @@ Alternatively, you can use the --oversubscribe option to ignore the
 number of available slots when deciding the number of processes to
 launch.
 --------------------------------------------------------------------------
+  741  make target/mfog 
+  742  mpiexec -np 2 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv > experiments/mpi.log 2>&1
+  743  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  744  vim experiments/mpi-matrix.log 
+  745  mpiexec -np 3 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  746  echo '--np 3' >> experiments/mpi-matrix.log
+  747  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  748  echo '--np 4' >> experiments/mpi-matrix.log
+  749  mpiexec -np 4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  750  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  751  echo '--np 5' >> experiments/mpi-matrix.log
+  752  mpiexec -np 4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  753  mpiexec -np 5 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  754  make mfog@jantar 
+  755  mpiexec -np 5 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  756  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  757  echo '--np 6' >> experiments/mpi-matrix.log
+  758  mpiexec --np 6 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  759  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  760  echo '--np 7' >> experiments/mpi-matrix.log
+  761  mpiexec --np 7 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  762  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  763  echo '--np 8' >> experiments/mpi-matrix.log
+  764  mpiexec --np 8 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  765  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
+  766  mpiexec --np 9 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
+  767  exit
+  768  cd cloud/
+  769  ls
+  770  history | tail -n 30 >> experiments/mpi.log 

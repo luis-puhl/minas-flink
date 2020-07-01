@@ -6,8 +6,8 @@
 #include <string.h>
 #include <mpi.h>
 
-#include "minas.h"
-#include "loadenv.h"
+#include "../minas/minas.h"
+#include "../util/loadenv.h"
 
 #define MFOG_MASTER_RANK 0
 #define DEBUG_LN
