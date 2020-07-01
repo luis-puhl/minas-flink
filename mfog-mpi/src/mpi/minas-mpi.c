@@ -159,18 +159,44 @@ int receiveExamples(int dimension, Model *model, int clRank) {
 }
 
 int MNS_mfog_main(int argc, char *argv[], char **envp) {
-    MPI_Init(&argc, &argv);
+    int mpiReturn;
+    mpiReturn = MPI_Init(&argc, &argv);
+    MPI_RETURN
     int clRank, clSize;
-    MPI_Comm_size(MPI_COMM_WORLD, &clSize);
-    MPI_Comm_rank(MPI_COMM_WORLD, &clRank);
+    mpiReturn = MPI_Comm_size(MPI_COMM_WORLD, &clSize);
+    mpiReturn = MPI_Comm_rank(MPI_COMM_WORLD, &clRank);
+    MPI_RETURN
     if (clRank == 0) {
         char processor_name[MPI_MAX_PROCESSOR_NAME];
         int name_len;
-        MPI_Get_processor_name(processor_name, &name_len);
+        mpiReturn = MPI_Get_processor_name(processor_name, &name_len);
+        MPI_RETURN
+        printEnvs(argc, argv, envp);
         fprintf(stderr, "Processor %s, Rank %d out of %d processors\n", processor_name, clRank, clSize);
+        //
+        #ifdef MPI_VERSION
+        fprintf(stderr, "MPI %d %d\n", MPI_VERSION, MPI_SUBVERSION);
+        #endif // MPI_VERSION
+        //
+        char value[140]; int flag;
+        //
+        mpiReturn = MPI_Info_get(MPI_INFO_ENV, "arch", 140, value, &flag);
+        MPI_RETURN
+        if (flag) fprintf(stderr, "MPI arch = %s\n", value);
+        //
+        mpiReturn = MPI_Info_get(MPI_INFO_ENV, "host", 140, value, &flag);
+        MPI_RETURN
+        if (flag) fprintf(stderr, "MPI host = %s\n", value);
+        //
+        mpiReturn = MPI_Info_get(MPI_INFO_ENV, "thread_level", 140, value, &flag);
+        MPI_RETURN
+        if (flag) fprintf(stderr, "MPI thread_level = %s\n", value);
     }
     if (clSize <= 1) {
-        errx(EXIT_FAILURE, "Cluster with only one node.");
+        fprintf(stderr, "Cluster with only one node.");
+        MNS_minas_main(argc, argv, envp);
+        MPI_Finalize();
+        return 0;
     }
     //
     /*

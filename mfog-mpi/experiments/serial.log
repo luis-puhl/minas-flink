@@ -1,4 +1,0 @@
-arg MODEL_CSV=datasets/model-clean.csv
-arg EXAMPLES_CSV=datasets/test.csv
-arg TIMING_LOG=experiments/timing.csv
-arg MATCHES_CSV=out/serial.csv

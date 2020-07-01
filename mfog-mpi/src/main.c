@@ -5,7 +5,7 @@
 #ifndef MAIN
 #define MAIN
 int main(int argc, char *argv[], char **envp) {
-    printEnvs(argc, argv, envp);
+    // printEnvs(argc, argv, envp);
     MNS_mfog_main(argc, argv, envp);
     return 0;
 }
