@@ -8,8 +8,8 @@ target:
 	@-mkdir target out experiments 2>/dev/null
 target/mfog: target src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c
 	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c -o target/mfog -lm -Wall -g
-target/minas: target src/main.c src/minas/minas.c src/util/loadenv.c
-	gcc src/main.c src/minas/minas.c src/util/loadenv.c -o target/minas -lm -Wall -g
+target/minas: target src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c
+	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c -o target/minas -lm -Wall -g
 target/eval: target src/minas/evaluate.c src/util/loadenv.c
 	gcc src/minas/evaluate.c src/util/loadenv.c -o target/eval -lm -Wall -g
 mfog@jantar: target/mfog
@@ -36,7 +36,7 @@ experiments/cluster-matrix.log: out/cluster.csv datasets/model-clean.csv dataset
 		EVALUATE_LOG=experiments/cluster-matrix.log >> experiments/cluster.log 2>&1
 
 cluster@almoco:
-	scp *.c *.h makefile almoco:~/cloud
+	scp -r src makefile almoco:~/cloud
 	ssh almoco "cd cloud && make clean experiments/serial-matrix.log experiments/mpi-matrix.log experiments/cluster-matrix.log"
 	mkdir -p experiments/rpi
 	scp almoco:~/cloud/experiments/* experiments/rpi/

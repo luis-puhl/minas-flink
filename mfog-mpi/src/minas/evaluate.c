@@ -61,9 +61,9 @@ int main(int argc, char *argv[], char **envp) {
     if (!fscanf(matches, "%s\n", header)) {
         errx(EXIT_FAILURE, "bad file format '%s'", matchesCsv);
     }
-    int mathcesBufferSize = 0, examplesBufferSize = 0;
+    int matchesBufferSize = 0, examplesBufferSize = 0;
     int totalExamples = 0, totalMatches = 0, totalHits = 0;
-    Match *mathcesBuffer = malloc(1 * sizeof(Match));
+    Match *matchesBuffer = malloc(1 * sizeof(Match));
     Point *examplesBuffer = malloc(1 * sizeof(Point));
     while (!feof(examples)) {
         for (int i = 0; i < dimension; i++) {
@@ -86,21 +86,21 @@ int main(int argc, char *argv[], char **envp) {
         if (match.pointId != example.id) {
             int i = 0;
             // after buffer is too big, reuse addresses
-            if (mathcesBufferSize > 100) {
+            if (matchesBufferSize > 100) {
                 // try to replace an deleted buffer entry
-                for (i = 0; i < mathcesBufferSize; i++) {
-                    if (mathcesBuffer[i].pointId == -1) {
-                        mathcesBuffer[i] = match;
+                for (i = 0; i < matchesBufferSize; i++) {
+                    if (matchesBuffer[i].pointId == -1) {
+                        matchesBuffer[i] = match;
                         break;
                     }
                 }
             }
             // if no deleted entry has been found, realloc
-            if (i >= mathcesBufferSize) {
-                mathcesBuffer = realloc(mathcesBuffer, ++mathcesBufferSize * sizeof(Match));
-                mathcesBuffer[mathcesBufferSize -1] = match;
+            if (i >= matchesBufferSize) {
+                matchesBuffer = realloc(matchesBuffer, ++matchesBufferSize * sizeof(Match));
+                matchesBuffer[matchesBufferSize -1] = match;
             }
-            if (mathcesBufferSize > 100) {
+            if (matchesBufferSize > 100) {
                 // try to replace an deleted buffer entry
                 for (i = 0; i < examplesBufferSize; i++) {
                     if (examplesBuffer[i].id == -1) {
@@ -110,20 +110,20 @@ int main(int argc, char *argv[], char **envp) {
                 }
             }
             // if no deleted entry has been found, realloc
-            if (i >= mathcesBufferSize) {
+            if (i >= matchesBufferSize) {
                 examplesBuffer = realloc(examplesBuffer, ++examplesBufferSize * sizeof(Point));
                 examplesBuffer[examplesBufferSize - 1] = example;
             }
-            for (int i = 0; i < mathcesBufferSize; i++) {
+            for (int i = 0; i < matchesBufferSize; i++) {
                 for (int j = 0; j < examplesBufferSize; j++) {
-                    if (mathcesBuffer[i].pointId == examplesBuffer[j].id) {
-                        match = mathcesBuffer[i];
+                    if (matchesBuffer[i].pointId == examplesBuffer[j].id) {
+                        match = matchesBuffer[i];
                         example = examplesBuffer[j];
                         // delete
-                        mathcesBuffer[i].pointId = -1;
+                        matchesBuffer[i].pointId = -1;
                         examplesBuffer[j].id = -1;
                         // break outer
-                        i = mathcesBufferSize;
+                        i = matchesBufferSize;
                         break;
                     }
                 }

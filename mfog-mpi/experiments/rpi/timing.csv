@@ -1,4 +1,3 @@
-# source, executable, build_date-time, wall-clock, function, gnuc, elapsed, cores, itens
 minas-funcs.c,target/minas,Jun 25 2020 09:58:03,1593089884,readModel,8.3.0,3.962000e-03,1,100
 minas-funcs.c,target/minas,Jun 25 2020 09:58:03,1593089898,readExamples,8.3.0,1.363125e+01,1,653457
 minas.c,target/minas,Jun 25 2020 09:58:03,1593089962,main,8.3.0,6.306085e+01,1,653457
@@ -45,3 +44,19 @@ minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593091046,sendModel,8.3.0,2.0929
 minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593091074,sendExamples,8.3.0,2.834445e+01,8,653457
 minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593091074,main,8.3.0,2.834457e+01,8,653457
 evaluate.c,target/eval,Jun 25 2020 09:57:09,1593091101,main,8.3.0,2.133758e+01,1,653457
+src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633813,readModel,8.3.0,3.955000e-03,1,100
+src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633827,readExamples,8.3.0,1.366900e+01,1,653457
+src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633890,MNS_minas_main,8.3.0,6.305408e+01,1,653457
+src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593633912,main,8.3.0,2.139040e+01,1,653457
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633913,readModel,8.3.0,3.950000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633927,readExamples,8.3.0,1.378291e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633927,sendModel,8.3.0,8.270000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633951,sendExamples,8.3.0,2.419547e+01,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633951,MNS_mfog_main,8.3.0,2.419553e+01,4,653457
+src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593633973,main,8.3.0,2.149938e+01,1,653457
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633975,readModel,8.3.0,3.988000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633989,readExamples,8.3.0,1.373520e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633989,sendModel,8.3.0,1.438300e-02,8,100
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593634014,sendExamples,8.3.0,2.555413e+01,8,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593634014,MNS_mfog_main,8.3.0,2.555451e+01,8,653457
+src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593634036,main,8.3.0,2.137745e+01,1,653457

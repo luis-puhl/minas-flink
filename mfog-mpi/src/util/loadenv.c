@@ -74,7 +74,7 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
     const char *stdoutName = "stdout";
     const char *stderrName = "stderr";
     int failures = 0;
-#define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
+    #define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
     for (int var = 0; var < varsSize; var++) {
         if (var >= assingned) {
             fprintf(stderr, "Expected argument or environment '%s' to be defined\n", varNames[var]);

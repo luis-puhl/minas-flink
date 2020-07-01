@@ -1,0 +1,29 @@
+arg MODEL_CSV=datasets/model-clean.csv
+arg EXAMPLES_CSV=datasets/test.csv
+arg TIMING_LOG=experiments/timing.csv
+arg MATCHES_CSV=out/mpi.csv
+Processor pokebola, Rank 0 out of 4 processors
+MPI 3 1
+MPI arch = x86_64
+MPI host = pokebola
+MPI thread_level = MPI_THREAD_SINGLE
+Reading examples from  'datasets/test.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing matches to     'out/mpi.csv'
+Writing timing to      'experiments/timing.csv'
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:03:21,1593633802,readModel,10.1.0,1.122000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:03:21,1593633804,readExamples,10.1.0,2.154380e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:03:21,1593633804,sendModel,10.1.0,1.980000e-04,4,100
+[3] Recv model with 100 clusters took 	2.152578e+00s
+[1] Recv model with 100 clusters took 	2.133939e+00s
+[2] Recv model with 100 clusters took 	2.122532e+00s
+[3] Worker classify Test with 217819 examples took 	3.347617s
+[2] Worker classify Test with 217819 examples took 	3.280501s
+[1] Worker classify Test with 217819 examples took 	3.310785s
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:03:21,1593633807,sendExamples,10.1.0,3.343592e+00,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:03:21,1593633807,MNS_mfog_main,10.1.0,3.343612e+00,4,653457
+src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:09,1593633810,main,10.1.0,2.757006e+00,1,653457
+Reading examples from   'datasets/test.csv'
+Reading matches from    'out/mpi.csv'
+Writing evaluation to   'experiments/mpi-matrix.log'
+Writing timing to       'experiments/timing.csv'

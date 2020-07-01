@@ -193,7 +193,7 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
         if (flag) fprintf(stderr, "MPI thread_level = %s\n", value);
     }
     if (clSize <= 1) {
-        fprintf(stderr, "Cluster with only one node.");
+        fprintf(stderr, "Cluster with only one node. Running serial code.\n");
         MNS_minas_main(argc, argv, envp);
         MPI_Finalize();
         return 0;

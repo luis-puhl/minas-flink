@@ -2,20 +2,20 @@ arg MODEL_CSV=datasets/model-clean.csv
 arg EXAMPLES_CSV=datasets/test.csv
 arg TIMING_LOG=experiments/timing.csv
 arg MATCHES_CSV=out/serial.csv
-Processor almoco, Rank 0 out of 1 processors
+Processor pokebola, Rank 0 out of 1 processors
 MPI 3 1
-MPI arch = armv7l
-MPI host = almoco
+MPI arch = x86_64
+MPI host = pokebola
 MPI thread_level = MPI_THREAD_SINGLE
 Cluster with only one node. Running serial code.
-src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633813,readModel,8.3.0,3.980000e-03,1,100
-src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633827,readExamples,8.3.0,1.366903e+01,1,653457
-src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633890,MNS_minas_main,8.3.0,6.305409e+01,1,653457
+src/minas/minas.c,target/minas,Jul  1 2020 17:03:09,1593633789,readModel,10.1.0,6.520000e-04,1,100
+src/minas/minas.c,target/minas,Jul  1 2020 17:03:09,1593633792,readExamples,10.1.0,2.390788e+00,1,653457
+src/minas/minas.c,target/minas,Jul  1 2020 17:03:09,1593633798,MNS_minas_main,10.1.0,6.800608e+00,1,653457
 Reading model from     'datasets/model-clean.csv'
 Reading examples from  'datasets/test.csv'
 Writing matches to     'out/serial.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593633912,main,8.3.0,2.139043e+01,1,653457
+src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:09,1593633801,main,10.1.0,2.685307e+00,1,653457
 Reading examples from   'datasets/test.csv'
 Reading matches from    'out/serial.csv'
 Writing evaluation to   'experiments/serial-matrix.log'

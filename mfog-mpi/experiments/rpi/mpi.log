@@ -1,255 +1,29 @@
-Processor almoco, Rank 0 out of 2 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090156,readModel,8.3.0,4.090000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090170,readExamples,8.3.0,1.394542e+01,1,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090170,sendModel,8.3.0,6.090000e-04,2,100
-[1] Recv model with 100 clusters took 	1.397938e+01s
-[1] Worker classify Test with 653457 examples took 	63.914736s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090233,sendExamples,8.3.0,6.371017e+01,2,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090233,main,8.3.0,6.371023e+01,2,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593090297,main,8.3.0,2.138951e+01,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/mpi.csv'
-Writing evaluation to   'experiments/mpi-matrix.log'
-Writing timing to       'experiments/timing.csv'
-Processor almoco, Rank 0 out of 3 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090335,readModel,8.3.0,3.984000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090348,readExamples,8.3.0,1.382320e+01,1,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090348,sendModel,8.3.0,7.260000e-04,3,100
-[1] Recv model with 100 clusters took 	1.383443e+01s
-[2] Recv model with 100 clusters took 	1.384571e+01s
-[1] Worker classify Test with 326729 examples took 	36.094106s
-[2] Worker classify Test with 326728 examples took 	36.088946s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090385,sendExamples,8.3.0,3.444382e+01,3,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090385,main,8.3.0,3.444398e+01,3,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593090431,main,8.3.0,2.121228e+01,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/mpi.csv'
-Writing evaluation to   'experiments/mpi-matrix.log'
-Writing timing to       'experiments/timing.csv'
+arg MODEL_CSV=datasets/model-clean.csv
+arg EXAMPLES_CSV=datasets/test.csv
+arg TIMING_LOG=experiments/timing.csv
+arg MATCHES_CSV=out/mpi.csv
 Processor almoco, Rank 0 out of 4 processors
+MPI 3 1
+MPI arch = armv7l
+MPI host = almoco
+MPI thread_level = MPI_THREAD_SINGLE
 Reading examples from  'datasets/test.csv'
 Reading model from     'datasets/model-clean.csv'
 Writing matches to     'out/mpi.csv'
 Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090455,readModel,8.3.0,4.017000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090469,readExamples,8.3.0,1.388383e+01,1,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090469,sendModel,8.3.0,8.900000e-04,4,100
-[1] Recv model with 100 clusters took 	1.390908e+01s
-[2] Recv model with 100 clusters took 	1.395188e+01s
-[3] Recv model with 100 clusters took 	1.395227e+01s
-[1] Worker classify Test with 217819 examples took 	24.154931s
-[2] Worker classify Test with 217819 examples took 	24.217105s
-[3] Worker classify Test with 217819 examples took 	24.236812s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090494,sendExamples,8.3.0,2.418300e+01,4,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090494,main,8.3.0,2.418307e+01,4,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593090535,main,8.3.0,2.149084e+01,1,653457
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633913,readModel,8.3.0,3.979000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633927,readExamples,8.3.0,1.378294e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633927,sendModel,8.3.0,8.710000e-04,4,100
+[1] Recv model with 100 clusters took 	1.378816e+01s
+[2] Recv model with 100 clusters took 	1.377512e+01s
+[3] Recv model with 100 clusters took 	1.377644e+01s
+[1] Worker classify Test with 217819 examples took 	24.291999s
+[2] Worker classify Test with 217819 examples took 	24.274475s
+[3] Worker classify Test with 217819 examples took 	24.287912s
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633951,sendExamples,8.3.0,2.419549e+01,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633951,MNS_mfog_main,8.3.0,2.419555e+01,4,653457
+src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593633973,main,8.3.0,2.149940e+01,1,653457
 Reading examples from   'datasets/test.csv'
 Reading matches from    'out/mpi.csv'
 Writing evaluation to   'experiments/mpi-matrix.log'
 Writing timing to       'experiments/timing.csv'
-Processor almoco, Rank 0 out of 4 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090588,readModel,8.3.0,4.114000e-03,1,100
---------------------------------------------------------------------------
-There are not enough slots available in the system to satisfy the 5
-slots that were requested by the application:
-
-  ./target/mfog
-
-Either request fewer slots for your application, or make more slots
-available for use.
-
-A "slot" is the Open MPI term for an allocatable unit where we can
-launch a process.  The number of slots available are defined by the
-environment in which Open MPI processes are run:
-
-  1. Hostfile, via "slots=N" clauses (N defaults to number of
-     processor cores if not provided)
-  2. The --host command line parameter, via a ":N" suffix on the
-     hostname (N defaults to 1 if not provided)
-  3. Resource manager (e.g., SLURM, PBS/Torque, LSF, etc.)
-  4. If none of a hostfile, the --host command line parameter, or an
-     RM is present, Open MPI defaults to the number of processor cores
-
-In all the above cases, if you want Open MPI to default to the number
-of hardware threads instead of the number of processor cores, use the
---use-hwthread-cpus option.
-
-Alternatively, you can use the --oversubscribe option to ignore the
-number of available slots when deciding the number of processes to
-launch.
---------------------------------------------------------------------------
-Processor almoco, Rank 0 out of 5 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090684,readModel,8.3.0,4.006000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090698,readExamples,8.3.0,1.402848e+01,1,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090698,sendModel,8.3.0,1.488600e-02,5,100
-[1] Recv model with 100 clusters took 	1.402853e+01s
-[2] Recv model with 100 clusters took 	1.396162e+01s
-[3] Recv model with 100 clusters took 	1.408467e+01s
-[4] Recv model with 100 clusters took 	1.409355e+01s
-[2] Worker classify Test with 163364 examples took 	24.479495s
-[3] Worker classify Test with 163364 examples took 	24.646554s
-[1] Worker classify Test with 163365 examples took 	24.595791s
-[4] Worker classify Test with 163364 examples took 	24.704735s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090723,sendExamples,8.3.0,2.407041e+01,5,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090723,main,8.3.0,2.407070e+01,5,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593090756,main,8.3.0,2.115892e+01,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/mpi.csv'
-Writing evaluation to   'experiments/mpi-matrix.log'
-Writing timing to       'experiments/timing.csv'
-Processor almoco, Rank 0 out of 6 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090799,readModel,8.3.0,4.038000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090813,readExamples,8.3.0,1.391209e+01,1,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090813,sendModel,8.3.0,1.786100e-02,6,100
-[5] Recv model with 100 clusters took 	1.399587e+01s
-[1] Recv model with 100 clusters took 	1.394306e+01s
-[2] Recv model with 100 clusters took 	1.386825e+01s
-[4] Recv model with 100 clusters took 	1.399715e+01s
-[3] Recv model with 100 clusters took 	1.397519e+01s
-[1] Worker classify Test with 130692 examples took 	30.424628s
-[2] Worker classify Test with 130692 examples took 	30.045364s
-[3] Worker classify Test with 130691 examples took 	30.445622s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090844,sendExamples,8.3.0,3.019671e+01,6,653457
-[5] Worker classify Test with 130691 examples took 	30.513150s
-[4] Worker classify Test with 130691 examples took 	30.509039s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090844,main,8.3.0,3.019851e+01,6,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593090899,main,8.3.0,2.119215e+01,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/mpi.csv'
-Writing evaluation to   'experiments/mpi-matrix.log'
-Writing timing to       'experiments/timing.csv'
-Processor almoco, Rank 0 out of 7 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090924,readModel,8.3.0,3.974000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593090938,readExamples,8.3.0,1.379501e+01,1,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090938,sendModel,8.3.0,2.113700e-02,7,100
-[1] Recv model with 100 clusters took 	1.383446e+01s
-[2] Recv model with 100 clusters took 	1.370491e+01s
-[5] Recv model with 100 clusters took 	1.385350e+01s
-[6] Recv model with 100 clusters took 	1.386515e+01s
-[3] Recv model with 100 clusters took 	1.385421e+01s
-[4] Recv model with 100 clusters took 	1.386383e+01s
-[2] Worker classify Test with 108910 examples took 	23.129645s
-[1] Worker classify Test with 108910 examples took 	22.723100s
-[3] Worker classify Test with 108910 examples took 	23.461971s
-[6] Worker classify Test with 108909 examples took 	23.491166s
-[5] Worker classify Test with 108909 examples took 	23.419641s
-[4] Worker classify Test with 108909 examples took 	23.287271s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090961,sendExamples,8.3.0,2.336210e+01,7,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593090961,main,8.3.0,2.336403e+01,7,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593091000,main,8.3.0,2.122137e+01,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/mpi.csv'
-Writing evaluation to   'experiments/mpi-matrix.log'
-Writing timing to       'experiments/timing.csv'
-Processor almoco, Rank 0 out of 8 processors
-Reading examples from  'datasets/test.csv'
-Reading model from     'datasets/model-clean.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593091032,readModel,8.3.0,7.518000e-03,1,100
-minas-funcs.c,./target/mfog,Jun 25 2020 10:02:26,1593091046,readExamples,8.3.0,1.372104e+01,1,653457
-[2] Recv model with 100 clusters took 	1.378563e+01s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593091046,sendModel,8.3.0,2.095900e-02,8,100
-[1] Recv model with 100 clusters took 	1.362504e+01s
-[5] Recv model with 100 clusters took 	1.366448e+01s
-[6] Recv model with 100 clusters took 	1.379712e+01s
-[3] Recv model with 100 clusters took 	1.379860e+01s
-[7] Recv model with 100 clusters took 	1.380132e+01s
-[4] Recv model with 100 clusters took 	1.380132e+01s
-[2] Worker classify Test with 93351 examples took 	27.897833s
-[1] Worker classify Test with 93351 examples took 	28.087162s
-[3] Worker classify Test with 93351 examples took 	28.556926s
-[4] Worker classify Test with 93351 examples took 	28.483052s
-[5] Worker classify Test with 93351 examples took 	28.435536s
-[7] Worker classify Test with 93351 examples took 	28.421284s
-[6] Worker classify Test with 93351 examples took 	27.339912s
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593091074,sendExamples,8.3.0,2.834447e+01,8,653457
-minas-mpi.c,./target/mfog,Jun 25 2020 10:02:26,1593091074,main,8.3.0,2.834459e+01,8,653457
-evaluate.c,target/eval,Jun 25 2020 09:57:09,1593091101,main,8.3.0,2.133760e+01,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/mpi.csv'
-Writing evaluation to   'experiments/mpi-matrix.log'
-Writing timing to       'experiments/timing.csv'
---------------------------------------------------------------------------
-There are not enough slots available in the system to satisfy the 9
-slots that were requested by the application:
-
-  ./target/mfog
-
-Either request fewer slots for your application, or make more slots
-available for use.
-
-A "slot" is the Open MPI term for an allocatable unit where we can
-launch a process.  The number of slots available are defined by the
-environment in which Open MPI processes are run:
-
-  1. Hostfile, via "slots=N" clauses (N defaults to number of
-     processor cores if not provided)
-  2. The --host command line parameter, via a ":N" suffix on the
-     hostname (N defaults to 1 if not provided)
-  3. Resource manager (e.g., SLURM, PBS/Torque, LSF, etc.)
-  4. If none of a hostfile, the --host command line parameter, or an
-     RM is present, Open MPI defaults to the number of processor cores
-
-In all the above cases, if you want Open MPI to default to the number
-of hardware threads instead of the number of processor cores, use the
---use-hwthread-cpus option.
-
-Alternatively, you can use the --oversubscribe option to ignore the
-number of available slots when deciding the number of processes to
-launch.
---------------------------------------------------------------------------
-  741  make target/mfog 
-  742  mpiexec -np 2 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv > experiments/mpi.log 2>&1
-  743  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  744  vim experiments/mpi-matrix.log 
-  745  mpiexec -np 3 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  746  echo '--np 3' >> experiments/mpi-matrix.log
-  747  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  748  echo '--np 4' >> experiments/mpi-matrix.log
-  749  mpiexec -np 4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  750  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  751  echo '--np 5' >> experiments/mpi-matrix.log
-  752  mpiexec -np 4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  753  mpiexec -np 5 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  754  make mfog@jantar 
-  755  mpiexec -np 5 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  756  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  757  echo '--np 6' >> experiments/mpi-matrix.log
-  758  mpiexec --np 6 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  759  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  760  echo '--np 7' >> experiments/mpi-matrix.log
-  761  mpiexec --np 7 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  762  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  763  echo '--np 8' >> experiments/mpi-matrix.log
-  764  mpiexec --np 8 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  765  target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-  766  mpiexec --np 9 --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv >> experiments/mpi.log 2>&1
-  767  exit
-  768  cd cloud/
-  769  ls
-  770  history | tail -n 30 >> experiments/mpi.log 
