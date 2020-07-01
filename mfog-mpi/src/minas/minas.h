@@ -39,4 +39,6 @@ void classify(int dimension, Model *model, Point *ex, Match *match);
 Model *kMeansInit(int nClusters, int dimension, Point examples[]);
 Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable);
 
+int MNS_minas_main(int argc, char *argv[], char **envp);
+
 #endif // MINAS_H

@@ -1,12 +1,4 @@
-minas-funcs.c,target/minas,Jun 25 2020 09:39:38,1593088925,readModel,10.1.0,7.200000e-04,1,100
-minas-funcs.c,target/minas,Jun 25 2020 09:39:38,1593088927,readExamples,10.1.0,2.115696e+00,1,653457
-minas.c,target/minas,Jun 25 2020 09:39:38,1593088935,main,10.1.0,7.515010e+00,1,653457
-Reading model from     'datasets/model-clean.csv'
-Reading examples from  'datasets/test.csv'
-Writing matches to     'out/serial.csv'
-Writing timing to      'experiments/timing.csv'
-evaluate.c,target/eval,Jun 25 2020 09:42:39,1593088962,main,10.1.0,2.892702e+00,1,653457
-Reading examples from   'datasets/test.csv'
-Reading matches from    'out/serial.csv'
-Writing evaluation to   'experiments/serial-matrix.log'
-Writing timing to       'experiments/timing.csv'
+arg MODEL_CSV=datasets/model-clean.csv
+arg EXAMPLES_CSV=datasets/test.csv
+arg TIMING_LOG=experiments/timing.csv
+arg MATCHES_CSV=out/serial.csv

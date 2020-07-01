@@ -1,5 +1,5 @@
-#ifndef MINAS_FUNCS
-#define MINAS_FUNCS
+#ifndef MINAS_C
+#define MINAS_C
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -215,12 +215,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     // );
 }
 
-#endif // MINAS_FUNCS
-
-
-#ifndef MAIN
-#define MAIN
-int main(int argc, char *argv[], char **envp) {
+int MNS_minas_main(int argc, char *argv[], char **envp) {
     char *executable = argv[0];
     char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
     FILE *modelFile, *examplesFile, *matches, *timing;
@@ -291,4 +286,5 @@ int main(int argc, char *argv[], char **envp) {
     free(examples);
     return 0;
 }
-#endif // MAIN
+
+#endif // MINAS_C

@@ -6,12 +6,12 @@ clean:
 
 target:
 	@-mkdir target out experiments 2>/dev/null
-target/mfog: target minas-mpi.c minas-funcs.c loadenv.c
-	mpicc minas-mpi.c minas-funcs.c loadenv.c -o target/mfog -lm -Wall -g
-target/minas: target minas.c minas-funcs.c loadenv.c
-	gcc minas.c minas-funcs.c loadenv.c -o target/minas -lm -Wall -g
-target/eval: target evaluate.c loadenv.c
-	gcc evaluate.c loadenv.c -o target/eval -lm -Wall -g
+target/mfog: target src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c
+	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c -o target/mfog -lm -Wall -g
+target/minas: target src/main.c src/minas/minas.c src/util/loadenv.c
+	gcc src/main.c src/minas/minas.c src/util/loadenv.c -o target/minas -lm -Wall -g
+target/eval: target src/minas/evaluate.c src/util/loadenv.c
+	gcc src/minas/evaluate.c src/util/loadenv.c -o target/eval -lm -Wall -g
 mfog@jantar: target/mfog
 	scp target/mfog jantar:/home/pi/cloud/target/
 

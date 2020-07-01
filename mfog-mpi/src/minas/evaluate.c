@@ -4,7 +4,7 @@
 #include <err.h>
 
 #include "minas.h"
-#include "loadenv.h"
+#include "../util/loadenv.h"
 
 int findLabelIndex(int *confusionSize, char **labels, int ***confusionMatrix, char newLabel) {
     int i;

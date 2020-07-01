@@ -6,6 +6,7 @@
 int assingVarFromEnvArg(char *varName, char **varPtr, char *envOrArg, char *nextArg);
 int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]);
 void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]);
+int printEnvs(int argc, char *argv[], char **envp);
 
 // # source, executable, build_date-time, wall-clock, function, gnuc, elapsed, cores, itens
 #define PRINT_TIMING_FORMAT "%s,%s,%s %s,%ld,%s,%s,%e,%d,%d\n"

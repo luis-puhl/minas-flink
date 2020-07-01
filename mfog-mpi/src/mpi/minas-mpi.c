@@ -1,3 +1,6 @@
+#ifndef MFOG_C
+#define MFOG_C
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -155,9 +158,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     return exampleCounter;
 }
 
-#ifndef MAIN
-#define MAIN
-int main(int argc, char *argv[], char **envp) {
+int MNS_mfog_main(int argc, char *argv[], char **envp) {
     MPI_Init(&argc, &argv);
     int clRank, clSize;
     MPI_Comm_size(MPI_COMM_WORLD, &clSize);
@@ -231,4 +232,5 @@ int main(int argc, char *argv[], char **envp) {
     MPI_Finalize();
     return 0;
 }
-#endif
+
+#endif // MFOG_C

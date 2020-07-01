@@ -23,6 +23,27 @@ int assingVarFromEnvArg(char *varName, char **varPtr, char *envOrArg, char *next
     return 1;
 }
 
+int printEnvs(int argc, char *argv[], char **envp) {
+    const char *prefixMfog = "MFOG_";
+    int assingned = 0;
+    for (char **env = envp; *env != 0; env++) {
+        char *thisEnv = *env;
+        int diff = 0, i = 0;
+        for (; prefixMfog[i] != '\0' && diff == 0; i++) diff += prefixMfog[i] - thisEnv[i];
+        if (diff != 0) continue;
+        fprintf(stderr, "env %s\n", thisEnv);
+        assingned++;
+    }
+    for (int arg = 1; arg < argc; arg++) {
+        fprintf(stderr, "arg %s\n", argv[arg]);
+        assingned++;
+    }
+    #ifdef MPI_VERSION
+    fprintf(stderr, "MPI %d\n", MPI_VERSION, MPI_SUBVERSION);
+    #endif // MPI_VERSION
+    return assingned;
+}
+
 int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]) {
     const char *prefixMfog = "MFOG_";
     int assingned = 0;
@@ -53,10 +74,10 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
     const char *stdoutName = "stdout";
     const char *stderrName = "stderr";
     int failures = 0;
-    #define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
+#define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
     for (int var = 0; var < varsSize; var++) {
         if (var >= assingned) {
-            printf("Expected argument or environment '%s' to be defined\n", varNames[var]);
+            fprintf(stderr, "Expected argument or environment '%s' to be defined\n", varNames[var]);
             failures++;
             continue;
         }
@@ -64,7 +85,7 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
         char *fileName = *(varPtrs[var]);
         // fprintf(stderr, "%s => %s\n", varNames[var], fileName);
         if (fileName == NULL) {
-            printf("Expected argument or environment '%s' to be defined\n", varNames[var]);
+            fprintf(stderr, "Expected argument or environment '%s' to be defined\n", varNames[var]);
             failures++;
             continue;
         }
@@ -86,11 +107,12 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
             *(filePtrs[var]) = fopen(fileName, fileModes[var]);
         }
         if (*(filePtrs[var]) == NULL) {
-            printf("Expected argument '%s' set to '%s' to be '%s'-able file.\n", varNames[var], fileName, fileModes[var]);
+            fprintf(stderr, "Expected argument '%s' set to '%s' to be '%s'-able file.\n", varNames[var], fileName, fileModes[var]);
             failures++;
         }
     }
     if (failures > 0) {
+        fflush(stderr);
         errx(EXIT_FAILURE, "Missing %d arguments.", failures);
     }
     return varsSize;
