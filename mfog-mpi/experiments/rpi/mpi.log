@@ -11,18 +11,19 @@ Reading examples from  'datasets/test.csv'
 Reading model from     'datasets/model-clean.csv'
 Writing matches to     'out/mpi.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633913,readModel,8.3.0,3.979000e-03,1,100
-src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633927,readExamples,8.3.0,1.378294e+01,1,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633927,sendModel,8.3.0,8.710000e-04,4,100
-[1] Recv model with 100 clusters took 	1.378816e+01s
-[2] Recv model with 100 clusters took 	1.377512e+01s
-[3] Recv model with 100 clusters took 	1.377644e+01s
-[1] Worker classify Test with 217819 examples took 	24.291999s
-[2] Worker classify Test with 217819 examples took 	24.274475s
-[3] Worker classify Test with 217819 examples took 	24.287912s
-src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633951,sendExamples,8.3.0,2.419549e+01,4,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633951,MNS_mfog_main,8.3.0,2.419555e+01,4,653457
-src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593633973,main,8.3.0,2.149940e+01,1,653457
+src/minas/minas.c,./target/mfog,Jul  2 2020 19:11:48,1593727909,readModel,8.3.0,3.961000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  2 2020 19:11:48,1593727923,readExamples,8.3.0,1.381474e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  2 2020 19:11:48,1593727923,sendModel,8.3.0,9.070000e-04,4,100
+[2] Recv model with 100 clusters took 	1.384087e+01s
+[3] Recv model with 100 clusters took 	1.382909e+01s
+[1] Recv model with 100 clusters took 	1.384529e+01s
+[1] Worker classify Test with 217819 examples took 	24.188731s
+[3] Worker classify Test with 217819 examples took 	24.219648s
+[2] Worker classify Test with 217819 examples took 	24.219240s
+src/mpi/minas-mpi.c,./target/mfog,Jul  2 2020 19:11:48,1593727947,sendExamples,8.3.0,2.418962e+01,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  2 2020 19:11:48,1593727947,MNS_mfog_main,8.3.0,2.418969e+01,4,653457
+src/minas/minas.c,target/eval,Jul  2 2020 19:10:08,1593727963,readExamples,8.3.0,1.531221e+01,1,653457
+src/minas/evaluate.c,target/eval,Jul  2 2020 19:10:07,1593727967,main,8.3.0,1.455260e-01,1,653457
 Reading examples from   'datasets/test.csv'
 Reading matches from    'out/mpi.csv'
 Writing evaluation to   'experiments/mpi-matrix.log'

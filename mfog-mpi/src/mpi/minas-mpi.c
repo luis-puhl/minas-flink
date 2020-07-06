@@ -75,12 +75,7 @@ int receiveClassifications(FILE *matches) {
     MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
     while (hasMessage) {
         MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
-                // match.pointId, match.isMatch, match.cluster->id,
-                // match.cluster->label, match.distance, match.cluster->radius
-                match.pointId, match.isMatch, match.clusterId,
-                match.label, match.distance, match.radius
-        );
+        fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(match));
         matchesCounter++;
         MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
     }
@@ -94,7 +89,7 @@ int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE
     char *buffer = malloc(bufferSize);
     MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     //
-    Match match;
+    //Match match;
 
     for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
         Point *ex = &(examples[exampleCounter]);

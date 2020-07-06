@@ -20,3 +20,4 @@
 - 2020-06-15 [ ] Detecção de novidades;
 - 2020-06-15 [ ] Homogenização de ambientes (USER, PATH, ...);
 - 2020-06-15 [x] Vazão (Throughput) (70k/5s), Latência (1/vazão), speedup (T_seq/T_parallel);
+- 2020-07-01 [ ] Review evaluate. Use unix sort.

@@ -1,10 +1,10 @@
 Confusion Matrix
       	|	Classes
 Labels	|	         A	         N	
-     -	|	     17371	      2623	
-     A	|	         0	         0	
-     N	|	    429808	    203655	
+     -	|	     41744	       317	
+     A	|	     22067	         0	
+     N	|	    449569	    205961	
 Total examples     653457
-Total matches      653457
-Hits               203655 ( 31.165784%)
-Misses             449802 ( 68.834216%)
+Total matches           0
+Hits               205961 ( 31.518677%)
+Misses             447496 ( 68.481323%)

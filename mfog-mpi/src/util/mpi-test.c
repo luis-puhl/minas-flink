@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     }
         sprintf(buf, "%s", processor_name);
 
-    // mesmo codigo é executado em todos os nós. Rank e root do bcast definem papeis
+    // mesmo código é executado em todos os nós. Rank e root do bcast definem papeis
     // como todos usam o mesmo códo e só root sabe o tamanho da string, não dá para usar strlen...
     // int MPI_Bcast (void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm)
     // MPI_Bcast( buf, strlen(buf+1), MPI_CHAR, root, MPI_COMM_WORLD);

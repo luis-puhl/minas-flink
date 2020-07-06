@@ -8,14 +8,15 @@ MPI arch = armv7l
 MPI host = almoco
 MPI thread_level = MPI_THREAD_SINGLE
 Cluster with only one node. Running serial code.
-src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633813,readModel,8.3.0,3.980000e-03,1,100
-src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633827,readExamples,8.3.0,1.366903e+01,1,653457
-src/minas/minas.c,target/minas,Jul  1 2020 17:03:32,1593633890,MNS_minas_main,8.3.0,6.305409e+01,1,653457
+src/minas/minas.c,target/minas,Jul  2 2020 19:10:09,1593727811,readModel,8.3.0,4.111000e-03,1,100
+src/minas/minas.c,target/minas,Jul  2 2020 19:10:09,1593727825,readExamples,8.3.0,1.399489e+01,1,653457
+src/minas/minas.c,target/minas,Jul  2 2020 19:10:09,1593727890,MNS_minas_main,8.3.0,6.386066e+01,1,653457
 Reading model from     'datasets/model-clean.csv'
 Reading examples from  'datasets/test.csv'
 Writing matches to     'out/serial.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593633912,main,8.3.0,2.139043e+01,1,653457
+src/minas/minas.c,target/eval,Jul  2 2020 19:10:08,1593727903,readExamples,8.3.0,1.360285e+01,1,653457
+src/minas/evaluate.c,target/eval,Jul  2 2020 19:10:07,1593727907,main,8.3.0,1.471090e-01,1,653457
 Reading examples from   'datasets/test.csv'
 Reading matches from    'out/serial.csv'
 Writing evaluation to   'experiments/serial-matrix.log'

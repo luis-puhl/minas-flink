@@ -74,11 +74,18 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
     const char *stdoutName = "stdout";
     const char *stderrName = "stderr";
     int failures = 0;
-    #define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
+    #define DEBUG_LN fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, __FUNCTION__); fflush(stderr);
     for (int var = 0; var < varsSize; var++) {
         if (var >= assingned) {
-            fprintf(stderr, "Expected argument or environment '%s' to be defined\n", varNames[var]);
-            failures++;
+            char *extraMsg;
+            if (fileModes[var][0] == 'a' && fileModes[var][1] == '\0') {
+                extraMsg = "\tWill use stdout as append file.";
+                *(filePtrs[var]) = stdout;
+                *(varPtrs[var]) = "stdout";
+            } else {
+                failures++;
+            }
+            fprintf(stderr, "Expected argument or environment '%s' to be defined and '%s'-able.%s\n", varNames[var], fileModes[var], extraMsg);
             continue;
         }
         if (varPtrs[var] == NULL) break;

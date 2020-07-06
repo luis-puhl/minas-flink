@@ -1,4 +1,4 @@
-all: clean experiments/serial-matrix.log experiments/mpi-matrix.log cluster@almoco
+all: clean experiments/serial-matrix.log experiments/mpi-matrix.log experiments/mpi-test.log cluster@almoco
 
 clean:
 	@-rm target/* out/* experiments/*.log 2>/dev/null
@@ -8,10 +8,10 @@ target:
 	@-mkdir target out experiments 2>/dev/null
 target/mfog: target src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c
 	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c -o target/mfog -lm -Wall -g
-target/minas: target src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c
+target/minas: target src/main.c src/minas/minas.c src/minas/minas.h src/util/loadenv.c src/util/loadenv.h src/mpi/minas-mpi.c
 	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/mpi/minas-mpi.c -o target/minas -lm -Wall -g
 target/eval: target src/minas/evaluate.c src/util/loadenv.c
-	gcc src/minas/evaluate.c src/util/loadenv.c -o target/eval -lm -Wall -g
+	gcc src/minas/evaluate.c src/minas/minas.c src/util/loadenv.c -o target/eval -lm -Wall -g
 target/mpi-test: target src/util/mpi-test.c
 	mpicc src/util/mpi-test.c -o target/mpi-test -lm -Wall -g
 	cp target/mpi-test /home/pi/cloud/target/
@@ -33,8 +33,7 @@ out/cluster.csv: mfog@jantar datasets/model-clean.csv datasets/test.csv
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/cluster.csv > experiments/cluster.log 2>&1
 
 experiments/serial-matrix.log: target/eval datasets/test.csv out/serial.csv
-	target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/serial.csv \
-		EVALUATE_LOG=experiments/serial-matrix.log >> experiments/serial.log 2>&1
+	python src/minas/evaluate.py datasets/test.csv out/serial.csv >> experiments/serial-matrix.log
 experiments/mpi-matrix.log: target/eval datasets/test.csv out/mpi.csv
 	target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv \
 		EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1

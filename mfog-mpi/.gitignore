@@ -1,2 +1,3 @@
 cloud/openmpi-*
 usr/
+**/.ipynb_checkpoints

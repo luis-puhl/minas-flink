@@ -197,18 +197,22 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
 void classify(int dimension, Model *model, Point *ex, Match *match) {
     match->distance = (double) dimension;
     match->pointId = ex->id;
+    printf("#pid_%d", ex->id);
     for (int i = 0; i < model->size; i++) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
+        printf("%le,", distance);
         if (match->distance > distance) {
             // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
-            match->label = model->vals[i].label;
-            match->radius = model->vals[i].radius;
+            match->clusterLabel = model->vals[i].label;
+            match->clusterRadius = model->vals[i].radius;
+            match->secondDistance = match->distance;
             match->distance = distance;
         }
     }
-    match->isMatch = match->distance <= match->radius ? 'y' : 'n';
-    
+    printf("\n");
+    match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+
     // printf("%d,%c,%d,%c,%e,%e\n",
     //     match->pointId, match->isMatch, match->clusterId,
     //     match->label, match->distance, match->radius
@@ -243,7 +247,7 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
     examples = readExamples(model.dimension, examplesFile, &nExamples, timing, executable);
     // fprintf(stderr, "nExamples %d\n", nExamples);
 
-    fprintf(matches, "#id,isMach,clusterId,label,distance,radius\n");
+    fprintf(matches, MATCH_CSV_HEADER);
     int exampleCounter = 0;
     clock_t start = clock();
     Match match;
@@ -253,7 +257,7 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
         // fprintf(stderr, "%d/%d\n", exampleCounter, nExamples);
         //
         classify(model.dimension, &model, &(examples[exampleCounter]), &match);
-        if (match.isMatch == 'n') {
+        if (match.label == '-') {
             // unkown
             unkBuffer[nUnk] = examples[exampleCounter];
             nUnk++;
@@ -270,10 +274,7 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
             }
             // kMeans(&m, m.size, dimension, unkBuffer, nUnk, timing, executable);
         }
-        fprintf(matches, "%d,%c,%d,%c,%e,%e\n",
-            match.pointId, match.isMatch, match.clusterId,
-            match.label, match.distance, match.radius
-        );
+        fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(match));
     }
     PRINT_TIMING(timing, executable, 1, start, exampleCounter);
 

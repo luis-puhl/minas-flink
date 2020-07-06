@@ -11,26 +11,27 @@ Reading examples from  'datasets/test.csv'
 Reading model from     'datasets/model-clean.csv'
 Writing matches to     'out/cluster.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633975,readModel,8.3.0,4.015000e-03,1,100
-src/minas/minas.c,./target/mfog,Jul  1 2020 17:05:12,1593633989,readExamples,8.3.0,1.373523e+01,1,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593633989,sendModel,8.3.0,1.441900e-02,8,100
-[1] Recv model with 100 clusters took 	1.376295e+01s
-[2] Recv model with 100 clusters took 	1.376036e+01s
-[3] Recv model with 100 clusters took 	1.372945e+01s
-[7] Recv model with 100 clusters took 	1.375899e+01s
-[4] Recv model with 100 clusters took 	1.376254e+01s
-[6] Recv model with 100 clusters took 	1.376396e+01s
-[5] Recv model with 100 clusters took 	1.376187e+01s
-[1] Worker classify Test with 93351 examples took 	25.841782s
-[2] Worker classify Test with 93351 examples took 	25.792579s
-[3] Worker classify Test with 93351 examples took 	24.892586s
-[4] Worker classify Test with 93351 examples took 	25.780313s
-[7] Worker classify Test with 93351 examples took 	25.755274s
-[6] Worker classify Test with 93351 examples took 	25.827089s
-[5] Worker classify Test with 93351 examples took 	24.895861s
-src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593634014,sendExamples,8.3.0,2.555415e+01,8,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  1 2020 17:05:13,1593634014,MNS_mfog_main,8.3.0,2.555453e+01,8,653457
-src/minas/evaluate.c,target/eval,Jul  1 2020 17:03:31,1593634036,main,8.3.0,2.137747e+01,1,653457
+src/minas/minas.c,./target/mfog,Jul  2 2020 19:11:48,1593727968,readModel,8.3.0,8.077000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  2 2020 19:11:48,1593727984,readExamples,8.3.0,1.556239e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  2 2020 19:11:48,1593727984,sendModel,8.3.0,2.197400e-02,8,100
+[1] Recv model with 100 clusters took 	1.556058e+01s
+[2] Recv model with 100 clusters took 	1.559183e+01s
+[7] Recv model with 100 clusters took 	1.558056e+01s
+[5] Recv model with 100 clusters took 	1.557452e+01s
+[3] Recv model with 100 clusters took 	1.556948e+01s
+[6] Recv model with 100 clusters took 	1.558953e+01s
+[4] Recv model with 100 clusters took 	1.551685e+01s
+[1] Worker classify Test with 93351 examples took 	26.314960s
+[3] Worker classify Test with 93351 examples took 	26.274221s
+[2] Worker classify Test with 93351 examples took 	25.700251s
+[6] Worker classify Test with 93351 examples took 	26.318033s
+[7] Worker classify Test with 93351 examples took 	26.318306s
+[5] Worker classify Test with 93351 examples took 	26.321867s
+[4] Worker classify Test with 93351 examples took 	25.435228s
+src/mpi/minas-mpi.c,./target/mfog,Jul  2 2020 19:11:48,1593728010,sendExamples,8.3.0,2.619129e+01,8,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  2 2020 19:11:48,1593728010,MNS_mfog_main,8.3.0,2.619143e+01,8,653457
+src/minas/minas.c,target/eval,Jul  2 2020 19:10:08,1593728024,readExamples,8.3.0,1.367099e+01,1,653457
+src/minas/evaluate.c,target/eval,Jul  2 2020 19:10:07,1593728028,main,8.3.0,1.475460e-01,1,653457
 Reading examples from   'datasets/test.csv'
 Reading matches from    'out/cluster.csv'
 Writing evaluation to   'experiments/cluster-matrix.log'
