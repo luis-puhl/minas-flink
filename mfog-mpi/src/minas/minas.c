@@ -50,6 +50,7 @@ Model *kMeansInit(int nClusters, int dimension, Point examples[]) {
 Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable) {
     // Model *model = kMeansInit(nClusters, dimension, examples);
     Match match;
+    double *classifyDistances = malloc(model->size * sizeof(double));
     clock_t start = clock();
     //
     double globalDistance = dimension * 2.0, prevGlobalDistance, diffGD = 1.0;
@@ -70,7 +71,7 @@ Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int 
         }
         // distances
         for (int i = 0; i < nExamples; i++) {
-            classify(dimension, model, &(examples[i]), &match);
+            classify(dimension, model, &(examples[i]), &match, classifyDistances);
             globalDistance += match.distance;
             distances[match.clusterId] += match.distance;
             sqrDistances[match.clusterId] += match.distance * match.distance;
@@ -178,7 +179,7 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
             &ex->value[15], &ex->value[16], &ex->value[17], &ex->value[18], &ex->value[19],
             &ex->value[20], &ex->value[21], &ex->label
         );
-        ex->id = exSize;
+        ex->id = exSize - 1;
         if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", (*nExamples), line);
         //
         exs = realloc(exs, (++exSize) * sizeof(Point));
@@ -194,13 +195,14 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
     return exs;
 }
 
-void classify(int dimension, Model *model, Point *ex, Match *match) {
+void classify(int dimension, Model *model, Point *ex, Match *match, double allDistances[]) {
     match->distance = (double) dimension;
     match->pointId = ex->id;
-    printf("#pid_%d", ex->id);
+    // printf("#pid_%d", ex->id);
     for (int i = 0; i < model->size; i++) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
-        printf("%le,", distance);
+        // printf("%le,", distance);
+        allDistances[i] = distance;
         if (match->distance > distance) {
             // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
@@ -210,7 +212,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
             match->distance = distance;
         }
     }
-    printf("\n");
+    // printf("\n");
     match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
 
     // printf("%d,%c,%d,%c,%e,%e\n",
@@ -252,11 +254,12 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
     clock_t start = clock();
     Match match;
     Point *unkBuffer = malloc(nExamples * sizeof(Point));
+    double *distances = malloc(model.size * sizeof(double));
     int nUnk = 0;
     for (exampleCounter = 0; exampleCounter < nExamples; exampleCounter++) {
         // fprintf(stderr, "%d/%d\n", exampleCounter, nExamples);
         //
-        classify(model.dimension, &model, &(examples[exampleCounter]), &match);
+        classify(model.dimension, &model, &(examples[exampleCounter]), &match, distances);
         if (match.label == '-') {
             // unkown
             unkBuffer[nUnk] = examples[exampleCounter];

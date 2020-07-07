@@ -1,4 +1,5 @@
-all: clean experiments/serial-matrix.log experiments/mpi-matrix.log experiments/mpi-test.log cluster@almoco
+all: clean experiments/serial-matrix.log experiments/mpi-matrix.log cluster@almoco
+# experiments/mpi-test.log
 
 clean:
 	@-rm target/* out/* experiments/*.log 2>/dev/null
@@ -32,14 +33,12 @@ out/cluster.csv: mfog@jantar datasets/model-clean.csv datasets/test.csv
 	mpiexec --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/cluster.csv > experiments/cluster.log 2>&1
 
-experiments/serial-matrix.log: target/eval datasets/test.csv out/serial.csv
-	python src/minas/evaluate.py datasets/test.csv out/serial.csv >> experiments/serial-matrix.log
-experiments/mpi-matrix.log: target/eval datasets/test.csv out/mpi.csv
-	target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv \
-		EVALUATE_LOG=experiments/mpi-matrix.log >> experiments/mpi.log 2>&1
-experiments/cluster-matrix.log: out/cluster.csv datasets/model-clean.csv datasets/test.csv
-	target/eval EXAMPLES_CSV=datasets/test.csv TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/cluster.csv \
-		EVALUATE_LOG=experiments/cluster-matrix.log >> experiments/cluster.log 2>&1
+experiments/serial-matrix.log: datasets/test.csv out/serial.csv
+	python3 src/minas/evaluate.py datasets/test.csv out/serial.csv > experiments/serial-matrix.log
+experiments/mpi-matrix.log: datasets/test.csv out/mpi.csv
+	python3 src/minas/evaluate.py datasets/test.csv out/mpi.csv > experiments/mpi-matrix.log
+experiments/cluster-matrix.log: out/cluster.csv datasets/test.csv
+	python3 src/minas/evaluate.py datasets/test.csv out/cluster.csv > experiments/cluster-matrix.log
 experiments/mpi-test.log: target/mpi-test
 	echo "" > experiments/mpi-test.log
 	echo "$$ mpiexec --host localhost:2 /home/pi/cloud/target/mpi-test" >> experiments/mpi-test.log

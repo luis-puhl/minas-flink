@@ -67,7 +67,7 @@ typedef struct match {
 double MNS_distance(double a[], double b[], int dimension);
 void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable);
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable);
-void classify(int dimension, Model *model, Point *ex, Match *match);
+void classify(int dimension, Model *model, Point *ex, Match *match, double allDistances[]);
 
 Model *kMeansInit(int nClusters, int dimension, Point examples[]);
 Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable);

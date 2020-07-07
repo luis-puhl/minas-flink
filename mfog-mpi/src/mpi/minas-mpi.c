@@ -131,6 +131,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     char *buffer = malloc(bufferSize);
     //
     clock_t start = clock();
+    double *distances = malloc(model->size * sizeof(double));
     while (ex.id >= 0) {
         MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         int position = 0;
@@ -139,7 +140,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
         MPI_Unpack(buffer, bufferSize, &position, valuePtr, dimension, MPI_DOUBLE, MPI_COMM_WORLD);
         ex.value = valuePtr;
         //
-        classify(dimension, model, &ex, &match);
+        classify(dimension, model, &ex, &match, distances);
         MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_MASTER_RANK, 2005, MPI_COMM_WORLD);
         //
         exampleCounter++;
@@ -236,7 +237,7 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
         sendModel(model.dimension, &model, clRank, clSize, timing, executable);
 
         clock_t start = clock();
-        fprintf(matches, "#id,isMach,clusterId,label,distance,radius\n");
+        fprintf(matches, MATCH_CSV_HEADER);
         int exampleCounter = sendExamples(model.dimension, examples, clSize, matches, timing, executable);
 
         MPI_Barrier(MPI_COMM_WORLD);

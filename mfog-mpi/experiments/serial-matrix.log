@@ -1,10 +1,10 @@
 Confusion Matrix
 Classes (act)       A       N
 Labels (pred)                
--               17657    2337
-N              429521  203941
+-               19677     317
+N              427502  205961
 Total examples     653457
 Total matches      653457
-Hits               203941 ( 31.209552%)
-Misses             449515 ( 68.790295%)
-Hits + Misses      653456 ( 99.999847%)
+Hits               205961 ( 31.518677%)
+Misses             447496 ( 68.481323%)
+Hits + Misses      653457 (100.000000%)
