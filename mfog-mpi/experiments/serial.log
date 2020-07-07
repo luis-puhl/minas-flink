@@ -8,9 +8,9 @@ MPI arch = x86_64
 MPI host = pokebola
 MPI thread_level = MPI_THREAD_SINGLE
 Cluster with only one node. Running serial code.
-src/minas/minas.c,target/minas,Jul  7 2020 09:25:50,1594124750,readModel,10.1.0,7.680000e-04,1,100
-src/minas/minas.c,target/minas,Jul  7 2020 09:25:50,1594124752,readExamples,10.1.0,2.009272e+00,1,653457
-src/minas/minas.c,target/minas,Jul  7 2020 09:25:50,1594124760,MNS_minas_main,10.1.0,7.573472e+00,1,653457
+src/minas/minas.c,target/minas,Jul  7 2020 11:06:28,1594130788,readModel,10.1.0,7.200000e-04,1,100
+src/minas/minas.c,target/minas,Jul  7 2020 11:06:28,1594130790,readExamples,10.1.0,1.871059e+00,1,653457
+src/minas/minas.c,target/minas,Jul  7 2020 11:06:28,1594130797,MNS_minas_main,10.1.0,7.007842e+00,1,653457
 Reading model from     'datasets/model-clean.csv'
 Reading examples from  'datasets/test.csv'
 Writing matches to     'out/serial.csv'

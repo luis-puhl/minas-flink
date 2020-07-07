@@ -1,4 +1,5 @@
-all: clean experiments/serial-matrix.log experiments/mpi-matrix.log cluster@almoco
+all: clean experiments/serial-matrix.log experiments/mpi-matrix.log
+# cluster@almoco
 # experiments/mpi-test.log
 
 clean:
@@ -33,12 +34,25 @@ out/cluster.csv: mfog@jantar datasets/model-clean.csv datasets/test.csv
 	mpiexec --host jantar:4,almoco:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/cluster.csv > experiments/cluster.log 2>&1
 
+sortedObjs = out/serial-sorted.csv out/mpi-sorted.csv out/cluster-sorted.csv
+$(sortedObjs): out/%-sorted.csv: out/%.csv
+	sort --field-separator=',' --key=1 -n $< > $@
+diffObjs = experiments/mpi-serial.diff experiments/cluster-serial.diff
+$(diffObjs): experiments/%-serial.diff: out/%-sorted.csv out/serial-sorted.csv
+	diff out/serial-sorted.csv $< > $@
+
 experiments/serial-matrix.log: datasets/test.csv out/serial.csv
-	python3 src/minas/evaluate.py datasets/test.csv out/serial.csv > experiments/serial-matrix.log
-experiments/mpi-matrix.log: datasets/test.csv out/mpi.csv
+	python3 src/minas/evaluate.py datasets/test.csv out/serial.csv > $@
+experiments/mpi-matrix.log: datasets/test.csv out/mpi.csv out/serial-sorted.csv out/mpi-sorted.csv
 	python3 src/minas/evaluate.py datasets/test.csv out/mpi.csv > experiments/mpi-matrix.log
-experiments/cluster-matrix.log: out/cluster.csv datasets/test.csv
+	@-echo 'diff with serial===' >> $@
+	diff out/serial-sorted.csv out/mpi-sorted.csv >> $@
+	@-echo '===diff with serial' >> $@
+experiments/cluster-matrix.log: out/cluster.csv datasets/test.csv experiments/cluster-serial.diff
 	python3 src/minas/evaluate.py datasets/test.csv out/cluster.csv > experiments/cluster-matrix.log
+	@-echo 'diff with serial===' >> $@
+	diff out/serial-sorted.csv $< >> $@
+	@-echo '===diff with serial' >> $@
 experiments/mpi-test.log: target/mpi-test
 	echo "" > experiments/mpi-test.log
 	echo "$$ mpiexec --host localhost:2 /home/pi/cloud/target/mpi-test" >> experiments/mpi-test.log

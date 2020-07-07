@@ -114,3 +114,16 @@ src/minas/minas.c,./target/mfog,Jul  7 2020 09:28:10,1594124979,readExamples,8.3
 src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 09:28:11,1594124979,sendModel,8.3.0,2.232500e-02,8,100
 src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 09:28:11,1594125008,sendExamples,8.3.0,2.718816e+01,8,653457
 src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 09:28:11,1594125008,MNS_mfog_main,8.3.0,2.718866e+01,8,653457
+src/minas/minas.c,target/minas,Jul  7 2020 10:54:13,1594130054,readModel,8.3.0,3.923000e-03,1,100
+src/minas/minas.c,target/minas,Jul  7 2020 10:54:13,1594130068,readExamples,8.3.0,1.378397e+01,1,653457
+src/minas/minas.c,target/minas,Jul  7 2020 10:54:13,1594130134,MNS_minas_main,8.3.0,6.525105e+01,1,653457
+src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130165,readModel,8.3.0,4.008000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130179,readExamples,8.3.0,1.379422e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130179,sendModel,8.3.0,8.290000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130205,sendExamples,8.3.0,2.522928e+01,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130205,MNS_mfog_main,8.3.0,2.522935e+01,4,653457
+src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130233,readModel,8.3.0,3.975000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130247,readExamples,8.3.0,1.387781e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130247,sendModel,8.3.0,2.291800e-02,8,100
+src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130275,sendExamples,8.3.0,2.766524e+01,8,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130275,MNS_mfog_main,8.3.0,2.766538e+01,8,653457
