@@ -1,0 +1,128 @@
+ifconfig 
+ifconfig wla
+ifconfig wla*
+ifconfig wlan0
+sudo apt update 
+sudo apt upgrade 
+sudo reboot 
+ls
+ifcofig
+cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2
+exit
+ifconfig
+ssh pi@localhost
+exit
+ls
+ls -lah
+start-x
+startlxde
+startx
+ls
+tar xf openmpi-4.0.4.tar.gz 
+ls
+cd openmpi-4.0.4/
+ls
+./configure --enable-heterogeneous
+make -j 4 all
+sudo make -j 4 install
+mpirun --version
+sudo apt search lib*rte
+sudo apt search 'lib*rte'
+sudo apt install libopenmpi
+sudo apt install libopenmpi-dev 
+mpirun --version
+sudo make install
+mpirun --version
+./configure --enable-heterogeneous
+sudo reboot 
+ompi_info | less
+ls
+exit
+whereis mpirun
+mpirun --version
+cd openmpi-4.0.4/
+./configure --enable-heterogeneous
+make -j 4 all
+sudo make install
+mpirun --version
+sudo reboot 
+exit
+mpirun --version
+sudo apt update 
+sudo apt upgrade 
+sudo apt remove openmpi-*
+sudo apt remove openmpi-bin
+sudo apt autoremove
+mpirun --version
+ompi_info
+ompi_info | less
+ifconfig 
+mkdir mfog
+cd mfog/
+vim mpi_het_test.c
+sudo apt install vim
+vim mpi_het_test.c
+mpicc mpi_het_test.c 
+mpicc mpi_het_test.c -o test_het
+ls
+./test_het 
+exit
+cd cloud/
+ls
+make target/mfog 
+mpiexec --version
+mpicc --version
+make target/mfog 
+mkdir target
+make target/mfog 
+ssh pi@jantar
+ssh pi@almoco
+ssh-keygen 
+vim ~/.ssh/config
+ssh almoco
+ssh-copy-id almoco
+ssh almoco
+htop
+sudo swapoff -a
+vim /etc/dphys-swapfile
+sudo vim /etc/dphys-swapfile
+htop
+ls
+htop
+sudo reboot 
+htop
+exit
+htop
+cd cloud/
+mkdir out experiments
+htop
+cd cloud/
+make target/mfog
+htop
+make target/mfog
+htop
+make target/mfog
+htop
+make target/mfog
+htop
+mpicc helio.c -o helio
+ln -s /home/pi/cloud/helio ~/bcast
+ls ~
+ompi_info --all | grep hetero
+sudo reboot 
+cd cloud/
+htop
+ls
+cd ..
+mv cloud cloud-old
+mkdir cloud/target
+mkdir -p cloud/target
+ls cloud/target
+htop
+sudo apt update 
+sudo apt upgrade 
+exit
+ifconfig 
+exit
+history | less
+exit

@@ -1,0 +1,38 @@
+exit
+sudo apt update 
+sudo apt upgrade 
+exit
+mkdir -p cloud
+cd cloud/
+tar -xf openmpi-4.0.4.tar.gz
+cd openmpi-4.0.4/
+sudo apt install gcc libopenmpi-dev
+sudo reboot 
+startx
+sudo apt update 
+sudo apt upgrade 
+sudo apt autoremove
+cd cloud/openmpi-4.0.4/
+./configure
+make -j 4 all
+sudo make install
+mpirun --version
+sudo apt remove libopenmpi3
+mpirun --version
+cd ..
+mkdir target
+sudo shutdown
+sudo shutdown now
+exit
+sudo apt update
+sudo apt upgrade 
+sudo apt autoremove 
+sudo apt install librte-dev
+sudo apt search librte
+sudo apt search rte
+sudo apt search rte | less
+sudo apt install libpmix2
+htop
+sudo dphys-swapfile uninstall
+htop
+exit
