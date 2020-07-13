@@ -3,13 +3,26 @@
 import sys
 from pandas import DataFrame, read_csv
 import matplotlib.pyplot as plt
-import pandas as pd 
+import pandas as pd
+import os.path
 
-examplesDf = pd.read_csv(filepath_or_buffer=sys.argv[1], header=None)
+examplesFilename = sys.argv[1]
+matchesFilename = sys.argv[2]
+err = 0
+if not os.path.isfile(examplesFilename):
+    print('file not found   %s' % (examplesFilename))
+    err += 1
+if not os.path.isfile(matchesFilename):
+    print('file not found   %s' % (matchesFilename))
+    err += 1
+if err > 0:
+    exit(1)
+
+examplesDf = pd.read_csv(filepath_or_buffer=examplesFilename, header=None)
 examplesDf['class'] = examplesDf[22]
 examplesDf['#pointId'] = examplesDf.index
 
-matchesDf = pd.read_csv(filepath_or_buffer=sys.argv[2])
+matchesDf = pd.read_csv(filepath_or_buffer=matchesFilename)
 
 df = pd.merge(matchesDf, examplesDf, on='#pointId')
 print("Confusion Matrix")

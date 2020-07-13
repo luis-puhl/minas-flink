@@ -52,7 +52,7 @@ experiments/mpi-matrix.log: datasets/test.csv out/mpi.csv out/serial-sorted.csv 
 	diff out/serial-sorted.csv out/mpi-sorted.csv >> $@
 	@-echo '===diff with serial' >> $@
 experiments/cluster-matrix.log: out/cluster-sorted.csv datasets/test.csv
-	python3 src/minas/evaluate.py datasets/test.csv out/cluster-sorted.csv > $@
+	python3 src/minas/evaluate.py datasets/test.csv out/cluster.csv > $@
 	@-echo 'diff with serial===' >> $@
 	diff out/serial-sorted.csv out/cluster-sorted.csv >> $@
 	@-echo '===diff with serial' >> $@

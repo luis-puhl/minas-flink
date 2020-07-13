@@ -1,8 +1,18 @@
+[lanche:15608] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15608] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15611] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15611] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15612] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15612] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15613] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15613] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15614] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:15614] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
 arg MODEL_CSV=datasets/model-clean.csv
 arg EXAMPLES_CSV=datasets/test.csv
 arg TIMING_LOG=experiments/timing.csv
 arg MATCHES_CSV=out/cluster.csv
-Processor almoco, Rank 0 out of 8 processors
+Processor almoco, Rank 0 out of 12 processors
 MPI 3 1
 MPI arch = armv7l
 MPI host = almoco
@@ -11,22 +21,30 @@ Reading examples from  'datasets/test.csv'
 Reading model from     'datasets/model-clean.csv'
 Writing matches to     'out/cluster.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130233,readModel,8.3.0,4.000000e-03,1,100
-src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130247,readExamples,8.3.0,1.387784e+01,1,653457
-[2] Recv model with 100 clusters took 	1.392982e+01s
-[1] Recv model with 100 clusters took 	1.391628e+01s
-src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130247,sendModel,8.3.0,2.295600e-02,8,100
-[6] Recv model with 100 clusters took 	1.392020e+01s
-[3] Recv model with 100 clusters took 	1.393294e+01s
-[5] Recv model with 100 clusters took 	1.390447e+01s
-[4] Recv model with 100 clusters took 	1.391984e+01s
-[7] Recv model with 100 clusters took 	1.392612e+01s
-[2] Worker classify Test with 93351 examples took 	27.888414s
-[1] Worker classify Test with 93351 examples took 	27.067001s
-[3] Worker classify Test with 93351 examples took 	27.898090s
-[5] Worker classify Test with 93351 examples took 	26.985504s
-[4] Worker classify Test with 93351 examples took 	27.901528s
-[6] Worker classify Test with 93351 examples took 	27.896357s
-[7] Worker classify Test with 93351 examples took 	27.895642s
-src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130275,sendExamples,8.3.0,2.766526e+01,8,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130275,MNS_mfog_main,8.3.0,2.766540e+01,8,653457
+src/minas/minas.c,./target/mfog,Jul 12 2020 22:55:30,1594605407,readModel,8.3.0,4.013000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul 12 2020 22:55:30,1594605420,readExamples,8.3.0,1.387859e+01,1,653457
+[1] Recv model with 100 clusters took 	1.396407e+01s
+[2] Recv model with 100 clusters took 	1.392705e+01s
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 22:55:30,1594605420,sendModel,8.3.0,2.338400e-02,12,100
+[11] Recv model with 100 clusters took 	1.396986e+01s
+[5] Recv model with 100 clusters took 	1.396822e+01s
+[6] Recv model with 100 clusters took 	1.396716e+01s
+[10] Recv model with 100 clusters took 	1.397425e+01s
+[4] Recv model with 100 clusters took 	1.390474e+01s
+[3] Recv model with 100 clusters took 	1.395748e+01s
+[9] Recv model with 100 clusters took 	1.397230e+01s
+[8] Recv model with 100 clusters took 	1.397307e+01s
+[7] Recv model with 100 clusters took 	1.397455e+01s
+[2] Worker classify Test with 59406 examples took 	32.335357s
+[1] Worker classify Test with 59406 examples took 	32.332475s
+[3] Worker classify Test with 59405 examples took 	31.376695s
+[9] Worker classify Test with 59405 examples took 	32.380753s
+[4] Worker classify Test with 59405 examples took 	31.798653s
+[8] Worker classify Test with 59405 examples took 	31.993548s
+[5] Worker classify Test with 59405 examples took 	32.281840s
+[10] Worker classify Test with 59405 examples took 	32.382172s
+[6] Worker classify Test with 59405 examples took 	32.267379s
+[7] Worker classify Test with 59405 examples took 	32.215693s
+[11] Worker classify Test with 59405 examples took 	32.373917s
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 22:55:30,1594605453,sendExamples,8.3.0,3.224719e+01,12,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 22:55:30,1594605453,MNS_mfog_main,8.3.0,3.224973e+01,12,653457

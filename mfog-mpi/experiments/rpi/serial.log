@@ -8,9 +8,9 @@ MPI arch = armv7l
 MPI host = almoco
 MPI thread_level = MPI_THREAD_SINGLE
 Cluster with only one node. Running serial code.
-src/minas/minas.c,target/minas,Jul  7 2020 10:54:13,1594130054,readModel,8.3.0,3.946000e-03,1,100
-src/minas/minas.c,target/minas,Jul  7 2020 10:54:13,1594130068,readExamples,8.3.0,1.378401e+01,1,653457
-src/minas/minas.c,target/minas,Jul  7 2020 10:54:13,1594130134,MNS_minas_main,8.3.0,6.525107e+01,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 22:53:42,1594605223,readModel,8.3.0,3.919000e-03,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 22:53:42,1594605237,readExamples,8.3.0,1.363620e+01,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 22:53:42,1594605302,MNS_minas_main,8.3.0,6.503737e+01,1,653457
 Reading model from     'datasets/model-clean.csv'
 Reading examples from  'datasets/test.csv'
 Writing matches to     'out/serial.csv'

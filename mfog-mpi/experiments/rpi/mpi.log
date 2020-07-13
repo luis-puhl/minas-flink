@@ -11,14 +11,14 @@ Reading examples from  'datasets/test.csv'
 Reading model from     'datasets/model-clean.csv'
 Writing matches to     'out/mpi.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130165,readModel,8.3.0,4.034000e-03,1,100
-src/minas/minas.c,./target/mfog,Jul  7 2020 10:56:04,1594130179,readExamples,8.3.0,1.379425e+01,1,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130179,sendModel,8.3.0,8.740000e-04,4,100
-[1] Recv model with 100 clusters took 	1.378067e+01s
-[2] Recv model with 100 clusters took 	1.377070e+01s
-[3] Recv model with 100 clusters took 	1.379537e+01s
-[1] Worker classify Test with 217819 examples took 	25.733318s
-[2] Worker classify Test with 217819 examples took 	25.706656s
-[3] Worker classify Test with 217819 examples took 	25.762176s
-src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130205,sendExamples,8.3.0,2.522930e+01,4,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 10:56:04,1594130205,MNS_mfog_main,8.3.0,2.522936e+01,4,653457
+src/minas/minas.c,./target/mfog,Jul 12 2020 22:55:30,1594605331,readModel,8.3.0,4.060000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul 12 2020 22:55:30,1594605345,readExamples,8.3.0,1.377320e+01,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 22:55:30,1594605345,sendModel,8.3.0,9.080000e-04,4,100
+[1] Recv model with 100 clusters took 	1.376314e+01s
+[2] Recv model with 100 clusters took 	1.376216e+01s
+[3] Recv model with 100 clusters took 	1.375333e+01s
+[1] Worker classify Test with 217819 examples took 	25.402928s
+[2] Worker classify Test with 217819 examples took 	25.414041s
+[3] Worker classify Test with 217819 examples took 	25.408443s
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 22:55:30,1594605370,sendExamples,8.3.0,2.541548e+01,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 22:55:30,1594605370,MNS_mfog_main,8.3.0,2.541555e+01,4,653457
