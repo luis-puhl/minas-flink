@@ -325,6 +325,7 @@ src/minas/minas.c,./target/mfog,Jul  7 2020 11:06:44,1594130807,readExamples,10.
 src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 11:06:44,1594130807,sendModel,10.1.0,2.350000e-04,4,100
 src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 11:06:44,1594130810,sendExamples,10.1.0,3.548333e+00,4,653457
 src/mpi/minas-mpi.c,./target/mfog,Jul  7 2020 11:06:44,1594130810,MNS_mfog_main,10.1.0,3.548363e+00,4,653457
+<<<<<<< Updated upstream
 src/minas/minas.c,target/minas,Jul 12 2020 20:42:38,1594597359,readModel,10.1.0,6.380000e-04,1,100
 src/minas/minas.c,target/minas,Jul 12 2020 20:42:38,1594597361,readExamples,10.1.0,1.928083e+00,1,653457
 src/minas/minas.c,target/minas,Jul 12 2020 20:42:38,1594597367,MNS_minas_main,10.1.0,6.695963e+00,1,653457
@@ -333,3 +334,47 @@ src/minas/minas.c,./target/mfog,Jul 12 2020 20:42:51,1594597374,readExamples,10.
 src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 20:42:51,1594597374,sendModel,10.1.0,3.080000e-04,4,100
 src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 20:42:51,1594597377,sendExamples,10.1.0,3.598252e+00,4,653457
 src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 20:42:51,1594597377,MNS_mfog_main,10.1.0,3.598280e+00,4,653457
+=======
+src/minas/minas.c,target/minas,Jul 12 2020 11:03:09,1594562589,readModel,10.1.0,7.120000e-04,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 11:03:09,1594562592,readExamples,10.1.0,2.313886e+00,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 11:03:09,1594562599,MNS_minas_main,10.1.0,7.805597e+00,1,653457
+src/minas/minas.c,./target/mfog,Jul 12 2020 11:03:25,1594562605,readModel,10.1.0,1.039000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul 12 2020 11:03:25,1594562608,readExamples,10.1.0,3.008631e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 11:03:25,1594562608,sendModel,10.1.0,3.610000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 11:03:25,1594562612,sendExamples,10.1.0,3.874685e+00,4,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 11:03:25,1594562612,MNS_mfog_main,10.1.0,3.874717e+00,4,653457
+>>>>>>> Stashed changes
+src/minas/minas.c,target/minas,Jul 12 2020 23:24:13,1594607054,readModel,10.1.0,9.320000e-04,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 23:24:13,1594607056,readExamples,10.1.0,2.123835e+00,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 23:26:17,1594607178,readModel,10.1.0,6.800000e-04,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 23:26:17,1594607180,readExamples,10.1.0,2.005271e+00,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 23:34:50,1594607690,readModel,10.1.0,6.750000e-04,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 23:34:50,1594607693,readExamples,10.1.0,2.154813e+00,1,653457
+src/main.c,target/minas,Jul 12 2020 23:34:50,1594607699,main,10.1.0,6.142348e+00,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 23:36:21,1594607781,readModel,10.1.0,6.660000e-04,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 23:36:21,1594607783,readExamples,10.1.0,2.178523e+00,1,653457
+src/main.c,target/minas,Jul 12 2020 23:36:21,1594607789,main,10.1.0,5.983819e+00,1,653457
+src/minas/minas.c,target/minas,Jul 12 2020 23:57:28,1594609048,readModel,10.1.0,6.200000e-04,1,100
+src/minas/minas.c,target/minas,Jul 12 2020 23:57:28,1594609050,readExamples,10.1.0,2.082857e+00,1,653457
+src/main.c,target/minas,Jul 12 2020 23:57:28,1594609056,main,10.1.0,5.957988e+00,1,653457
+src/minas/minas.c,./target/mfog,Jul 12 2020 23:57:42,1594609062,readModel,10.1.0,6.490000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 12 2020 23:57:42,1594609064,readExamples,10.1.0,2.310801e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 23:57:42,1594609064,sendModel,10.1.0,1.790000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 23:57:42,1594609067,sendExamples,10.1.0,2.502318e+00,4,653457
+src/main.c,./target/mfog,Jul 12 2020 23:57:41,1594609067,main,10.1.0,2.502341e+00,4,653457
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:00:11,1594609211,readModel,10.1.0,7.520000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:00:11,1594609214,readExamples,10.1.0,2.318467e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:00:11,1594609214,sendModel,10.1.0,1.900000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:00:11,1594609216,sendExamples,10.1.0,2.678000e+00,4,653457
+src/main.c,./target/mfog,Jul 13 2020 00:00:11,1594609216,main,10.1.0,2.678021e+00,4,653457
+src/minas/minas.c,target/minas,Jul 13 2020 00:01:00,1594609260,readModel,10.1.0,1.015000e-03,1,100
+src/minas/minas.c,target/minas,Jul 13 2020 00:01:00,1594609262,readExamples,10.1.0,2.174576e+00,1,653457
+src/main.c,target/minas,Jul 13 2020 00:00:59,1594609268,main,10.1.0,5.901872e+00,1,653457
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594609272,readModel,10.1.0,7.040000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594609275,readExamples,10.1.0,2.441065e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594609275,sendModel,10.1.0,1.520000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,sendExamples,10.1.0,2.122791e+00,4,653457
+src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,main,10.1.0,2.122804e+00,4,653457
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594611961,readModel,10.1.0,6.150000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594611963,readExamples,10.1.0,1.965228e+00,1,653457
+src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594611969,main,10.1.0,5.890040e+00,1,653457

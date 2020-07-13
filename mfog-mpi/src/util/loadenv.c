@@ -46,39 +46,36 @@ int printEnvs(int argc, char *argv[], char **envp) {
 
 int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]) {
     const char *prefixMfog = "MFOG_";
-    int assingned = 0;
-    for (char **env = envp; *env != 0; env++) {
-        char *thisEnv = *env;
-        // fprintf(stderr, "%s\n", thisEnv);
-        int diff = 0, i = 0;
-        for (; prefixMfog[i] != '\0' && diff == 0; i++) diff += prefixMfog[i] - thisEnv[i];
-        //
-        if (diff != 0) continue;
-        for (int var = 0; var < varsSize; var++) {
-            if (assingVarFromEnvArg(varNames[var], varPtrs[var], &(thisEnv[i]), NULL)) {
-                assingned++;
-                break;
-            }
-        }
-    }
-    for (int arg = 1; arg < argc; arg++) {
-        for (int var = 0; var < varsSize; var++) {
-            // fprintf(stderr, "%s\n", argv[arg]);
-            if (assingVarFromEnvArg(varNames[var], varPtrs[var], argv[arg], argv[arg+1])) {
-                assingned++;
-                break;
-            }
-        }
-    }
     //
     const char *stdoutName = "stdout";
     const char *stderrName = "stderr";
     int failures = 0;
     #define DEBUG_LN fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, __FUNCTION__); fflush(stderr);
     for (int var = 0; var < varsSize; var++) {
-        if (var >= assingned) {
+        int assingned = 0;
+        for (char **env = envp; *env != 0; env++) {
+            char *thisEnv = *env;
+            // fprintf(stderr, "%s\n", thisEnv);
+            int diff = 0, i = 0;
+            for (; prefixMfog[i] != '\0' && diff == 0; i++) diff += prefixMfog[i] - thisEnv[i];
+            //
+            if (diff != 0) continue;
+            if (assingVarFromEnvArg(varNames[var], varPtrs[var], &(thisEnv[i]), NULL)) {
+                assingned++;
+                break;
+            }
+        }
+        for (int arg = 1; arg < argc; arg++) {
+            // fprintf(stderr, "%s\n", argv[arg]);
+            if (assingVarFromEnvArg(varNames[var], varPtrs[var], argv[arg], argv[arg+1])) {
+                assingned++;
+                break;
+            }
+        }
+        if (!assingned) {
             char *extraMsg;
-            if (fileModes[var][0] == 'a' && fileModes[var][1] == '\0') {
+            extraMsg = "";
+            if (fileModes[var][0] == 'w' || fileModes[var][0] == 'a') {
                 extraMsg = "\tWill use stdout as append file.";
                 *(filePtrs[var]) = stdout;
                 *(varPtrs[var]) = "stdout";
@@ -118,11 +115,8 @@ int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[],
             failures++;
         }
     }
-    if (failures > 0) {
-        fflush(stderr);
-        errx(EXIT_FAILURE, "Missing %d arguments.", failures);
-    }
-    return varsSize;
+    fprintf(stderr, "Missing %d arguments.\n", failures);
+    return failures;
 }
 
 void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]) {
@@ -130,6 +124,7 @@ void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[
     const char *stderrName = "stderr";
     for (int var = 0; var < varsSize; var++) {
         char *fileName = *(varPtrs[var]);
+        if (fileName == NULL) continue;
         int isStdout = 0;
         for (int i = 0; stdoutName[i] != '\0' && isStdout == 0; i++) isStdout += stdoutName[i] - fileName[i];
         int isStderr = 0;

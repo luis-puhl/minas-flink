@@ -65,13 +65,16 @@ typedef struct match {
 // double MNS_distance(double a[], double b[], int dimension);
 // #endif // MINAS_FUNCS
 double MNS_distance(double a[], double b[], int dimension);
-void readModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable);
+Model *readModel(int dimension, FILE *file, FILE *timing, char *executable);
+void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable);
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable);
-void classify(int dimension, Model *model, Point *ex, Match *match, double allDistances[]);
+// void classify(int dimension, Model *model, Point *ex, Match *match, double allDistances[]);
+void classify(int dimension, Model *model, Point *ex, Match *match);
 
 Model *kMeansInit(int nClusters, int dimension, Point examples[]);
 Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable);
 
 int MNS_minas_main(int argc, char *argv[], char **envp);
+Model *MNS_offline(int nExamples, Point examples[], int nClusters, int dimension, FILE *timing, char *executable);
 
 #endif // MINAS_H

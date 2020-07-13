@@ -1,24 +1,24 @@
-arg MODEL_CSV=datasets/model-clean.csv
-arg EXAMPLES_CSV=datasets/test.csv
-arg TIMING_LOG=experiments/timing.csv
-arg MATCHES_CSV=out/mpi.csv
-Processor pokebola, Rank 0 out of 4 processors
-MPI 3 1
-MPI arch = x86_64
-MPI host = pokebola
-MPI thread_level = MPI_THREAD_SINGLE
-Reading examples from  'datasets/test.csv'
+MPI rank / size => 2/4
+MPI rank / size => 3/4
+MPI rank / size => 0/4
+Expected argument or environment 'TRAINING_CSV' to be defined and 'r'-able.
+Expected argument or environment 'MODEL_OUT_CSV' to be defined and 'a'-able.	Will use stdout as append file.
+MPI rank / size => 1/4
+Missing 1 arguments.
+Reading training from  '(null)'
 Reading model from     'datasets/model-clean.csv'
+Writing model out to   'stdout'
+Reading examples from  'datasets/test.csv'
 Writing matches to     'out/mpi.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/minas.c,./target/mfog,Jul 12 2020 20:42:51,1594597371,readModel,10.1.0,7.030000e-04,1,100
-src/minas/minas.c,./target/mfog,Jul 12 2020 20:42:51,1594597374,readExamples,10.1.0,2.084963e+00,1,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 20:42:51,1594597374,sendModel,10.1.0,3.140000e-04,4,100
-[2] Recv model with 100 clusters took 	2.085868e+00s
-[3] Recv model with 100 clusters took 	2.073989e+00s
-[1] Recv model with 100 clusters took 	2.086654e+00s
-[2] Worker classify Test with 217819 examples took 	3.600622s
-[1] Worker classify Test with 217819 examples took 	3.584957s
-[3] Worker classify Test with 217819 examples took 	3.555360s
-src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 20:42:51,1594597377,sendExamples,10.1.0,3.598257e+00,4,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul 12 2020 20:42:51,1594597377,MNS_mfog_main,10.1.0,3.598284e+00,4,653457
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594609272,readModel,10.1.0,7.150000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594609275,readExamples,10.1.0,2.441072e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594609275,sendModel,10.1.0,1.560000e-04,4,100
+[2] Recv model with 100 clusters took 	1.600000e-04s
+[1] Recv model with 100 clusters took 	1.670000e-04s
+[3] Recv model with 100 clusters took 	1.700000e-04s
+[2] Worker classify Test with 217819 examples took 	2.122920s
+[1] Worker classify Test with 217819 examples took 	2.122744s
+[3] Worker classify Test with 217819 examples took 	2.123164s
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,sendExamples,10.1.0,2.122797e+00,4,653457
+src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,main,10.1.0,2.122806e+00,4,653457

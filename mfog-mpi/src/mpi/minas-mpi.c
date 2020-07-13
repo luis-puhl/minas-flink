@@ -69,20 +69,21 @@ void receiveModel(int dimension, Model *model, int clRank) {
     fprintf(stderr, "[%d] Recv model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
 }
 
-int receiveClassifications(FILE *matches) {
+int receiveClassifications(Match *matches) {
     int hasMessage = 0, matchesCounter = 0;
     Match match;
     MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
     while (hasMessage) {
         MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(match));
+        matches[match.pointId] = match;
+        // fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(match));
         matchesCounter++;
         MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
     }
     return matchesCounter;
 }
 
-int sendExamples(int dimension, Point *examples, int clSize, FILE *matches, FILE *timing, char *executable) {
+int sendExamples(int dimension, Point *examples, Match *matches, int clSize, FILE *timing, char *executable) {
     int dest = 1, exampleCounter = 0;
     clock_t start = clock();
     int bufferSize = sizeof(Point) + dimension * sizeof(double);
@@ -131,7 +132,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     char *buffer = malloc(bufferSize);
     //
     clock_t start = clock();
-    double *distances = malloc(model->size * sizeof(double));
+    // double *distances = malloc(model->size * sizeof(double));
     while (ex.id >= 0) {
         MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         int position = 0;
@@ -140,7 +141,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
         MPI_Unpack(buffer, bufferSize, &position, valuePtr, dimension, MPI_DOUBLE, MPI_COMM_WORLD);
         ex.value = valuePtr;
         //
-        classify(dimension, model, &ex, &match, distances);
+        classify(dimension, model, &ex, &match);
         MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_MASTER_RANK, 2005, MPI_COMM_WORLD);
         //
         exampleCounter++;
@@ -209,10 +210,10 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
         - Rcv Example
         - Classify
     */
-    Model model;
-    model.dimension = 22;
+    Model *model;
+    int dimension = 22;
     if (clRank == 0) {
-        char *executable = argv[0]; 
+        char *executable = argv[0];
         char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
         FILE *modelFile, *examplesFile, *matches, *timing;
         #define VARS_SIZE 4
@@ -228,25 +229,27 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
             "Writing timing to      '%s'\n",
             examplesCsv, modelCsv, matchesCsv, timingLog
         );
-        
-        readModel(model.dimension, modelFile, &model, timing, executable);
+
+        model = readModel(dimension, modelFile, timing, executable);
         Point *examples;
         int nExamples;
-        examples = readExamples(model.dimension, examplesFile, &nExamples, timing, executable);
+        examples = readExamples(dimension, examplesFile, &nExamples, timing, executable);
+        Match *memMatches = malloc(nExamples * sizeof(Match));
         //
-        sendModel(model.dimension, &model, clRank, clSize, timing, executable);
+        sendModel(dimension, model, clRank, clSize, timing, executable);
 
         clock_t start = clock();
-        fprintf(matches, MATCH_CSV_HEADER);
-        int exampleCounter = sendExamples(model.dimension, examples, clSize, matches, timing, executable);
+        // fprintf(matches, MATCH_CSV_HEADER);
+        int exampleCounter = sendExamples(dimension, examples, memMatches, clSize, timing, executable);
 
         MPI_Barrier(MPI_COMM_WORLD);
         PRINT_TIMING(timing, executable, clSize, start, exampleCounter);
         closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
     } else {
-        receiveModel(model.dimension, &model, clRank);
+        model = malloc(sizeof(Model));
+        receiveModel(dimension, model, clRank);
 
-        receiveExamples(model.dimension, &model, clRank);
+        receiveExamples(dimension, model, clRank);
 
         MPI_Barrier(MPI_COMM_WORLD);
     }
