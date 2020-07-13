@@ -32,6 +32,7 @@ typedef struct cluster {
     char label, category;
     double radius, meanDistance, *center;
     double distancesSum, distancesSqrSum;
+    double *pointSum, *pointSqrSum;
     int time;
 } Cluster;
 
@@ -48,7 +49,7 @@ typedef struct match {
     double clusterRadius;
     char label;
     double distance, secondDistance;
-    // Cluster *cluster;
+    Cluster *cluster;
 } Match;
 
 #define MATCH_CSV_HEADER "#pointId,clusterLabel,clusterId,clusterRadius,label,distance,secondDistance\n"

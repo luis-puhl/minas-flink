@@ -378,3 +378,8 @@ src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,main,10.1.0,2.122804e+0
 src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594611961,readModel,10.1.0,6.150000e-04,1,100
 src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594611963,readExamples,10.1.0,1.965228e+00,1,653457
 src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594611969,main,10.1.0,5.890040e+00,1,653457
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594658483,readModel,10.1.0,1.024000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594658485,readExamples,10.1.0,1.946348e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594658485,sendModel,10.1.0,1.300000e-04,4,100
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594658487,sendExamples,10.1.0,2.115485e+00,4,653457
+src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594658487,main,10.1.0,2.115498e+00,4,653457

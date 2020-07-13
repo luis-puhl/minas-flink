@@ -1,24 +1,24 @@
+MPI rank / size => 0/4
+MPI rank / size => 1/4
 MPI rank / size => 2/4
 MPI rank / size => 3/4
-MPI rank / size => 0/4
 Expected argument or environment 'TRAINING_CSV' to be defined and 'r'-able.
 Expected argument or environment 'MODEL_OUT_CSV' to be defined and 'a'-able.	Will use stdout as append file.
-MPI rank / size => 1/4
-Missing 1 arguments.
 Reading training from  '(null)'
 Reading model from     'datasets/model-clean.csv'
 Writing model out to   'stdout'
 Reading examples from  'datasets/test.csv'
 Writing matches to     'out/mpi.csv'
 Writing timing to      'experiments/timing.csv'
-src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594609272,readModel,10.1.0,7.150000e-04,1,100
-src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594609275,readExamples,10.1.0,2.441072e+00,1,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594609275,sendModel,10.1.0,1.560000e-04,4,100
-[2] Recv model with 100 clusters took 	1.600000e-04s
-[1] Recv model with 100 clusters took 	1.670000e-04s
-[3] Recv model with 100 clusters took 	1.700000e-04s
-[2] Worker classify Test with 217819 examples took 	2.122920s
-[1] Worker classify Test with 217819 examples took 	2.122744s
-[3] Worker classify Test with 217819 examples took 	2.123164s
-src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,sendExamples,10.1.0,2.122797e+00,4,653457
-src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594609277,main,10.1.0,2.122806e+00,4,653457
+Missing 1 arguments.
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594658483,readModel,10.1.0,1.036000e-03,1,100
+src/minas/minas.c,./target/mfog,Jul 13 2020 00:01:12,1594658485,readExamples,10.1.0,1.946356e+00,1,653457
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594658485,sendModel,10.1.0,1.340000e-04,4,100
+[1] Recv model with 100 clusters took 	1.280000e-04s
+[2] Recv model with 100 clusters took 	1.260000e-04s
+[3] Recv model with 100 clusters took 	1.390000e-04s
+[1] Worker classify Test with 217819 examples took 	2.116105s
+[2] Worker classify Test with 217819 examples took 	2.115571s
+[3] Worker classify Test with 217819 examples took 	2.116200s
+src/mpi/minas-mpi.c,./target/mfog,Jul 13 2020 00:01:12,1594658487,sendExamples,10.1.0,2.115491e+00,4,653457
+src/main.c,./target/mfog,Jul 13 2020 00:01:12,1594658487,main,10.1.0,2.115500e+00,4,653457

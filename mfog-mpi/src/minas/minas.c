@@ -168,8 +168,8 @@ void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *exe
         Cluster *cl = &(model->vals[i]);
         fprintf(file,
             "%d,%c,%c,"
-            "%d,%d,%lf,%lf,"
-            "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n",
+            "%d,%d,%le,%le,"
+            "%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le\n",
             cl->id, cl->label, cl->category,
             cl->matches, cl->time, cl->meanDistance, cl->radius,
             cl->center[0], cl->center[1], cl->center[2], cl->center[3], cl->center[4],
@@ -334,6 +334,7 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
     char *labels = malloc(labelsSize * sizeof(char));
     labels[0] = examples[0].label;
     Point *group = malloc(nExamples * sizeof(Point));
+    Match *groupMatches = malloc(nExamples * sizeof(Match));
     int remaining = nExamples;
     while (remaining > 0) {
         for (int i = 0; i < nExamples; i++) {
@@ -351,8 +352,12 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
         for (int i = filledClusters; i < model->size; i++) {
             model->vals[i].id = i;
             model->vals[i].center = malloc(model->dimension * sizeof(double));
+            model->vals[i].pointSum = malloc(model->dimension * sizeof(double));
+            model->vals[i].pointSqrSum = malloc(model->dimension * sizeof(double));
             for (int j = 0; j < model->dimension; j++) {
                 model->vals[i].center[j] = examples[i].value[j];
+                model->vals[i].pointSum[j] = 0.0;
+                model->vals[i].pointSqrSum[j] = 0.0;
             }
             model->vals[i].label = examples[i].label;
             model->vals[i].category = 'n';
@@ -361,6 +366,81 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
             model->vals[i].meanDistance = 0.0;
             model->vals[i].radius = 0.0;
         }
+        double globalInnerDistance = dimension, prevGlobalInnerDistance = dimension + 1, improvement;
+        int iter = 10;
+        do {
+            printf("K-MEANS ITER %d\n", iter);
+            iter--;
+            prevGlobalInnerDistance = globalInnerDistance;
+            globalInnerDistance = 0;
+            for (int exIndx = 0; exIndx < groupSize; exIndx++) {
+                // classify(dimension, model, &(group[i]), &m);
+                Point *ex = &(group[exIndx]);
+                Match *match = &(groupMatches[exIndx]);
+                // printf("classify %d %d\n", exIndx, group[exIndx].id);
+                match->distance = (double) dimension;
+                match->pointId = ex->id;
+                for (int clIndx = 0; clIndx < model->size; clIndx++) {
+                    Cluster *cl = &(model->vals[clIndx]);
+                    double distance = MNS_distance(ex->value, cl->center, dimension);
+                    if (match->distance > distance) {
+                        match->cluster = cl;
+                        match->clusterId = cl->id;
+                        match->clusterLabel = cl->label;
+                        match->clusterRadius = cl->radius;
+                        match->secondDistance = match->distance;
+                        match->distance = distance;
+                    }
+                }
+                match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+                // update cluster
+                // printf("update cluster %d -> %p\n", match->clusterId, match->cluster);
+                match->cluster->matches++;
+                match->cluster->distancesSum += match->distance;
+                match->cluster->distancesSqrSum += match->distance * match->distance;
+                for (int d = 0; d < dimension; d++) {
+                    match->cluster->pointSum[d] += ex->value[d];
+                    match->cluster->pointSqrSum[d] += ex->value[d] * ex->value[d];
+                }
+            }
+            // assing new center
+            for (int clIdx = 0; clIdx < model->size; clIdx++) {
+                Cluster *cl = &model->vals[clIdx];
+                // printf("assing new center to %d (%le avg dist)\n", cl->id, cl->distancesSum / cl->matches);
+                for (int d = 0; d < dimension; d++) {
+                    cl->center[d] = cl->pointSum[d] / cl->matches;
+                    cl->pointSum[d] = 0;
+                    cl->pointSqrSum[d] = 0;
+                }
+                cl->distancesSum = 0;
+            }
+            // update distances
+            for (int i = 0; i < groupSize; i++) {
+                groupMatches[i].distance = MNS_distance(group[i].value, groupMatches[i].cluster->center, dimension);
+                groupMatches[i].cluster->distancesSum += groupMatches[i].distance;
+                groupMatches[i].cluster->distancesSqrSum += groupMatches[i].distance * groupMatches[i].distance;
+                globalInnerDistance += groupMatches[i].distance;
+            }
+            // update mean
+            for (int clIdx = 0; clIdx < model->size; clIdx++) {
+                Cluster *cl = &model->vals[clIdx];
+                cl->meanDistance = cl->distancesSum / cl->matches;
+                cl->radius = 0;
+            }
+            // update std-dev
+            for (int i = 0; i < groupSize; i++) {
+                double diff = groupMatches[i].distance - groupMatches[i].cluster->meanDistance;
+                groupMatches[i].cluster->radius += diff * diff;
+            }
+            for (int clIdx = 0; clIdx < model->size; clIdx++) {
+                model->vals[clIdx].radius = sqrt(model->vals[clIdx].radius / (model->vals[clIdx].matches - 1));
+                model->vals[clIdx].matches = 0;
+            }
+            // stop when iteration limit is reached or when improvement is less than 1%
+            improvement = (globalInnerDistance / prevGlobalInnerDistance) - 1;
+            printf("[%d] Global dist of %le (%le avg) (%3.3lf%% better)\n", iter, globalInnerDistance, globalInnerDistance / groupSize, improvement);
+        } while (iter > 0 && improvement > 1.01);
+        printf("remaining %d\n", remaining);
         if (timing) {
             PRINT_TIMING(timing, executable, 1, start, model->size);
         }
