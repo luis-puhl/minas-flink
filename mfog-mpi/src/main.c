@@ -104,6 +104,9 @@ int main(int argc, char *argv[], char **envp) {
     }
     
     MPI_Finalize();
+    free(model);
+    free(examples);
+    free()
     return 0;
 }
 #endif // MAIN

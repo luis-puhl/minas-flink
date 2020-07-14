@@ -4,6 +4,7 @@
 
 typedef struct point {
     int id;
+    // double value[22];
     double *value;
     char label;
 } Point;

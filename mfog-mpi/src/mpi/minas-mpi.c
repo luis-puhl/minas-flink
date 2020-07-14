@@ -27,8 +27,11 @@ void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing
         dimension * (model->size) * sizeof(double);
     char *buffer = malloc(bufferSize);
     int position = 0;
-    DEBUG_LN mpiReturn = MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
-    MPI_RETURN
+    mpiReturn = MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    if (mpiReturn != MPI_SUCCESS) {
+        MPI_Abort(MPI_COMM_WORLD, mpiReturn);
+        errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
+    }
     DEBUG_LN mpiReturn = MPI_Pack(model->vals, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
     MPI_RETURN
     for (int i = 0; i < model->size; i++) {
@@ -83,7 +86,7 @@ int receiveClassifications(Match *matches) {
     return matchesCounter;
 }
 
-int sendExamples(int dimension, Point *examples, Match *matches, int clSize, FILE *timing, char *executable) {
+int sendExamples(int dimension, Point examples[], Match matches[], int clSize, FILE *timing, char *executable) {
     int dest = 1, exampleCounter = 0;
     clock_t start = clock();
     int bufferSize = sizeof(Point) + dimension * sizeof(double);
@@ -108,6 +111,7 @@ int sendExamples(int dimension, Point *examples, Match *matches, int clSize, FIL
     ex.value = malloc(dimension * sizeof(double));
     for (int dest = 1; dest < clSize; dest++) {
         int position = 0;
+        // TODO: enviar apenas o point com id=-1, o valor não é utilizado
         MPI_Pack(&ex, sizeof(Point), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Pack(ex.value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);

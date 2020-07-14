@@ -17,7 +17,19 @@
 - 2020-06-10 [ ] Optimizations with MPI I-Send/I-Recv or buffer (micro-batch, time, back-pressure);
 - 2020-06-12 [ ] Run on local<-->rpi, cloud<-->rpi;
   - 2020-07-01 [x] Run with heterogeneous cluster is not possible.
+  - 2020-07-13 [ ] Socket comm: Cloud, multiple stream sources (opposing current fan-out model);
 - 2020-06-15 [ ] Detecção de novidades;
-- 2020-06-15 [ ] Homogenização de ambientes (USER, PATH, ...);
+- 2020-06-15 [x] Homogenização de ambientes (USER, PATH, ...) ---->> Only on Rpi;
 - 2020-06-15 [x] Vazão (Throughput) (70k/5s), Latência (1/vazão), speedup (T_seq/T_parallel);
 - 2020-07-01 [ ] Review evaluate. Use unix sort.
+- 2020-07-13
+  - Classificador sem ND/Training;
+  - [x] Serial vs Paralelo (em C);
+  - [ ] Finalizar treinamento e ND
+    - [ ] Adicionar saídas no formato mfog (matches.csv e model.csv);
+    - [ ] Desativar ND para comparação com a implementação atual;
+    - [ ] Comparar a implementação java (original) com a nova (mpi-c);
+    - [ ] Implementar ND na versão serial (corretamente);
+    - [ ] Implementar ND na versão MPI com um nó exclusivo (fan-in matches);
+  - [ ] Valgrind memory leak analysis;
+  - [ ] Constante de `dimension` em tempo de compilação (dataset constante);
