@@ -106,7 +106,7 @@ int main(int argc, char *argv[], char **envp) {
     MPI_Finalize();
     free(model);
     free(examples);
-    free()
+    free(memMatches);
     return 0;
 }
 #endif // MAIN

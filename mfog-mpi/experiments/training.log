@@ -1,0 +1,38 @@
+MPI rank / size => 0/1
+Reading training from  'datasets/training.csv'
+Reading model from     'datasets/model-clean.csv'
+Writing model out to   'out/model.csv'
+Reading examples from  'datasets/test.csv'
+Writing matches to     'out/matches.csv'
+Writing timing to      'stdout'
+src/minas/minas.c,./target/mfog,Jul 15 2020 01:43:01,1594788182,readExamples,10.1.0,2.109260e-01,1,72000
+clustering 72000 examples with label N
+realloc from 0 to 100
+[0] Global dist of 1.112411e+04 (1.545016e-01 avg) (504.641577% better)
+[1] Global dist of 9.765304e+03 (1.356292e-01 avg) (  0.122150% better)
+[2] Global dist of 8.781530e+03 (1.219657e-01 avg) (  0.100742% better)
+[3] Global dist of 8.497243e+03 (1.180173e-01 avg) (  0.032373% better)
+[4] Global dist of 8.408015e+03 (1.167780e-01 avg) (  0.010501% better)
+[5] Global dist of 8.403018e+03 (1.167086e-01 avg) (  0.000594% better)
+[6] Global dist of 8.389920e+03 (1.165267e-01 avg) (  0.001559% better)
+[7] Global dist of 8.370567e+03 (1.162579e-01 avg) (  0.002307% better)
+[8] Global dist of 8.183579e+03 (1.136608e-01 avg) (  0.022339% better)
+[9] Global dist of 8.084527e+03 (1.122851e-01 avg) (  0.012104% better)
+src/minas/minas.c,./target/mfog,Jul 15 2020 01:43:01,1594788188,MNS_offline,10.1.0,6.025706e+00,1,100
+src/minas/minas.c,./target/mfog,Jul 15 2020 01:43:01,1594788188,writeModel,10.1.0,6.900000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 15 2020 01:43:01,1594788189,readExamples,10.1.0,1.770862e+00,1,653457
+src/main.c,./target/mfog,Jul 15 2020 01:43:01,1594788195,main,10.1.0,5.296719e+00,1,653457
+
+Confusion Matrix
+Classes (act)       A       N   total
+Labels (pred)                        
+-              257149  134480  391629
+N              190030   71798  261828
+total          447179  206278  653457
+
+
+Total examples     653457
+Total matches      653457
+Hits                71798 ( 10.987410%)
+Misses             581659 ( 89.012590%)
+Hits + Misses      653457 (100.000000%)
