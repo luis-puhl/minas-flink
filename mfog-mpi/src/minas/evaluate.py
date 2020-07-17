@@ -21,6 +21,9 @@ if err > 0:
 examplesDf = pd.read_csv(filepath_or_buffer=examplesFilename, header=None)
 examplesDf['class'] = examplesDf[22]
 examplesDf['#pointId'] = examplesDf.index
+countPerClass = examplesDf.groupby('class').count()[['#pointId']]
+print("Count per class")
+print(countPerClass)
 
 matchesDf = pd.read_csv(filepath_or_buffer=matchesFilename)
 
@@ -46,6 +49,6 @@ misses = df[df['label'] != df["class"]]['#pointId'].count()
 print('\n')
 print('Total examples   %8d' % (totalExamples))
 print('Total matches    %8d' % (totalMatches))
-print('Hits             %8d (%10f%%)' % (hits, (hits/totalExamples) * 100.0))
-print('Misses           %8d (%10f%%)' % (misses, (misses/totalExamples) * 100.0))
-print('Hits + Misses    %8d (%10f%%)' % (hits + misses, ((hits + misses)/totalExamples) * 100.0))
+print('Hits             %8d (%10f%%)' % (hits, (hits/totalMatches) * 100.0))
+print('Misses           %8d (%10f%%)' % (misses, (misses/totalMatches) * 100.0))
+print('Hits + Misses    %8d (%10f%%)' % (hits + misses, ((hits + misses)/totalMatches) * 100.0))

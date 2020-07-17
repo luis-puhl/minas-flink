@@ -32,7 +32,7 @@ int main(int argc, char *argv[], char **envp) {
     char *varNames[] = {    "TRAINING_CSV", "MODEL_CSV",    "MODEL_OUT_CSV",    "EXAMPLES_CSV", "MATCHES_CSV",  "TIMING_LOG" };
     char **fileNames[] = {  &trainingCsv,   &modelCsv,      &modelOutCsv,       &examplesCsv,   &matchesCsv,    &timingLog };
     FILE **files[] = {      &trainingFile,  &modelFile,     &modelOutFile,      &examplesFile,  &matches,       &timing };
-    char *fileModes[] = {   "r",            "r",            "a",                "r",            "w",            "a" };
+    char *fileModes[] = {   "r",            "r",            "w",                "r",            "w",            "a" };
     if (clRank == 0) {
         loadEnv(argc, argv, envp, envSize, varNames, fileNames, files, fileModes);
         printf(

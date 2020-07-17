@@ -46,19 +46,17 @@ typedef struct model {
 
 typedef struct match {
     int pointId, clusterId;
-    char clusterLabel;
+    char clusterLabel, clusterCatergoy;
     double clusterRadius;
     char label;
     double distance, secondDistance;
     Cluster *cluster;
 } Match;
 
-#define MATCH_CSV_HEADER "#pointId,clusterLabel,clusterId,clusterRadius,label,distance,secondDistance\n"
-#define MATCH_CSV_LINE_FORMAT "%d,%c,%d,%le,%c,%le,%le\n"
+#define MATCH_CSV_HEADER "#pointId,clusterLabel,clusterCategory,clusterId,clusterRadius,label,distance,secondDistance\n"
+#define MATCH_CSV_LINE_FORMAT "%d,%c,%c,%d,%le,%c,%le,%le\n"
 #define MATCH_CSV_LINE_PRINT_ARGS(match) \
-    match.pointId, match.clusterLabel, match.clusterId, match.clusterRadius, match.label, match.distance, match.secondDistance
-#define MATCH_CSV_LINE_SCAN_ARGS(match) \
-    &(match.pointId), &(match.clusterLabel), &(match.clusterId), &(match.clusterRadius), &(match.label), &(match.distance), &(match.secondDistance)
+    match.pointId, match.clusterLabel, match.clusterCatergoy, match.clusterId, match.clusterRadius, match.label, match.distance, match.secondDistance
 
 /** -------------------------------------------------------------------------------------------------------------------- */
 

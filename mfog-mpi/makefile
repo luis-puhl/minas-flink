@@ -3,7 +3,7 @@ all: clean experiments/serial-matrix.log experiments/mpi-matrix.log
 # experiments/mpi-test.log
 
 clean:
-	@-rm target/* out/* experiments/*.log 2>/dev/null
+	@-rm target/* experiments/*.log 2>/dev/null
 	@-mkdir target out experiments 2>/dev/null
 	@echo clean
 
@@ -52,6 +52,14 @@ cluster@almoco: code@almoco
 	ssh almoco "cd cloud && make experiments/cluster-matrix.log"
 	mkdir -p experiments/rpi
 	scp almoco:~/cloud/experiments/* experiments/rpi/
+
+runJava:
+	java -classpath '../ref-git/src-minas/out/artifacts/src_minas_jar/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
+		datasets/training.csv datasets/test.csv out/KDD/ \
+		clustream clustream \
+		2.0 1 10000 100 true
+	# intellij args
+	# datasets/KDD/KDDTe5Classes_fold1_ini.csv datasets/KDD/KDDTe5Classes_fold1_onl.csv out/KDD clustream clustream 2.0 1 10000 100 true
 
 # target/mpi-test: target src/util/mpi-test.c
 # 	mpicc src/util/mpi-test.c -o target/mpi-test -lm -Wall -g

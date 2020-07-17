@@ -244,6 +244,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
             // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
             match->clusterLabel = model->vals[i].label;
+            match->clusterCatergoy = model->vals[i].category;
             match->clusterRadius = model->vals[i].radius;
             match->secondDistance = match->distance;
             match->distance = distance;
@@ -324,30 +325,21 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
     return 0;
 }
 
-void printModel(Model *model, Cluster clusters[], int nClusters) {
-    printf("Model(dim=%d, size=%d, vals=%p\n", model->dimension, model->size, model->vals);
-    for (int i = 0; i < nClusters; i++) {
-        Cluster *cl = &(clusters[i]);
-        double sum = 0.0;
-        for (int d = 0; d < model->dimension; d++) {
-            sum += cl->center[d];
-        }
-        printf(
-            "\tCluster(id=%2d, lbl=%c, cat=%c, "
-            "matches=%5d, tim=%d, mean=%le, radi=%le, val=%le\n",
-            cl->id, cl->label, cl->category,
-            cl->matches, cl->time, cl->meanDistance, cl->radius, sum);
-        //     "\n\t\t%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,"
-        //     "\n\t\t%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le)\n",
-        //     cl->id, cl->label, cl->category,
-        //     cl->matches, cl->time, cl->meanDistance, cl->radius,
-        //     cl->center[0], cl->center[1], cl->center[2], cl->center[3], cl->center[4],
-        //     cl->center[5], cl->center[6], cl->center[7], cl->center[8], cl->center[9],
-        //     cl->center[10], cl->center[11], cl->center[12], cl->center[13], cl->center[14],
-        //     cl->center[15], cl->center[16], cl->center[17], cl->center[18], cl->center[19],
-        //     cl->center[20], cl->center[21]);
-    }
-}
+// void printModel(Model *model, Cluster clusters[], int nClusters) {
+//     printf("Model(dim=%d, size=%d, vals=%p\n", model->dimension, model->size, model->vals);
+//     for (int i = 0; i < nClusters; i++) {
+//         Cluster *cl = &(clusters[i]);
+//         double sum = 0.0;
+//         for (int d = 0; d < model->dimension; d++) {
+//             sum += cl->center[d];
+//         }
+//         printf(
+//             "\tCluster(id=%2d, lbl=%c, cat=%c, "
+//             "matches=%5d, tim=%d, mean=%le, radi=%le, val=%le\n",
+//             cl->id, cl->label, cl->category,
+//             cl->matches, cl->time, cl->meanDistance, cl->radius, sum);
+//     }
+// }
 
 /**
  * Initial training
@@ -438,6 +430,8 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
                         // match->clusterRadius = cl->radius;
                         match->secondDistance = match->distance;
                         match->distance = distance;
+                    } else if (distance <= match->secondDistance) {
+                        match->secondDistance = distance;
                     }
                 }
                 match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
