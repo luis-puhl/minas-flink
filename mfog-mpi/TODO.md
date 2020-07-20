@@ -21,13 +21,14 @@
 - 2020-06-15 [ ] Detecção de novidades;
 - 2020-06-15 [x] Homogenização de ambientes (USER, PATH, ...) ---->> Only on Rpi;
 - 2020-06-15 [x] Vazão (Throughput) (70k/5s), Latência (1/vazão), speedup (T_seq/T_parallel);
-- 2020-07-01 [ ] Review evaluate. Use unix sort.
+- 2020-07-01 [x] Review evaluate. Use unix sort.
 - 2020-07-13
   - Classificador sem ND/Training;
   - [x] Serial vs Paralelo (em C);
   - [ ] Finalizar treinamento e ND
-    - [ ] Adicionar saídas no formato mfog (matches.csv e model.csv);
-    - [ ] Desativar ND para comparação com a implementação atual;
+    - [x] ~~Adicionar saídas no formato mfog (matches.csv e model.csv);~~
+      - [x] Converter saída minas original para mfog (eval.py);
+    - [x] Desativar ND para comparação com a implementação atual;
     - [ ] Comparar a implementação java (original) com a nova (mpi-c);
     - [ ] Implementar ND na versão serial (corretamente);
     - [ ] Implementar ND na versão MPI com um nó exclusivo (fan-in matches);
