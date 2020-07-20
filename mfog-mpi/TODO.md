@@ -28,9 +28,14 @@
   - [ ] Finalizar treinamento e ND
     - [x] ~~Adicionar saídas no formato mfog (matches.csv e model.csv);~~
       - [x] Converter saída minas original para mfog (eval.py);
+      - [ ] Header de model.csv
+      - [ ] id cluster
+      - [ ] cluster matches
     - [x] Desativar ND para comparação com a implementação atual;
     - [ ] Comparar a implementação java (original) com a nova (mpi-c);
+    - [ ] Usar `bash` chamando `java -cp moa.jar moa.DoTask kmeans|clustream file`
     - [ ] Implementar ND na versão serial (corretamente);
     - [ ] Implementar ND na versão MPI com um nó exclusivo (fan-in matches);
+    - [ ] Diff por imagem (clusters e exemplos?);
   - [ ] Valgrind memory leak analysis;
   - [ ] Constante de `dimension` em tempo de compilação (dataset constante);

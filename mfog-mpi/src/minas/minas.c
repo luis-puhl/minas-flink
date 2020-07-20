@@ -240,7 +240,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
         // printf("%le,", distance);
         // allDistances[i] = distance;
-        if (match->distance > distance) {
+        if (match->distance >= distance) {
             // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
             match->clusterLabel = model->vals[i].label;
@@ -251,7 +251,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
         }
     }
     // printf("\n");
-    match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+    match->label = match->distance < match->clusterRadius ? match->clusterLabel : '-';
 
     // printf("%d,%c,%d,%c,%e,%e\n",
     //     match->pointId, match->isMatch, match->clusterId,
