@@ -1,9 +1,9 @@
 Expected argument or environment 'TRAINING_CSV' to be defined and 'r'-able.
 Expected argument or environment 'MODEL_OUT_CSV' to be defined and 'w'-able.	Will use stdout as append file.
 Missing 1 arguments.
-src/minas/minas.c,./target/mfog,Jul 20 2020 18:58:20,1595282300,readModel,10.1.0,9.230000e-04,1,100
-src/minas/minas.c,./target/mfog,Jul 20 2020 18:58:20,1595282303,readExamples,10.1.0,2.146313e+00,1,653457
-src/main.c,./target/mfog,Jul 20 2020 18:58:20,1595282309,main,10.1.0,6.251520e+00,1,653457
+src/minas/minas.c,./target/mfog,Jul 21 2020 16:05:10,1595358311,readModel,10.1.0,6.980000e-04,1,100
+src/minas/minas.c,./target/mfog,Jul 21 2020 16:05:10,1595358313,readExamples,10.1.0,1.889818e+00,1,653457
+src/main.c,./target/mfog,Jul 21 2020 16:05:10,1595358318,main,10.1.0,5.783570e+00,1,653457
 MPI rank / size => 0/1
 Reading training from  '(null)'
 Reading model from     'datasets/model-clean.csv'

@@ -32,7 +32,7 @@ typedef struct cluster {
     int id, matches;
     char label, category;
     double radius, meanDistance, *center;
-    double distancesSum, distancesSqrSum;
+    double distancesSum, distancesSqrSum, distancesMax;
     double *pointSum, *pointSqrSum;
     int time;
 } Cluster;
@@ -70,9 +70,6 @@ void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *exe
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable);
 // void classify(int dimension, Model *model, Point *ex, Match *match, double allDistances[]);
 void classify(int dimension, Model *model, Point *ex, Match *match);
-
-// Model *kMeansInit(int nClusters, int dimension, Point examples[]);
-// Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable);
 
 int MNS_minas_main(int argc, char *argv[], char **envp);
 Model *MNS_offline(int nExamples, Point examples[], int nClusters, int dimension, FILE *timing, char *executable);
