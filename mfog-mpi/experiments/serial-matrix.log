@@ -1,10 +1,18 @@
+Count per class
+       #pointId
+class          
+A        447179
+N        206278
 Confusion Matrix
-Classes (act)       A       N
-Labels (pred)                
--               19677     317
-N              427502  205961
+Classes (act)       A       N   total
+Labels (pred)                        
+-               19677     340   20017
+N              427502  205938  633440
+total          447179  206278  653457
+
+
 Total examples     653457
 Total matches      653457
-Hits               205961 ( 31.518677%)
-Misses             447496 ( 68.481323%)
+Hits               205938 ( 31.515157%)
+Misses             447519 ( 68.484843%)
 Hits + Misses      653457 (100.000000%)

@@ -9,6 +9,49 @@
 
 #ifndef MAIN
 #define MAIN
+
+int mainClassify(int clRank, int clSize, Point examples[], int nExamples, Model *model, Match *memMatches, FILE *matches, FILE *timing, char *executable) {
+    clock_t start = clock();
+    if (clSize == 1) {
+        for (int i = 0; i < nExamples; i++) {
+            classify(model->dimension, model, &(examples[i]), &(memMatches[i]));
+        }
+        if (timing) {
+            PRINT_TIMING(timing, executable, clSize, start, nExamples);
+        }
+        fprintf(matches, MATCH_CSV_HEADER);
+        for (int i = 0; i < nExamples; i++) {
+            fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
+        }
+    } else if (clRank == 0) {
+        MPI_Barrier(MPI_COMM_WORLD);
+        sendModel(model->dimension, model, clRank, clSize, timing, executable);
+        
+        MPI_Barrier(MPI_COMM_WORLD);
+        int exampleCounter = sendExamples(model->dimension, examples, memMatches, clSize, timing, executable);
+
+        MPI_Barrier(MPI_COMM_WORLD);
+        if (timing) {
+            PRINT_TIMING(timing, executable, clSize, start, exampleCounter);    
+        }
+        fprintf(matches, MATCH_CSV_HEADER);
+        for (int i = 0; i < exampleCounter; i++) {
+            fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
+        }
+        // closeEnv(envSize, varNames, fileNames, files, fileModes);
+    } else {
+        MPI_Barrier(MPI_COMM_WORLD);
+        model = malloc(sizeof(Model));
+        receiveModel(0, model, clRank);
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        receiveExamples(model->dimension, model, clRank);
+
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
+    return nExamples;
+}
+
 int main(int argc, char *argv[], char **envp) {
     int mpiReturn;
     mpiReturn = MPI_Init(&argc, &argv);
@@ -67,40 +110,10 @@ int main(int argc, char *argv[], char **envp) {
         examples = readExamples(model->dimension, examplesFile, &nExamples, timing, executable);
         memMatches = malloc(nExamples * sizeof(Match));
     }
-    if (clSize == 1) {
-        clock_t start = clock();
-        for (int i = 0; i < nExamples; i++) {
-            classify(model->dimension, model, &(examples[i]), &(memMatches[i]));
-        }
-        PRINT_TIMING(timing, executable, clSize, start, nExamples);
-        fprintf(matches, MATCH_CSV_HEADER);
-        for (int i = 0; i < nExamples; i++) {
-            fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
-        }
-    } else if (clRank == 0) {
-        MPI_Barrier(MPI_COMM_WORLD);
-        sendModel(model->dimension, model, clRank, clSize, timing, executable);
-        
-        MPI_Barrier(MPI_COMM_WORLD);
-        clock_t start = clock();
-        int exampleCounter = sendExamples(model->dimension, examples, memMatches, clSize, timing, executable);
-
-        MPI_Barrier(MPI_COMM_WORLD);
-        PRINT_TIMING(timing, executable, clSize, start, exampleCounter);
-        fprintf(matches, MATCH_CSV_HEADER);
-        for (int i = 0; i < exampleCounter; i++) {
-            fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
-        }
+    mainClassify(clRank, clSize,examples, nExamples, model, memMatches, matches, timing, executable);
+    
+    if (clRank == 0) {
         closeEnv(envSize, varNames, fileNames, files, fileModes);
-    } else {
-        MPI_Barrier(MPI_COMM_WORLD);
-        model = malloc(sizeof(Model));
-        receiveModel(0, model, clRank);
-        MPI_Barrier(MPI_COMM_WORLD);
-
-        receiveExamples(model->dimension, model, clRank);
-
-        MPI_Barrier(MPI_COMM_WORLD);
     }
     
     MPI_Finalize();
@@ -109,4 +122,5 @@ int main(int argc, char *argv[], char **envp) {
     free(memMatches);
     return 0;
 }
+
 #endif // MAIN
