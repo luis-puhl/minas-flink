@@ -7,169 +7,205 @@
 #include "../minas/minas.h"
 #include "../util/loadenv.h"
 
-Cluster* kMeansInit(int nClusters, int dimension, Point examples[], int initialClusterId, char label, char category, FILE *timing, char *executable) {
+Cluster *kMeansInit(int k, Cluster clusters[], int dimension, Point *examples[], int initialClusterId, char label, char category, FILE *timing, char *executable) {
     clock_t start = clock();
-    Cluster *clusters = malloc(nClusters * sizeof(Cluster));
-    for (int i = 0; i < nClusters; i++) {
-        clusters[i].id = initialClusterId + i;
-        clusters[i].center = malloc(dimension * sizeof(double));
-        clusters[i].pointSum = malloc(dimension * sizeof(double));
-        clusters[i].pointSqrSum = malloc(dimension * sizeof(double));
-        for (int j = 0; j < dimension; j++) {
-            clusters[i].center[j] = examples[i].value[j];
-            clusters[i].pointSum[j] = 0.0;
-            clusters[i].pointSqrSum[j] = 0.0;
+    for (int i = 0; i < k; i++) {
+        Cluster *modelCl = &(clusters[i]);
+        modelCl->id = initialClusterId + i;
+        modelCl->label = label;
+        modelCl->category = category;
+        modelCl->time = 0;
+        modelCl->matches = 0;
+        modelCl->meanDistance = 0.0;
+        modelCl->distancesMax = 0.0;
+        modelCl->radius = 0.0;
+        modelCl->center = malloc(dimension * sizeof(double));
+        modelCl->pointSum = malloc(dimension * sizeof(double));
+        modelCl->pointSqrSum = malloc(dimension * sizeof(double));
+        for (int d = 0; d < dimension; d++) {
+            modelCl->center[d] = examples[i]->value[d];
+            modelCl->pointSum[d] = 0.0;
+            modelCl->pointSqrSum[d] = 0.0;
         }
-        clusters[i].label = label;
-        clusters[i].category = category;
-        clusters[i].time = 0;
-        clusters[i].matches = 0;
-        clusters[i].meanDistance = 0.0;
-        clusters[i].radius = 0.0;
     }
     if (timing) {
-        PRINT_TIMING(timing, executable, 1, start, nClusters);
+        PRINT_TIMING(timing, executable, 1, start, k);
     }
     return clusters;
 }
 
-Model *kMeans(Model *model, int nClusters, int dimension, Point examples[], int nExamples, FILE *timing, char *executable) {
-    // Model *model = kMeansInit(nClusters, dimension, examples);
-    Match match;
-    // double *classifyDistances = malloc(model->size * sizeof(double));
+Cluster *kMeans(int k, Cluster clusters[], int dimension, Point *examples[], int nExamples, FILE *timing, char *executable) {
     clock_t start = clock();
     //
-    double globalDistance = dimension * 2.0, prevGlobalDistance, diffGD = 1.0;
-    double newCenters[nClusters][dimension], distances[nClusters], sqrDistances[nClusters];
-    int matches[nClusters];
-    int maxIterations = 10;
-    while (diffGD > 0.00001 && maxIterations-- > 0) {
-        // setup
-        prevGlobalDistance = globalDistance;
-        globalDistance = 0.0;
-        for (int i = 0; i < model->size; i++) {
-            matches[model->vals[i].id] = 0;
-            distances[model->vals[i].id] = 0.0;
-            sqrDistances[model->vals[i].id] = 0.0;
+    Match *groupMatches = malloc(nExamples * sizeof(Match));
+    double globalInnerDistance = dimension;
+    double prevGlobalInnerDistance = dimension + 1;
+    double improvement = 1;
+    // recommended improvement threshold is 1.0E-05
+    // kyoto goes to zero after *improvement > (1.0E-08)*
+    for (int iter = 0; iter < 100 && improvement > 0; iter++) {
+        prevGlobalInnerDistance = globalInnerDistance;
+        globalInnerDistance = 0;
+        for (int i = 0; i < k; i++) {
+            clusters[i].matches = 0;
+            clusters[i].distancesMax = 0.0;
+            clusters[i].meanDistance = 0.0;
+            clusters[i].radius = 0.0;
             for (int d = 0; d < dimension; d++) {
-                newCenters[model->vals[i].id][d] = 0.0;
+                clusters[i].pointSum[d] = 0.0;
+                clusters[i].pointSqrSum[d] = 0.0;
             }
         }
         // distances
-        for (int i = 0; i < nExamples; i++) {
-            classify(dimension, model, &(examples[i]), &match);
-            globalDistance += match.distance;
-            distances[match.clusterId] += match.distance;
-            sqrDistances[match.clusterId] += match.distance * match.distance;
-            for (int d = 0; d < dimension; d++) {
-                newCenters[match.clusterId][d] += examples[i].value[d];
+        for (int exIndx = 0; exIndx < nExamples; exIndx++) {
+            // classify(dimension, model, &(group[i]), &m);
+            Point *ex = examples[exIndx];
+            Match *match = &(groupMatches[exIndx]);
+            // printf("classify %d %d\n", exIndx, group[exIndx].id);
+            match->distance = (double) dimension;
+            match->pointId = ex->id;
+            for (int clIndx = 0; clIndx < k; clIndx++) {
+                Cluster *cl = &(clusters[clIndx]);
+                double distance = MNS_distance(ex->value, cl->center, dimension);
+                if (match->distance > distance) {
+                    match->cluster = cl;
+                    // match->clusterId = cl->id;
+                    // match->clusterLabel = cl->label;
+                    // match->clusterRadius = cl->radius;
+                    // match->secondDistance = match->distance;
+                    match->distance = distance;
+                }// else if (distance <= match->secondDistance) {
+                //    match->secondDistance = distance;
+                // }
             }
-            matches[match.clusterId]++;
+            // match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+            // update cluster
+            // printf("update cluster %d -> %p\n", match->clusterId, match->cluster);
+            match->cluster->matches++;
+            // if (match->distance > match->cluster->distancesMax) {
+            //     match->cluster->distancesMax = match->distance;
+            // }
+            match->cluster->distancesSum += match->distance;
+            match->cluster->distancesSqrSum += match->distance * match->distance;
+            for (int d = 0; d < dimension; d++) {
+                match->cluster->pointSum[d] += ex->value[d];
+                match->cluster->pointSqrSum[d] += ex->value[d] * ex->value[d];
+            }
+            globalInnerDistance += match->distance;
         }
-        // new centers and radius
-        for (int i = 0; i < model->size; i++) {
-            Cluster *cl = &(model->vals[i]);
-            cl->matches = matches[cl->id];
-            // skip clusters that didn't move
+        // assing new center
+        for (int clIdx = 0; clIdx < k; clIdx++) {
+            Cluster *cl = &clusters[clIdx];
             if (cl->matches == 0) continue;
-            cl->time++;
-            // avg of examples in the cluster
-            double maxDistance = -1.0;
+            // if (cl->matches == 0) {
+            //     for (int d = 0; d < dimension; d++) {
+            //         // cl->center[d] = 0;
+            //         cl->pointSum[d] = 0;
+            //         cl->pointSqrSum[d] = 0;
+            //     }
+            // }
+            // printf("assing new center to %d (%le avg dist)\n", cl->id, cl->distancesSum / cl->matches);
             for (int d = 0; d < dimension; d++) {
-                cl->center[d] = newCenters[cl->id][d] / cl->matches;
-                if (distances[cl->id] > maxDistance) {
-                    maxDistance = distances[cl->id];
-                }
+                cl->center[d] = cl->pointSum[d] / cl->matches;
+                cl->pointSum[d] = 0;
+                cl->pointSqrSum[d] = 0;
             }
-            cl->meanDistance = distances[cl->id] / cl->matches;
-            /**
-             * Radius is not clearly defined in the papers and original source code
-             * So here is defined as max distance
-             *  OR square distance sum divided by matches.
-             **/
-            // cl->radius = sqrDistances[cl->id] / cl->matches;
-            cl->radius = maxDistance;
+            cl->distancesSum = 0;
         }
-        //
-        diffGD = globalDistance / prevGlobalDistance;
-        fprintf(stderr, "%s iter=%d, diff%%=%e (%e -> %e)\n", __FILE__, maxIterations, diffGD, prevGlobalDistance, globalDistance);
+        // // update distances
+        // for (int i = 0; i < nExamples; i++) {
+        //     double distance = MNS_distance(group[i].value, groupMatches[i].cluster->center, dimension);
+        //     groupMatches[i].distance = distance;
+        //     groupMatches[i].cluster->distancesSum += distance;
+        //     groupMatches[i].cluster->distancesSqrSum += distance * distance;
+        //     if (distance > groupMatches[i].cluster->distancesMax) {
+        //         groupMatches[i].cluster->distancesMax = distance;
+        //     }
+        //     globalInnerDistance += distance;
+        // }
+        // for (int clIdx = 0; clIdx < nClusters; clIdx++) {
+        //     Cluster *cl = &clusters[clIdx];
+        //     if (cl->matches != 0) {
+        //         cl->meanDistance = cl->distancesSum / cl->matches;
+        //     }
+        //     // cl->radius = 0;
+        //     cl->radius = cl->distancesMax;
+        // }
+        // update std-dev
+        // for (int i = 0; i < nExamples; i++) {
+        //     double diff = groupMatches[i].distance - groupMatches[i].cluster->meanDistance;
+        //     groupMatches[i].cluster->radius += diff * diff;
+        // }
+        // for (int clIdx = 0; clIdx < nClusters; clIdx++) {
+        //     clusters[clIdx].radius = sqrt(clusters[clIdx].radius / (clusters[clIdx].matches - 1));
+        //     // clusters[clIdx].matches = 0;
+        // }
+        // stop when iteration limit is reached or when improvement is less than 1%
+        improvement = (globalInnerDistance / prevGlobalInnerDistance) - 1;
+        improvement = improvement >= 0 ? improvement : - improvement;
+        printf(
+            "[%3d] Global dist of %le (%le avg) (%le better)\n",
+            iter, globalInnerDistance, globalInnerDistance / nExamples, improvement
+        );
     }
+    // update distances
+    for (int i = 0; i < k; i++) {
+        clusters[i].matches = 0;
+        clusters[i].distancesMax = 0.0;
+        clusters[i].meanDistance = 0.0;
+        clusters[i].radius = 0.0;
+        for (int d = 0; d < dimension; d++) {
+            clusters[i].pointSum[d] = 0.0;
+            clusters[i].pointSqrSum[d] = 0.0;
+        }
+    }
+    for (int exIndx = 0; exIndx < nExamples; exIndx++) {
+        // classify(dimension, model, &(group[i]), &m);
+        Point *ex = examples[exIndx];
+        Match *match = &(groupMatches[exIndx]);
+        // printf("classify %d %d\n", exIndx, group[exIndx].id);
+        match->distance = (double) dimension;
+        match->pointId = ex->id;
+        for (int clIndx = 0; clIndx < k; clIndx++) {
+            Cluster *cl = &(clusters[clIndx]);
+            double distance = MNS_distance(ex->value, cl->center, dimension);
+            if (match->distance > distance) {
+                match->cluster = cl;
+                // match->clusterId = cl->id;
+                // match->clusterLabel = cl->label;
+                // match->clusterRadius = cl->radius;
+                // match->secondDistance = match->distance;
+                match->distance = distance;
+            }// else if (distance <= match->secondDistance) {
+            //    match->secondDistance = distance;
+            // }
+        }
+        // match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+        // update cluster
+        // printf("update cluster %d -> %p\n", match->clusterId, match->cluster);
+        match->cluster->matches++;
+        if (match->distance > match->cluster->distancesMax) {
+            match->cluster->distancesMax = match->distance;
+        }
+        match->cluster->distancesSum += match->distance;
+        match->cluster->distancesSqrSum += match->distance * match->distance;
+        for (int d = 0; d < dimension; d++) {
+            match->cluster->pointSum[d] += ex->value[d];
+            match->cluster->pointSqrSum[d] += ex->value[d] * ex->value[d];
+        }
+    }
+    for (int clIdx = 0; clIdx < k; clIdx++) {
+        Cluster *cl = &clusters[clIdx];
+        if (cl->matches != 0) {
+            cl->meanDistance = cl->distancesSum / cl->matches;
+        }
+        // cl->radius = 0;
+        cl->radius = cl->distancesMax;
+    }
+    //
+    free(groupMatches);
     if (timing) {
         PRINT_TIMING(timing, executable, 1, start, nExamples);
     }
-    return model;
+    return clusters;
 }
-
-/*
-    public static Clustering kMeans(Cluster[] centers, List<? extends Cluster> data ) {
-        int k = centers.length;
-
-        int dimensions = centers[0].getCenter().length;
-
-        ArrayList<ArrayList<Cluster>> clustering = new ArrayList<ArrayList<Cluster>>();
-        for ( int i = 0; i < k; i++ ) {
-            clustering.add( new ArrayList<Cluster>() );
-        }
-
-        int repetitions = 100;
-        while ( repetitions-- >= 0 ) {
-            // Assign points to clusters
-            for ( Cluster point : data ) {
-                double minDistance = distance( point.getCenter(), centers[0].getCenter() );
-                int closestCluster = 0;
-                for ( int i = 1; i < k; i++ ) {
-                    double distance = distance( point.getCenter(), centers[i].getCenter() );
-                    if ( distance < minDistance ) {
-                        closestCluster = i;
-                        minDistance = distance;
-                    }
-                }
-
-                clustering.get( closestCluster ).add( point );
-            }
-
-            // Calculate new centers and clear clustering lists
-            SphereCluster[] newCenters = new SphereCluster[centers.length];
-            for ( int i = 0; i < k; i++ ) {
-                newCenters[i] = calculateCenter( clustering.get( i ), dimensions );
-                clustering.get( i ).clear();
-            }
-            centers = newCenters;
-        }
-
-        return new Clustering( centers );
-    }
-    private static SphereCluster calculateCenter( ArrayList<Cluster> cluster, int dimensions ) {
-        double[] res = new double[dimensions];
-        for ( int i = 0; i < res.length; i++ ) {
-            res[i] = 0.0;
-        }
-
-        if ( cluster.size() == 0 ) {
-            return new SphereCluster( res, 0.0 );
-        }
-
-        for ( Cluster point : cluster ) {
-            double [] center = point.getCenter();
-            for (int i = 0; i < res.length; i++) {
-               res[i] += center[i];
-            }
-        }
-
-        // Normalize
-        for ( int i = 0; i < res.length; i++ ) {
-            res[i] /= cluster.size();
-        }
-
-        // Calculate radius
-        double radius = 0.0;
-        for ( Cluster point : cluster ) {
-            double dist = distance( res, point.getCenter() );
-            if ( dist > radius ) {
-                radius = dist;
-            }
-        }
-
-        return new SphereCluster( res, radius );
-    }
-*/
