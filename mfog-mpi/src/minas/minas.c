@@ -314,12 +314,19 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
         double prevGlobalInnerDistance = dimension + 1;
         double improvement = (globalInnerDistance / prevGlobalInnerDistance) - 1;
         improvement = improvement > 0 ? improvement : -improvement;
-        for (int iter = 0; iter < 100 /* && improvement > (1.0E-08) */; iter++) {
+        // kyoto goes to zero after *improvement > (1.0E-08)*
+        for (int iter = 0; iter < 100 && improvement > (1.0E-08); iter++) {
             prevGlobalInnerDistance = globalInnerDistance;
             globalInnerDistance = 0;
             for (int i = 0; i < nClusters; i++) {
                 clusters[i].matches = 0;
                 clusters[i].distancesMax = 0.0;
+                clusters[i].meanDistance = 0.0;
+                clusters[i].radius = 0.0;
+                for (int d = 0; d < dimension; d++) {
+                    clusters[i].pointSum[d] = 0.0;
+                    clusters[i].pointSqrSum[d] = 0.0;
+                }
             }
             // distances
             for (int exIndx = 0; exIndx < nExamples; exIndx++) {
@@ -337,13 +344,13 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
                         // match->clusterId = cl->id;
                         // match->clusterLabel = cl->label;
                         // match->clusterRadius = cl->radius;
-                        match->secondDistance = match->distance;
+                        // match->secondDistance = match->distance;
                         match->distance = distance;
-                    } else if (distance <= match->secondDistance) {
-                        match->secondDistance = distance;
-                    }
+                    }// else if (distance <= match->secondDistance) {
+                    //    match->secondDistance = distance;
+                    // }
                 }
-                match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+                // match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
                 // update cluster
                 // printf("update cluster %d -> %p\n", match->clusterId, match->cluster);
                 match->cluster->matches++;
@@ -356,11 +363,19 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
                     match->cluster->pointSum[d] += ex->value[d];
                     match->cluster->pointSqrSum[d] += ex->value[d] * ex->value[d];
                 }
+                globalInnerDistance += match->distance;
             }
             // assing new center
             for (int clIdx = 0; clIdx < nClusters; clIdx++) {
                 Cluster *cl = &clusters[clIdx];
                 if (cl->matches == 0) continue;
+                // if (cl->matches == 0) {
+                //     for (int d = 0; d < dimension; d++) {
+                //         // cl->center[d] = 0;
+                //         cl->pointSum[d] = 0;
+                //         cl->pointSqrSum[d] = 0;
+                //     }
+                // }
                 // printf("assing new center to %d (%le avg dist)\n", cl->id, cl->distancesSum / cl->matches);
                 for (int d = 0; d < dimension; d++) {
                     cl->center[d] = cl->pointSum[d] / cl->matches;
@@ -369,24 +384,25 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
                 }
                 cl->distancesSum = 0;
             }
-            // update distances
-            for (int i = 0; i < nExamples; i++) {
-                groupMatches[i].distance = MNS_distance(group[i].value, groupMatches[i].cluster->center, dimension);
-                groupMatches[i].cluster->distancesSum += groupMatches[i].distance;
-                groupMatches[i].cluster->distancesSqrSum += groupMatches[i].distance * groupMatches[i].distance;
-                if (groupMatches[i].distance > groupMatches[i].cluster->distancesMax) {
-                    groupMatches[i].cluster->distancesMax = groupMatches[i].distance;
-                }
-                globalInnerDistance += groupMatches[i].distance;
-            }
-            for (int clIdx = 0; clIdx < nClusters; clIdx++) {
-                Cluster *cl = &clusters[clIdx];
-                if (cl->matches != 0) {
-                    cl->meanDistance = cl->distancesSum / cl->matches;
-                }
-                // cl->radius = 0;
-                cl->radius = cl->distancesMax;
-            }
+            // // update distances
+            // for (int i = 0; i < nExamples; i++) {
+            //     double distance = MNS_distance(group[i].value, groupMatches[i].cluster->center, dimension);
+            //     groupMatches[i].distance = distance;
+            //     groupMatches[i].cluster->distancesSum += distance;
+            //     groupMatches[i].cluster->distancesSqrSum += distance * distance;
+            //     if (distance > groupMatches[i].cluster->distancesMax) {
+            //         groupMatches[i].cluster->distancesMax = distance;
+            //     }
+            //     globalInnerDistance += distance;
+            // }
+            // for (int clIdx = 0; clIdx < nClusters; clIdx++) {
+            //     Cluster *cl = &clusters[clIdx];
+            //     if (cl->matches != 0) {
+            //         cl->meanDistance = cl->distancesSum / cl->matches;
+            //     }
+            //     // cl->radius = 0;
+            //     cl->radius = cl->distancesMax;
+            // }
             // update std-dev
             // for (int i = 0; i < nExamples; i++) {
             //     double diff = groupMatches[i].distance - groupMatches[i].cluster->meanDistance;
@@ -398,12 +414,65 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
             // }
             // stop when iteration limit is reached or when improvement is less than 1%
             improvement = (globalInnerDistance / prevGlobalInnerDistance) - 1;
-            improvement = improvement > 0 ? improvement : - improvement;
+            improvement = improvement >= 0 ? improvement : - improvement;
             printf(
                 "[%3d] Global dist of %le (%le avg) (%le better)\n",
                 iter, globalInnerDistance, globalInnerDistance / nExamples, improvement
             );
-        // } while (iter > 0 && improvement > 1.01);
+        }
+        // update distances
+        for (int i = 0; i < nClusters; i++) {
+            clusters[i].matches = 0;
+            clusters[i].distancesMax = 0.0;
+            clusters[i].meanDistance = 0.0;
+            clusters[i].radius = 0.0;
+            for (int d = 0; d < dimension; d++) {
+                clusters[i].pointSum[d] = 0.0;
+                clusters[i].pointSqrSum[d] = 0.0;
+            }
+        }
+        for (int exIndx = 0; exIndx < nExamples; exIndx++) {
+            // classify(dimension, model, &(group[i]), &m);
+            Point *ex = &(group[exIndx]);
+            Match *match = &(groupMatches[exIndx]);
+            // printf("classify %d %d\n", exIndx, group[exIndx].id);
+            match->distance = (double) dimension;
+            match->pointId = ex->id;
+            for (int clIndx = 0; clIndx < nClusters; clIndx++) {
+                Cluster *cl = &(clusters[clIndx]);
+                double distance = MNS_distance(ex->value, cl->center, dimension);
+                if (match->distance > distance) {
+                    match->cluster = cl;
+                    // match->clusterId = cl->id;
+                    // match->clusterLabel = cl->label;
+                    // match->clusterRadius = cl->radius;
+                    // match->secondDistance = match->distance;
+                    match->distance = distance;
+                }// else if (distance <= match->secondDistance) {
+                //    match->secondDistance = distance;
+                // }
+            }
+            // match->label = match->distance <= match->clusterRadius ? match->clusterLabel : '-';
+            // update cluster
+            // printf("update cluster %d -> %p\n", match->clusterId, match->cluster);
+            match->cluster->matches++;
+            if (match->distance > match->cluster->distancesMax) {
+                match->cluster->distancesMax = match->distance;
+            }
+            match->cluster->distancesSum += match->distance;
+            match->cluster->distancesSqrSum += match->distance * match->distance;
+            for (int d = 0; d < dimension; d++) {
+                match->cluster->pointSum[d] += ex->value[d];
+                match->cluster->pointSqrSum[d] += ex->value[d] * ex->value[d];
+            }
+        }
+        for (int clIdx = 0; clIdx < nClusters; clIdx++) {
+            Cluster *cl = &clusters[clIdx];
+            if (cl->matches != 0) {
+                cl->meanDistance = cl->distancesSum / cl->matches;
+            }
+            // cl->radius = 0;
+            cl->radius = cl->distancesMax;
         }
         //
         if (timing) {
