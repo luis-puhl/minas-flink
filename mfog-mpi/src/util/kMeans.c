@@ -7,8 +7,11 @@
 #include "../minas/minas.h"
 #include "../util/loadenv.h"
 
-Cluster *kMeansInit(int k, Cluster clusters[], int dimension, Point *examples[], int initialClusterId, char label, char category, FILE *timing, char *executable) {
+Cluster *kMeansInit(int k, Cluster clusters[], int dimension, int nExamples, Point examples[], int initialClusterId, char label, char category, FILE *timing, char *executable) {
     clock_t start = clock();
+    if (nExamples < k) {
+        errx(EXIT_FAILURE, "Not enough examples for clustering. Needed %d and got %d\n", k, nExamples);
+    }
     for (int i = 0; i < k; i++) {
         Cluster *modelCl = &(clusters[i]);
         modelCl->id = initialClusterId + i;
@@ -23,7 +26,7 @@ Cluster *kMeansInit(int k, Cluster clusters[], int dimension, Point *examples[],
         modelCl->pointSum = malloc(dimension * sizeof(double));
         modelCl->pointSqrSum = malloc(dimension * sizeof(double));
         for (int d = 0; d < dimension; d++) {
-            modelCl->center[d] = examples[i]->value[d];
+            modelCl->center[d] = examples[i].value[d];
             modelCl->pointSum[d] = 0.0;
             modelCl->pointSqrSum[d] = 0.0;
         }
@@ -34,7 +37,7 @@ Cluster *kMeansInit(int k, Cluster clusters[], int dimension, Point *examples[],
     return clusters;
 }
 
-Cluster *kMeans(int k, Cluster clusters[], int dimension, Point *examples[], int nExamples, FILE *timing, char *executable) {
+Cluster *kMeans(int k, Cluster clusters[], int dimension, int nExamples, Point examples[], FILE *timing, char *executable) {
     clock_t start = clock();
     //
     // init clusters
@@ -55,12 +58,12 @@ Cluster *kMeans(int k, Cluster clusters[], int dimension, Point *examples[], int
     double improvement = 1;
     // recommended improvement threshold is 1.0E-05
     // kyoto goes to zero after *improvement > (1.0E-08)*
-    for (int iter = 0; iter < 100 && improvement > 0; iter++) {
+    for (int iter = 0; iter < 100 && improvement > 1.0E-01; iter++) {
         prevGlobalInnerDistance = globalInnerDistance;
         globalInnerDistance = 0;
         // distances
         for (int exIndx = 0; exIndx < nExamples; exIndx++) {
-            Point *ex = examples[exIndx];
+            Point *ex = &(examples[exIndx]);
             Match *match = &(groupMatches[exIndx]);
             match->distance = (double) dimension;
             match->pointId = ex->id;
@@ -121,7 +124,7 @@ Cluster *kMeans(int k, Cluster clusters[], int dimension, Point *examples[], int
     }
     for (int exIndx = 0; exIndx < nExamples; exIndx++) {
         // classify(dimension, model, &(group[i]), &m);
-        Point *ex = examples[exIndx];
+        Point *ex = &(examples[exIndx]);
         Match *match = &(groupMatches[exIndx]);
         // printf("classify %d %d\n", exIndx, group[exIndx].id);
         match->distance = (double) dimension;

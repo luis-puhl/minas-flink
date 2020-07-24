@@ -7,14 +7,56 @@
 #include "./mpi/minas-mpi.h"
 #include "./util/loadenv.h"
 
+/**
+ * Experiments are based in this Minas config
+ *      threshold = 2.0
+ *      flagEvaluationType = 1
+ *      thresholdForgettingPast = 10000
+ *      numMicro = 100   // aka K in k-means
+ *      flagMicroClusters = true
+ *      
+ *      minExCluster = 20
+ *      validationCriterion = dec
+*/
+
 #ifndef MAIN
 #define MAIN
 
 int mainClassify(int clRank, int clSize, Point examples[], int nExamples, Model *model, Match *memMatches, FILE *matches, FILE *timing, char *executable) {
     clock_t start = clock();
+    double noveltyThreshold = 2;
+    int k = 100;
+    int minExCluster = 20;
+    int maxUnkSize = k * minExCluster;
     if (clSize == 1) {
+        Point **unknowns = malloc(maxUnkSize * sizeof(Point *));
+        int unknownsSize = 0;
         for (int i = 0; i < nExamples; i++) {
-            classify(model->dimension, model, &(examples[i]), &(memMatches[i]));
+            Point *example = &(examples[i]);
+            Match *match = &(memMatches[i]);
+            classify(model->dimension, model, example, match);
+            if (match->label == '-') {
+                unknowns[unknownsSize] = example;
+                unknownsSize++;
+                if (unknownsSize >= maxUnkSize) {
+                    // ND
+                    Point *linearGroup = malloc(unknownsSize * sizeof(Point));
+                    printf("clustering unknowns with %5d examples\n", unknownsSize);
+                    for (int g = 0; g < unknownsSize; g++) {
+                        linearGroup[g] = *unknowns[g];
+                    }
+                    model = noveltyDetection(k, model, unknownsSize, linearGroup, minExCluster, noveltyThreshold, timing, executable);
+                    Match unkMatch;
+                    for (int unk = 0; unk < unknownsSize; unk++) {
+                        classify(model->dimension, model, unknowns[unk], &unkMatch);
+                        if (unkMatch.label != '-') {
+                            printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
+                        }
+                    }
+                    unknownsSize = 0;
+                    free(linearGroup);
+                }
+            }
         }
         if (timing) {
             PRINT_TIMING(timing, executable, clSize, start, nExamples);
@@ -111,7 +153,7 @@ int main(int argc, char *argv[], char **envp) {
         memMatches = malloc(nExamples * sizeof(Match));
     }
     mainClassify(clRank, clSize,examples, nExamples, model, memMatches, matches, timing, executable);
-    
+
     if (clRank == 0) {
         closeEnv(envSize, varNames, fileNames, files, fileModes);
     }

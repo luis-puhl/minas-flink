@@ -40,6 +40,7 @@ typedef struct cluster {
 typedef struct model {
     Cluster* vals;
     int size, dimension;
+    char nextNovelty;
 } Model;
 
 /** -------------------------------------------------------------------------------------------------------------------- */
@@ -73,5 +74,6 @@ void classify(int dimension, Model *model, Point *ex, Match *match);
 
 int MNS_minas_main(int argc, char *argv[], char **envp);
 Model *MNS_offline(int nExamples, Point examples[], int nClusters, int dimension, FILE *timing, char *executable);
+Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[], int minExCluster, double noveltyThreshold, FILE *timing, char *executable);
 
 #endif // MINAS_H

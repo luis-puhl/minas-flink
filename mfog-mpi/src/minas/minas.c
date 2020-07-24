@@ -35,6 +35,7 @@ Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
     Model *model = malloc(sizeof(Model));
     model->size = 0;
     model->dimension = dimension;
+    model->nextNovelty = 'a';
     model->vals = malloc(1 * sizeof(Cluster));
     int lines = 0;
     //
@@ -236,12 +237,13 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
 /**
  * Initial training
 **/
-Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension, FILE *timing, char *executable) {
+Model* MNS_offline(int nExamples, Point examples[], int k, int dimension, FILE *timing, char *executable) {
     // one kMeans per label
     clock_t start = clock();
     Model *model = malloc(sizeof(Model));
     model->size = 0;
     model->dimension = dimension;
+    model->nextNovelty = 'a';
     model->vals = malloc(1 * sizeof(Cluster));
     //
     int labelsSize = 0;
@@ -272,20 +274,27 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
         char label = labels[l];
         int groupSize = groupSizes[l];
         Point **group = groups[l];
+        Point *linearGroup = malloc(groupSize * sizeof(Point));
         printf("clustering label %c with %5d examples\n", label, groupSize);
-        if (groupSize < nClusters) {
-            errx(EXIT_FAILURE, "Not enough examples for clustering. Needed %d and got %d\n", nClusters, groupSize);
+        for (int g = 0; g < groupSize; g++) {
+            linearGroup[g] = *group[g];
+        }
+        
+        if (groupSize < k) {
+            errx(EXIT_FAILURE, "Not enough examples for clustering. Needed %d and got %d\n", k, groupSize);
         }
         //
         int prevModelSize = model->size;
-        model->size += nClusters;
+        model->size += k;
         printf("realloc from %d to %d\n", prevModelSize, model->size);
         model->vals = realloc(model->vals, model->size * sizeof(Cluster));
         //
         Cluster *clusters = &(model->vals[prevModelSize]);
-        clusters = kMeansInit(nClusters, clusters, dimension, group, prevModelSize, label, category, timing, executable);
+        clusters = kMeansInit(k, clusters, dimension, groupSize, linearGroup, prevModelSize, label, category, timing, executable);
         //
-        clusters = kMeans(nClusters, clusters, dimension, group, groupSize, timing, executable);
+        clusters = kMeans(k, clusters, dimension, groupSize, linearGroup, timing, executable);
+        //
+        free(linearGroup);
     }
     //
     for (int l = 0; l < labelsSize; l++) {
@@ -299,6 +308,63 @@ Model* MNS_offline(int nExamples, Point examples[], int nClusters, int dimension
     // dont free(vals)
     if (timing) {
         PRINT_TIMING(timing, executable, 1, start, nExamples);
+    }
+    return model;
+}
+
+char noveltyLabel(Model *model, Cluster *cluster, double threshold) {
+    double minDist = model->dimension;
+    Cluster *nearest = NULL;
+    for (int i = 0; i < model->size; i++) {
+        double dist = MNS_distance(model->vals[i].center, cluster->center, model->dimension);
+        if (dist < minDist || nearest == NULL) {
+            nearest = &(model->vals[i]);
+            minDist = dist;
+        }
+    }
+    if (minDist < nearest->meanDistance * threshold) {
+        // cluster in an extension of a concept
+        cluster->label = nearest->label;
+    } else {
+        // cluster is a novelty pattern
+        printf("Novelty pattern found. Will call it '%c'.\n", model->nextNovelty);
+        cluster->label = model->nextNovelty;
+        model->nextNovelty++;
+        if (model->nextNovelty > 'z') {
+            model->nextNovelty = 'a';
+        }
+    }
+    return cluster->label;
+}
+
+Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[], int minExCluster, double noveltyThreshold, FILE *timing, char *executable) {
+    clock_t start = clock();
+    char label = 'a';
+    char category = 'u';
+    int dimension = model->dimension;
+    Cluster *clusters = malloc(k * sizeof(Cluster));
+
+    clusters = kMeansInit(k, clusters, dimension, unknownsSize, unknowns, model->size, label, category, timing, executable);
+    //
+    clusters = kMeans(k, clusters, dimension, unknownsSize, unknowns, timing, executable);
+
+    for (int clId = 0; clId < k; clId++) {
+        if (clusters[clId].matches > minExCluster) {
+            noveltyLabel(model, &clusters[clId], noveltyThreshold);
+            //
+            int prevSize = model->size;
+            model->size++;
+            model->vals = realloc(model->vals, model->size * sizeof(Cluster));
+            model->vals[prevSize] = clusters[clId];
+        } else {
+            free(clusters[clId].center);
+            free(clusters[clId].pointSum);
+            free(clusters[clId].pointSqrSum);
+        }
+    }
+
+    if (timing) {
+        PRINT_TIMING(timing, executable, 1, start, unknownsSize);
     }
     return model;
 }
