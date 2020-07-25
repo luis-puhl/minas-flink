@@ -234,6 +234,58 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
     return 0;
 }
 
+Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Point examples[], FILE *timing, char *executable) {
+    clock_t start = clock();
+    // update distances
+    for (int i = 0; i < k; i++) {
+        clusters[i].matches = 0;
+        clusters[i].distancesMax = 0.0;
+        clusters[i].meanDistance = 0.0;
+        clusters[i].radius = 0.0;
+        for (int d = 0; d < dimension; d++) {
+            clusters[i].pointSum[d] = 0.0;
+            clusters[i].pointSqrSum[d] = 0.0;
+        }
+    }
+    for (int exIndx = 0; exIndx < nExamples; exIndx++) {
+        // classify(dimension, model, &(group[i]), &m);
+        Point *ex = &(examples[exIndx]);
+        double nearestDistance;
+        Cluster *nearest = NULL;
+        for (int clIndx = 0; clIndx < k; clIndx++) {
+            Cluster *cl = &(clusters[clIndx]);
+            double distance = MNS_distance(ex->value, cl->center, dimension);
+            if (nearest == NULL || nearestDistance > distance) {
+                nearest = cl;
+                nearestDistance = distance;
+            }
+        }
+        nearest->matches++;
+        if (nearestDistance > nearest->distancesMax) {
+            nearest->distancesMax = nearestDistance;
+        }
+        nearest->distancesSum += nearestDistance;
+        nearest->distancesSqrSum += nearestDistance * nearestDistance;
+        for (int d = 0; d < dimension; d++) {
+            nearest->pointSum[d] += ex->value[d];
+            nearest->pointSqrSum[d] += ex->value[d] * ex->value[d];
+        }
+    }
+    for (int clIdx = 0; clIdx < k; clIdx++) {
+        Cluster *cl = &clusters[clIdx];
+        if (cl->matches != 0) {
+            cl->meanDistance = cl->distancesSum / cl->matches;
+        }
+        // cl->radius = 0;
+        cl->radius = cl->distancesMax;
+    }
+    if (timing) {
+        PRINT_TIMING(timing, executable, 1, start, nExamples);
+    }
+    return clusters;
+}
+
+
 /**
  * Initial training
 **/
@@ -290,9 +342,9 @@ Model* MNS_offline(int nExamples, Point examples[], int k, int dimension, FILE *
         model->vals = realloc(model->vals, model->size * sizeof(Cluster));
         //
         Cluster *clusters = &(model->vals[prevModelSize]);
-        clusters = kMeansInit(k, clusters, dimension, groupSize, linearGroup, prevModelSize, label, category, timing, executable);
-        //
-        clusters = kMeans(k, clusters, dimension, groupSize, linearGroup, timing, executable);
+        clusters = kMeansInit(dimension, k, clusters, groupSize, linearGroup, prevModelSize, label, category, timing, executable);
+        clusters = kMeans(dimension, k, clusters, groupSize, linearGroup, timing, executable);
+        clusters = fillCluster(dimension, k, clusters, groupSize, linearGroup, timing, executable);
         //
         free(linearGroup);
     }
@@ -312,30 +364,6 @@ Model* MNS_offline(int nExamples, Point examples[], int k, int dimension, FILE *
     return model;
 }
 
-char noveltyLabel(Model *model, Cluster *cluster, double threshold) {
-    double minDist = model->dimension;
-    Cluster *nearest = NULL;
-    for (int i = 0; i < model->size; i++) {
-        double dist = MNS_distance(model->vals[i].center, cluster->center, model->dimension);
-        if (dist < minDist || nearest == NULL) {
-            nearest = &(model->vals[i]);
-            minDist = dist;
-        }
-    }
-    if (minDist < nearest->meanDistance * threshold) {
-        // cluster in an extension of a concept
-        cluster->label = nearest->label;
-    } else {
-        // cluster is a novelty pattern
-        printf("Novelty pattern found. Will call it '%c'.\n", model->nextNovelty);
-        cluster->label = model->nextNovelty;
-        model->nextNovelty++;
-        if (model->nextNovelty > 'z') {
-            model->nextNovelty = 'a';
-        }
-    }
-    return cluster->label;
-}
 
 Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[], int minExCluster, double noveltyThreshold, FILE *timing, char *executable) {
     clock_t start = clock();
@@ -344,13 +372,92 @@ Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[],
     int dimension = model->dimension;
     Cluster *clusters = malloc(k * sizeof(Cluster));
 
-    clusters = kMeansInit(k, clusters, dimension, unknownsSize, unknowns, model->size, label, category, timing, executable);
-    //
-    clusters = kMeans(k, clusters, dimension, unknownsSize, unknowns, timing, executable);
+    clusters = kMeansInit(dimension, k, clusters, unknownsSize, unknowns, model->size, label, category, timing, executable);
+    clusters = kMeans(dimension, k, clusters, unknownsSize, unknowns, timing, executable);
+    // clusters = fillCluster(dimension, k, clusters, unknownsSize, unknowns, timing, executable);
+    for (int i = 0; i < k; i++) {
+        clusters[i].matches = 0;
+        clusters[i].distancesMax = 0.0;
+        clusters[i].meanDistance = 0.0;
+        clusters[i].radius = 0.0;
+        for (int d = 0; d < dimension; d++) {
+            clusters[i].pointSum[d] = 0.0;
+            clusters[i].pointSqrSum[d] = 0.0;
+        }
+    }
+    for (int exIndx = 0; exIndx < unknownsSize; exIndx++) {
+        // classify(dimension, model, &(group[i]), &m);
+        Point *ex = &(unknowns[exIndx]);
+        double nearestDistance;
+        Cluster *nearest = NULL;
+        for (int clIndx = 0; clIndx < model->size; clIndx++) {
+            Cluster *cl = &(model->vals[clIndx]);
+            double distance = MNS_distance(ex->value, cl->center, dimension);
+            if (nearest == NULL || nearestDistance > distance) {
+                nearest = cl;
+                nearestDistance = distance;
+            }
+        }
+        for (int clIndx = 0; clIndx < k; clIndx++) {
+            Cluster *cl = &(clusters[clIndx]);
+            double distance = MNS_distance(ex->value, cl->center, dimension);
+            if (nearest == NULL || nearestDistance > distance) {
+                nearest = cl;
+                nearestDistance = distance;
+            }
+        }
+        nearest->matches++;
+        if (nearestDistance > nearest->distancesMax) {
+            nearest->distancesMax = nearestDistance;
+        }
+        nearest->distancesSum += nearestDistance;
+        nearest->distancesSqrSum += nearestDistance * nearestDistance;
+        for (int d = 0; d < dimension; d++) {
+            nearest->pointSum[d] += ex->value[d];
+            nearest->pointSqrSum[d] += ex->value[d] * ex->value[d];
+        }
+    }
+    for (int clIdx = 0; clIdx < k; clIdx++) {
+        Cluster *cl = &clusters[clIdx];
+        if (cl->matches != 0) {
+            cl->meanDistance = cl->distancesSum / cl->matches;
+        }
+        // cl->radius = 0;
+        cl->radius = cl->distancesMax;
+    }
 
     for (int clId = 0; clId < k; clId++) {
-        if (clusters[clId].matches > minExCluster) {
-            noveltyLabel(model, &clusters[clId], noveltyThreshold);
+        if (clusters[clId].matches >= minExCluster) {
+            printf("\tNew pattern in %5d examples. ", clusters[clId].matches);
+            double minDist = model->dimension;
+            Cluster *nearest = NULL;
+            for (int i = 0; i < model->size; i++) {
+                double dist = MNS_distance(model->vals[i].center, clusters[clId].center, model->dimension);
+                if (dist < minDist || nearest == NULL) {
+                    nearest = &(model->vals[i]);
+                    minDist = dist;
+                }
+            }
+            double ndThreshold = nearest->radius * noveltyThreshold;
+            printf("Nearest cluster in model %e distant and ndThreshold=%e. ", minDist, ndThreshold);
+            if (minDist < ndThreshold) {
+                // cluster in an extension of a concept
+                printf("Is extension of '%c' concept.\n", nearest->label);
+                clusters[clId].label = nearest->label;
+                clusters[clId].category = 'e';
+            } else {
+                // cluster is a novelty pattern
+                printf("Will call this novelty '%c'.\n", model->nextNovelty);
+                clusters[clId].label = model->nextNovelty;
+                clusters[clId].category = 'a';
+                model->nextNovelty++;
+                if (model->nextNovelty == 'z' + 1) {
+                    model->nextNovelty = '0';
+                }
+                if (model->nextNovelty == '9' + 1) {
+                    model->nextNovelty = 'a';
+                }
+            }
             //
             int prevSize = model->size;
             model->size++;

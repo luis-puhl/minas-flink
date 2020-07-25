@@ -9,6 +9,7 @@
 
 int assingVarFromEnvArg(char *varName, char **varPtr, char *envOrArg, char *nextArg) {
     // printf("varName=%s, envOrArg=%s, nextArg=%s\n", varName, envOrArg, nextArg);
+    if (varName == NULL) return 0;
     int diff = 0, i;
     for (i = 0; varName[i] != '\0' && diff == 0; i++) diff += varName[i] - envOrArg[i];
     if (diff != 0) return 0;

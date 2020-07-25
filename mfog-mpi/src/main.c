@@ -22,23 +22,29 @@
 #ifndef MAIN
 #define MAIN
 
-int mainClassify(int clRank, int clSize, Point examples[], int nExamples, Model *model, Match *memMatches, FILE *matches, FILE *timing, char *executable) {
+int mainClassify(int mpiRank, int mpiSize, Point examples[], Model *model, int *nMatches, Match *memMatches, FILE *matches, FILE *timing, char *executable) {
     clock_t start = clock();
     double noveltyThreshold = 2;
     int k = 100;
     int minExCluster = 20;
     int maxUnkSize = k * minExCluster;
-    if (clSize == 1) {
+    int exampleCounter = 0;
+    *nMatches = 0;
+    int thresholdForgettingPast = 10000;
+    int lastCheck = 0;
+    if (mpiSize == 1) {
         Point **unknowns = malloc(maxUnkSize * sizeof(Point *));
         int unknownsSize = 0;
-        for (int i = 0; i < nExamples; i++) {
-            Point *example = &(examples[i]);
-            Match *match = &(memMatches[i]);
+        for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
+            Point *example = &(examples[exampleCounter]);
+            Match *match = &(memMatches[*nMatches]);
+            (*nMatches)++;
             classify(model->dimension, model, example, match);
             if (match->label == '-') {
                 unknowns[unknownsSize] = example;
                 unknownsSize++;
-                if (unknownsSize >= maxUnkSize) {
+                if (unknownsSize >= maxUnkSize  && (lastCheck + (k * minExCluster) < exampleCounter)) {
+                    lastCheck = exampleCounter;
                     // ND
                     Point *linearGroup = malloc(unknownsSize * sizeof(Point));
                     printf("clustering unknowns with %5d examples\n", unknownsSize);
@@ -46,35 +52,59 @@ int mainClassify(int clRank, int clSize, Point examples[], int nExamples, Model 
                         linearGroup[g] = *unknowns[g];
                     }
                     model = noveltyDetection(k, model, unknownsSize, linearGroup, minExCluster, noveltyThreshold, timing, executable);
-                    Match unkMatch;
-                    for (int unk = 0; unk < unknownsSize; unk++) {
-                        classify(model->dimension, model, unknowns[unk], &unkMatch);
-                        if (unkMatch.label != '-') {
-                            printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
+                    char outputModelFileName[200];
+                    sprintf(outputModelFileName, "out/models/%d.csv", exampleCounter);
+                    FILE *outputModelFile = fopen(outputModelFileName, "w");
+                    if (outputModelFile != NULL) {
+                        writeModel(model->dimension, outputModelFile, model, timing, executable);
+                    }
+                    fclose(outputModelFile);
+                    //
+                    // Classify after model update
+                    int prevUnknownsSize = unknownsSize;
+                    unknownsSize = 0;
+                    int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
+                    int forgotten = 0;
+                    for (int unk = 0; unk < prevUnknownsSize; unk++) {
+                        match = &(memMatches[*nMatches]);
+                        classify(model->dimension, model, unknowns[unk], match);
+                        if (match->label != '-') {
+                            (*nMatches)++;
+                            // printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
+                        } else if (unknowns[unk]->id > currentForgetUnkThreshold) {
+                            // compact unknowns
+                            unknowns[unknownsSize] = unknowns[unk];
+                            unknownsSize++;
+                        } else {
+                            forgotten++;
                         }
                     }
-                    unknownsSize = 0;
+                    printf("late classify of %d unknowns, forgotten %d\n", prevUnknownsSize + forgotten - unknownsSize, forgotten);
+                    fflush(stdout);
                     free(linearGroup);
                 }
             }
+            if (exampleCounter % thresholdForgettingPast == 0) {
+                // put old clusters in model to sleep
+            }
         }
         if (timing) {
-            PRINT_TIMING(timing, executable, clSize, start, nExamples);
+            PRINT_TIMING(timing, executable, mpiSize, start, exampleCounter);
         }
         fprintf(matches, MATCH_CSV_HEADER);
-        for (int i = 0; i < nExamples; i++) {
+        for (int i = 0; i < (*nMatches); i++) {
             fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
         }
-    } else if (clRank == 0) {
+    } else if (mpiRank == 0) {
         MPI_Barrier(MPI_COMM_WORLD);
-        sendModel(model->dimension, model, clRank, clSize, timing, executable);
+        sendModel(model->dimension, model, mpiRank, mpiSize, timing, executable);
         
         MPI_Barrier(MPI_COMM_WORLD);
-        int exampleCounter = sendExamples(model->dimension, examples, memMatches, clSize, timing, executable);
+        int exampleCounter = sendExamples(model->dimension, examples, memMatches, mpiSize, timing, executable);
 
         MPI_Barrier(MPI_COMM_WORLD);
         if (timing) {
-            PRINT_TIMING(timing, executable, clSize, start, exampleCounter);    
+            PRINT_TIMING(timing, executable, mpiSize, start, exampleCounter);
         }
         fprintf(matches, MATCH_CSV_HEADER);
         for (int i = 0; i < exampleCounter; i++) {
@@ -84,14 +114,14 @@ int mainClassify(int clRank, int clSize, Point examples[], int nExamples, Model 
     } else {
         MPI_Barrier(MPI_COMM_WORLD);
         model = malloc(sizeof(Model));
-        receiveModel(0, model, clRank);
+        receiveModel(0, model, mpiRank);
         MPI_Barrier(MPI_COMM_WORLD);
 
-        receiveExamples(model->dimension, model, clRank);
+        receiveExamples(model->dimension, model, mpiRank);
 
         MPI_Barrier(MPI_COMM_WORLD);
     }
-    return nExamples;
+    return exampleCounter;
 }
 
 int main(int argc, char *argv[], char **envp) {
@@ -101,46 +131,50 @@ int main(int argc, char *argv[], char **envp) {
         MPI_Abort(MPI_COMM_WORLD, mpiReturn);
         errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
     }
-    int clRank, clSize;
-    mpiReturn = MPI_Comm_size(MPI_COMM_WORLD, &clSize);
-    mpiReturn = MPI_Comm_rank(MPI_COMM_WORLD, &clRank);
+    int mpiRank, mpiSize;
+    mpiReturn = MPI_Comm_size(MPI_COMM_WORLD, &mpiSize);
+    mpiReturn = MPI_Comm_rank(MPI_COMM_WORLD, &mpiRank);
     if (mpiReturn != MPI_SUCCESS) {
         MPI_Abort(MPI_COMM_WORLD, mpiReturn);
         errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
     }
-    printf("MPI rank / size => %d/%d\n", clRank, clSize);
+    printf("MPI rank / size => %d/%d\n", mpiRank, mpiSize);
     // printEnvs(argc, argv, envp);
     char *executable = argv[0];
-    int envSize = 6;
-    char                    *trainingCsv,   *modelCsv,      *modelOutCsv,       *examplesCsv,   *matchesCsv,    *timingLog;
-    FILE                    *trainingFile,  *modelFile,     *modelOutFile,      *examplesFile,  *matches,       *timing;
-    char *varNames[] = {    "TRAINING_CSV", "MODEL_CSV",    "MODEL_OUT_CSV",    "EXAMPLES_CSV", "MATCHES_CSV",  "TIMING_LOG" };
-    char **fileNames[] = {  &trainingCsv,   &modelCsv,      &modelOutCsv,       &examplesCsv,   &matchesCsv,    &timingLog };
-    FILE **files[] = {      &trainingFile,  &modelFile,     &modelOutFile,      &examplesFile,  &matches,       &timing };
-    char *fileModes[] = {   "r",            "r",            "w",                "r",            "w",            "a" };
-    if (clRank == 0) {
+    int envSize =           1 +             1 +             /* 1 +                 */ 1 +             1 +             1;
+    char                    *trainingCsv,   *modelCsv,      /* *modelOutCsv,       */ *examplesCsv,   *matchesCsv,    *timingLog;
+    FILE                    *trainingFile,  *modelFile,     /* *modelOutFile,      */ *examplesFile,  *matches,       *timing;
+    char *varNames[] = {    "TRAINING_CSV", "MODEL_CSV",    /* "MODEL_OUT_CSV",    */ "EXAMPLES_CSV", "MATCHES_CSV",  "TIMING_LOG" };
+    char **fileNames[] = {  &trainingCsv,   &modelCsv,      /* &modelOutCsv,       */ &examplesCsv,   &matchesCsv,    &timingLog };
+    FILE **files[] = {      &trainingFile,  &modelFile,     /* &modelOutFile,      */ &examplesFile,  &matches,       &timing };
+    char *fileModes[] = {   "r",            "r",            /* "w",                */ "r",            "w",            "a" };
+    if (mpiRank == 0) {
         loadEnv(argc, argv, envp, envSize, varNames, fileNames, files, fileModes);
         printf(
             "Reading training from  '%s'\n"
             "Reading model from     '%s'\n"
-            "Writing model out to   '%s'\n"
+            // "Writing model out to   '%s'\n"
             "Reading examples from  '%s'\n"
             "Writing matches to     '%s'\n"
             "Writing timing to      '%s'\n",
-            trainingCsv, modelCsv, modelOutCsv, examplesCsv, matchesCsv, timingLog
+            trainingCsv, modelCsv, /* modelOutCsv, */ examplesCsv, matchesCsv, timingLog
         );
+        fflush(stdout);
     }
     //
     Model *model;
-    if (clRank == 0) {
+    if (mpiRank == 0) {
         if (trainingCsv != NULL && trainingFile != NULL) {
             // printf("will training\n");
             int nExamples;
             Point *examples = readExamples(22, trainingFile, &nExamples, timing, executable);
             model = MNS_offline(nExamples, examples, 100, 22, timing, executable);
-            if (modelOutFile != NULL) {
-                writeModel(model->dimension, modelOutFile, model, timing, executable);
+            fflush(stdout);
+            FILE *outputModelFile = fopen("out/models/0-initial.csv", "w");
+            if (outputModelFile != NULL) {
+                writeModel(model->dimension, outputModelFile, model, timing, executable);
             }
+            fclose(outputModelFile);
         } else if (modelCsv != NULL && modelFile != NULL) {
             model = readModel(22, modelFile, timing, executable);
         }
@@ -150,11 +184,20 @@ int main(int argc, char *argv[], char **envp) {
     int nExamples;
     if (examplesCsv != NULL && examplesFile != NULL) {
         examples = readExamples(model->dimension, examplesFile, &nExamples, timing, executable);
-        memMatches = malloc(nExamples * sizeof(Match));
+        // max 2 matches per example
+        memMatches = malloc(2 * nExamples * sizeof(Match));
     }
-    mainClassify(clRank, clSize,examples, nExamples, model, memMatches, matches, timing, executable);
+    int nMatches;
+    mainClassify(mpiRank, mpiSize, examples, model, &nMatches, memMatches, matches, timing, executable);
 
-    if (clRank == 0) {
+    if (mpiRank == 0) {
+        char outputModelFileName[200];
+        sprintf(outputModelFileName, "out/models/%d-final.csv", nExamples);
+        FILE *outputModelFile = fopen(outputModelFileName, "w");
+        if (outputModelFile != NULL) {
+            writeModel(model->dimension, outputModelFile, model, timing, executable);
+        }
+        fclose(outputModelFile);
         closeEnv(envSize, varNames, fileNames, files, fileModes);
     }
     
