@@ -438,6 +438,7 @@ Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[],
                     minDist = dist;
                 }
             }
+            // double ndThreshold = nearest->meanDistance * noveltyThreshold;
             double ndThreshold = nearest->radius * noveltyThreshold;
             printf("Nearest cluster in model %e distant and ndThreshold=%e. ", minDist, ndThreshold);
             if (minDist < ndThreshold) {

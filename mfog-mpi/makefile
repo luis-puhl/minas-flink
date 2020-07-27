@@ -48,6 +48,11 @@ experiments/cluster-matrix.log: datasets/test.csv out/cluster.csv
 	diff out/serial-sorted.csv out/cluster-sorted.csv >> $@
 	@-echo '===diff with serial' >> $@
 
+experiments/noveltyDetection.log: target/mfog
+	target/mfog TRAINING_CSV=datasets/training.csv MODEL_CSV=datasets/model-clean.csv \
+		EXAMPLES_CSV=datasets/test.csv MATCHES_CSV out/matches.csv > $@
+	python3 src/minas/evaluate.py >> $@
+
 cluster@almoco: code@almoco
 	ssh almoco "cd cloud && make experiments/cluster-matrix.log"
 	mkdir -p experiments/rpi

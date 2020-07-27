@@ -5,10 +5,14 @@ import sys
 import os.path
 import numpy as np
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 # get_ipython().run_line_magic('matplotlib', 'inline')
 # plt.close('all')
+
+dpi = 300
+figsize = (1920 / dpi, 1080 / dpi)
 
 def getExamplesDf(path):
     assert os.path.isfile(path), "file '%s' not found." % path
@@ -56,17 +60,19 @@ def confusionMatrix(exDf, maDf=None):
     cf = pd.crosstab(merged['class'], merged['label'],
                      rownames=['Classes (act)'], colnames=['Labels (pred)']).transpose()
     classes = cf.columns.values
-    labels = cf.index
+    labels = cf.index.to_list()
     offf = ['-'] + [c for c in classes if c in labels]
     cf['assigned'] = [l if l in offf else c for l, c in zip(labels, cf.idxmax(axis='columns'))]
     cf['hits'] = [0 if l == '-' else cf.at[i, l] for i, l in cf['assigned'].iteritems()]
-    return (cf, classes, labels.to_list(), offf)
+    assignment = dict([ v for v in cf['assigned'].iteritems()])
+    return (cf, classes, labels, offf, assignment)
 
-def printEval(exDf, maDf):
+def printEval(exDf, maDf, path=None, title=None):
     print("examples ", exDf.shape)
     print("matches  ", maDf.shape)
     df = merge(exDf, maDf)
-    cf, classes, labels, offf = confusionMatrix(df)
+    cf, classes, labels, off, ass = confusionMatrix(df)
+    plotHitMissUnkRate(df, ass, off, path, title)
     print("Confusion Matrix")
     print(cf)
 
@@ -78,20 +84,67 @@ def printEval(exDf, maDf):
 
     print('Classes          ', classes)
     print('Labels           ', labels, len(labels))
-    print('Initial labels   ', offf)
+    print('Initial labels   ', off)
+    # print('Assignment       ', ass)
     print('Total examples   %8d' % (totalExamples))
     print('Total matches    %8d' % (totalMatches))
     print('Hits             %8d (%10f%%)' % (hits, (hits/tot) * 100.0))
     print('Misses           %8d (%10f%%)' % (misses, (misses/tot) * 100.0))
     # print('Hits + Misses    %8d (%10f%%)' % (hits + misses, ((hits + misses)/tot) * 100.0))
     print('')
-    return cf
+    return df, cf, classes, labels, off, ass
 
-def diffMinasMfog(examplesDf, minasDF, mfogDF):
+def plotHitMissUnkRate(df, assignment, off, path=None, title=None):
+    if (path is not None):
+        path = path + 'hits_' + title + '.png'
+    df['assigned'] = df['label'].map(assignment)
+    df['hit'] = (df['assigned'] == df['class']).map({False: 0, True: 1})
+    df['miss'] = (df['assigned'] != df['class']).map({False: 0, True: 1})
+    df['unk'] = (df['assigned'] == '-').map({False: 0, True: 1})
+    df['miss'] = df['miss'] - df['unk']
+    # 
+    df['hits'] = df['hit'].cumsum()
+    df['misses'] = df['miss'].cumsum()
+    df['unks'] = df['unk'].cumsum()
+    # 
+    df['tot'] = df['hits'] + df['misses'] + df['unks']
+    # 
+    df['d_hit'] = df['hits'] / df['tot']
+    df['d_mis'] = df['misses'] / df['tot']
+    df['d_unk'] = df['unks'] / df['tot']
+    # 
+    labelSet = set()
+    # d_lbl = []
+    xcoords = []
+    prevLen = len(off)
+    for i, l in zip(df.index, df['label']):
+        labelSet.add(l)
+        # d_lbl += [len(labelSet)]
+        if len(labelSet) > prevLen:
+            prevLen = len(labelSet)
+            xcoords += [i]
+    # df['d_lbl'] = d_lbl
+    # df['d_lbl'] = df['d_lbl'] / len(labelSet)
+    plotable = df[['d_hit', 'd_mis', 'd_unk' ]]
+    # 
+    if (title is not None):
+        title += ' Hit Miss Unk'
+    else:
+        title = 'Hit Miss Unk'
+    ax = plotable.plot(title=title, figsize=figsize)
+    ax.vlines(x=xcoords, ymin=0, ymax=1, colors='gray', ls='--', lw=0.5, label='vline_multiple')
+    ax.get_xaxis().set_major_formatter(matplotlib.ticker.EngFormatter())
+    # 
+    if (path is not None):
+        plt.savefig(path, dpi=dpi, bbox_inches='tight')
+        print('saving', path)
+    return df
+
+def diffMinasMfog(examplesDf, minasDF, mfogDF, path=None):
     print("### Minas\n")
-    printEval(examplesDf, minasDF)
+    printEval(examplesDf, minasDF, path, 'minas')
     print("### Mfog\n")
-    printEval(examplesDf, mfogDF)
+    printEval(examplesDf, mfogDF, path, 'mfog')
     # [['id', 'og', 'label']]
     m = pd.merge(minasDF, mfogDF, on='id', how='left')
     diff = m[m['label_x'] != m['label_y']]
@@ -109,7 +162,7 @@ def getModelDf(path):
     df = pd.read_csv(filepath_or_buffer=path)
     df['id'] = df['#id'].astype(int)
     msum = df['matches'].sum()
-    df['matches'] = df['matches'].astype(float) / msum
+    df['matches_p'] = df['matches'].astype(float) / msum
     return df.drop(['#id', 'time'], axis=1)  # .sort_values('meanDistance')
 
 def compareModelDf(a, b, path=None):
@@ -134,14 +187,18 @@ def compareModelDf(a, b, path=None):
     ax0.pcolor(aCl)
     ax1.pcolor(bCl)
     if (path is not None):
-        fig.savefig(path + 'model-full.png', dpi=300)
+        fig.set_size_inches(figsize)
+        fig.savefig(path + 'model-full.png', dpi=dpi, bbox_inches='tight')
+        print('saving', path + 'model-full.png')
     # 
     fig, (ax0, ax1) = plt.subplots(2, 1)
     ax0.set_title('Full diff')
     ax0.pcolor(c)
     ax1.pcolor(d)
     if (path is not None):
-        fig.savefig(path + 'model-diff.png', dpi=300)
+        fig.set_size_inches(figsize)
+        fig.savefig(path + 'model-diff.png', dpi=dpi, bbox_inches='tight')
+        print('saving', path + 'model-diff.png')
     # 
     m = pd.merge(a, b, on='id', how='left')
     diff = m[m['matches_x'] != m['matches_y']]
@@ -155,7 +212,9 @@ def compareModelDf(a, b, path=None):
     ax0.pcolor(h)
     # ax1.pcolor(f)
     if (path is not None):
-        fig.savefig(path + 'model-diff-matches.png', dpi=300)
+        fig.set_size_inches(figsize)
+        fig.savefig(path + 'model-diff-matches.png', dpi=dpi, bbox_inches='tight')
+        print('saving', path + 'model-diff-matches.png')
     return d
 
 
@@ -183,7 +242,7 @@ def main(
     mfogDF = getMatchesDf(matchesFN)
     minasDF = getMatchesDf(minasMatches)
     # ogdf = getOriginalMatchesDf('../../out/minas-og/2020-07-20T12-21-54.755/results')
-    diffMinasMfog(examplesDf, minasDF, mfogDF)
+    diffMinasMfog(examplesDf, minasDF, mfogDF, outputDir)
 
     modelDF = getModelDf(modelFN)
     # minasFiModDF = getModelDf('../../out/minas-og/2020-07-22T01-19-11.984/model/653457_final.csv')
