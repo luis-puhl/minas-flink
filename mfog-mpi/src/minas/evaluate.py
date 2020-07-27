@@ -68,29 +68,31 @@ def confusionMatrix(exDf, maDf=None):
     return (cf, classes, labels, offf, assignment)
 
 def printEval(exDf, maDf, path=None, title=None):
-    print("examples ", exDf.shape)
-    print("matches  ", maDf.shape)
     df = merge(exDf, maDf)
     cf, classes, labels, off, ass = confusionMatrix(df)
-    plotHitMissUnkRate(df, ass, off, path, title)
+    df = plotHitMissUnkRate(df, ass, off, path, title)
     print("Confusion Matrix")
     print(cf)
 
-    totalExamples = exDf['id'].count()
+    totalExamples = exDf.shape[0]
     totalMatches = maDf.shape[0]
     tot = max(totalMatches, totalExamples)
-    hits = cf['hits'].sum()
-    misses = totalMatches - hits
+    hits = df['hit'].sum()
+    misses = df['miss'].sum()
+    unks = df['unk'].sum()
+    repro = totalMatches - totalExamples
 
     print('Classes          ', classes)
-    print('Labels           ', labels, len(labels))
     print('Initial labels   ', off)
+    print('Labels           ', labels, len(labels))
     # print('Assignment       ', ass)
-    print('Total examples   %8d' % (totalExamples))
-    print('Total matches    %8d' % (totalMatches))
+    print('Total examples   ', exDf.shape)
+    print('Total matches    ', maDf.shape)
     print('Hits             %8d (%10f%%)' % (hits, (hits/tot) * 100.0))
     print('Misses           %8d (%10f%%)' % (misses, (misses/tot) * 100.0))
-    # print('Hits + Misses    %8d (%10f%%)' % (hits + misses, ((hits + misses)/tot) * 100.0))
+    print('Unknowns         %8d (%10f%%)' % (unks, (unks/tot) * 100.0))
+    print('Unk. reprocessed %8d (%10f%%)' % (repro, (repro/unks) * 100.0))
+    print('Total            %8d (%10f%%)' % (hits + misses + unks, ((hits + misses + unks)/tot) * 100.0))
     print('')
     return df, cf, classes, labels, off, ass
 
@@ -114,25 +116,20 @@ def plotHitMissUnkRate(df, assignment, off, path=None, title=None):
     df['d_unk'] = df['unks'] / df['tot']
     # 
     labelSet = set()
-    # d_lbl = []
     xcoords = []
     prevLen = len(off)
     for i, l in zip(df.index, df['label']):
         labelSet.add(l)
-        # d_lbl += [len(labelSet)]
         if len(labelSet) > prevLen:
             prevLen = len(labelSet)
             xcoords += [i]
-    # df['d_lbl'] = d_lbl
-    # df['d_lbl'] = df['d_lbl'] / len(labelSet)
-    plotable = df[['d_hit', 'd_mis', 'd_unk' ]]
     # 
     if (title is not None):
         title += ' Hit Miss Unk'
     else:
         title = 'Hit Miss Unk'
-    ax = plotable.plot(title=title, figsize=figsize)
-    ax.vlines(x=xcoords, ymin=0, ymax=1, colors='gray', ls='--', lw=0.5, label='vline_multiple')
+    ax = df[['d_hit', 'd_mis', 'd_unk' ]].plot(title=title, figsize=figsize)
+    ax.vlines(x=xcoords, ymin=-0.05, ymax=1.05, colors='gray', ls='--', lw=0.5, label='vline_multiple')
     ax.get_xaxis().set_major_formatter(matplotlib.ticker.EngFormatter())
     # 
     if (path is not None):
@@ -221,7 +218,7 @@ def compareModelDf(a, b, path=None):
 def main(
     examplesFN='datasets/test.csv',
     matchesFN='out/matches.csv',
-    minasMatches='out/minas-og/2020-07-20T12-18-21.758/matches.csv',
+    minasMatches='out/og/2020-07-20T12-18-21.758/matches.csv',
     modelFN='datasets/model-clean.csv',
     mfogModelFN='out/model.csv',
     outputDir='out/',
@@ -267,4 +264,3 @@ if __name__ == "__main__":
         'outputDir',
     ]
     main(**dict(zip(params, sys.argv[1:])))
-

@@ -144,12 +144,13 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
 void classify(int dimension, Model *model, Point *ex, Match *match) {
     match->distance = (double) dimension;
     match->pointId = ex->id;
+    match->label = '-';
     // printf("#pid_%d", ex->id);
     for (int i = 0; i < model->size; i++) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
         // printf("%le,", distance);
         // allDistances[i] = distance;
-        if (match->distance >= distance) {
+        if (distance <= match->distance) {
             // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
             match->clusterLabel = model->vals[i].label;
@@ -157,10 +158,17 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
             match->clusterRadius = model->vals[i].radius;
             match->secondDistance = match->distance;
             match->distance = distance;
+        } else if (distance <= match->secondDistance) {
+            match->secondDistance = distance;
         }
     }
     // printf("\n");
-    match->label = match->distance < match->clusterRadius ? match->clusterLabel : '-';
+    // If the border isn't included, a novelty cluster would miss the farthest
+    // example that was used to create the cluster in the first place.
+    // if (match->distance < match->clusterRadius) {
+    if (match->distance <= match->clusterRadius) {
+        match->label = match->clusterLabel;
+    }
 
     // printf("%d,%c,%d,%c,%e,%e\n",
     //     match->pointId, match->isMatch, match->clusterId,

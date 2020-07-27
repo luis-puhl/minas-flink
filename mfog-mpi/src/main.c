@@ -79,7 +79,7 @@ int mainClassify(int mpiRank, int mpiSize, Point examples[], Model *model, int *
                             forgotten++;
                         }
                     }
-                    printf("late classify of %d unknowns, forgotten %d\n", prevUnknownsSize + forgotten - unknownsSize, forgotten);
+                    printf("late classify of %d -> %d unknowns, forgotten %d\n", prevUnknownsSize, unknownsSize, forgotten);
                     fflush(stdout);
                     free(linearGroup);
                 }

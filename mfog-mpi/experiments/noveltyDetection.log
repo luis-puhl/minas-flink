@@ -4,10 +4,10 @@ Reading model from     'datasets/model-clean.csv'
 Reading examples from  'datasets/test.csv'
 Writing matches to     'out/matches.csv'
 Writing timing to      'stdout'
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813505,readExamples,10.1.0,2.284430e-01,1,72000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823011,readExamples,10.1.0,2.151850e-01,1,72000
 clustering label N with 72000 examples
 realloc from 0 to 100
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813505,kMeansInit,10.1.0,5.500000e-05,1,100
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823011,kMeansInit,10.1.0,5.800000e-05,1,100
 kMeans with k = 100 and 72000 examples
 	[  0] Global dist of 1.173516e+04 (1.629883e-01 avg) (5.324162e+02 better)
 	[  1] Global dist of 1.041213e+04 (1.446130e-01 avg) (1.127403e-01 better)
@@ -84,33 +84,33 @@ kMeans with k = 100 and 72000 examples
 	[ 72] Global dist of 7.546162e+03 (1.048078e-01 avg) (7.914054e-07 better)
 	[ 73] Global dist of 7.546162e+03 (1.048078e-01 avg) (1.131388e-07 better)
 	[ 74] Global dist of 7.546162e+03 (1.048078e-01 avg) (0.000000e+00 better)
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813553,kMeans,10.1.0,4.867109e+01,1,72000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813554,fillCluster,10.1.0,6.635450e-01,1,72000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813554,MNS_offline,10.1.0,4.933669e+01,1,72000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813554,writeModel,10.1.0,1.122000e-03,1,100
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813556,readExamples,10.1.0,2.005018e+00,1,653457
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823058,kMeans,10.1.0,4.688785e+01,1,72000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823059,fillCluster,10.1.0,6.549730e-01,1,72000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823059,MNS_offline,10.1.0,4.754483e+01,1,72000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823059,writeModel,10.1.0,6.700000e-04,1,100
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823061,readExamples,10.1.0,1.872830e+00,1,653457
 clustering unknowns with  2000 examples
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813558,kMeansInit,10.1.0,4.800000e-05,1,100
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823063,kMeansInit,10.1.0,5.400000e-05,1,100
 kMeans with k = 100 and  2000 examples
-	[  0] Global dist of 4.524579e+02 (2.262290e-01 avg) (1.956627e+01 better)
-	[  1] Global dist of 3.521970e+02 (1.760985e-01 avg) (2.215918e-01 better)
-	[  2] Global dist of 2.785683e+02 (1.392841e-01 avg) (2.090554e-01 better)
-	[  3] Global dist of 2.679678e+02 (1.339839e-01 avg) (3.805325e-02 better)
-	[  4] Global dist of 2.621723e+02 (1.310861e-01 avg) (2.162790e-02 better)
-	[  5] Global dist of 2.639233e+02 (1.319616e-01 avg) (6.678812e-03 better)
-	[  6] Global dist of 2.643678e+02 (1.321839e-01 avg) (1.684465e-03 better)
-	[  7] Global dist of 2.647666e+02 (1.323833e-01 avg) (1.508461e-03 better)
-	[  8] Global dist of 2.647521e+02 (1.323761e-01 avg) (5.477604e-05 better)
-	[  9] Global dist of 2.647390e+02 (1.323695e-01 avg) (4.965557e-05 better)
-	[ 10] Global dist of 2.647248e+02 (1.323624e-01 avg) (5.359571e-05 better)
-	[ 11] Global dist of 2.647108e+02 (1.323554e-01 avg) (5.285032e-05 better)
-	[ 12] Global dist of 2.646964e+02 (1.323482e-01 avg) (5.441786e-05 better)
-	[ 13] Global dist of 2.646660e+02 (1.323330e-01 avg) (1.146720e-04 better)
-	[ 14] Global dist of 2.646534e+02 (1.323267e-01 avg) (4.787661e-05 better)
-	[ 15] Global dist of 2.646496e+02 (1.323248e-01 avg) (1.422590e-05 better)
-	[ 16] Global dist of 2.646494e+02 (1.323247e-01 avg) (7.091780e-07 better)
-	[ 17] Global dist of 2.646494e+02 (1.323247e-01 avg) (0.000000e+00 better)
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813558,kMeans,10.1.0,3.084140e-01,1,2000
+	[  0] Global dist of 4.387852e+02 (2.193926e-01 avg) (1.894478e+01 better)
+	[  1] Global dist of 3.488619e+02 (1.744309e-01 avg) (2.049370e-01 better)
+	[  2] Global dist of 2.771307e+02 (1.385653e-01 avg) (2.056149e-01 better)
+	[  3] Global dist of 2.663019e+02 (1.331509e-01 avg) (3.907465e-02 better)
+	[  4] Global dist of 2.604885e+02 (1.302442e-01 avg) (2.183015e-02 better)
+	[  5] Global dist of 2.625376e+02 (1.312688e-01 avg) (7.866408e-03 better)
+	[  6] Global dist of 2.629238e+02 (1.314619e-01 avg) (1.471068e-03 better)
+	[  7] Global dist of 2.629174e+02 (1.314587e-01 avg) (2.435656e-05 better)
+	[  8] Global dist of 2.629029e+02 (1.314514e-01 avg) (5.516130e-05 better)
+	[  9] Global dist of 2.628897e+02 (1.314449e-01 avg) (5.000484e-05 better)
+	[ 10] Global dist of 2.628756e+02 (1.314378e-01 avg) (5.397271e-05 better)
+	[ 11] Global dist of 2.628616e+02 (1.314308e-01 avg) (5.322210e-05 better)
+	[ 12] Global dist of 2.628472e+02 (1.314236e-01 avg) (5.480069e-05 better)
+	[ 13] Global dist of 2.628168e+02 (1.314084e-01 avg) (1.154787e-04 better)
+	[ 14] Global dist of 2.628041e+02 (1.314021e-01 avg) (4.821348e-05 better)
+	[ 15] Global dist of 2.628004e+02 (1.314002e-01 avg) (1.432600e-05 better)
+	[ 16] Global dist of 2.628002e+02 (1.314001e-01 avg) (7.141682e-07 better)
+	[ 17] Global dist of 2.628002e+02 (1.314001e-01 avg) (0.000000e+00 better)
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823063,kMeans,10.1.0,3.211830e-01,1,2000
 	New pattern in    35 examples. Nearest cluster in model 1.098155e+00 distant and ndThreshold=2.141442e+00. Is extension of 'N' concept.
 	New pattern in    28 examples. Nearest cluster in model 1.085861e+00 distant and ndThreshold=2.907593e+00. Is extension of 'N' concept.
 	New pattern in    33 examples. Nearest cluster in model 6.919931e-01 distant and ndThreshold=1.445135e+00. Is extension of 'N' concept.
@@ -121,142 +121,127 @@ src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813558,kMeans,10.1.0,3.08
 	New pattern in   231 examples. Nearest cluster in model 5.835287e-01 distant and ndThreshold=1.006711e+00. Is extension of 'N' concept.
 	New pattern in    55 examples. Nearest cluster in model 3.365155e-01 distant and ndThreshold=8.724022e-02. Will call this novelty 'a'.
 	New pattern in    31 examples. Nearest cluster in model 3.626829e-01 distant and ndThreshold=5.226847e-01. Is extension of 'N' concept.
-	New pattern in   110 examples. Nearest cluster in model 2.344291e-02 distant and ndThreshold=3.485555e-02. Is extension of 'N' concept.
-	New pattern in   178 examples. Nearest cluster in model 1.407686e-02 distant and ndThreshold=5.039916e-02. Is extension of 'N' concept.
-	New pattern in   219 examples. Nearest cluster in model 1.420582e-02 distant and ndThreshold=3.237944e-02. Is extension of 'N' concept.
+	New pattern in   114 examples. Nearest cluster in model 2.344529e-02 distant and ndThreshold=3.485555e-02. Is extension of 'N' concept.
+	New pattern in   180 examples. Nearest cluster in model 1.410519e-02 distant and ndThreshold=5.044224e-02. Is extension of 'N' concept.
+	New pattern in   219 examples. Nearest cluster in model 1.430670e-02 distant and ndThreshold=3.256406e-02. Is extension of 'N' concept.
 	New pattern in    34 examples. Nearest cluster in model 3.595082e-02 distant and ndThreshold=4.155866e-02. Is extension of 'N' concept.
-	New pattern in    38 examples. Nearest cluster in model 2.056230e-02 distant and ndThreshold=3.237944e-02. Is extension of 'N' concept.
+	New pattern in    38 examples. Nearest cluster in model 2.062724e-02 distant and ndThreshold=3.256406e-02. Is extension of 'N' concept.
 	New pattern in    31 examples. Nearest cluster in model 1.741549e-02 distant and ndThreshold=3.485555e-02. Is extension of 'N' concept.
 	New pattern in    20 examples. Nearest cluster in model 2.199290e-02 distant and ndThreshold=3.485555e-02. Is extension of 'N' concept.
-	New pattern in    45 examples. Nearest cluster in model 1.667017e-02 distant and ndThreshold=5.039916e-02. Is extension of 'N' concept.
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813558,noveltyDetection,10.1.0,3.452320e-01,1,2000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813558,writeModel,10.1.0,1.329000e-03,1,118
-late classify of 2397 unknowns, forgotten 546
+	New pattern in    48 examples. Nearest cluster in model 1.634219e-02 distant and ndThreshold=5.044224e-02. Is extension of 'N' concept.
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823063,noveltyDetection,10.1.0,3.585160e-01,1,2000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823063,writeModel,10.1.0,1.185000e-03,1,118
+late classify of 2000 -> 137 unknowns, forgotten 476
 clustering unknowns with  2000 examples
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813559,kMeansInit,10.1.0,3.200000e-05,1,100
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823063,kMeansInit,10.1.0,3.300000e-05,1,100
 kMeans with k = 100 and  2000 examples
-	[  0] Global dist of 2.022668e+02 (1.011334e-01 avg) (8.193947e+00 better)
-	[  1] Global dist of 1.284109e+02 (6.420546e-02 avg) (3.651410e-01 better)
-	[  2] Global dist of 7.378270e+01 (3.689135e-02 avg) (4.254173e-01 better)
-	[  3] Global dist of 6.622168e+01 (3.311084e-02 avg) (1.024769e-01 better)
-	[  4] Global dist of 6.496383e+01 (3.248192e-02 avg) (1.899445e-02 better)
-	[  5] Global dist of 6.279158e+01 (3.139579e-02 avg) (3.343787e-02 better)
-	[  6] Global dist of 6.157396e+01 (3.078698e-02 avg) (1.939140e-02 better)
-	[  7] Global dist of 5.814669e+01 (2.907335e-02 avg) (5.566105e-02 better)
-	[  8] Global dist of 5.770301e+01 (2.885150e-02 avg) (7.630429e-03 better)
-	[  9] Global dist of 5.760078e+01 (2.880039e-02 avg) (1.771620e-03 better)
-	[ 10] Global dist of 5.747315e+01 (2.873657e-02 avg) (2.215761e-03 better)
-	[ 11] Global dist of 5.744762e+01 (2.872381e-02 avg) (4.441487e-04 better)
-	[ 12] Global dist of 5.744316e+01 (2.872158e-02 avg) (7.773769e-05 better)
-	[ 13] Global dist of 5.743989e+01 (2.871994e-02 avg) (5.692351e-05 better)
-	[ 14] Global dist of 5.744062e+01 (2.872031e-02 avg) (1.272965e-05 better)
-	[ 15] Global dist of 5.744032e+01 (2.872016e-02 avg) (5.267798e-06 better)
-	[ 16] Global dist of 5.744032e+01 (2.872016e-02 avg) (0.000000e+00 better)
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813559,kMeans,10.1.0,3.040380e-01,1,2000
-	New pattern in    20 examples. Nearest cluster in model 9.809368e-01 distant and ndThreshold=8.724022e-02. Will call this novelty 'b'.
-	New pattern in   318 examples. Nearest cluster in model 1.896705e-02 distant and ndThreshold=3.013554e-02. Is extension of 'N' concept.
-	New pattern in    32 examples. Nearest cluster in model 3.315110e-01 distant and ndThreshold=2.271077e-02. Will call this novelty 'c'.
-	New pattern in    48 examples. Nearest cluster in model 1.977661e-02 distant and ndThreshold=3.485555e-02. Is extension of 'N' concept.
-	New pattern in    68 examples. Nearest cluster in model 1.291155e-01 distant and ndThreshold=2.271077e-02. Will call this novelty 'd'.
-	New pattern in    27 examples. Nearest cluster in model 2.306617e-02 distant and ndThreshold=5.031859e-02. Is extension of 'N' concept.
-	New pattern in    27 examples. Nearest cluster in model 2.609302e-02 distant and ndThreshold=6.439839e-02. Is extension of 'd' concept.
-	New pattern in    74 examples. Nearest cluster in model 2.089207e-02 distant and ndThreshold=4.132141e-02. Is extension of 'N' concept.
-	New pattern in   267 examples. Nearest cluster in model 1.905038e-02 distant and ndThreshold=5.031859e-02. Is extension of 'N' concept.
-	New pattern in    92 examples. Nearest cluster in model 1.870975e-02 distant and ndThreshold=5.031859e-02. Is extension of 'N' concept.
-	New pattern in    30 examples. Nearest cluster in model 4.308680e-02 distant and ndThreshold=3.868072e-02. Will call this novelty 'e'.
-	New pattern in    92 examples. Nearest cluster in model 2.118256e-02 distant and ndThreshold=5.013636e-02. Is extension of 'N' concept.
-	New pattern in    23 examples. Nearest cluster in model 2.253744e-02 distant and ndThreshold=3.672013e-02. Is extension of 'e' concept.
-	New pattern in   315 examples. Nearest cluster in model 1.613695e-01 distant and ndThreshold=2.465627e-01. Is extension of 'c' concept.
-	New pattern in    29 examples. Nearest cluster in model 1.809309e-02 distant and ndThreshold=3.489051e-02. Is extension of 'N' concept.
-	New pattern in    39 examples. Nearest cluster in model 4.051518e-02 distant and ndThreshold=6.439839e-02. Is extension of 'd' concept.
-	New pattern in    25 examples. Nearest cluster in model 2.353547e-02 distant and ndThreshold=3.745267e-02. Is extension of 'N' concept.
-	New pattern in    21 examples. Nearest cluster in model 3.956731e-02 distant and ndThreshold=4.543810e-02. Is extension of 'd' concept.
-	New pattern in    53 examples. Nearest cluster in model 2.008699e-02 distant and ndThreshold=6.439839e-02. Is extension of 'd' concept.
-	New pattern in    63 examples. Nearest cluster in model 1.764250e-02 distant and ndThreshold=4.235638e-02. Is extension of 'N' concept.
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813559,noveltyDetection,10.1.0,3.426200e-01,1,2000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813559,writeModel,10.1.0,8.810000e-04,1,138
-late classify of 2008 unknowns, forgotten 171
+	[  0] Global dist of 1.937554e+02 (9.687770e-02 avg) (7.807064e+00 better)
+	[  1] Global dist of 1.486781e+02 (7.433905e-02 avg) (2.326506e-01 better)
+	[  2] Global dist of 8.226989e+01 (4.113495e-02 avg) (4.466576e-01 better)
+	[  3] Global dist of 7.095113e+01 (3.547556e-02 avg) (1.375809e-01 better)
+	[  4] Global dist of 6.693888e+01 (3.346944e-02 avg) (5.654953e-02 better)
+	[  5] Global dist of 6.596016e+01 (3.298008e-02 avg) (1.462106e-02 better)
+	[  6] Global dist of 6.580079e+01 (3.290039e-02 avg) (2.416190e-03 better)
+	[  7] Global dist of 6.566895e+01 (3.283448e-02 avg) (2.003569e-03 better)
+	[  8] Global dist of 6.555781e+01 (3.277890e-02 avg) (1.692476e-03 better)
+	[  9] Global dist of 6.547408e+01 (3.273704e-02 avg) (1.277226e-03 better)
+	[ 10] Global dist of 6.527019e+01 (3.263509e-02 avg) (3.114031e-03 better)
+	[ 11] Global dist of 6.519061e+01 (3.259531e-02 avg) (1.219188e-03 better)
+	[ 12] Global dist of 6.517185e+01 (3.258592e-02 avg) (2.878465e-04 better)
+	[ 13] Global dist of 6.516032e+01 (3.258016e-02 avg) (1.769169e-04 better)
+	[ 14] Global dist of 6.513738e+01 (3.256869e-02 avg) (3.519990e-04 better)
+	[ 15] Global dist of 6.513058e+01 (3.256529e-02 avg) (1.043795e-04 better)
+	[ 16] Global dist of 6.511104e+01 (3.255552e-02 avg) (2.999442e-04 better)
+	[ 17] Global dist of 6.503301e+01 (3.251650e-02 avg) (1.198484e-03 better)
+	[ 18] Global dist of 6.500185e+01 (3.250093e-02 avg) (4.791097e-04 better)
+	[ 19] Global dist of 6.498974e+01 (3.249487e-02 avg) (1.863035e-04 better)
+	[ 20] Global dist of 6.498974e+01 (3.249487e-02 avg) (0.000000e+00 better)
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823064,kMeans,10.1.0,3.772170e-01,1,2000
+	New pattern in    21 examples. Nearest cluster in model 4.157839e-01 distant and ndThreshold=8.724022e-02. Will call this novelty 'b'.
+	New pattern in    69 examples. Nearest cluster in model 2.151845e-02 distant and ndThreshold=3.256406e-02. Is extension of 'N' concept.
+	New pattern in   196 examples. Nearest cluster in model 1.790142e-02 distant and ndThreshold=4.033888e-02. Is extension of 'N' concept.
+	New pattern in    58 examples. Nearest cluster in model 1.684715e-02 distant and ndThreshold=3.545068e-02. Is extension of 'N' concept.
+	New pattern in   159 examples. Nearest cluster in model 3.303075e-01 distant and ndThreshold=4.298197e-02. Will call this novelty 'c'.
+	New pattern in   108 examples. Nearest cluster in model 8.846954e-02 distant and ndThreshold=1.432603e-01. Is extension of 'c' concept.
+	New pattern in   173 examples. Nearest cluster in model 2.782955e-02 distant and ndThreshold=3.485555e-02. Is extension of 'N' concept.
+	New pattern in    54 examples. Nearest cluster in model 1.635474e-02 distant and ndThreshold=5.022467e-02. Is extension of 'N' concept.
+	New pattern in    21 examples. Nearest cluster in model 5.738295e-02 distant and ndThreshold=4.827376e-02. Will call this novelty 'd'.
+	New pattern in    56 examples. Nearest cluster in model 2.099633e-02 distant and ndThreshold=5.022467e-02. Is extension of 'N' concept.
+	New pattern in    28 examples. Nearest cluster in model 2.203385e-02 distant and ndThreshold=3.556590e-02. Is extension of 'd' concept.
+	New pattern in    25 examples. Nearest cluster in model 2.538792e-02 distant and ndThreshold=3.556590e-02. Is extension of 'd' concept.
+	New pattern in    31 examples. Nearest cluster in model 7.592302e-02 distant and ndThreshold=3.684950e-02. Will call this novelty 'e'.
+	New pattern in    42 examples. Nearest cluster in model 1.668499e-02 distant and ndThreshold=4.126453e-02. Is extension of 'e' concept.
+	New pattern in    51 examples. Nearest cluster in model 2.357872e-01 distant and ndThreshold=1.182402e-01. Will call this novelty 'f'.
+	New pattern in    20 examples. Nearest cluster in model 1.919360e-02 distant and ndThreshold=3.556590e-02. Is extension of 'd' concept.
+	New pattern in    20 examples. Nearest cluster in model 1.432094e-01 distant and ndThreshold=4.126453e-02. Will call this novelty 'g'.
+	New pattern in    21 examples. Nearest cluster in model 6.472707e-02 distant and ndThreshold=4.126453e-02. Will call this novelty 'h'.
+	New pattern in    31 examples. Nearest cluster in model 1.604593e-01 distant and ndThreshold=1.432603e-01. Will call this novelty 'i'.
+	New pattern in    38 examples. Nearest cluster in model 2.214112e-02 distant and ndThreshold=4.126453e-02. Is extension of 'e' concept.
+	New pattern in    40 examples. Nearest cluster in model 1.273730e-02 distant and ndThreshold=4.370149e-02. Is extension of 'e' concept.
+	New pattern in   293 examples. Nearest cluster in model 1.792370e-02 distant and ndThreshold=5.022467e-02. Is extension of 'N' concept.
+	New pattern in    93 examples. Nearest cluster in model 2.132547e-02 distant and ndThreshold=2.271077e-02. Is extension of 'N' concept.
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823064,noveltyDetection,10.1.0,4.169170e-01,1,2000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823064,writeModel,10.1.0,9.490000e-04,1,141
+late classify of 2000 -> 142 unknowns, forgotten 148
 clustering unknowns with  2000 examples
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813563,kMeansInit,10.1.0,5.500000e-05,1,100
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823068,kMeansInit,10.1.0,3.300000e-05,1,100
 kMeans with k = 100 and  2000 examples
-	[  0] Global dist of 8.033802e+02 (4.016901e-01 avg) (3.551728e+01 better)
-	[  1] Global dist of 4.832759e+02 (2.416379e-01 avg) (3.984469e-01 better)
-	[  2] Global dist of 4.380715e+02 (2.190358e-01 avg) (9.353730e-02 better)
-	[  3] Global dist of 4.229599e+02 (2.114799e-01 avg) (3.449584e-02 better)
-	[  4] Global dist of 4.098930e+02 (2.049465e-01 avg) (3.089400e-02 better)
-	[  5] Global dist of 4.074979e+02 (2.037489e-01 avg) (5.843283e-03 better)
-	[  6] Global dist of 4.074101e+02 (2.037051e-01 avg) (2.153099e-04 better)
-	[  7] Global dist of 4.076333e+02 (2.038166e-01 avg) (5.477872e-04 better)
-	[  8] Global dist of 4.076644e+02 (2.038322e-01 avg) (7.626432e-05 better)
-	[  9] Global dist of 4.077481e+02 (2.038740e-01 avg) (2.053673e-04 better)
-	[ 10] Global dist of 4.077187e+02 (2.038593e-01 avg) (7.213519e-05 better)
-	[ 11] Global dist of 4.076739e+02 (2.038370e-01 avg) (1.097804e-04 better)
-	[ 12] Global dist of 4.076647e+02 (2.038323e-01 avg) (2.266199e-05 better)
-	[ 13] Global dist of 4.076384e+02 (2.038192e-01 avg) (6.457968e-05 better)
-	[ 14] Global dist of 4.075653e+02 (2.037827e-01 avg) (1.791905e-04 better)
-	[ 15] Global dist of 4.073948e+02 (2.036974e-01 avg) (4.182703e-04 better)
-	[ 16] Global dist of 4.072353e+02 (2.036176e-01 avg) (3.916578e-04 better)
-	[ 17] Global dist of 4.068102e+02 (2.034051e-01 avg) (1.043910e-03 better)
-	[ 18] Global dist of 4.066939e+02 (2.033469e-01 avg) (2.858611e-04 better)
-	[ 19] Global dist of 4.064648e+02 (2.032324e-01 avg) (5.632726e-04 better)
-	[ 20] Global dist of 4.038158e+02 (2.019079e-01 avg) (6.517105e-03 better)
-	[ 21] Global dist of 4.002587e+02 (2.001294e-01 avg) (8.808677e-03 better)
-	[ 22] Global dist of 4.003022e+02 (2.001511e-01 avg) (1.085498e-04 better)
-	[ 23] Global dist of 4.003101e+02 (2.001550e-01 avg) (1.965768e-05 better)
-	[ 24] Global dist of 4.003095e+02 (2.001548e-01 avg) (1.261604e-06 better)
-	[ 25] Global dist of 4.003095e+02 (2.001547e-01 avg) (1.882207e-07 better)
-	[ 26] Global dist of 4.003095e+02 (2.001547e-01 avg) (0.000000e+00 better)
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813563,kMeans,10.1.0,4.596190e-01,1,2000
-	New pattern in    99 examples. Nearest cluster in model 5.218033e-02 distant and ndThreshold=6.938894e-18. Will call this novelty 'f'.
-	New pattern in   116 examples. Nearest cluster in model 6.756792e-02 distant and ndThreshold=6.178132e-02. Will call this novelty 'g'.
-	New pattern in    22 examples. Nearest cluster in model 2.026097e-01 distant and ndThreshold=6.431052e-02. Will call this novelty 'h'.
-	New pattern in    33 examples. Nearest cluster in model 9.806478e-02 distant and ndThreshold=2.429679e-01. Is extension of 'h' concept.
-	New pattern in    54 examples. Nearest cluster in model 2.572794e-01 distant and ndThreshold=2.465627e-01. Will call this novelty 'i'.
-	New pattern in    46 examples. Nearest cluster in model 3.433632e-02 distant and ndThreshold=6.178132e-02. Is extension of 'd' concept.
-	New pattern in    55 examples. Nearest cluster in model 2.103573e-01 distant and ndThreshold=8.724022e-02. Will call this novelty 'j'.
-	New pattern in   145 examples. Nearest cluster in model 1.353612e-02 distant and ndThreshold=8.994812e-02. Is extension of 'd' concept.
-	New pattern in    41 examples. Nearest cluster in model 5.933357e-01 distant and ndThreshold=4.961154e-01. Will call this novelty 'k'.
-	New pattern in    29 examples. Nearest cluster in model 1.436878e-02 distant and ndThreshold=2.271077e-02. Is extension of 'N' concept.
-	New pattern in   140 examples. Nearest cluster in model 1.772497e-02 distant and ndThreshold=6.431052e-02. Is extension of 'g' concept.
-	New pattern in    25 examples. Nearest cluster in model 1.546413e-02 distant and ndThreshold=3.013554e-02. Is extension of 'N' concept.
-	New pattern in   157 examples. Nearest cluster in model 3.194965e-01 distant and ndThreshold=2.465627e-01. Will call this novelty 'l'.
-	New pattern in    74 examples. Nearest cluster in model 1.629413e-01 distant and ndThreshold=2.465627e-01. Is extension of 'c' concept.
-	New pattern in    70 examples. Nearest cluster in model 3.295235e-02 distant and ndThreshold=6.431052e-02. Is extension of 'g' concept.
-	New pattern in    35 examples. Nearest cluster in model 1.002838e+00 distant and ndThreshold=1.993681e+00. Is extension of 'f' concept.
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813563,noveltyDetection,10.1.0,5.029220e-01,1,2000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813563,writeModel,10.1.0,9.370000e-04,1,154
-late classify of 2840 unknowns, forgotten 853
+	[  0] Global dist of 1.265916e+03 (6.329582e-01 avg) (5.654165e+01 better)
+	[  1] Global dist of 6.097177e+02 (3.048589e-01 avg) (5.183586e-01 better)
+	[  2] Global dist of 4.935079e+02 (2.467540e-01 avg) (1.905961e-01 better)
+	[  3] Global dist of 4.865191e+02 (2.432596e-01 avg) (1.416146e-02 better)
+	[  4] Global dist of 4.741195e+02 (2.370597e-01 avg) (2.548648e-02 better)
+	[  5] Global dist of 4.608592e+02 (2.304296e-01 avg) (2.796812e-02 better)
+	[  6] Global dist of 4.593646e+02 (2.296823e-01 avg) (3.243175e-03 better)
+	[  7] Global dist of 4.593197e+02 (2.296599e-01 avg) (9.761940e-05 better)
+	[  8] Global dist of 4.592149e+02 (2.296075e-01 avg) (2.281949e-04 better)
+	[  9] Global dist of 4.593328e+02 (2.296664e-01 avg) (2.566092e-04 better)
+	[ 10] Global dist of 4.593328e+02 (2.296664e-01 avg) (0.000000e+00 better)
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823068,kMeans,10.1.0,1.980770e-01,1,2000
+	New pattern in    39 examples. Nearest cluster in model 1.382211e-02 distant and ndThreshold=2.271077e-02. Is extension of 'N' concept.
+	New pattern in   290 examples. Nearest cluster in model 7.793931e-01 distant and ndThreshold=1.283293e+00. Is extension of 'b' concept.
+	New pattern in   101 examples. Nearest cluster in model 1.671640e-01 distant and ndThreshold=2.422769e-01. Is extension of 'i' concept.
+	New pattern in    80 examples. Nearest cluster in model 1.993207e-01 distant and ndThreshold=1.432603e-01. Will call this novelty 'j'.
+	New pattern in    41 examples. Nearest cluster in model 6.604885e-01 distant and ndThreshold=6.533380e-01. Will call this novelty 'k'.
+	New pattern in    49 examples. Nearest cluster in model 1.540753e-01 distant and ndThreshold=1.163678e-01. Will call this novelty 'l'.
+	New pattern in    35 examples. Nearest cluster in model 1.013370e+00 distant and ndThreshold=6.938894e-18. Will call this novelty 'm'.
+	New pattern in   143 examples. Nearest cluster in model 3.891371e-02 distant and ndThreshold=6.682841e-02. Is extension of 'h' concept.
+	New pattern in   163 examples. Nearest cluster in model 3.027334e-01 distant and ndThreshold=3.059407e-01. Is extension of 'f' concept.
+	New pattern in    67 examples. Nearest cluster in model 9.467046e-02 distant and ndThreshold=6.938894e-18. Will call this novelty 'n'.
+	New pattern in    53 examples. Nearest cluster in model 2.064789e-01 distant and ndThreshold=8.724022e-02. Will call this novelty 'o'.
+	New pattern in    43 examples. Nearest cluster in model 2.138626e-01 distant and ndThreshold=6.533380e-01. Is extension of 'i' concept.
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823068,noveltyDetection,10.1.0,2.498920e-01,1,2000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823068,writeModel,10.1.0,1.020000e-03,1,153
+late classify of 2000 -> 50 unknowns, forgotten 818
 clustering unknowns with  2000 examples
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813564,kMeansInit,10.1.0,3.700000e-05,1,100
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823069,kMeansInit,10.1.0,3.900000e-05,1,100
 kMeans with k = 100 and  2000 examples
-	[  0] Global dist of 1.175377e+02 (5.876883e-02 avg) (4.342621e+00 better)
-	[  1] Global dist of 4.453885e+01 (2.226943e-02 avg) (6.210674e-01 better)
-	[  2] Global dist of 3.348007e+01 (1.674004e-02 avg) (2.482952e-01 better)
-	[  3] Global dist of 3.026598e+01 (1.513299e-02 avg) (9.600013e-02 better)
-	[  4] Global dist of 2.994863e+01 (1.497431e-02 avg) (1.048545e-02 better)
-	[  5] Global dist of 2.969027e+01 (1.484513e-02 avg) (8.626748e-03 better)
-	[  6] Global dist of 2.964097e+01 (1.482048e-02 avg) (1.660465e-03 better)
-	[  7] Global dist of 2.961603e+01 (1.480801e-02 avg) (8.414037e-04 better)
-	[  8] Global dist of 2.961603e+01 (1.480801e-02 avg) (0.000000e+00 better)
-src/util/kMeans.c,target/mfog,Jul 26 2020 22:31:44,1595813564,kMeans,10.1.0,1.537050e-01,1,2000
-	New pattern in    22 examples. Nearest cluster in model 2.519886e-01 distant and ndThreshold=2.429679e-01. Will call this novelty 'm'.
-	New pattern in    21 examples. Nearest cluster in model 5.410785e-02 distant and ndThreshold=4.543810e-02. Will call this novelty 'n'.
-	New pattern in    44 examples. Nearest cluster in model 2.806687e-01 distant and ndThreshold=4.961154e-01. Is extension of 'i' concept.
-	New pattern in   471 examples. Nearest cluster in model 4.392784e-02 distant and ndThreshold=2.271077e-02. Will call this novelty 'o'.
-	New pattern in    44 examples. Nearest cluster in model 4.999212e-02 distant and ndThreshold=3.868072e-02. Will call this novelty 'p'.
-	New pattern in    81 examples. Nearest cluster in model 5.675778e-02 distant and ndThreshold=3.672013e-02. Will call this novelty 'q'.
-	New pattern in    28 examples. Nearest cluster in model 2.995987e-02 distant and ndThreshold=5.093716e-02. Is extension of 'p' concept.
-	New pattern in   557 examples. Nearest cluster in model 1.442277e-02 distant and ndThreshold=2.801328e-02. Is extension of 'o' concept.
-	New pattern in   424 examples. Nearest cluster in model 2.353871e-02 distant and ndThreshold=2.801328e-02. Is extension of 'o' concept.
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813564,noveltyDetection,10.1.0,1.971650e-01,1,2000
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813564,writeModel,10.1.0,1.036000e-03,1,163
-late classify of 2121 unknowns, forgotten 217
-src/main.c,target/mfog,Jul 26 2020 22:31:44,1595813565,mainClassify,10.1.0,8.700198e+00,1,653457
-src/minas/minas.c,target/mfog,Jul 26 2020 22:31:44,1595813565,writeModel,10.1.0,9.890000e-04,1,163
+	[  0] Global dist of 1.272072e+02 (6.360362e-02 avg) (4.782147e+00 better)
+	[  1] Global dist of 4.103443e+01 (2.051722e-02 avg) (6.774206e-01 better)
+	[  2] Global dist of 2.752017e+01 (1.376009e-02 avg) (3.293395e-01 better)
+	[  3] Global dist of 2.714908e+01 (1.357454e-02 avg) (1.348451e-02 better)
+	[  4] Global dist of 2.681458e+01 (1.340729e-02 avg) (1.232094e-02 better)
+	[  5] Global dist of 2.680221e+01 (1.340110e-02 avg) (4.612669e-04 better)
+	[  6] Global dist of 2.673369e+01 (1.336685e-02 avg) (2.556393e-03 better)
+	[  7] Global dist of 2.672759e+01 (1.336380e-02 avg) (2.280614e-04 better)
+	[  8] Global dist of 2.672759e+01 (1.336380e-02 avg) (0.000000e+00 better)
+src/util/kMeans.c,target/mfog,Jul 27 2020 00:59:45,1595823069,kMeans,10.1.0,1.690670e-01,1,2000
+	New pattern in   502 examples. Nearest cluster in model 4.402284e-02 distant and ndThreshold=2.271077e-02. Will call this novelty 'p'.
+	New pattern in    24 examples. Nearest cluster in model 5.355089e-02 distant and ndThreshold=4.370149e-02. Will call this novelty 'q'.
+	New pattern in    87 examples. Nearest cluster in model 5.141639e-02 distant and ndThreshold=3.473294e-02. Will call this novelty 'r'.
+	New pattern in    23 examples. Nearest cluster in model 3.938789e-01 distant and ndThreshold=5.746985e-01. Is extension of 'l' concept.
+	New pattern in    36 examples. Nearest cluster in model 2.556388e-02 distant and ndThreshold=5.369610e-02. Is extension of 'q' concept.
+	New pattern in   592 examples. Nearest cluster in model 1.445043e-02 distant and ndThreshold=2.777567e-02. Is extension of 'p' concept.
+	New pattern in   463 examples. Nearest cluster in model 2.342738e-02 distant and ndThreshold=2.777567e-02. Is extension of 'p' concept.
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823069,noveltyDetection,10.1.0,2.157580e-01,1,2000
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823069,writeModel,10.1.0,1.218000e-03,1,160
+late classify of 2000 -> 69 unknowns, forgotten 187
+src/main.c,target/mfog,Jul 27 2020 00:59:45,1595823070,mainClassify,10.1.0,8.823892e+00,1,653457
+src/minas/minas.c,target/mfog,Jul 27 2020 00:59:45,1595823070,writeModel,10.1.0,9.730000e-04,1,160
 src/minas/evaluate.py
 	examplesFN = datasets/test.csv
 	matchesFN = out/matches.csv
-	minasMatches = out/minas-og/2020-07-20T12-18-21.758/matches.csv
+	minasMatches = out/og/2020-07-20T12-18-21.758/matches.csv
 	modelFN = datasets/model-clean.csv
 	mfogModelFN = out/model.csv
 
@@ -267,8 +252,7 @@ A      447179
 N      206278
 ### Minas
 
-examples  (653457, 25)
-matches   (665107, 9)
+saving out/hits_minas.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
@@ -287,45 +271,52 @@ Labels (pred)
 9                 161     154        A     161
 N              441395  199715        N  199715
 Classes           ['A' 'N']
-Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
 Initial labels    ['-', 'N']
-Total examples     653457
-Total matches      665107
+Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
+Total examples    (653457, 25)
+Total matches     (665107, 9)
 Hits               207669 ( 31.223397%)
-Misses             457438 ( 68.776603%)
+Misses             445458 ( 66.975389%)
+Unknowns            11980 (  1.801214%)
+Unk. reprocessed    11650 ( 97.245409%)
+Total              665107 (100.000000%)
 
 ### Mfog
 
-examples  (653457, 25)
-matches   (659249, 9)
+saving out/hits_mfog.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--                8403     334        -       0
-N              436178  205866        N  205866
-b                 748      91        A     748
-c                1136       0        A    1136
-d                 623       0        A     623
-e                 128       0        A     128
-f                 186       0        A     186
-g                 413       0        A     413
-h                 248       0        A     248
-i                 404       0        A     404
-j                  72       0        A      72
-k                  56       0        A      56
-l                 314       0        A     314
-m                  26       0        A      26
-n                  76       0        A      76
-o                3519       0        A    3519
-p                 206       0        A     206
-q                 222       0        A     222
+-                8306     355        -       0
+N              435763  205887        N  205887
+a                 236       0        A     236
+b                 756      81        A     756
+c                 574       0        A     574
+d                 214       0        A     214
+e                 243       0        A     243
+f                 499       0        A     499
+g                 431       0        A     431
+h                 495       0        A     495
+i                 237       0        A     237
+j                 640       0        A     640
+k                  57       0        A      57
+l                 539       0        A     539
+m                  55       0        A      55
+n                  91       0        A      91
+o                  69       0        A      69
+p                3464       0        A    3464
+q                 169       0        A     169
+r                 269       0        A     269
 Classes           ['A' 'N']
-Labels            ['-', 'N', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q'] 18
 Initial labels    ['-', 'N']
-Total examples     653457
-Total matches      659249
-Hits               214243 ( 32.498039%)
-Misses             445006 ( 67.501961%)
+Labels            ['-', 'N', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r'] 20
+Total examples    (653457, 25)
+Total matches     (659430, 9)
+Hits               214925 ( 32.592542%)
+Misses             435844 ( 66.094051%)
+Unknowns             8661 (  1.313407%)
+Unk. reprocessed     5973 ( 68.964323%)
+Total              659430 (100.000000%)
 
 ### Diff
 
@@ -336,10 +327,13 @@ Misses             445006 ( 67.501961%)
 539        539     N  1.026340   -  1.085700     N  1.453797   N  1.086120
 723        723     N  1.026340   -  1.086764     N  1.453797   N  1.086905
 ...        ...   ...       ...  ..       ...   ...       ...  ..       ...
-671133  653288    10  0.953439   -  1.005741     f  0.471080   f  0.120054
-671177  653332    10  0.953439   -  1.005741     f  0.471080   f  0.120054
-671190  653345     3  0.750654   3  0.155509     N  1.177876   N  0.694689
-671208  653363    10  1.225131  10  0.448390     N  1.509374   N  0.444244
-671298  653453    10  1.225131  10  0.487844     N  1.509374   N  0.542915
+671358  653288    10  0.953439   -  1.005741     m  0.457659   m  0.162594
+671402  653332    10  0.953439   -  1.005741     m  0.457659   m  0.162594
+671415  653345     3  0.750654   3  0.155509     N  1.177876   N  0.694689
+671433  653363    10  1.225131  10  0.448390     N  1.509374   N  0.444244
+671523  653453    10  1.225131  10  0.487844     N  1.509374   N  0.542915
 
-[38349 rows x 9 columns]
+[39001 rows x 9 columns]
+saving out/model-full.png
+saving out/model-diff.png
+saving out/model-diff-matches.png
