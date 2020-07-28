@@ -7,134 +7,145 @@
 #include <err.h>
 // #include <string.h>
 
-int assingVarFromEnvArg(char *varName, char **varPtr, char *envOrArg, char *nextArg) {
-    // printf("varName=%s, envOrArg=%s, nextArg=%s\n", varName, envOrArg, nextArg);
-    if (varName == NULL) return 0;
+#define PRINT_ERROR fprintf(stderr, " At "__FILE__":%d\n", __LINE__);
+
+char *paramEqualsOrNext(char *varName, char *envOrArg, char *nextArg) {
+    if (varName == NULL) return NULL;
     int diff = 0, i;
     for (i = 0; varName[i] != '\0' && diff == 0; i++) diff += varName[i] - envOrArg[i];
     if (diff != 0) return 0;
     if (envOrArg[i] == '=') {
-        *varPtr = &(envOrArg[i + 1]);
+        return &(envOrArg[i + 1]);
     } else if (envOrArg[i] == '\0') {
-        *varPtr = nextArg;
-    } else {
-        return 0;
+        return nextArg;
     }
-    // printf("Assing '%s' with '%s'\n", varName, *varPtr);
-    return 1;
+    return NULL;
 }
 
-int printEnvs(int argc, char *argv[], char **envp) {
+char* findEnvVar(int argc, char *argv[], char **envp, char *varName) {
     const char *prefixMfog = "MFOG_";
-    int assingned = 0;
     for (char **env = envp; *env != 0; env++) {
         char *thisEnv = *env;
         int diff = 0, i = 0;
         for (; prefixMfog[i] != '\0' && diff == 0; i++) diff += prefixMfog[i] - thisEnv[i];
+        //
         if (diff != 0) continue;
-        fprintf(stderr, "env %s\n", thisEnv);
-        assingned++;
+        char *strVarPtr = paramEqualsOrNext(varName, &(thisEnv[i]), NULL);
+        if (strVarPtr != 0) {
+            return strVarPtr;
+        }
     }
     for (int arg = 1; arg < argc; arg++) {
-        fprintf(stderr, "arg %s\n", argv[arg]);
-        assingned++;
+        char *strVarPtr = paramEqualsOrNext(varName, argv[arg], argv[arg + 1]);
+        if (strVarPtr != 0) {
+            return strVarPtr;
+        }
     }
-    #ifdef MPI_VERSION
-    fprintf(stderr, "MPI %d\n", MPI_VERSION, MPI_SUBVERSION);
-    #endif // MPI_VERSION
-    return assingned;
+    fprintf(stderr, "Parameter '%s' not found in args or evn.", varName);PRINT_ERROR
+    return NULL;
 }
 
-int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]) {
-    const char *prefixMfog = "MFOG_";
+#define IS_STDOUT 'o'
+#define IS_STDERR 'e'
+char isStdFile(char fileName[]) {
+    const char *stdoutName = "stdout";
+    const char *stderrName = "stderr";
+    int isStdout = 0, isStderr = 0, i;
+    for (i = 0; stdoutName[i] != '\0'; i++) {
+        isStdout += stdoutName[i] - fileName[i];
+        isStderr += stderrName[i] - fileName[i];
+        if (fileName[i] == '\0') break;
+    }
+    if (isStdout == 0) {
+        return IS_STDOUT;
+    }
+    if (isStdout == 0) {
+        return IS_STDERR;
+    }
+    return '\0';
+}
+
+FILE *loadFileFromEnvValue(char varName[], char fileName[], char fileMode[]) {
+    if (fileName == NULL || fileMode == NULL) {
+        fprintf(stderr, "Expected argument '%s' set to '%s' to be '%s'-able file.", varName, fileName, fileMode);PRINT_ERROR
+        return NULL;
+    }
     //
-    const char *stdoutName = "stdout";
-    const char *stderrName = "stderr";
-    int failures = 0;
-    #define DEBUG_LN fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, __FUNCTION__); fflush(stderr);
-    for (int var = 0; var < varsSize; var++) {
-        int assingned = 0;
-        for (char **env = envp; *env != 0; env++) {
-            char *thisEnv = *env;
-            // fprintf(stderr, "%s\n", thisEnv);
-            int diff = 0, i = 0;
-            for (; prefixMfog[i] != '\0' && diff == 0; i++) diff += prefixMfog[i] - thisEnv[i];
-            //
-            if (diff != 0) continue;
-            if (assingVarFromEnvArg(varNames[var], varPtrs[var], &(thisEnv[i]), NULL)) {
-                assingned++;
-                break;
-            }
-        }
-        for (int arg = 1; arg < argc; arg++) {
-            // fprintf(stderr, "%s\n", argv[arg]);
-            if (assingVarFromEnvArg(varNames[var], varPtrs[var], argv[arg], argv[arg+1])) {
-                assingned++;
-                break;
-            }
-        }
-        if (!assingned) {
-            char *extraMsg;
-            extraMsg = "";
-            if (fileModes[var][0] == 'w' || fileModes[var][0] == 'a') {
-                extraMsg = "\tWill use stdout as append file.";
-                *(filePtrs[var]) = stdout;
-                *(varPtrs[var]) = "stdout";
-            } else {
-                failures++;
-            }
-            fprintf(stderr, "Expected argument or environment '%s' to be defined and '%s'-able.%s\n", varNames[var], fileModes[var], extraMsg);
-            continue;
-        }
-        if (varPtrs[var] == NULL) break;
-        char *fileName = *(varPtrs[var]);
-        // fprintf(stderr, "%s => %s\n", varNames[var], fileName);
-        if (fileName == NULL) {
-            fprintf(stderr, "Expected argument or environment '%s' to be defined\n", varNames[var]);
-            failures++;
-            continue;
-        }
-        int isStdout = 0, isStderr = 0, i;
-        for (i = 0; stdoutName[i] != '\0'; i++) {
-            isStdout += stdoutName[i] - fileName[i];
-            isStderr += stderrName[i] - fileName[i];
-            if (fileName[i] == '\0') break;
-        }
-        if (isStdout == 0) {
-        // if (strcmp("stdout", fileName) == 0) {
-            // printf("Set var '%s' to stdout.\n", varNames[var]);
-            *(filePtrs[var]) = stdout;
-        } else if (isStderr == 0) {
-        // } else if (strcmp("stderr", fileName) == 0) {
-            // printf("Set var '%s' to stderr.\n", varNames[var]);
-            *(filePtrs[var]) = stderr;
-        } else {
-            *(filePtrs[var]) = fopen(fileName, fileModes[var]);
-        }
-        if (*(filePtrs[var]) == NULL) {
-            fprintf(stderr, "Expected argument '%s' set to '%s' to be '%s'-able file.\n", varNames[var], fileName, fileModes[var]);
-            failures++;
-        }
+    FILE *file;
+    switch (isStdFile(fileName)) {
+    case IS_STDOUT:
+        file = stdout;
+        break;
+    case IS_STDERR:
+        file = stderr;
+        break;
+    
+    default:
+        file = fopen(fileName, fileMode);
+        break;
     }
-    fprintf(stderr, "Missing %d arguments.\n", failures);
-    return failures;
+    if (file == NULL) {
+        fprintf(stderr, "Expected argument '%s' set to '%s' to be '%s'-able file.", varName, fileName, fileMode);PRINT_ERROR
+    }
+    return file;
 }
 
-void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]) {
-    const char *stdoutName = "stdout";
-    const char *stderrName = "stderr";
-    for (int var = 0; var < varsSize; var++) {
-        char *fileName = *(varPtrs[var]);
-        if (fileName == NULL) continue;
-        int isStdout = 0;
-        for (int i = 0; stdoutName[i] != '\0' && isStdout == 0; i++) isStdout += stdoutName[i] - fileName[i];
-        int isStderr = 0;
-        for (int i = 0; stderrName[i] != '\0' && isStderr == 0; i++) isStderr += stderrName[i] - fileName[i];
-        if (isStdout || isStderr) {
-            continue;
-        } else {
-            fclose(*(filePtrs[var]));
+FILE *loadEnvFile(int argc, char *argv[], char **envp, char varName[], char **fileName, FILE **file, char fileMode[]) {
+    char *varValue = findEnvVar(argc, argv, envp, varName);
+    if (varValue == NULL) {
+        if (*file != NULL) {
+            fprintf(stderr, "Using default value for param '%s' with value '%s' (%p).", varName, *fileName, *file);PRINT_ERROR
+        } else if (*fileName != NULL) {
+            *(file) = loadFileFromEnvValue(varName, *fileName, fileMode);
+            fprintf(stderr, "Using default string for param '%s' with value '%s' (%p).", varName, *fileName, *file);PRINT_ERROR
+        } else if (fileMode[0] == 'w' || fileMode[0] == 'a') {
+            fprintf(stderr, "Expected argument or environment '%s' to be defined and '%s'-able."
+                "\tWill use stdout as append file.", varName, fileMode);
+            PRINT_ERROR
+            *fileName = "stdout";
+            *(file) = stdout;
         }
+    } else {
+        *fileName = varValue;
+        *(file) = loadFileFromEnvValue(varName, *fileName, fileMode);
+    }
+    return *(file);
+}
+
+int loadEnvVar(int argc, char *argv[], char **envp, char varType, char *varName, char **strVarPtr, int *valuePtr) {
+    char *varValue = findEnvVar(argc, argv, envp, varName);
+    if (varValue == NULL) {
+        return 1;
+    }
+    *strVarPtr = varValue;
+    switch (varType) {
+    case 'i':
+        *(valuePtr) = atoi(*strVarPtr);
+        break;
+    case 'f':
+        *(valuePtr) = atof(*strVarPtr);
+        break;
+    
+    default:
+        fprintf(stderr, "No action for varName '%s' with type '%c'.", varName, varType);PRINT_ERROR
+        break;
+    }
+    return 0;
+}
+
+void closeEnvFile(char varName[], char fileName[], FILE *file) {
+    if (fileName == NULL) {
+        return;
+    }
+    switch (isStdFile(fileName)) {
+    case IS_STDOUT:
+        break;
+    case IS_STDERR:
+        break;
+    
+    default:
+        fclose(file);
+        break;
     }
 }
 

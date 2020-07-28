@@ -3,10 +3,10 @@
 
 #include <stdio.h>
 
-int assingVarFromEnvArg(char *varName, char **varPtr, char *envOrArg, char *nextArg);
-int loadEnv(int argc, char *argv[], char **envp, int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]);
-void closeEnv(int varsSize, char *varNames[], char **varPtrs[], FILE **filePtrs[], char *fileModes[]);
-int printEnvs(int argc, char *argv[], char **envp);
+char* findEnvVar(int argc, char *argv[], char **envp, char *varName);
+int loadEnvVar(int argc, char *argv[], char **envp, char varType, char *varName, char **strVarPtr, int *valuePtr);
+FILE *loadEnvFile(int argc, char *argv[], char **envp, char *varName, char **strVarPtr, FILE **valuePtr, char fileMode[]);
+void closeEnvFile(char varName[], char fileName[], FILE *file);
 
 // # source, executable, build_date-time, wall-clock, function, gnuc, elapsed, cores, itens
 #define PRINT_TIMING_FORMAT "%s,%s,%s %s,%ld,%s,%s,%e,%d,%d\n"

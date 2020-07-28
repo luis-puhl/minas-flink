@@ -159,6 +159,7 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     return exampleCounter;
 }
 
+/*
 int MNS_mfog_main(int argc, char *argv[], char **envp) {
     int mpiReturn;
     mpiReturn = MPI_Init(&argc, &argv);
@@ -200,7 +201,7 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
         return 0;
     }
     //
-    /*
+    / *
     # Root:
         - Read Model
         - Broadcast Model
@@ -213,7 +214,7 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
         - Rcv Model
         - Rcv Example
         - Classify
-    */
+    * /
     Model *model;
     int dimension = 22;
     if (clRank == 0) {
@@ -261,5 +262,6 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
     MPI_Finalize();
     return 0;
 }
+*/
 
 #endif // MFOG_C

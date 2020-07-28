@@ -5,7 +5,10 @@
         "cstdlib": "c",
         "*.tcc": "c",
         "memory": "c",
-        "random": "c"
+        "random": "c",
+        "cstdio": "cpp",
+        "fstream": "cpp",
+        "iostream": "cpp"
     },
     "cSpell.words": [
         "Iprobe",

@@ -46,22 +46,15 @@ Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
         Cluster *cl = &(model->vals[model->size - 1]);
         cl->center = malloc(dimension * sizeof(double));
         // #id,label,category,matches,time,meanDistance,radius,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21
-        int assigned = sscanf(line,
-            "%d,%c,%c,"
-            "%d,%d,%lf,%lf,"
-            "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n",
-            &cl->id, &cl->label, &cl->category,
-            &cl->matches, &cl->time, &cl->meanDistance, &cl->radius,
-            &cl->center[0], &cl->center[1], &cl->center[2], &cl->center[3], &cl->center[4],
-            &cl->center[5], &cl->center[6], &cl->center[7], &cl->center[8], &cl->center[9],
-            &cl->center[10], &cl->center[11], &cl->center[12], &cl->center[13], &cl->center[14],
-            &cl->center[15], &cl->center[16], &cl->center[17], &cl->center[18], &cl->center[19],
-            &cl->center[20], &cl->center[21]
-        );
-        #ifdef SQR_DISTANCE
-            cl->radius *= cl->radius;
-        #endif // SQR_DISTANCE
-        if (assigned != 29) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", lines, line);
+        int assigned = 0;
+        sscanf(line, "%d,%c,%c,%d,%d,%lf,%lf,", &cl->id, &cl->label, &cl->category, &cl->matches, &cl->time, &cl->meanDistance, &cl->radius);
+        for (int d = 0; d < dimension - 1; d++) {
+            assigned += sscanf(line, "%lf,", &cl->center[d]);
+        }
+        assigned += sscanf(line, "%lf\n", &cl->center[dimension - 1]);
+        if (assigned != (7 + dimension)) {
+            errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'" __FILE__ ":%d\n", lines, line, __LINE__);
+        }
     }
     if (timing) {
         PRINT_TIMING(timing, executable, 1, start, model->size);
@@ -74,24 +67,19 @@ void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *exe
     clock_t start = clock();
     //
     // #id,label,category,matches,time,meanDistance,radius,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21
-    fprintf(file,
-        "#id,label,category,matches,time,meanDistance,radius,"
-        "c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21\n"
-    );
+    fprintf(file, "#id,label,category,matches,time,meanDistance,radius,");
+    for (int d = 0; d < dimension - 1; d++) {
+        fprintf(file, "c%d,", d);
+    }
+    fprintf(file, "c%d\n", dimension - 1);
+    //
     for (int i = 0; i < model->size; i++) {
         Cluster *cl = &(model->vals[i]);
-        fprintf(file,
-            "%d,%c,%c,"
-            "%d,%d,%le,%le,"
-            "%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le,%le\n",
-            cl->id, cl->label, cl->category,
-            cl->matches, cl->time, cl->meanDistance, cl->radius,
-            cl->center[0], cl->center[1], cl->center[2], cl->center[3], cl->center[4],
-            cl->center[5], cl->center[6], cl->center[7], cl->center[8], cl->center[9],
-            cl->center[10], cl->center[11], cl->center[12], cl->center[13], cl->center[14],
-            cl->center[15], cl->center[16], cl->center[17], cl->center[18], cl->center[19],
-            cl->center[20], cl->center[21]
-        );
+        fprintf(file, "%d,%c,%c,%d,%d,%le,%le,", cl->id, cl->label, cl->category, cl->matches, cl->time, cl->meanDistance, cl->radius);
+        for (int d = 0; d < dimension -1; d++) {
+            fprintf(file, "%le,", cl->center[d]);
+        }
+        fprintf(file, "%le\n", cl->center[dimension - 1]);
     }
     fflush(file);
     if (timing) {
@@ -100,7 +88,7 @@ void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *exe
 }
 
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable) {
-    if (file == NULL) errx(EXIT_FAILURE, "bad file");
+    if (file == NULL/* || ferror(file)*/) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     char line[line_len + 1];
     //
@@ -112,21 +100,22 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
     (*nExamples) = 0;
     while (fgets(line, line_len, file)) {
         (*nExamples)++;
-        if (line[0] == '#') continue;
+        if (line[0] == '#') {
+            printf("%s", line);
+            continue;
+        }
         // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
         Point *ex = &(exs[exSize-1]);
         ex->value = malloc(dimension * sizeof(double));
-        int assigned = sscanf(line,
-            "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,"
-            "%c\n",
-            &ex->value[0], &ex->value[1], &ex->value[2], &ex->value[3], &ex->value[4],
-            &ex->value[5], &ex->value[6], &ex->value[7], &ex->value[8], &ex->value[9],
-            &ex->value[10], &ex->value[11], &ex->value[12], &ex->value[13], &ex->value[14],
-            &ex->value[15], &ex->value[16], &ex->value[17], &ex->value[18], &ex->value[19],
-            &ex->value[20], &ex->value[21], &ex->label
-        );
+        int assigned = 0;
+        for (int d = 0; d < dimension; d++) {
+            assigned += sscanf(line, "%lf,", &ex->value[d]);
+        }
+        assigned += sscanf(line, "%c\n", &ex->label);
         ex->id = exSize - 1;
-        if (assigned != 23) errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'", (*nExamples), line);
+        if (assigned != (1 + dimension)) {
+            errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'" __FILE__ ":%d\n", (*nExamples), line, __LINE__);
+        }
         //
         exs = realloc(exs, (++exSize) * sizeof(Point));
     }
@@ -176,6 +165,7 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     // );
 }
 
+/*
 int MNS_minas_main(int argc, char *argv[], char **envp) {
     char *executable = argv[0];
     char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
@@ -241,6 +231,7 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
     free(examples);
     return 0;
 }
+*/
 
 Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Point examples[], FILE *timing, char *executable) {
     clock_t start = clock();
