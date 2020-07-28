@@ -18,7 +18,7 @@
 - 2020-06-12 [ ] Run on local<-->rpi, cloud<-->rpi;
   - 2020-07-01 [x] Run with heterogeneous cluster is not possible.
   - 2020-07-13 [ ] Socket comm: Cloud, multiple stream sources (opposing current fan-out model);
-- 2020-06-15 [ ] Detecção de novidades;
+- 2020-06-15 [x] Detecção de novidades;
 - 2020-06-15 [x] Homogenização de ambientes (USER, PATH, ...) ---->> Only on Rpi;
 - 2020-06-15 [x] Vazão (Throughput) (70k/5s), Latência (1/vazão), speedup (T_seq/T_parallel);
 - 2020-07-01 [x] Review evaluate. Use unix sort.
@@ -40,3 +40,16 @@
     - [x] Diff por imagem (clusters e exemplos?);
   - [ ] Valgrind memory leak analysis;
   - [ ] Constante de `dimension` em tempo de compilação (dataset constante);
+- 2020-07-27
+  - Modelos continuam não idênticos (porém bem mais próximos);
+  - Implementado ND com alguns resultados favoráveis;
+  - [ ] Escrever um *teste de mesa* com `csv` de entrada,
+        pequeno (K, d, n) (número de clusters, dimensões e exemplos),
+        plot dos pontos e centroides;
+  - [ ] Options:
+    - [ ] Implement sockets and cloud: new lib, new challenges;
+    - [ ] Implement redis and cloud: new lib, new challenges;
+    - [ ] ND on mpi, parallel k-means: not in the original architecture;
+    - [ ] Clu-Stream: is faster, less error;
+    - [ ] Run on rpi: will be very slow with ND (k-menas);
+    - [ ] Plot ex distances, compare with og;

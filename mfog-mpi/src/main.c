@@ -43,7 +43,7 @@ int mainClassify(int mpiRank, int mpiSize, Point examples[], Model *model, int *
             if (match->label == '-') {
                 unknowns[unknownsSize] = example;
                 unknownsSize++;
-                if (unknownsSize >= maxUnkSize  && (lastCheck + (k * minExCluster) < exampleCounter)) {
+                if (unknownsSize >= maxUnkSize && (lastCheck + (k * minExCluster) < exampleCounter)) {
                     lastCheck = exampleCounter;
                     // ND
                     Point *linearGroup = malloc(unknownsSize * sizeof(Point));
