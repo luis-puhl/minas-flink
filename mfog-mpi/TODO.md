@@ -43,9 +43,10 @@
 - 2020-07-27
   - Modelos continuam não idênticos (porém bem mais próximos);
   - Implementado ND com alguns resultados favoráveis;
-  - [ ] Escrever um *teste de mesa* com `csv` de entrada,
+  - [x] Escrever um *teste de mesa* com `csv` de entrada,
         pequeno (K, d, n) (número de clusters, dimensões e exemplos),
-        plot dos pontos e centroides;
+        plot dos pontos e centroides; Existe diferença entre implementações mas
+        mas não é visualizável https://docs.google.com/spreadsheets/d/1KGdMJmJBH0Xhb82ik6Do6Bz64d7jqrXn8H5ZVgTJPWc/edit#gid=0&range=G114:H123;
   - [ ] Options:
     - [ ] Implement sockets and cloud: new lib, new challenges;
     - [ ] Implement redis and cloud: new lib, new challenges;
