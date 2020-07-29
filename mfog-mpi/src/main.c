@@ -22,10 +22,9 @@
 #ifndef MAIN
 #define MAIN
 
-int mainClassify(int mpiRank, int mpiSize, Point examples[], Model *model, int *nMatches, Match *memMatches, FILE *matchesFile, FILE *timingFile, char *executable) {
+int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model, int *nMatches, Match *memMatches, FILE *matchesFile, FILE *timingFile, char *executable) {
     clock_t start = clock();
     double noveltyThreshold = 2;
-    int k = 100;
     int minExCluster = 20;
     int maxUnkSize = k * minExCluster;
     int exampleCounter = 0;
@@ -56,7 +55,7 @@ int mainClassify(int mpiRank, int mpiSize, Point examples[], Model *model, int *
                     sprintf(outputModelFileName, "out/models/%d.csv", exampleCounter);
                     FILE *outputModelFile = fopen(outputModelFileName, "w");
                     if (outputModelFile != NULL) {
-                        writeModel(model->dimension, outputModelFile, model, timingFile, executable);
+                        writeModel(outputModelFile, model, timingFile, executable);
                     }
                     fclose(outputModelFile);
                     //
@@ -185,14 +184,13 @@ int main(int argc, char *argv[], char **envp) {
     Model *model;
     if (mpiRank == 0) {
         if (trainingCsv != NULL && trainingFile != NULL) {
-            // printf("will training\n");
             int nExamples;
-            Point *examples = readExamples(22, trainingFile, &nExamples, timingFile, executable);
-            model = MNS_offline(nExamples, examples, 100, 22, timingFile, executable);
+            Point *examples = readExamples(dimension, trainingFile, &nExamples, timingFile, executable);
+            model = MNS_offline(nExamples, examples, kParam, dimension, timingFile, executable);
             fflush(stdout);
             FILE *outputModelFile = fopen("out/models/0-initial.csv", "w");
             if (outputModelFile != NULL) {
-                writeModel(model->dimension, outputModelFile, model, timingFile, executable);
+                writeModel(outputModelFile, model, timingFile, executable);
             }
             fclose(outputModelFile);
         } else if (modelCsv != NULL && modelFile != NULL) {
@@ -208,14 +206,14 @@ int main(int argc, char *argv[], char **envp) {
         memMatches = malloc(2 * nExamples * sizeof(Match));
     }
     int nMatches;
-    mainClassify(mpiRank, mpiSize, examples, model, &nMatches, memMatches, matchesFile, timingFile, executable);
+    mainClassify(kParam, mpiRank, mpiSize, examples, model, &nMatches, memMatches, matchesFile, timingFile, executable);
 
     if (mpiRank == 0) {
         char outputModelFileName[200];
         sprintf(outputModelFileName, "out/models/%d-final.csv", nExamples);
         FILE *outputModelFile = fopen(outputModelFileName, "w");
         if (outputModelFile != NULL) {
-            writeModel(model->dimension, outputModelFile, model, timingFile, executable);
+            writeModel(outputModelFile, model, timingFile, executable);
         }
         fclose(outputModelFile);
         // closeEnv(envType, varNames, fileNames, values, fileModes);

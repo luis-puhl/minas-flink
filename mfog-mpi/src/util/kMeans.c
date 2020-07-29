@@ -78,33 +78,25 @@ Cluster *kMeans(int dimension, int k, Cluster clusters[], int nExamples, Point e
             }
             // update cluster
             match->cluster->matches++;
-            // if (match->distance > match->cluster->distancesMax) {
-            //     match->cluster->distancesMax = match->distance;
-            // }
-            match->cluster->distancesSum += match->distance;
-            match->cluster->distancesSqrSum += match->distance * match->distance;
             for (int d = 0; d < dimension; d++) {
                 match->cluster->pointSum[d] += ex->value[d];
-                match->cluster->pointSqrSum[d] += ex->value[d] * ex->value[d];
             }
             globalInnerDistance += match->distance;
         }
         // assing new center
         for (int i = 0; i < k; i++) {
+            if (k <= 10) printf("center %d: ", i);
             for (int d = 0; d < dimension; d++) {
                 if (clusters[i].matches != 0) {
                     clusters[i].center[d] = clusters[i].pointSum[d] / clusters[i].matches;
+                    if (k <= 10) printf("%f, ", clusters[i].center[d]);
                 }
                 clusters[i].pointSum[d] = 0.0;
-                clusters[i].pointSqrSum[d] = 0.0;
             }
-            clusters[i].distancesSum = 0.0;
-            clusters[i].distancesSqrSum = 0.0;
+            if (k <= 10) printf("\n");
             clusters[i].matches = 0;
-            // clusters[i].distancesMax = 0.0;
-            // clusters[i].meanDistance = 0.0;
-            // clusters[i].radius = 0.0;
         }
+        if (k <= 10) printf("\n");
         improvement = (globalInnerDistance / prevGlobalInnerDistance) - 1;
         improvement = improvement >= 0 ? improvement : - improvement;
         printf(

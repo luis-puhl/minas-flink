@@ -62,7 +62,8 @@ Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
     return model;
 }
 
-void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *executable) {
+void writeModel(FILE *file, Model *model, FILE *timing, char *executable) {
+    int dimension = model->dimension;
     if (file == NULL) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     //
@@ -88,44 +89,59 @@ void writeModel(int dimension, FILE *file, Model *model, FILE *timing, char *exe
 }
 
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable) {
-    if (file == NULL/* || ferror(file)*/) errx(EXIT_FAILURE, "bad file");
+    if (file == NULL || ferror(file)) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     char line[line_len + 1];
     //
     Point *exs;
-    unsigned int exSize = 1;
-    exs = malloc(exSize * sizeof(Point));
+    exs = malloc(1 * sizeof(Point));
     //
     // for (examples)
-    (*nExamples) = 0;
+    *nExamples = 0;
+    int isFileIndexed = 0;
     while (fgets(line, line_len, file)) {
-        (*nExamples)++;
         if (line[0] == '#') {
-            printf("%s", line);
+            // printf("%s", line);
+            if (line[1] == 'i' && line[2] == 'd') {
+                isFileIndexed = 1;
+                // printf("File is indexed. At "__FILE__":%d\n", __LINE__);
+            }
             continue;
         }
         // 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A
-        Point *ex = &(exs[exSize-1]);
+        Point *ex = &(exs[*nExamples]);
         ex->value = malloc(dimension * sizeof(double));
         int assigned = 0;
-        for (int d = 0; d < dimension; d++) {
-            assigned += sscanf(line, "%lf,", &ex->value[d]);
+        char *linePtr = line;
+        if (isFileIndexed) {
+            assigned += sscanf(linePtr, "%d,", &ex->id);
+            for (;*linePtr != ','; linePtr++) { /* nope */ }
+            linePtr++;
+        } else {
+            ex->id = *nExamples;
         }
-        assigned += sscanf(line, "%c\n", &ex->label);
-        ex->id = exSize - 1;
-        if (assigned != (1 + dimension)) {
+        // printf("%s\tPoint(id=%d, val=[", line, ex->id);
+        for (int d = 0; d < dimension; d++) {
+            assigned += sscanf(linePtr, "%lf,", &ex->value[d]);
+            // printf("%lf, ", ex->value[d]);
+            for (;*linePtr != ','; linePtr++) { /* nope */ }
+            linePtr++;
+        }
+        assigned += sscanf(linePtr, "%c\n", &ex->label);
+        // printf("], class='%c')\n", ex->label);
+        if (assigned != (1 + isFileIndexed + dimension)) {
             errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'" __FILE__ ":%d\n", (*nExamples), line, __LINE__);
         }
         //
-        exs = realloc(exs, (++exSize) * sizeof(Point));
+        (*nExamples)++;
+        exs = realloc(exs, (*nExamples + 1) * sizeof(Point));
     }
-    fclose(file);
-    Point *ex = &(exs[exSize-1]);
-    ex->id = -1;
-    ex->value = NULL;
-    ex->label = '\0';
+    // fclose(file);
+    exs[*nExamples].id = -1;
+    exs[*nExamples].value = NULL;
+    exs[*nExamples].label = '\0';
     if (timing) {
-        PRINT_TIMING(timing, executable, 1, start, (*nExamples));
+        PRINT_TIMING(timing, executable, 1, start, (*nExamples +1));
     }
     return exs;
 }
@@ -233,7 +249,7 @@ int MNS_minas_main(int argc, char *argv[], char **envp) {
 }
 */
 
-Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Point examples[], FILE *timing, char *executable) {
+Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Point examples[], FILE *timing, char *executable, Model *model) {
     clock_t start = clock();
     // update distances
     for (int i = 0; i < k; i++) {
@@ -251,6 +267,16 @@ Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Po
         Point *ex = &(examples[exIndx]);
         double nearestDistance;
         Cluster *nearest = NULL;
+        if (model != NULL) {
+            for (int clIndx = 0; clIndx < model->size; clIndx++) {
+                Cluster *cl = &(model->vals[clIndx]);
+                double distance = MNS_distance(ex->value, cl->center, dimension);
+                if (nearest == NULL || nearestDistance > distance) {
+                    nearest = cl;
+                    nearestDistance = distance;
+                }
+            }
+        }
         for (int clIndx = 0; clIndx < k; clIndx++) {
             Cluster *cl = &(clusters[clIndx]);
             double distance = MNS_distance(ex->value, cl->center, dimension);
@@ -320,6 +346,7 @@ Model* MNS_offline(int nExamples, Point examples[], int k, int dimension, FILE *
             }
         }
     }
+    printf("Labels %s \n", labels);
     char category = 'n';
     for (int l = 0; l < labelsSize; l++) {
         char label = labels[l];
@@ -332,7 +359,7 @@ Model* MNS_offline(int nExamples, Point examples[], int k, int dimension, FILE *
         }
         
         if (groupSize < k) {
-            errx(EXIT_FAILURE, "Not enough examples for clustering. Needed %d and got %d\n", k, groupSize);
+            errx(EXIT_FAILURE, "Not enough examples for clustering. Needed %d and got %d. At "__FILE__":%d\n", k, groupSize, __LINE__);
         }
         //
         int prevModelSize = model->size;
@@ -343,7 +370,7 @@ Model* MNS_offline(int nExamples, Point examples[], int k, int dimension, FILE *
         Cluster *clusters = &(model->vals[prevModelSize]);
         clusters = kMeansInit(dimension, k, clusters, groupSize, linearGroup, prevModelSize, label, category, timing, executable);
         clusters = kMeans(dimension, k, clusters, groupSize, linearGroup, timing, executable);
-        clusters = fillCluster(dimension, k, clusters, groupSize, linearGroup, timing, executable);
+        clusters = fillCluster(dimension, k, clusters, groupSize, linearGroup, timing, executable, NULL);
         //
         free(linearGroup);
     }
@@ -373,7 +400,8 @@ Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[],
 
     clusters = kMeansInit(dimension, k, clusters, unknownsSize, unknowns, model->size, label, category, timing, executable);
     clusters = kMeans(dimension, k, clusters, unknownsSize, unknowns, timing, executable);
-    // clusters = fillCluster(dimension, k, clusters, unknownsSize, unknowns, timing, executable);
+    clusters = fillCluster(dimension, k, clusters, unknownsSize, unknowns, timing, executable, model);
+    /*
     for (int i = 0; i < k; i++) {
         clusters[i].matches = 0;
         clusters[i].distancesMax = 0.0;
@@ -424,6 +452,7 @@ Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[],
         // cl->radius = 0;
         cl->radius = cl->distancesMax;
     }
+    */
 
     for (int clId = 0; clId < k; clId++) {
         if (clusters[clId].matches >= minExCluster) {

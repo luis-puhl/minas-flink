@@ -134,7 +134,7 @@ int loadEnvVar(int argc, char *argv[], char **envp, char varType, char *varName,
 }
 
 void closeEnvFile(char varName[], char fileName[], FILE *file) {
-    if (fileName == NULL) {
+    if (fileName == NULL || ferror(file)) {
         return;
     }
     switch (isStdFile(fileName)) {

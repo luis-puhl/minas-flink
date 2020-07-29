@@ -64,7 +64,7 @@ def confusionMatrix(exDf, maDf=None):
     offf = ['-'] + [c for c in classes if c in labels]
     cf['assigned'] = [l if l in offf else c for l, c in zip(labels, cf.idxmax(axis='columns'))]
     cf['hits'] = [0 if l == '-' else cf.at[i, l] for i, l in cf['assigned'].iteritems()]
-    cf['misses'] = [0 if l == '-' else cf.at[i, l] for i, l in cf['assigned'].iteritems()]
+    # cf['misses'] = [0 if l == '-' else cf.at[i, l] for i, l in cf['assigned'].iteritems()]
     # cf['lbl_tot'] = [c for c in classes if c in labels]
     assignment = dict([ v for v in cf['assigned'].iteritems()])
     return (cf, classes, labels, offf, assignment)
