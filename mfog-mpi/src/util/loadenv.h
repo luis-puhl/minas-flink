@@ -8,6 +8,8 @@ int loadEnvVar(int argc, char *argv[], char **envp, char varType, char *varName,
 FILE *loadEnvFile(int argc, char *argv[], char **envp, char *varName, char **strVarPtr, FILE **valuePtr, char fileMode[]);
 void closeEnvFile(char varName[], char fileName[], FILE *file);
 
+int findEnvFlag(int argc, char *argv[], char **envp, char *varName);
+
 // # source, executable, build_date-time, wall-clock, function, gnuc, elapsed, cores, itens
 #define PRINT_TIMING_FORMAT "%s,%s,%s %s,%ld,%s,%s,%e,%d,%d\n"
 #define PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens) \

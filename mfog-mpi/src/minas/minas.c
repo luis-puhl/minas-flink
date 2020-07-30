@@ -181,74 +181,6 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
     // );
 }
 
-/*
-int MNS_minas_main(int argc, char *argv[], char **envp) {
-    char *executable = argv[0];
-    char *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
-    FILE *modelFile, *examplesFile, *matches, *timing;
-    #define VARS_SIZE 4
-    char *varNames[] = { "MODEL_CSV", "EXAMPLES_CSV", "MATCHES_CSV", "TIMING_LOG"};
-    char **fileNames[] = { &modelCsv, &examplesCsv, &matchesCsv, &timingLog };
-    FILE **files[] = { &modelFile, &examplesFile, &matches, &timing };
-    char *fileModes[] = { "r", "r", "w", "a" };
-    loadEnv(argc, argv, envp, VARS_SIZE, varNames, fileNames, files, fileModes);
-    printf(
-        "Reading model from     '%s'\n"
-        "Reading examples from  '%s'\n"
-        "Writing matches to     '%s'\n"
-        "Writing timing to      '%s'\n",
-        modelCsv, examplesCsv, matchesCsv, timingLog
-    );
-    //
-    
-    Model *model = readModel(22, modelFile, timing, executable);
-    Point *examples;
-    int nExamples;
-    examples = readExamples(model->dimension, examplesFile, &nExamples, timing, executable);
-    // fprintf(stderr, "nExamples %d\n", nExamples);
-
-    fprintf(matches, MATCH_CSV_HEADER);
-    int exampleCounter = 0;
-    clock_t start = clock();
-    Match match;
-    Point *unkBuffer = malloc(nExamples * sizeof(Point));
-    int nUnk = 0;
-    for (exampleCounter = 0; exampleCounter < nExamples; exampleCounter++) {
-        // fprintf(stderr, "%d/%d\n", exampleCounter, nExamples);
-        //
-        classify(model->dimension, model, &(examples[exampleCounter]), &match);
-        if (match.label == '-') {
-            // unkown
-            unkBuffer[nUnk] = examples[exampleCounter];
-            nUnk++;
-        }
-        if (nUnk > 100 && nUnk % 100 == 0) {
-            // retrain
-            Model m;
-            m.dimension = 22;
-            m.size = 10;
-            m.vals = malloc(m.size * sizeof(Cluster));
-            for (int i = 0; i < m.size; i++) {
-                m.vals[i].id = i;
-                m.vals[i].center = malloc(m.dimension * sizeof(double));
-            }
-            // kMeans(&m, m.size, dimension, unkBuffer, nUnk, timing, executable);
-        }
-        fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(match));
-    }
-    PRINT_TIMING(timing, executable, 1, start, exampleCounter);
-
-    closeEnv(VARS_SIZE, varNames, fileNames, files, fileModes);
-
-    for (int i = 0; i < model->size; i++) {
-        free(model->vals[i].center);
-    }
-    free(model->vals);
-    free(examples);
-    return 0;
-}
-*/
-
 Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Point examples[], FILE *timing, char *executable, Model *model) {
     clock_t start = clock();
     // update distances
@@ -309,7 +241,6 @@ Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Po
     }
     return clusters;
 }
-
 
 /**
  * Initial training
@@ -401,58 +332,6 @@ Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[],
     clusters = kMeansInit(dimension, k, clusters, unknownsSize, unknowns, model->size, label, category, timing, executable);
     clusters = kMeans(dimension, k, clusters, unknownsSize, unknowns, timing, executable);
     clusters = fillCluster(dimension, k, clusters, unknownsSize, unknowns, timing, executable, model);
-    /*
-    for (int i = 0; i < k; i++) {
-        clusters[i].matches = 0;
-        clusters[i].distancesMax = 0.0;
-        clusters[i].meanDistance = 0.0;
-        clusters[i].radius = 0.0;
-        for (int d = 0; d < dimension; d++) {
-            clusters[i].pointSum[d] = 0.0;
-            clusters[i].pointSqrSum[d] = 0.0;
-        }
-    }
-    for (int exIndx = 0; exIndx < unknownsSize; exIndx++) {
-        // classify(dimension, model, &(group[i]), &m);
-        Point *ex = &(unknowns[exIndx]);
-        double nearestDistance;
-        Cluster *nearest = NULL;
-        for (int clIndx = 0; clIndx < model->size; clIndx++) {
-            Cluster *cl = &(model->vals[clIndx]);
-            double distance = MNS_distance(ex->value, cl->center, dimension);
-            if (nearest == NULL || nearestDistance > distance) {
-                nearest = cl;
-                nearestDistance = distance;
-            }
-        }
-        for (int clIndx = 0; clIndx < k; clIndx++) {
-            Cluster *cl = &(clusters[clIndx]);
-            double distance = MNS_distance(ex->value, cl->center, dimension);
-            if (nearest == NULL || nearestDistance > distance) {
-                nearest = cl;
-                nearestDistance = distance;
-            }
-        }
-        nearest->matches++;
-        if (nearestDistance > nearest->distancesMax) {
-            nearest->distancesMax = nearestDistance;
-        }
-        nearest->distancesSum += nearestDistance;
-        nearest->distancesSqrSum += nearestDistance * nearestDistance;
-        for (int d = 0; d < dimension; d++) {
-            nearest->pointSum[d] += ex->value[d];
-            nearest->pointSqrSum[d] += ex->value[d] * ex->value[d];
-        }
-    }
-    for (int clIdx = 0; clIdx < k; clIdx++) {
-        Cluster *cl = &clusters[clIdx];
-        if (cl->matches != 0) {
-            cl->meanDistance = cl->distancesSum / cl->matches;
-        }
-        // cl->radius = 0;
-        cl->radius = cl->distancesMax;
-    }
-    */
 
     for (int clId = 0; clId < k; clId++) {
         if (clusters[clId].matches >= minExCluster) {

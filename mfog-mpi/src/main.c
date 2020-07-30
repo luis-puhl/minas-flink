@@ -1,11 +1,19 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mpi.h>
 #include <err.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <netdb.h>
 
 #include "./minas/minas.h"
 #include "./mpi/minas-mpi.h"
 #include "./util/loadenv.h"
+#include "./util/net.h"
 
 /**
  * Experiments are based in this Minas config
@@ -21,8 +29,17 @@
 
 #ifndef MAIN
 #define MAIN
+struct main_mfog_st {
+    int mpiRank, mpiSize;
+    char *executable;
+    int kParam, dimension, isModelServer;
+    char *kParamStr, *dimensionStr;
+    char *trainingCsv, *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
+    FILE *trainingFile, *modelFile, *examplesFile, *matchesFile, *timingFile;
+};
 
-int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model, int *nMatches, Match *memMatches, FILE *matchesFile, FILE *timingFile, char *executable) {
+int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model,
+    int *nMatches, Match *memMatches, FILE *matchesFile, FILE *timingFile, char *executable) {
     clock_t start = clock();
     double noveltyThreshold = 2;
     int minExCluster = 20;
@@ -123,7 +140,50 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
     return exampleCounter;
 }
 
+Model *createModelServerModule(struct main_mfog_st params) {
+    Model *model;
+    if (params.mpiRank == 0) {
+        if (params.trainingCsv != NULL && params.trainingFile != NULL) {
+            int nExamples;
+            Point *examples = readExamples(params.dimension, params.trainingFile, &nExamples, params.timingFile, params.executable);
+            model = MNS_offline(nExamples, examples, params.kParam, params.dimension, params.timingFile, params.executable);
+            fflush(stdout);
+            FILE *outputModelFile = fopen("out/models/0-initial.csv", "w");
+            if (outputModelFile != NULL) {
+                writeModel(outputModelFile, model, params.timingFile, params.executable);
+            }
+            fclose(outputModelFile);
+        } else if (params.modelCsv != NULL && params.modelFile != NULL) {
+            model = readModel(params.dimension, params.modelFile, params.timingFile, params.executable);
+        }
+    } else {
+        // otherRank
+    }
+    return model;
+}
+
 int main(int argc, char *argv[], char **envp) {
+    int isModelServer = 0 ;
+    isModelServer += findEnvFlag(argc, argv, envp, "-cloud");
+    isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
+    if (isModelServer) {
+        // model = createModelServerModule(params);
+        // 
+        int sockfd = serverStart(7200);
+        int newsockfd = serverAccept(sockfd);
+        serverRead(newsockfd);
+        close(newsockfd);
+        close(sockfd);
+    } else {
+        // model = getModelFromStore(params);
+        //
+        printf("connect\n");
+        fflush(stdout);
+        int sockfd = clientConnect("127.0.0.1", 7200);
+        clientRead(sockfd);
+    }
+    return 0;
+
     int mpiReturn;
     mpiReturn = MPI_Init(&argc, &argv);
     if (mpiReturn != MPI_SUCCESS) {
@@ -139,27 +199,40 @@ int main(int argc, char *argv[], char **envp) {
     }
     printf("MPI rank / size => %d/%d\n", mpiRank, mpiSize);
     // printEnvs(argc, argv, envp);
-    char *executable = argv[0];
-    int kParam = 100, dimension = 22;
-    char *kParamStr, *dimensionStr;
-    char *trainingCsv, *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
-    FILE *trainingFile, *modelFile, *examplesFile, *matchesFile, *timingFile;
+    struct main_mfog_st params;
+    params.executable = argv[0];
+    params.kParam = 100;
+    params.dimension = 22;
+    params.isModelServer = 0;
     if (mpiRank == 0) {
         int envErrors = 0;
-        envErrors += loadEnvVar(argc, argv, envp, 'i', "k", &kParamStr, &kParam);
-        envErrors += loadEnvVar(argc, argv, envp, 'i', "dimension", &dimensionStr, &dimension);
+        params.isModelServer += findEnvFlag(argc, argv, envp, "-cloud");
+        params.isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
+        params.kParamStr = findEnvVar(argc, argv, envp, "k");
+        if (params.kParamStr == NULL) {
+            envErrors++;
+        } else {
+            params.kParam = atoi(params.kParamStr);
+        }
+        params.dimensionStr = findEnvVar(argc, argv, envp, "dimension");
+        if (params.dimensionStr == NULL) {
+            envErrors++;
+        } else {
+            params.dimension = atoi(params.dimensionStr);
+        }
         //
-        loadEnvFile(argc, argv, envp, "TRAINING_CSV",   &trainingCsv,   &trainingFile,    "r");
-        envErrors += trainingFile == NULL;
-        loadEnvFile(argc, argv, envp, "MODEL_CSV",      &modelCsv,      &modelFile,       "r");
-        envErrors += modelFile == NULL;
-        loadEnvFile(argc, argv, envp, "EXAMPLES_CSV",   &examplesCsv,   &examplesFile,    "r");
-        envErrors += examplesFile == NULL;
-        loadEnvFile(argc, argv, envp, "MATCHES_CSV",    &matchesCsv,    &matchesFile,     "w");
-        envErrors += matchesFile == NULL;
-        loadEnvFile(argc, argv, envp, "TIMING_LOG",     &timingLog,     &timingFile,      "a");
-        envErrors += timingFile == NULL;
+        loadEnvFile(argc, argv, envp, "TRAINING_CSV",   &params.trainingCsv,   &params.trainingFile,    "r");
+        // envErrors += params.trainingFile == NULL;
+        loadEnvFile(argc, argv, envp, "MODEL_CSV",      &params.modelCsv,      &params.modelFile,       "r");
+        envErrors += params.modelFile == NULL;
+        loadEnvFile(argc, argv, envp, "EXAMPLES_CSV",   &params.examplesCsv,   &params.examplesFile,    "r");
+        envErrors += params.examplesFile == NULL;
+        loadEnvFile(argc, argv, envp, "MATCHES_CSV",    &params.matchesCsv,    &params.matchesFile,     "w");
+        envErrors += params.matchesFile == NULL;
+        loadEnvFile(argc, argv, envp, "TIMING_LOG",     &params.timingLog,     &params.timingFile,      "a");
+        envErrors += params.timingFile == NULL;
         printf(
+            "isModelServer          %d\n"
             "Using kParam as        %d\n"
             "Using dimension as     %d\n"
             "Reading training from  (%p) '%s'\n"
@@ -167,12 +240,12 @@ int main(int argc, char *argv[], char **envp) {
             "Reading examples from  (%p) '%s'\n"
             "Writing matchesFile to (%p) '%s'\n"
             "Writing timingFile to  (%p) '%s'\n",
-            kParam, dimension,
-            trainingFile, trainingCsv,
-            modelFile, modelCsv,
-            examplesFile, examplesCsv,
-            matchesFile, matchesCsv,
-            timingFile, timingLog);
+            params.isModelServer, params.kParam, params.dimension,
+            params.trainingFile, params.trainingCsv,
+            params.modelFile, params.modelCsv,
+            params.examplesFile, params.examplesCsv,
+            params.matchesFile, params.matchesCsv,
+            params.timingFile, params.timingLog);
         fflush(stdout);
         if (envErrors != 0) {
             MPI_Finalize();
@@ -182,52 +255,54 @@ int main(int argc, char *argv[], char **envp) {
     }
     //
     Model *model;
-    if (mpiRank == 0) {
-        if (trainingCsv != NULL && trainingFile != NULL) {
-            int nExamples;
-            Point *examples = readExamples(dimension, trainingFile, &nExamples, timingFile, executable);
-            model = MNS_offline(nExamples, examples, kParam, dimension, timingFile, executable);
-            fflush(stdout);
-            FILE *outputModelFile = fopen("out/models/0-initial.csv", "w");
-            if (outputModelFile != NULL) {
-                writeModel(outputModelFile, model, timingFile, executable);
-            }
-            fclose(outputModelFile);
-        } else if (modelCsv != NULL && modelFile != NULL) {
-            model = readModel(22, modelFile, timingFile, executable);
-        }
+    if (params.isModelServer) {
+        // model = createModelServerModule(params);
+        // 
+        int sockfd = serverStart(7200);
+        int newsockfd = serverAccept(sockfd);
+        serverRead(newsockfd);
+        close(newsockfd);
+        close(sockfd);
+    } else {
+        // model = getModelFromStore(params);
+        //
+        printf("connect\n");
+        fflush(stdout);
+        int sockfd = clientConnect("127.0.0.1", 7200);
+        clientRead(sockfd);
     }
+    /*
     Point *examples;
     Match *memMatches;
     int nExamples;
-    if (examplesCsv != NULL && examplesFile != NULL) {
-        examples = readExamples(model->dimension, examplesFile, &nExamples, timingFile, executable);
+    if (params.examplesCsv != NULL && params.examplesFile != NULL) {
+        examples = readExamples(model->dimension, params.examplesFile, &nExamples, params.timingFile, params.executable);
         // max 2 matchesFile per example
         memMatches = malloc(2 * nExamples * sizeof(Match));
     }
     int nMatches;
-    mainClassify(kParam, mpiRank, mpiSize, examples, model, &nMatches, memMatches, matchesFile, timingFile, executable);
+    mainClassify(params.kParam, mpiRank, mpiSize, examples, model, &nMatches, memMatches, params.matchesFile, params.timingFile, params.executable);
 
     if (mpiRank == 0) {
         char outputModelFileName[200];
         sprintf(outputModelFileName, "out/models/%d-final.csv", nExamples);
         FILE *outputModelFile = fopen(outputModelFileName, "w");
         if (outputModelFile != NULL) {
-            writeModel(outputModelFile, model, timingFile, executable);
+            writeModel(outputModelFile, model, params.timingFile, params.executable);
         }
         fclose(outputModelFile);
         // closeEnv(envType, varNames, fileNames, values, fileModes);
-        closeEnvFile("TRAINING_CSV", trainingCsv, trainingFile);
-        closeEnvFile("MODEL_CSV", modelCsv, modelFile);
-        closeEnvFile("EXAMPLES_CSV", examplesCsv, examplesFile);
-        closeEnvFile("MATCHES_CSV", matchesCsv, matchesFile);
-        closeEnvFile("TIMING_LOG", timingLog, timingFile);
+        closeEnvFile("TRAINING_CSV", params.trainingCsv, params.trainingFile);
+        closeEnvFile("MODEL_CSV", params.modelCsv, params.modelFile);
+        closeEnvFile("EXAMPLES_CSV", params.examplesCsv, params.examplesFile);
+        closeEnvFile("MATCHES_CSV", params.matchesCsv, params.matchesFile);
+        closeEnvFile("TIMING_LOG", params.timingLog, params.timingFile);
     }
-    
+    */
     MPI_Finalize();
-    free(model);
-    free(examples);
-    free(memMatches);
+    // free(model);
+    // free(examples);
+    // free(memMatches);
     return 0;
 }
 

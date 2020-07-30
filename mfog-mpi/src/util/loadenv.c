@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <err.h>
-// #include <string.h>
+#include <string.h>
 
 #define PRINT_ERROR fprintf(stderr, " At "__FILE__":%d\n", __LINE__);
 
@@ -43,6 +43,27 @@ char* findEnvVar(int argc, char *argv[], char **envp, char *varName) {
     }
     fprintf(stderr, "Parameter '%s' not found in args or evn.", varName);PRINT_ERROR
     return NULL;
+}
+
+int findEnvFlag(int argc, char *argv[], char **envp, char *varName) {
+    const char *prefixMfog = "MFOG_";
+    for (char **env = envp; *env != 0; env++) {
+        char *thisEnv = *env;
+        int diff = 0, i = 0;
+        for (; prefixMfog[i] != '\0' && diff == 0; i++) diff += prefixMfog[i] - thisEnv[i];
+        if (diff != 0) continue;
+        for (; varName[i] != '\0' && diff == 0; i++) diff += varName[i] - thisEnv[i];
+        if (diff != 0) continue;
+        return 1;
+    }
+    for (int arg = 1; arg < argc; arg++) {
+        int diff = 0, i = 0;
+        for (; varName[i] != '\0' && diff == 0; i++) diff += varName[i] - argv[arg][i];
+        if (diff != 0) continue;
+        return 1;
+    }
+    fprintf(stderr, "Parameter '%s' not found in args or evn.", varName);PRINT_ERROR
+    return 0;
 }
 
 #define IS_STDOUT 'o'

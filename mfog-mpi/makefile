@@ -9,8 +9,8 @@ clean:
 
 target:
 	@-mkdir target out experiments 2>/dev/null
-target/mfog: target src/main.c src/minas/minas.c src/util/loadenv.c src/util/kMeans.c src/mpi/minas-mpi.c
-	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/util/kMeans.c src/mpi/minas-mpi.c -o target/mfog -lm -Wall -g
+target/mfog: target src/main.c src/minas/minas.c src/util/loadenv.c src/util/kMeans.c src/util/net.c src/mpi/minas-mpi.c
+	mpicc src/main.c src/minas/minas.c src/util/loadenv.c src/util/kMeans.c src/util/net.c src/mpi/minas-mpi.c -o target/mfog -lm -Wall -g
 code@almoco:
 	scp -r src makefile almoco:~/cloud
 	ssh almoco "cd cloud && make"
