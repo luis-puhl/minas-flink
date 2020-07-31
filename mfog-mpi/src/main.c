@@ -15,6 +15,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <netinet/in.h>
+#include <sys/time.h>
+#include <errno.h>
 
 #include "./minas/minas.h"
 #include "./mpi/minas-mpi.h"
@@ -36,6 +39,12 @@
 #ifndef MAIN
 #define MAIN 1
 
+#define TRAINING_CSV "TRAINING_CSV"
+#define MODEL_CSV "MODEL_CSV"
+#define EXAMPLES_CSV "EXAMPLES_CSV"
+#define MATCHES_CSV "MATCHES_CSV"
+#define TIMING_LOG "TIMING_LOG"
+
 struct main_mfog_st {
     int mpiRank, mpiSize;
     char *executable;
@@ -43,6 +52,7 @@ struct main_mfog_st {
     char *kParamStr, *dimensionStr;
     char *trainingCsv, *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
     FILE *trainingFile, *modelFile, *examplesFile, *matchesFile, *timingFile;
+    SOCKET modelStore;
 };
 
 int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, int *nMatches, Match *memMatches) {
@@ -53,7 +63,7 @@ int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, in
     int exampleCounter = 0;
     *nMatches = 0;
     int thresholdForgettingPast = 10000;
-    int lastCheck = 0;
+    // int lastCheck = 0;
     if (params->mpiSize == 1) {
         Point **unknowns = malloc(maxUnkSize * sizeof(Point *));
         size_t unknownsSize = 0;
@@ -67,7 +77,7 @@ int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, in
                 unknownsSize++;
                 if (unknownsSize >= maxUnkSize) {
                     //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
-                    lastCheck = exampleCounter;
+                    // lastCheck = exampleCounter;
                     // ND
                     Point *linearGroup = malloc(unknownsSize * sizeof(Point));
                     printf("clustering unknowns with %5ld examples\n", unknownsSize);
@@ -148,78 +158,93 @@ int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, in
     return exampleCounter;
 }
 
-#define MODEL_SERVER_PORT 7202
+#define MODEL_SERVER_PORT 7200
 
-Model *modelStoreService(struct main_mfog_st params) {
+Model *modelStoreService(struct main_mfog_st *params) {
     Model *model;
-    if (params.mpiRank != 0) {
+    if (params->mpiRank != 0) {
         // otherRank
         return NULL;
     }
-    if (params.trainingCsv != NULL && params.trainingFile != NULL) {
+    if (params->trainingCsv != NULL && params->trainingFile != NULL) {
         int nExamples;
-        Point *examples = readExamples(params.dimension, params.trainingFile, &nExamples, params.timingFile, params.executable);
-        model = MNS_offline(nExamples, examples, params.kParam, params.dimension, params.timingFile, params.executable);
-    } else if (params.modelCsv != NULL && params.modelFile != NULL) {
-        model = readModel(params.dimension, params.modelFile, params.timingFile, params.executable);
+        Point *examples = readExamples(params->dimension, params->trainingFile, &nExamples, params->timingFile, params->executable);
+        model = MNS_offline(nExamples, examples, params->kParam, params->dimension, params->timingFile, params->executable);
+    } else if (params->modelCsv != NULL && params->modelFile != NULL) {
+        model = readModel(params->dimension, params->modelFile, params->timingFile, params->executable);
     } else {
         MPI_Finalize();
         errx(EXIT_FAILURE, "No model file nor training file where provided.");
     }
     //
-    char outputModelFileName[200];
     int time = 0;
+    char outputModelFileName[200];
     sprintf(outputModelFileName, "out/model-store/%d.csv", time);
     FILE *modelFile = fopen(outputModelFileName, "w+");
-    size_t modelFileSize = 0;
     if (modelFile == NULL)
         errx(EXIT_FAILURE, "Gib me file '%s'. At "__FILE__":%d\n", outputModelFileName, __LINE__);
+    size_t modelFileSize = 0;
     modelFileSize += fprintf(modelFile, "# Model(dimension=%d, nextNovelty=%c, size=%d)\n",
                                 model->dimension, model->nextNovelty, model->size);
-    modelFileSize += writeModel(modelFile, model, params.timingFile, params.executable);
+    modelFileSize += writeModel(modelFile, model, params->timingFile, params->executable);
     printf("Model size = %10lu\n", modelFileSize);
-    int modelFd = fileno(modelFile);
-    SOCKET serverSocketFD = serverStart(MODEL_SERVER_PORT);
+    // int modelFd = fileno(modelFile);
+    //
+    server_t *server = serverStart(MODEL_SERVER_PORT);
     int bufferSize = 256;
     char *buffer = malloc((bufferSize + 1) * sizeof(char));
-    for (size_t i = 0; i < 10; i++) {
-        rewind(modelFile);
-        printf("accept %lu\n", i);
-        fflush(stdout);
-        SOCKET connectionFD = serverAccept(serverSocketFD);
-        // serverRead(newsockfd);
-        bzero(buffer, bufferSize);
-        if (read(connectionFD, buffer, bufferSize - 1) < 0)
-            errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
-        printf("buffer '%s'\n", buffer);
-        if (strcmp("can haz model?\n", buffer) == 0) {
+    int out = 0;
+    while (!out) {
+        printf("serverSelect\n");
+        serverSelect(server);
+        for (size_t i = 0; i < server->clientsLen; i++) {
+            SOCKET connection = server->clients[i];
+            if (!FD_ISSET(connection, &server->readfds))
+                continue;
             bzero(buffer, bufferSize);
-            printf("Sending Model size = %10lu\n", modelFileSize);
-            sprintf(buffer, "%10lu\n", modelFileSize);
-            //
-            if (write(connectionFD, buffer, 11) < 0)
-                errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
-            off_t bytes_sent = sendfile(connectionFD, modelFd, NULL, modelFileSize);
-            printf("bytes_sent = %10lu\n", bytes_sent);
-            fflush(stdout);
+            ssize_t valread = read(connection, buffer, bufferSize - 1);
+            if (valread == 0) {
+                serverDisconnect(server, connection, i);
+                continue;
+            }
+            buffer[valread] = '\0';
+            printf("buffer '%s'\n", buffer);
+            if (strcmp("can haz model?\n", buffer) == 0) {
+                bzero(buffer, bufferSize);
+                printf("Sending Model size = %10lu\n", modelFileSize);
+                sprintf(buffer, "%10lu\n", modelFileSize);
+                //
+                if (write(connection, buffer, 11) < 0)
+                    errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
+                rewind(modelFile);
+                off_t bytes_sent = sendfile(connection, dup(fileno(modelFile)), NULL, modelFileSize);
+                printf("bytes_sent = %10lu\n", bytes_sent);
+            }
+            if (buffer[0] == 'q' && buffer[1] == '\n') {
+                out = 1;
+                break;
+            }
         }
-        close(connectionFD);
     }
+    for (size_t i = 0; i < server->clientsLen; i++) {
+        close(server->clients[i]);
+    }
+    close(server->serverSocket);
     free(buffer);
-    close(serverSocketFD);
-    fclose(modelFile);
+    free(server);
+    // fclose(modelFile); // breaks, don't know why
     return model;
 }
 
-Model *getModelFromStore(struct main_mfog_st params) {
-    SOCKET sockfd = clientConnect("127.0.0.1", MODEL_SERVER_PORT);
-    if (write(sockfd, "can haz model?\n", 15) < 0)
+Model *getModelFromStore(struct main_mfog_st *params) {
+    params->modelStore = clientConnect("127.0.0.1", MODEL_SERVER_PORT);
+    if (write(params->modelStore, "can haz model?\n", 15) < 0)
         errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
     int bufferSize = 256;
     char *buffer = malloc((bufferSize + 1) * sizeof(char));
     //
     bzero(buffer, bufferSize);
-    if (read(sockfd, buffer, 11) < 0)
+    if (read(params->modelStore, buffer, 11) < 0)
         errx(EXIT_FAILURE, "ERROR read to socket. At "__FILE__":%d\n", __LINE__);
     printf("buffer '%s'\n", buffer);
     size_t modelFileSize = 0;
@@ -235,7 +260,7 @@ Model *getModelFromStore(struct main_mfog_st params) {
     ssize_t totBytesRcv = 0;
     while (totBytesRcv < modelFileSize) {
         bzero(buffer, bufferSize);
-        ssize_t bytes_received = read(sockfd, buffer, bufferSize);
+        ssize_t bytes_received = read(params->modelStore, buffer, bufferSize);
         totBytesRcv += bytes_received;
         if (totBytesRcv > modelFileSize) {
             bytes_received -= modelFileSize - totBytesRcv;
@@ -248,10 +273,10 @@ Model *getModelFromStore(struct main_mfog_st params) {
         errx(EXIT_FAILURE, "ERROR read to socket. At "__FILE__":%d\n", __LINE__);
     rewind(modelFile);
     Model *model;
-    model = readModel(params.dimension, modelFile, params.timingFile, params.executable);
+    model = readModel(params->dimension, modelFile, params->timingFile, params->executable);
     fclose(modelFile);
     free(buffer);
-    close(sockfd);
+    // close(params->modelStore);
     return model;
 }
 
@@ -311,17 +336,17 @@ void initEnv(int argc, char *argv[], char **envp, struct main_mfog_st *params) {
         return;
     }
     //
-    loadEnvFile(argc, argv, envp, "TRAINING_CSV",   &params->trainingCsv,   &params->trainingFile,    "r");
+    loadEnvFile(argc, argv, envp, TRAINING_CSV,   &params->trainingCsv,   &params->trainingFile,    "r");
     // envErrors += params->trainingFile == NULL;
-    loadEnvFile(argc, argv, envp, "MODEL_CSV",      &params->modelCsv,      &params->modelFile,       "r");
+    loadEnvFile(argc, argv, envp, MODEL_CSV,      &params->modelCsv,      &params->modelFile,       "r");
     // envErrors += params->modelFile == NULL;
-    loadEnvFile(argc, argv, envp, "EXAMPLES_CSV",   &params->examplesCsv,   &params->examplesFile,    "r");
+    loadEnvFile(argc, argv, envp, EXAMPLES_CSV,   &params->examplesCsv,   &params->examplesFile,    "r");
     if (!params->isModelServer)
         envErrors += params->examplesFile == NULL;
-    loadEnvFile(argc, argv, envp, "MATCHES_CSV",    &params->matchesCsv,    &params->matchesFile,     "w");
+    loadEnvFile(argc, argv, envp, MATCHES_CSV,    &params->matchesCsv,    &params->matchesFile,     "w");
     if (!params->isModelServer)
         envErrors += params->matchesFile == NULL;
-    loadEnvFile(argc, argv, envp, "TIMING_LOG",     &params->timingLog,     &params->timingFile,      "a");
+    loadEnvFile(argc, argv, envp, TIMING_LOG,     &params->timingLog,     &params->timingFile,      "a");
     // envErrors += params->timingFile == NULL;
     //
     // printf(
@@ -362,19 +387,18 @@ int main(int argc, char *argv[], char **envp) {
     //
     Model *model;
     if (params.isModelServer) {
-        model = modelStoreService(params);
-        MPI_Finalize();
+        model = modelStoreService(&params);
+        // MPI_Finalize(); // breaks, don't know why
         free(model);
         return 0;
     }
-    model = getModelFromStore(params);
-    // /*
+    model = getModelFromStore(&params);
     Point *examples;
     Match *memMatches;
     int nExamples;
     if (params.examplesCsv != NULL && params.examplesFile != NULL) {
         examples = readExamples(model->dimension, params.examplesFile, &nExamples, params.timingFile, params.executable);
-        // max 2 matchesFile per example
+        // max 2 matches per example
         memMatches = malloc(2 * nExamples * sizeof(Match));
     }
     int nMatches;
@@ -389,11 +413,11 @@ int main(int argc, char *argv[], char **envp) {
         }
         fclose(outputModelFile);
     }
-    closeEnvFile("TRAINING_CSV", params.trainingCsv, params.trainingFile);
-    closeEnvFile("MODEL_CSV", params.modelCsv, params.modelFile);
-    closeEnvFile("EXAMPLES_CSV", params.examplesCsv, params.examplesFile);
-    closeEnvFile("MATCHES_CSV", params.matchesCsv, params.matchesFile);
-    closeEnvFile("TIMING_LOG", params.timingLog, params.timingFile);
+    closeEnvFile(TRAINING_CSV, params.trainingCsv, params.trainingFile);
+    closeEnvFile(MODEL_CSV, params.modelCsv, params.modelFile);
+    closeEnvFile(EXAMPLES_CSV, params.examplesCsv, params.examplesFile);
+    closeEnvFile(MATCHES_CSV, params.matchesCsv, params.matchesFile);
+    closeEnvFile(TIMING_LOG, params.timingLog, params.timingFile);
     free(model);
     free(examples);
     free(memMatches);

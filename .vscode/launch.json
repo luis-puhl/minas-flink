@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/mfog-mpi/target/mfog",
             "args": [
-                // "--cloud",
+                "--cloud",
                 "k=10",
                 "dimension=2",
                 "MODEL_CSV=datasets/syn-0-initial.csv",
