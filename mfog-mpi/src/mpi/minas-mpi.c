@@ -19,12 +19,12 @@
 #endif
 #define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
 
-void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing, char *executable) {
+void sendModel(Model *model, int clRank, int clSize, FILE *timing, char *executable) {
     int mpiReturn;
     clock_t start = clock();
     int bufferSize = sizeof(Model) +
         (model->size) * sizeof(Cluster) +
-        dimension * (model->size) * sizeof(double);
+        model->dimension * (model->size) * sizeof(double);
     char *buffer = malloc(bufferSize);
     int position = 0;
     mpiReturn = MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
@@ -35,7 +35,7 @@ void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing
     DEBUG_LN mpiReturn = MPI_Pack(model->vals, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
     MPI_RETURN
     for (int i = 0; i < model->size; i++) {
-        mpiReturn = MPI_Pack(model->vals[i].center, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        mpiReturn = MPI_Pack(model->vals[i].center, model->dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_RETURN
     }
     DEBUG_LN if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
@@ -48,7 +48,7 @@ void sendModel(int dimension, Model *model, int clRank, int clSize, FILE *timing
     PRINT_TIMING(timing, executable, clSize, start, model->size);
 }
 
-void receiveModel(int dimension, Model *model, int clRank) {
+void receiveModel(Model *model, int clRank) {
     clock_t start = clock();
     int bufferSize, mpiReturn;
     DEBUG_LN mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);

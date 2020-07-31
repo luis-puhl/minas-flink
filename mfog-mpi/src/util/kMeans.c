@@ -85,18 +85,18 @@ Cluster *kMeans(int dimension, int k, Cluster clusters[], int nExamples, Point e
         }
         // assing new center
         for (int i = 0; i < k; i++) {
-            if (k <= 10) printf("center %d: ", i);
+            // if (k <= 10) printf("center %d: ", i);
             for (int d = 0; d < dimension; d++) {
                 if (clusters[i].matches != 0) {
                     clusters[i].center[d] = clusters[i].pointSum[d] / clusters[i].matches;
-                    if (k <= 10) printf("%f, ", clusters[i].center[d]);
+                    // if (k <= 10) printf("%f, ", clusters[i].center[d]);
                 }
                 clusters[i].pointSum[d] = 0.0;
             }
-            if (k <= 10) printf("\n");
+            // if (k <= 10) printf("\n");
             clusters[i].matches = 0;
         }
-        if (k <= 10) printf("\n");
+        // if (k <= 10) printf("\n");
         improvement = (globalInnerDistance / prevGlobalInnerDistance) - 1;
         improvement = improvement >= 0 ? improvement : - improvement;
         printf(

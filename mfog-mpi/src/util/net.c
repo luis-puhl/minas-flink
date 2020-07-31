@@ -12,9 +12,12 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <err.h>
+#include <stdarg.h>
 
-int serverStart(short unsigned int port) {
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+#include "net.h"
+
+SOCKET serverStart(short unsigned int port) {
+    SOCKET sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         errx(EXIT_FAILURE, "ERROR opening socket");
     struct sockaddr_in serv_addr;
@@ -29,7 +32,7 @@ int serverStart(short unsigned int port) {
     return sockfd;
 }
 
-int serverAccept(int sockfd) {
+int serverAccept(SOCKET sockfd) {
     struct sockaddr_in cli_addr;
     socklen_t clilen = sizeof(cli_addr);
     int newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
@@ -38,7 +41,7 @@ int serverAccept(int sockfd) {
     return newsockfd;
 }
 
-int serverRead(int connectionFD) {
+int serverRead(SOCKET connectionFD) {
     char buffer[256];
     bzero(buffer, 256);
     int n = read(connectionFD, buffer, 255);
@@ -91,7 +94,7 @@ int server(int argc, char *argv[]) {
     return 0;
 }
 
-int clientConnect(char hostname[], short unsigned int port) {
+SOCKET clientConnect(char hostname[], short unsigned int port) {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         errx(EXIT_FAILURE, "ERROR opening socket");
@@ -110,7 +113,7 @@ int clientConnect(char hostname[], short unsigned int port) {
     return sockfd;
 }
 
-int clientRead(int sockfd) {
+int clientRead(SOCKET sockfd) {
     char buffer[256];
     printf("Please enter the message: ");
     bzero(buffer, 256);

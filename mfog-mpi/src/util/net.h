@@ -1,12 +1,14 @@
 #ifndef _MFOG_NET_H
-#define _MFOG_NET_H
+#define _MFOG_NET_H 1
+
+typedef int SOCKET;
 
 // int server(int argc, char *argv[]);
-int serverStart(int port);
-int serverAccept(int sockfd);
-int serverRead(int connectionFD);
+SOCKET serverStart(short unsigned int port);
+SOCKET serverAccept(SOCKET sockfd);
+int serverRead(SOCKET connectionFD);
 
-int clientConnect(char hostname[], short unsigned int port);
-int clientRead(int sockfd);
+SOCKET clientConnect(char hostname[], short unsigned int port);
+int clientRead(SOCKET sockfd);
 
 #endif // _MFOG_NET_H

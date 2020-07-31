@@ -5,25 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
-            "request": "launch",
-            "name": "GDB Minas",
-            "target": "${fileDirname}/target/${fileBasenameNoExtension}",
-            "arguments": "datasets/model.csv datasets/test.csv",
-            "cwd": "${workspaceRoot}",
-            "valuesFormatting": "parseText"
-        },
-        {
-            "name": "gcc - Build and debug active file",
+            "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/target/${fileBasenameNoExtension}",
+            "program": "${workspaceFolder}/mfog-mpi/target/mfog",
             "args": [
-                "datasets/model.csv",
-                "datasets/test.csv"
+                // "--cloud",
+                "k=10",
+                "dimension=2",
+                "MODEL_CSV=datasets/syn-0-initial.csv",
+                // "EXAMPLES_CSV=datasets/syn-test.csv",
+                "EXAMPLES_CSV=datasets/test.csv",
+                "MATCHES_CSV=out/syn-matches.csv",
+                "TIMING_LOG=/dev/null",
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/mfog-mpi/",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -33,9 +30,7 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ],
-            "preLaunchTask": "gcc build active file",
-            "miDebuggerPath": "/usr/bin/gdb"
-        }
+            ]
+        },
     ]
 }

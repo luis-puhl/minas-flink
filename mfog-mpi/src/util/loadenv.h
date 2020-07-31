@@ -15,7 +15,7 @@ int findEnvFlag(int argc, char *argv[], char **envp, char *varName);
 #define PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens) \
     __FILE__, executable, __DATE__, __TIME__, time(NULL), __FUNCTION__, __VERSION__, ((double)(clock() - start)) / 1000000.0, nProcesses, nItens
 #define PRINT_TIMING(timing, executable, nProcesses, start, nItens)                                      \
-    fprintf(timing, PRINT_TIMING_FORMAT, PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens)); \
-    fprintf(stderr, PRINT_TIMING_FORMAT, PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens))
+    fprintf(timing, PRINT_TIMING_FORMAT, PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens));
+    // fprintf(stderr, PRINT_TIMING_FORMAT, PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens))
 
 #endif // !_LOAD_ENV_H

@@ -1,5 +1,5 @@
 #ifndef MINAS_H
-#define MINAS_H
+#define MINAS_H 1
 #include <stdio.h>
 
 typedef struct point {
@@ -67,7 +67,7 @@ typedef struct match {
 // #endif // MINAS_FUNCS
 double MNS_distance(double a[], double b[], int dimension);
 Model *readModel(int dimension, FILE *file, FILE *timing, char *executable);
-void writeModel(FILE *file, Model *model, FILE *timing, char *executable);
+size_t writeModel(FILE *file, Model *model, FILE *timing, char *executable);
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable);
 // void classify(int dimension, Model *model, Point *ex, Match *match, double allDistances[]);
 void classify(int dimension, Model *model, Point *ex, Match *match);

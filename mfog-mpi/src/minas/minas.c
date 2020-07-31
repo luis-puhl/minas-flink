@@ -45,15 +45,20 @@ Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
         model->vals = realloc(model->vals, (++model->size) * sizeof(Cluster));
         Cluster *cl = &(model->vals[model->size - 1]);
         cl->center = malloc(dimension * sizeof(double));
+        cl->pointSum = malloc(dimension * sizeof(double));
+        cl->pointSqrSum = malloc(dimension * sizeof(double));
         // #id,label,category,matches,time,meanDistance,radius,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21
         int assigned = 0;
-        sscanf(line, "%d,%c,%c,%d,%d,%lf,%lf,", &cl->id, &cl->label, &cl->category, &cl->matches, &cl->time, &cl->meanDistance, &cl->radius);
+        assigned += sscanf(line, "%d,%c,%c,%d,%d,%lf,%lf,", &cl->id, &cl->label, &cl->category, &cl->matches, &cl->time, &cl->meanDistance, &cl->radius);
         for (int d = 0; d < dimension - 1; d++) {
             assigned += sscanf(line, "%lf,", &cl->center[d]);
         }
         assigned += sscanf(line, "%lf\n", &cl->center[dimension - 1]);
-        if (assigned != (7 + dimension)) {
-            errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'" __FILE__ ":%d\n", lines, line, __LINE__);
+        int expected_assignments = 7 + dimension;
+        if (assigned != expected_assignments) {
+            errx(EXIT_FAILURE, "File with wrong format. Expected %d and got %d.\n"
+                               "\tOn line %d '%s'. At " __FILE__ ":%d\n",
+                 expected_assignments, assigned, lines, line, __LINE__);
         }
     }
     if (timing) {
@@ -62,30 +67,31 @@ Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
     return model;
 }
 
-void writeModel(FILE *file, Model *model, FILE *timing, char *executable) {
-    int dimension = model->dimension;
+size_t writeModel(FILE *file, Model *model, FILE *timing, char *executable) {
+    int written = 0;
     if (file == NULL) errx(EXIT_FAILURE, "bad file");
     clock_t start = clock();
     //
     // #id,label,category,matches,time,meanDistance,radius,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21
-    fprintf(file, "#id,label,category,matches,time,meanDistance,radius,");
-    for (int d = 0; d < dimension - 1; d++) {
-        fprintf(file, "c%d,", d);
+    written += fprintf(file, "#id,label,category,matches,time,meanDistance,radius,");
+    for (int d = 0; d < model->dimension - 1; d++) {
+        written += fprintf(file, "c%d,", d);
     }
-    fprintf(file, "c%d\n", dimension - 1);
+    written += fprintf(file, "c%d\n", model->dimension - 1);
     //
     for (int i = 0; i < model->size; i++) {
         Cluster *cl = &(model->vals[i]);
-        fprintf(file, "%d,%c,%c,%d,%d,%le,%le,", cl->id, cl->label, cl->category, cl->matches, cl->time, cl->meanDistance, cl->radius);
-        for (int d = 0; d < dimension -1; d++) {
-            fprintf(file, "%le,", cl->center[d]);
+        written += fprintf(file, "%d,%c,%c,%d,%d,%le,%le,", cl->id, cl->label, cl->category, cl->matches, cl->time, cl->meanDistance, cl->radius);
+        for (int d = 0; d < model->dimension -1; d++) {
+            written += fprintf(file, "%le,", cl->center[d]);
         }
-        fprintf(file, "%le\n", cl->center[dimension - 1]);
+        written += fprintf(file, "%le\n", cl->center[model->dimension - 1]);
     }
     fflush(file);
     if (timing) {
         PRINT_TIMING(timing, executable, 1, start, model->size);
     }
+    return written;
 }
 
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable) {
@@ -129,8 +135,11 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
         }
         assigned += sscanf(linePtr, "%c\n", &ex->label);
         // printf("], class='%c')\n", ex->label);
-        if (assigned != (1 + isFileIndexed + dimension)) {
-            errx(EXIT_FAILURE, "File with wrong format. On line %d '%s'" __FILE__ ":%d\n", (*nExamples), line, __LINE__);
+        int expected_assignments = 1 + isFileIndexed + dimension;
+        if (assigned != expected_assignments) {
+            errx(EXIT_FAILURE, "File with wrong format. Expected %d and got %d.\n"
+                               "On line %d '%s'" __FILE__ ":%d\n",
+                 expected_assignments, assigned, (*nExamples), line, __LINE__);
         }
         //
         (*nExamples)++;
@@ -199,16 +208,16 @@ Cluster *fillCluster(int dimension, int k, Cluster clusters[], int nExamples, Po
         Point *ex = &(examples[exIndx]);
         double nearestDistance;
         Cluster *nearest = NULL;
-        if (model != NULL) {
-            for (int clIndx = 0; clIndx < model->size; clIndx++) {
-                Cluster *cl = &(model->vals[clIndx]);
-                double distance = MNS_distance(ex->value, cl->center, dimension);
-                if (nearest == NULL || nearestDistance > distance) {
-                    nearest = cl;
-                    nearestDistance = distance;
-                }
-            }
-        }
+        // if (model != NULL) {
+        //     for (int clIndx = 0; clIndx < model->size; clIndx++) {
+        //         Cluster *cl = &(model->vals[clIndx]);
+        //         double distance = MNS_distance(ex->value, cl->center, dimension);
+        //         if (nearest == NULL || nearestDistance > distance) {
+        //             nearest = cl;
+        //             nearestDistance = distance;
+        //         }
+        //     }
+        // }
         for (int clIndx = 0; clIndx < k; clIndx++) {
             Cluster *cl = &(clusters[clIndx]);
             double distance = MNS_distance(ex->value, cl->center, dimension);

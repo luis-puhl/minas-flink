@@ -9,6 +9,12 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <netdb.h>
+// #include <unistd.h>
+// pid_t getpid(void);
+#include <sys/sendfile.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <signal.h>
 
 #include "./minas/minas.h"
 #include "./mpi/minas-mpi.h"
@@ -28,7 +34,8 @@
 */
 
 #ifndef MAIN
-#define MAIN
+#define MAIN 1
+
 struct main_mfog_st {
     int mpiRank, mpiSize;
     char *executable;
@@ -50,7 +57,7 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
     int lastCheck = 0;
     if (mpiSize == 1) {
         Point **unknowns = malloc(maxUnkSize * sizeof(Point *));
-        int unknownsSize = 0;
+        size_t unknownsSize = 0;
         for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
             Point *example = &(examples[exampleCounter]);
             Match *match = &(memMatches[*nMatches]);
@@ -59,11 +66,12 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
             if (match->label == '-') {
                 unknowns[unknownsSize] = example;
                 unknownsSize++;
-                if (unknownsSize >= maxUnkSize && (lastCheck + (k * minExCluster) < exampleCounter)) {
+                if (unknownsSize >= maxUnkSize) {
+                    //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
                     lastCheck = exampleCounter;
                     // ND
                     Point *linearGroup = malloc(unknownsSize * sizeof(Point));
-                    printf("clustering unknowns with %5d examples\n", unknownsSize);
+                    printf("clustering unknowns with %5ld examples\n", unknownsSize);
                     for (int g = 0; g < unknownsSize; g++) {
                         linearGroup[g] = *unknowns[g];
                     }
@@ -77,7 +85,7 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
                     fclose(outputModelFile);
                     //
                     // Classify after model update
-                    int prevUnknownsSize = unknownsSize;
+                    size_t prevUnknownsSize = unknownsSize;
                     unknownsSize = 0;
                     int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
                     int forgotten = 0;
@@ -95,7 +103,7 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
                             forgotten++;
                         }
                     }
-                    printf("late classify of %d -> %d unknowns, forgotten %d\n", prevUnknownsSize, unknownsSize, forgotten);
+                    printf("late classify of %ld -> %ld unknowns, forgotten %d\n", prevUnknownsSize, unknownsSize, forgotten);
                     fflush(stdout);
                     free(linearGroup);
                 }
@@ -113,7 +121,7 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
         }
     } else if (mpiRank == 0) {
         MPI_Barrier(MPI_COMM_WORLD);
-        sendModel(model->dimension, model, mpiRank, mpiSize, timingFile, executable);
+        sendModel(model, mpiRank, mpiSize, timingFile, executable);
         
         MPI_Barrier(MPI_COMM_WORLD);
         int exampleCounter = sendExamples(model->dimension, examples, memMatches, mpiSize, timingFile, executable);
@@ -130,7 +138,7 @@ int mainClassify(int k, int mpiRank, int mpiSize, Point examples[], Model *model
     } else {
         MPI_Barrier(MPI_COMM_WORLD);
         model = malloc(sizeof(Model));
-        receiveModel(0, model, mpiRank);
+        receiveModel(model, mpiRank);
         MPI_Barrier(MPI_COMM_WORLD);
 
         receiveExamples(model->dimension, model, mpiRank);
@@ -155,6 +163,9 @@ Model *createModelServerModule(struct main_mfog_st params) {
             fclose(outputModelFile);
         } else if (params.modelCsv != NULL && params.modelFile != NULL) {
             model = readModel(params.dimension, params.modelFile, params.timingFile, params.executable);
+        } else {
+            MPI_Finalize();
+            errx(EXIT_FAILURE, "No model file nor training file where provided.");
         }
     } else {
         // otherRank
@@ -162,28 +173,7 @@ Model *createModelServerModule(struct main_mfog_st params) {
     return model;
 }
 
-int main(int argc, char *argv[], char **envp) {
-    int isModelServer = 0 ;
-    isModelServer += findEnvFlag(argc, argv, envp, "-cloud");
-    isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
-    if (isModelServer) {
-        // model = createModelServerModule(params);
-        // 
-        int sockfd = serverStart(7200);
-        int newsockfd = serverAccept(sockfd);
-        serverRead(newsockfd);
-        close(newsockfd);
-        close(sockfd);
-    } else {
-        // model = getModelFromStore(params);
-        //
-        printf("connect\n");
-        fflush(stdout);
-        int sockfd = clientConnect("127.0.0.1", 7200);
-        clientRead(sockfd);
-    }
-    return 0;
-
+void initMPI(int argc, char *argv[], char **envp, struct main_mfog_st *params) {
     int mpiReturn;
     mpiReturn = MPI_Init(&argc, &argv);
     if (mpiReturn != MPI_SUCCESS) {
@@ -198,80 +188,191 @@ int main(int argc, char *argv[], char **envp) {
         errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
     }
     printf("MPI rank / size => %d/%d\n", mpiRank, mpiSize);
-    // printEnvs(argc, argv, envp);
-    struct main_mfog_st params;
-    params.executable = argv[0];
-    params.kParam = 100;
-    params.dimension = 22;
-    params.isModelServer = 0;
-    if (mpiRank == 0) {
+    params->mpiRank = mpiRank;
+    params->mpiSize = mpiSize;
+}
+
+void initEnv(int argc, char *argv[], char **envp, struct main_mfog_st *params) {
+    initMPI(argc, argv, envp, params);
+    params->executable = argv[0];
+    params->kParam = 100;
+    params->dimension = 22;
+    params->isModelServer = 0;
+    params->trainingCsv = NULL;
+    params->trainingFile = NULL;
+    params->modelCsv = NULL;
+    params->modelFile = NULL;
+    params->examplesCsv = NULL;
+    params->examplesFile = NULL;
+    params->matchesCsv = NULL;
+    params->matchesFile = NULL;
+    params->timingLog = NULL;
+    params->timingFile = NULL;
+
         int envErrors = 0;
-        params.isModelServer += findEnvFlag(argc, argv, envp, "-cloud");
-        params.isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
-        params.kParamStr = findEnvVar(argc, argv, envp, "k");
-        if (params.kParamStr == NULL) {
-            envErrors++;
-        } else {
-            params.kParam = atoi(params.kParamStr);
-        }
-        params.dimensionStr = findEnvVar(argc, argv, envp, "dimension");
-        if (params.dimensionStr == NULL) {
-            envErrors++;
-        } else {
-            params.dimension = atoi(params.dimensionStr);
-        }
-        //
-        loadEnvFile(argc, argv, envp, "TRAINING_CSV",   &params.trainingCsv,   &params.trainingFile,    "r");
-        // envErrors += params.trainingFile == NULL;
-        loadEnvFile(argc, argv, envp, "MODEL_CSV",      &params.modelCsv,      &params.modelFile,       "r");
-        envErrors += params.modelFile == NULL;
-        loadEnvFile(argc, argv, envp, "EXAMPLES_CSV",   &params.examplesCsv,   &params.examplesFile,    "r");
-        envErrors += params.examplesFile == NULL;
-        loadEnvFile(argc, argv, envp, "MATCHES_CSV",    &params.matchesCsv,    &params.matchesFile,     "w");
-        envErrors += params.matchesFile == NULL;
-        loadEnvFile(argc, argv, envp, "TIMING_LOG",     &params.timingLog,     &params.timingFile,      "a");
-        envErrors += params.timingFile == NULL;
-        printf(
-            "isModelServer          %d\n"
-            "Using kParam as        %d\n"
-            "Using dimension as     %d\n"
-            "Reading training from  (%p) '%s'\n"
-            "Reading model from     (%p) '%s'\n"
-            "Reading examples from  (%p) '%s'\n"
-            "Writing matchesFile to (%p) '%s'\n"
-            "Writing timingFile to  (%p) '%s'\n",
-            params.isModelServer, params.kParam, params.dimension,
-            params.trainingFile, params.trainingCsv,
-            params.modelFile, params.modelCsv,
-            params.examplesFile, params.examplesCsv,
-            params.matchesFile, params.matchesCsv,
-            params.timingFile, params.timingLog);
-        fflush(stdout);
-        if (envErrors != 0) {
-            MPI_Finalize();
-            errx(EXIT_FAILURE, "Environment errors %d. At "__FILE__":%d\n", envErrors, __LINE__);
-            return 1;
-        }
+    params->isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
+
+    params->kParamStr = findEnvVar(argc, argv, envp, "k");
+    if (params->kParamStr == NULL) {
+        envErrors++;
+    } else {
+        params->kParam = atoi(params->kParamStr);
+    }
+    
+    params->dimensionStr = findEnvVar(argc, argv, envp, "dimension");
+    if (params->dimensionStr == NULL) {
+        envErrors++;
+    } else {
+        params->dimension = atoi(params->dimensionStr);
+    }
+    if (params->mpiRank != 0) {
+        return;
     }
     //
+    loadEnvFile(argc, argv, envp, "TRAINING_CSV",   &params->trainingCsv,   &params->trainingFile,    "r");
+    // envErrors += params->trainingFile == NULL;
+    loadEnvFile(argc, argv, envp, "MODEL_CSV",      &params->modelCsv,      &params->modelFile,       "r");
+    // envErrors += params->modelFile == NULL;
+    loadEnvFile(argc, argv, envp, "EXAMPLES_CSV",   &params->examplesCsv,   &params->examplesFile,    "r");
+    if (!params->isModelServer)
+        envErrors += params->examplesFile == NULL;
+    loadEnvFile(argc, argv, envp, "MATCHES_CSV",    &params->matchesCsv,    &params->matchesFile,     "w");
+    if (!params->isModelServer)
+        envErrors += params->matchesFile == NULL;
+    loadEnvFile(argc, argv, envp, "TIMING_LOG",     &params->timingLog,     &params->timingFile,      "a");
+    // envErrors += params->timingFile == NULL;
+    //
+    // printf(
+    //     "isModelServer          %d\n"
+    //     "Using kParam as        %d\n"
+    //     "Using dimension as     %d\n"
+    //     "Reading training from  (%p) '%s'\n"
+    //     "Reading model from     (%p) '%s'\n"
+    //     "Reading examples from  (%p) '%s'\n"
+    //     "Writing matchesFile to (%p) '%s'\n"
+    //     "Writing timingFile to  (%p) '%s'\n",
+    //     params->isModelServer, params->kParam, params->dimension,
+    //     params->trainingFile, params->trainingCsv,
+    //     params->modelFile, params->modelCsv,
+    //     params->examplesFile, params->examplesCsv,
+    //     params->matchesFile, params->matchesCsv,
+    //     params->timingFile, params->timingLog);
+    fflush(stdout);
+    if (envErrors != 0) {
+        MPI_Finalize();
+        errx(EXIT_FAILURE, "Environment errors %d. At "__FILE__":%d\n", envErrors, __LINE__);
+    }
+}
+
+void sighandler(int signum) {
+   printf("Caught signal %d, coming out...\n", signum);
+   MPI_Finalize();
+   exit(1);
+}
+
+int main(int argc, char *argv[], char **envp) {
+    if (signal(SIGINT, sighandler) == SIG_ERR) {
+        fputs("An error occurred while setting a signal handler.\n", stderr);
+        return EXIT_FAILURE;
+    }
+    struct main_mfog_st params;
+    initEnv(argc, argv, envp, &params);
+    //
     Model *model;
+    #define MODEL_SERVER_PORT 7202
     if (params.isModelServer) {
-        // model = createModelServerModule(params);
-        // 
-        int sockfd = serverStart(7200);
-        int newsockfd = serverAccept(sockfd);
-        serverRead(newsockfd);
-        close(newsockfd);
-        close(sockfd);
+        model = createModelServerModule(params);
+        //
+        char outputModelFileName[200];
+        int time = 0;
+        sprintf(outputModelFileName, "out/model-store/%d.csv", time);
+        FILE *modelFile = fopen(outputModelFileName, "w+");
+        size_t modelFileSize = 0;
+        if (modelFile == NULL)
+            errx(EXIT_FAILURE, "Gib me file '%s'. At "__FILE__":%d\n", outputModelFileName, __LINE__);
+        modelFileSize += fprintf(modelFile, "# Model(dimension=%d, nextNovelty=%c, size=%d)\n",
+                                    model->dimension, model->nextNovelty, model->size);
+        modelFileSize += writeModel(modelFile, model, params.timingFile, params.executable);
+        printf("Model size = %10lu\n", modelFileSize);
+        int modelFd = fileno(modelFile);
+        SOCKET serverSocketFD = serverStart(MODEL_SERVER_PORT);
+        int bufferSize = 256;
+        char *buffer = malloc((bufferSize + 1) * sizeof(char));
+        for (size_t i = 0; i < 10; i++) {
+            rewind(modelFile);
+            printf("accept %lu\n", i);
+            fflush(stdout);
+            SOCKET connectionFD = serverAccept(serverSocketFD);
+            // serverRead(newsockfd);
+            bzero(buffer, bufferSize);
+            if (read(connectionFD, buffer, bufferSize - 1) < 0)
+                errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
+            printf("buffer '%s'\n", buffer);
+            if (strcmp("can haz model?\n", buffer) == 0) {
+                bzero(buffer, bufferSize);
+                printf("Sending Model size = %10lu\n", modelFileSize);
+                sprintf(buffer, "%10lu\n", modelFileSize);
+                //
+                if (write(connectionFD, buffer, 11) < 0)
+                    errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
+                off_t bytes_sent = sendfile(connectionFD, modelFd, NULL, modelFileSize);
+                printf("bytes_sent = %10lu\n", bytes_sent);
+                // if (write(connectionFD, "\n", 1) < 0)
+                //     errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
+                fflush(stdout);
+            }
+            close(connectionFD);
+        }
+        free(buffer);
+        close(serverSocketFD);
+        fclose(modelFile);
     } else {
         // model = getModelFromStore(params);
         //
-        printf("connect\n");
-        fflush(stdout);
-        int sockfd = clientConnect("127.0.0.1", 7200);
-        clientRead(sockfd);
+        char modelFileName[200];
+        int time = 0;
+        SOCKET sockfd = clientConnect("127.0.0.1", MODEL_SERVER_PORT);
+        if (write(sockfd, "can haz model?\n", 15) < 0)
+            errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
+        int bufferSize = 256;
+        char *buffer = malloc((bufferSize + 1) * sizeof(char));
+        //
+        bzero(buffer, bufferSize);
+        if (read(sockfd, buffer, 11) < 0)
+            errx(EXIT_FAILURE, "ERROR read to socket. At "__FILE__":%d\n", __LINE__);
+        printf("buffer '%s'\n", buffer);
+        size_t modelFileSize = 0;
+        sscanf(buffer, "%10lu", &modelFileSize);
+        printf("Model size = %10lu\n", modelFileSize);
+        //
+        sprintf(modelFileName, "out/models/remote-%d.csv", time);
+        FILE *modelFile = fopen(modelFileName, "w+");
+        if (modelFile == NULL)
+            errx(EXIT_FAILURE, "Gib me file '%s'. At "__FILE__":%d\n", modelFileName, __LINE__);
+        ssize_t totBytesRcv = 0;
+        // totBytesRcv = sendfile(fileno(modelFile), sockfd, NULL, modelFileSize); // in_fd cannot be a socket
+        for (; totBytesRcv < modelFileSize; ) {
+            bzero(buffer, bufferSize);
+            ssize_t bytes_received = read(sockfd, buffer, bufferSize);
+            // printf("buffer '%s'\n", buffer);
+            totBytesRcv += bytes_received;
+            if (totBytesRcv > modelFileSize) {
+                bytes_received -= modelFileSize - totBytesRcv;
+                totBytesRcv = modelFileSize;
+            }
+            fprintf(modelFile, "%s", buffer);
+            // write(modelFd, buffer, bytes_received);
+        }
+        printf("bytes_received = %10ld\n", totBytesRcv);
+        if (totBytesRcv != modelFileSize)
+            errx(EXIT_FAILURE, "ERROR read to socket. At "__FILE__":%d\n", __LINE__);
+        rewind(modelFile);
+        model = readModel(params.dimension, modelFile, params.timingFile, params.executable);
+        fclose(modelFile);
+        free(buffer);
+        close(sockfd);
     }
-    /*
+    // /*
     Point *examples;
     Match *memMatches;
     int nExamples;
@@ -281,9 +382,10 @@ int main(int argc, char *argv[], char **envp) {
         memMatches = malloc(2 * nExamples * sizeof(Match));
     }
     int nMatches;
-    mainClassify(params.kParam, mpiRank, mpiSize, examples, model, &nMatches, memMatches, params.matchesFile, params.timingFile, params.executable);
+    mainClassify(params.kParam, params.mpiRank, params.mpiSize, examples, model,
+        &nMatches, memMatches, params.matchesFile, params.timingFile, params.executable);
 
-    if (mpiRank == 0) {
+    if (params.mpiRank == 0) {
         char outputModelFileName[200];
         sprintf(outputModelFileName, "out/models/%d-final.csv", nExamples);
         FILE *outputModelFile = fopen(outputModelFileName, "w");
@@ -291,18 +393,17 @@ int main(int argc, char *argv[], char **envp) {
             writeModel(outputModelFile, model, params.timingFile, params.executable);
         }
         fclose(outputModelFile);
-        // closeEnv(envType, varNames, fileNames, values, fileModes);
         closeEnvFile("TRAINING_CSV", params.trainingCsv, params.trainingFile);
         closeEnvFile("MODEL_CSV", params.modelCsv, params.modelFile);
         closeEnvFile("EXAMPLES_CSV", params.examplesCsv, params.examplesFile);
         closeEnvFile("MATCHES_CSV", params.matchesCsv, params.matchesFile);
         closeEnvFile("TIMING_LOG", params.timingLog, params.timingFile);
     }
-    */
+    // */
     MPI_Finalize();
-    // free(model);
-    // free(examples);
-    // free(memMatches);
+    free(model);
+    free(examples);
+    free(memMatches);
     return 0;
 }
 

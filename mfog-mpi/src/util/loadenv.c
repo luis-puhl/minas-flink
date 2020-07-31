@@ -41,7 +41,7 @@ char* findEnvVar(int argc, char *argv[], char **envp, char *varName) {
             return strVarPtr;
         }
     }
-    fprintf(stderr, "Parameter '%s' not found in args or evn.", varName);PRINT_ERROR
+    // fprintf(stderr, "Parameter '%s' not found in args or evn.", varName);PRINT_ERROR
     return NULL;
 }
 
@@ -62,13 +62,17 @@ int findEnvFlag(int argc, char *argv[], char **envp, char *varName) {
         if (diff != 0) continue;
         return 1;
     }
-    fprintf(stderr, "Parameter '%s' not found in args or evn.", varName);PRINT_ERROR
+    // fprintf(stderr, "Parameter '%s' not found in args or env.", varName);PRINT_ERROR
     return 0;
 }
 
 #define IS_STDOUT 'o'
 #define IS_STDERR 'e'
 char isStdFile(char fileName[]) {
+    if (fileName == NULL) {
+        PRINT_ERROR
+        return '\0';
+    }
     const char *stdoutName = "stdout";
     const char *stderrName = "stderr";
     int isStdout = 0, isStderr = 0, i;
@@ -115,14 +119,14 @@ FILE *loadEnvFile(int argc, char *argv[], char **envp, char varName[], char **fi
     char *varValue = findEnvVar(argc, argv, envp, varName);
     if (varValue == NULL) {
         if (*file != NULL) {
-            fprintf(stderr, "Using default value for param '%s' with value '%s' (%p).", varName, *fileName, *file);PRINT_ERROR
+            // fprintf(stderr, "Using default value for param '%s' with value '%s' (%p).", varName, "\0", *file);PRINT_ERROR
         } else if (*fileName != NULL) {
             *(file) = loadFileFromEnvValue(varName, *fileName, fileMode);
-            fprintf(stderr, "Using default string for param '%s' with value '%s' (%p).", varName, *fileName, *file);PRINT_ERROR
+            // fprintf(stderr, "Using default string for param '%s' with value '%s' (%p).", varName, *fileName, *file);PRINT_ERROR
         } else if (fileMode[0] == 'w' || fileMode[0] == 'a') {
-            fprintf(stderr, "Expected argument or environment '%s' to be defined and '%s'-able."
-                "\tWill use stdout as append file.", varName, fileMode);
-            PRINT_ERROR
+            // fprintf(stderr, "Expected argument or environment '%s' to be defined and '%s'-able."
+            //     "\tWill use stdout as append file.", varName, fileMode);
+            // PRINT_ERROR
             *fileName = "stdout";
             *(file) = stdout;
         }
@@ -155,7 +159,7 @@ int loadEnvVar(int argc, char *argv[], char **envp, char varType, char *varName,
 }
 
 void closeEnvFile(char varName[], char fileName[], FILE *file) {
-    if (fileName == NULL || ferror(file)) {
+    if (file == NULL || fileName == NULL || ferror(file)) {
         return;
     }
     switch (isStdFile(fileName)) {
