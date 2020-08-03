@@ -37,6 +37,9 @@
     - [x] Implementar ND na versão serial (corretamente);
     - [ ] Implementar ND na versão MPI com um nó exclusivo (fan-in matches);
     - [ ] Implementar sockets para transmissão de exemplos, desconhecidos e ND
+      - [ ] Exemplos por socket;
+      - [x] Desconhecidos por socket;
+      - [ ] Modelo por socket [WIP];
     - [x] Diff por imagem (clusters e exemplos?);
   - [ ] Valgrind memory leak analysis;
   - [ ] Constante de `dimension` em tempo de compilação (dataset constante);
@@ -46,7 +49,7 @@
   - [x] Escrever um *teste de mesa* com `csv` de entrada,
         pequeno (K, d, n) (número de clusters, dimensões e exemplos),
         plot dos pontos e centroides; Existe diferença entre implementações mas
-        mas não é visualizável https://docs.google.com/spreadsheets/d/1KGdMJmJBH0Xhb82ik6Do6Bz64d7jqrXn8H5ZVgTJPWc/edit#gid=0&range=G114:H123;
+        mas não é visualizável. [Planilha e visualização dos passos de k-means](<https://docs.google.com/spreadsheets/d/1KGdMJmJBH0Xhb82ik6Do6Bz64d7jqrXn8H5ZVgTJPWc/edit#gid=0&range=G114:H123>);
   - [ ] Options:
     - [ ] Implement sockets and cloud: new lib, new challenges;
     - [ ] Implement redis and cloud: new lib, new challenges;
@@ -54,3 +57,10 @@
     - [ ] Clu-Stream: is faster, less error;
     - [ ] Run on rpi: will be very slow with ND (k-menas);
     - [ ] Plot ex distances, compare with og;
+- 2020-08-03
+  - Apresentação dos resultados de *teste de mesa* do kMeans.
+  - Diferenças apresentadas no [e-mail](./notes.md#resumo-semana-30-de-2020) de resultados de classificação,
+  em especial o número de etiquetas-novidade na [matrix de confusão](./notes.md#confusion-matrix).
+  - [ ] Apresentar o meu entendimento do algoritmo original e os detalhes de implementação,
+  em especial aquelas que diferem da implementação original.
+  - [ ] Reavaliar arquitetura (sockets, redis, db, ND, cloud)

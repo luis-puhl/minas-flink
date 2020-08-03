@@ -6,7 +6,7 @@
 
 typedef int SOCKET;
 
-typedef struct net_server {
+typedef struct {
     SOCKET serverSocket, *clients;
     int clientsLen;
     fd_set readfds;
@@ -15,7 +15,7 @@ typedef struct net_server {
 // int server(int argc, char *argv[]);
 server_t *serverStart(short unsigned int port);
 SOCKET serverAccept(SOCKET sockfd);
-void serverSelect(struct net_server *server);
+void serverSelect(server_t *server);
 void serverDisconnect(server_t *server, SOCKET connection, int connectionIndex);
 int serverRead(SOCKET connectionFD);
 
