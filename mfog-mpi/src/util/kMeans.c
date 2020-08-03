@@ -22,9 +22,9 @@ Cluster *kMeansInit(int dimension, int k, Cluster clusters[], int nExamples, Poi
         modelCl->meanDistance = 0.0;
         modelCl->distancesMax = 0.0;
         modelCl->radius = 0.0;
-        modelCl->center = malloc(dimension * sizeof(double));
-        modelCl->pointSum = malloc(dimension * sizeof(double));
-        modelCl->pointSqrSum = malloc(dimension * sizeof(double));
+        modelCl->center = calloc(dimension, sizeof(double));
+        modelCl->pointSum = calloc(dimension, sizeof(double));
+        modelCl->pointSqrSum = calloc(dimension, sizeof(double));
         for (int d = 0; d < dimension; d++) {
             modelCl->center[d] = examples[i].value[d];
             modelCl->pointSum[d] = 0.0;

@@ -37,12 +37,6 @@ typedef struct cluster {
     int time;
 } Cluster;
 
-typedef struct model {
-    Cluster* vals;
-    int size, dimension;
-    char nextNovelty;
-} Model;
-
 /** -------------------------------------------------------------------------------------------------------------------- */
 
 typedef struct match {
@@ -55,11 +49,21 @@ typedef struct match {
 } Match;
 
 #define MATCH_CSV_HEADER "#pointId,clusterLabel,clusterCategory,clusterId,clusterRadius,label,distance,secondDistance\n"
-#define MATCH_CSV_LINE_FORMAT "%d,%c,%c,%d,%le,%c,%le,%le\n"
+#define MATCH_CSV_LINE_FORMAT "%10d,%c,%c,%10d,%le,%c,%le,%le\n"
 #define MATCH_CSV_LINE_PRINT_ARGS(match) \
     match.pointId, match.clusterLabel, match.clusterCatergoy, match.clusterId, match.clusterRadius, match.label, match.distance, match.secondDistance
 
 /** -------------------------------------------------------------------------------------------------------------------- */
+
+typedef struct model {
+    Cluster* vals;
+    int size, dimension;
+    char nextNovelty;
+    Point *unknowns;
+    size_t unknownsSize;
+    Match *memMatches;
+    size_t memMatchesSize;
+} Model;
 
 // #ifndef MINAS_FUNCS
 // #define MINAS_FUNCS

@@ -53,31 +53,104 @@ struct main_mfog_st {
     char *trainingCsv, *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
     FILE *trainingFile, *modelFile, *examplesFile, *matchesFile, *timingFile;
     SOCKET modelStore;
+    double noveltyThreshold;
+    int minExCluster;
+    int maxUnkSize;
 };
+
+// struct main_mfog_st params;
+
+void handleUnknown(struct main_mfog_st *params, Model *model) {
+    // model->unknowns[model->unknownsSize - 1].value = malloc(params->dimension * sizeof(double));
+    int exampleCounter = model->unknowns[model->unknownsSize].id;
+    if (model->unknownsSize >= params->maxUnkSize) {
+        //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
+        // lastCheck = exampleCounter;
+        // ND
+        // Point *linearGroup = malloc(model->unknownsSize * sizeof(Point));
+        // printf("clustering unknowns with %5ld examples\n", model->unknownsSize);
+        // for (int g = 0; g < model->unknownsSize; g++) {
+        //     linearGroup[g] = *model->unknowns[g];
+        // }
+        model = noveltyDetection(params->kParam, model, model->unknownsSize, model->unknowns,
+                                 params->minExCluster, params->noveltyThreshold, params->timingFile, params->executable);
+        char outputModelFileName[200];
+        sprintf(outputModelFileName, "out/models/%d.csv", exampleCounter);
+        FILE *outputModelFile = fopen(outputModelFileName, "w");
+        if (outputModelFile != NULL) {
+            writeModel(outputModelFile, model, params->timingFile, params->executable);
+        }
+        fclose(outputModelFile);
+        //
+        // Classify after model update
+        // Match *memMatches = calloc(model->unknownsSize, sizeof(Match));
+        // bzero(memMatches, model->unknownsSize * sizeof(Match));
+        size_t prevUnknownsSize = model->unknownsSize;
+        model->unknownsSize = 0;
+        // int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
+        int forgotten = 0;
+        
+        // model->unknowns
+        for (int unk = 0; unk < prevUnknownsSize; unk++) {
+            Match *match = &model->memMatches[model->memMatchesSize];
+
+            classify(model->dimension, model, &model->unknowns[unk], match);
+            if (match->label != '-') {
+                model->memMatchesSize++;
+                // printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
+            } else {
+                // if (unknowns[unk]->id > currentForgetUnkThreshold) {
+                // compact unknowns
+                model->unknowns[model->unknownsSize] = model->unknowns[unk];
+                model->unknownsSize++;
+            }
+            // } else {
+            //     forgotten++;
+            // }
+        }
+        printf("late classify of %ld -> %ld unknowns, forgotten %d\n", prevUnknownsSize, model->unknownsSize, forgotten);
+        fflush(stdout);
+        // free(linearGroup);
+        // return memMatches;
+    }
+    // return NULL;
+}
+
+void sendUnk(struct main_mfog_st *params, Point *unk) {
+    char buffer[256];
+    bzero(buffer, 256);
+    size_t offset = sprintf(buffer, "Ex(id=%10d, class=%c, val=[", unk->id, unk->label);
+    for (size_t d = 0; d < params->dimension; d++){
+        offset += sprintf(&buffer[offset], "%le, ", unk->value[d]);
+    }
+    offset += sprintf(&buffer[offset], "]);\n");
+    int n = write(params->modelStore, buffer, strlen(buffer));
+    if (n < 0)
+        errx(EXIT_FAILURE, "ERROR writing to socket");
+}
 
 int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, int *nMatches, Match *memMatches) {
     clock_t start = clock();
-    double noveltyThreshold = 2;
-    int minExCluster = 20;
-    int maxUnkSize = params->kParam * minExCluster;
     int exampleCounter = 0;
     *nMatches = 0;
     int thresholdForgettingPast = 10000;
     // int lastCheck = 0;
     if (params->mpiSize == 1) {
-        Point **unknowns = malloc(maxUnkSize * sizeof(Point *));
-        size_t unknownsSize = 0;
+        // Point ** unknowns = malloc(maxUnkSize * sizeof(Point *));
+        // size_t unknownsSize = 0;
         for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
             Point *example = &(examples[exampleCounter]);
             Match *match = &(memMatches[*nMatches]);
             (*nMatches)++;
             classify(model->dimension, model, example, match);
             if (match->label == '-') {
+                sendUnk(params, example);
+            /*
                 unknowns[unknownsSize] = example;
                 unknownsSize++;
                 if (unknownsSize >= maxUnkSize) {
                     //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
-                    // lastCheck = exampleCounter;
+                    lastCheck = exampleCounter;
                     // ND
                     Point *linearGroup = malloc(unknownsSize * sizeof(Point));
                     printf("clustering unknowns with %5ld examples\n", unknownsSize);
@@ -117,6 +190,7 @@ int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, in
                     fflush(stdout);
                     free(linearGroup);
                 }
+            */
             }
             if (exampleCounter % thresholdForgettingPast == 0) {
                 // put old clusters in model to sleep
@@ -160,6 +234,85 @@ int mainClassify(struct main_mfog_st *params, Point examples[], Model *model, in
 
 #define MODEL_SERVER_PORT 7200
 
+void noveltyDetectionService(SOCKET connection, struct main_mfog_st *params, char *buffer, size_t maxBuff, Model *model) {
+    // printf("%s "__FILE__":%d\n", __FUNCTION__, __LINE__);
+    size_t buffLen = strlen(buffer);
+    size_t offset = 0;
+    // Ex(id=    646046, class=0, val=[3.785328e-02, 2.760000e-01, ]);\n
+    // len 63
+    size_t messageLen = 32 + params->dimension * 14 + 4;
+    do {
+        Point * unk = &model->unknowns[model->unknownsSize];
+        model->unknownsSize++;
+        // Point *unk = malloc(sizeof(Point));
+        // unk->value = malloc(params->dimension * sizeof(double));
+        if (buffLen < messageLen) {
+            // message incomplete
+            if (buffLen + messageLen > maxBuff) {
+                // compact
+                fprintf(stderr, "compact\n");
+                for (size_t i = 0; i < offset; i++) {
+                    buffer[i] = buffer[i + offset];
+                    if (buffer[i + offset] == '\0')
+                        break;
+                }
+                offset = 0;
+            }
+            fprintf(stderr, "read\n");
+            read(connection, &buffer[buffLen], maxBuff - buffLen);
+        }
+        size_t assigned = sscanf(&buffer[offset], "Ex(id=%10d, class=%c, val=[", &unk->id, &unk->label);
+        offset += 32;
+        if (assigned != 2) {
+            fprintf(stderr, "sscanf fail on buffer '%s'. At "__FILE__":%d\n", buffer, __LINE__);
+            break;
+        }
+        // printf("remaining buff '%s'\n", &buffer[offset]);
+
+        assigned = 0;
+        for (size_t d = 0; d < params->dimension; d++){
+            double x;
+            assigned += sscanf(&buffer[offset], "%le, ", &x /* &unk.value[d] */);
+            offset += 14;
+        }
+        if (assigned != params->dimension) {
+            fprintf(stderr, "sscanf fail on buffer '%s'. At "__FILE__":%d\n", buffer, __LINE__);
+            break;
+        }
+        assigned = sscanf(&buffer[offset], "]);\n");
+        if (assigned != 0)
+            fprintf(stderr, "sscanf fail on buffer '%s'. At "__FILE__":%d\n", buffer, __LINE__);
+        offset += 4;
+        //
+        // printf("handleUnknown(params, model, &unk);\n");
+        // model->unknowns[model->unknownsSize] = unknown;
+        // model->unknownsSize++;
+        handleUnknown(params, model);
+        if (model->memMatchesSize > 0) {
+            size_t matchesBufferSize = 93 + model->memMatchesSize * 67 + 2;
+            char *matchesBuffer = calloc(matchesBufferSize, sizeof(char));
+            size_t offs = sprintf(matchesBuffer, "%s", MATCH_CSV_HEADER);
+            for (size_t i = 0; i < model->memMatchesSize; i++) {
+                /*
+                |#pointId,clusterLabel,clusterCategory,clusterId,clusterRadius,label,distance,secondDistance
+                |       310,N,e,        10,0.000000e+00,N,0.000000e+00,0.000000e+00
+                |       313,N,e,        10,0.000000e+00,N,0.000000e+00,0.000000e+00
+                */
+                offs += sprintf(&matchesBuffer[offs], MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(model->memMatches[i]));
+                if (offs > matchesBufferSize)
+                    errx(EXIT_FAILURE, "Stupid fuck, more memory. At "__FILE__
+                                       ":%d\n\nbuffer=%s\n",
+                         __LINE__, matchesBuffer);
+            }
+            write(connection, matchesBuffer, offs);
+            // free(matchesBuffer);
+            model->memMatchesSize = 0;
+        }
+    } while (offset < buffLen);
+}
+
+// server_t *glob_server = NULL;
+
 Model *modelStoreService(struct main_mfog_st *params) {
     Model *model;
     if (params->mpiRank != 0) {
@@ -188,14 +341,24 @@ Model *modelStoreService(struct main_mfog_st *params) {
                                 model->dimension, model->nextNovelty, model->size);
     modelFileSize += writeModel(modelFile, model, params->timingFile, params->executable);
     printf("Model size = %10lu\n", modelFileSize);
+    model->unknownsSize = 0;
+    model->unknowns = calloc(params->maxUnkSize, sizeof(Point));
+    for (size_t i = 0; i < params->maxUnkSize; i++) {
+        model->unknowns[i].value = calloc(params->dimension, sizeof(double));
+    }
+    
+    model->memMatchesSize = 0;
+    model->memMatches = calloc(params->maxUnkSize, sizeof(Match));
     // int modelFd = fileno(modelFile);
     //
     server_t *server = serverStart(MODEL_SERVER_PORT);
+    // glob_server = server;
+    // serverSocketFD = server->serverSocket;
     int bufferSize = 256;
-    char *buffer = malloc((bufferSize + 1) * sizeof(char));
+    char *buffer = calloc(bufferSize + 1, sizeof(char));
     int out = 0;
     while (!out) {
-        printf("serverSelect\n");
+        // printf("serverSelect\n");
         serverSelect(server);
         for (size_t i = 0; i < server->clientsLen; i++) {
             SOCKET connection = server->clients[i];
@@ -208,7 +371,7 @@ Model *modelStoreService(struct main_mfog_st *params) {
                 continue;
             }
             buffer[valread] = '\0';
-            printf("buffer '%s'\n", buffer);
+            // handle request
             if (strcmp("can haz model?\n", buffer) == 0) {
                 bzero(buffer, bufferSize);
                 printf("Sending Model size = %10lu\n", modelFileSize);
@@ -220,18 +383,27 @@ Model *modelStoreService(struct main_mfog_st *params) {
                 off_t bytes_sent = sendfile(connection, dup(fileno(modelFile)), NULL, modelFileSize);
                 printf("bytes_sent = %10lu\n", bytes_sent);
             }
+            if (buffer[0] == 'E' && buffer[1] == 'x') {
+                // printf("buffer '%s'\n", buffer);
+                noveltyDetectionService(connection, params, buffer, bufferSize, model);
+                // return model;
+                // int n = write(params->modelStore, buffer, strlen(buffer));
+            }
             if (buffer[0] == 'q' && buffer[1] == '\n') {
+                printf("Got quit command. Bye!\n");
                 out = 1;
                 break;
             }
+            continue;
+            printf("Unknown command! buffer '%s'\n", buffer);
         }
     }
     for (size_t i = 0; i < server->clientsLen; i++) {
         close(server->clients[i]);
     }
     close(server->serverSocket);
-    free(buffer);
-    free(server);
+    // free(buffer);
+    // free(server);
     // fclose(modelFile); // breaks, don't know why
     return model;
 }
@@ -241,7 +413,7 @@ Model *getModelFromStore(struct main_mfog_st *params) {
     if (write(params->modelStore, "can haz model?\n", 15) < 0)
         errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
     int bufferSize = 256;
-    char *buffer = malloc((bufferSize + 1) * sizeof(char));
+    char *buffer = calloc(bufferSize + 1, sizeof(char));
     //
     bzero(buffer, bufferSize);
     if (read(params->modelStore, buffer, 11) < 0)
@@ -315,8 +487,11 @@ void initEnv(int argc, char *argv[], char **envp, struct main_mfog_st *params) {
     params->matchesFile = NULL;
     params->timingLog = NULL;
     params->timingFile = NULL;
+    params->noveltyThreshold = 2;
+    params->minExCluster = 20;
+    params->maxUnkSize = params->kParam * params->minExCluster;
 
-        int envErrors = 0;
+    int envErrors = 0;
     params->isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
 
     params->kParamStr = findEnvVar(argc, argv, envp, "k");
@@ -374,6 +549,13 @@ void initEnv(int argc, char *argv[], char **envp, struct main_mfog_st *params) {
 void sighandler(int signum) {
    printf("Caught signal %d, coming out...\n", signum);
    MPI_Finalize();
+//    if (glob_server != 0) {
+//         for (size_t i = 0; i < glob_server->clientsLen; i++) {
+//             close(glob_server->clients[i]);
+//         }
+//         close(glob_server->serverSocket);
+//    }
+   printf("Done signal %d\n", signum);
    exit(1);
 }
 
@@ -399,7 +581,7 @@ int main(int argc, char *argv[], char **envp) {
     if (params.examplesCsv != NULL && params.examplesFile != NULL) {
         examples = readExamples(model->dimension, params.examplesFile, &nExamples, params.timingFile, params.executable);
         // max 2 matches per example
-        memMatches = malloc(2 * nExamples * sizeof(Match));
+        memMatches = calloc(2 * nExamples, sizeof(Match));
     }
     int nMatches;
     mainClassify(&params, examples, model, &nMatches, memMatches);

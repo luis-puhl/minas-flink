@@ -55,7 +55,7 @@ SOCKET serverAccept(SOCKET sockfd) {
     socklen_t clilen = sizeof(cli_addr);
     SOCKET newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
     if (newsockfd < 0)
-        errx(EXIT_FAILURE, "ERROR on accept");
+        errx(EXIT_FAILURE, "ERROR on accept. At "__FILE__":%d\n", __LINE__);
     return newsockfd;
 }
 
@@ -96,7 +96,7 @@ void serverSelect(server_t *server) {
         socklen_t addSize;
         SOCKET new_socket = accept(server->serverSocket, remoteAddr, &addSize);
         if (new_socket < 0)
-            errx(EXIT_FAILURE, "ERROR on accept");
+            errx(EXIT_FAILURE, "ERROR on accept. At "__FILE__":%d\n", __LINE__);
         //inform user of socket number - used in send and receive commands
         printf("New connection , socket fd is %d , ip is : %s , port : %d \n",
             new_socket, inet_ntoa(remoteIAddr.sin_addr), ntohs(remoteIAddr.sin_port));
@@ -188,7 +188,7 @@ int serverMain(int argc, char *argv[]) {
     clilen = sizeof(cli_addr);
     newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
     if (newsockfd < 0)
-        errx(EXIT_FAILURE, "ERROR on accept");
+        errx(EXIT_FAILURE, "ERROR on accept. At "__FILE__":%d\n", __LINE__);
     bzero(buffer, 256);
     n = read(newsockfd, buffer, 255);
     if (n < 0)
