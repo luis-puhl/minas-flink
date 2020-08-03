@@ -7,6 +7,8 @@
 #include <err.h>
 #include <string.h>
 
+#include "./loadenv.h"
+
 #define PRINT_ERROR fprintf(stderr, " At "__FILE__":%d\n", __LINE__);
 
 char *paramEqualsOrNext(char *varName, char *envOrArg, char *nextArg) {
@@ -171,6 +173,99 @@ void closeEnvFile(char varName[], char fileName[], FILE *file) {
     default:
         fclose(file);
         break;
+    }
+}
+
+void initEnv(int argc, char *argv[], char **envp, mfog_params_t *params) {
+    // initMPI(argc, argv, envp, params);
+    int mpiReturn;
+    mpiReturn = MPI_Init(&argc, &argv);
+    if (mpiReturn != MPI_SUCCESS) {
+        MPI_Abort(MPI_COMM_WORLD, mpiReturn);
+        errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
+    }
+    int mpiRank, mpiSize;
+    mpiReturn = MPI_Comm_size(MPI_COMM_WORLD, &mpiSize);
+    mpiReturn = MPI_Comm_rank(MPI_COMM_WORLD, &mpiRank);
+    if (mpiReturn != MPI_SUCCESS) {
+        MPI_Abort(MPI_COMM_WORLD, mpiReturn);
+        errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
+    }
+    printf("MPI rank / size => %d/%d\n", mpiRank, mpiSize);
+    params->mpiRank = mpiRank;
+    params->mpiSize = mpiSize;
+    //
+    params->executable = argv[0];
+    params->kParam = 100;
+    params->dimension = 22;
+    params->isModelServer = 0;
+    params->trainingCsv = NULL;
+    params->trainingFile = NULL;
+    params->modelCsv = NULL;
+    params->modelFile = NULL;
+    params->examplesCsv = NULL;
+    params->examplesFile = NULL;
+    params->matchesCsv = NULL;
+    params->matchesFile = NULL;
+    params->timingLog = NULL;
+    params->timingFile = NULL;
+    params->noveltyThreshold = 2;
+    params->minExCluster = 20;
+    params->maxUnkSize = params->kParam * params->minExCluster;
+    params->thresholdForgettingPast = 10000;
+
+    int envErrors = 0;
+    params->isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
+
+    params->kParamStr = findEnvVar(argc, argv, envp, "k");
+    if (params->kParamStr == NULL) {
+        envErrors++;
+    } else {
+        params->kParam = atoi(params->kParamStr);
+    }
+    
+    params->dimensionStr = findEnvVar(argc, argv, envp, "dimension");
+    if (params->dimensionStr == NULL) {
+        envErrors++;
+    } else {
+        params->dimension = atoi(params->dimensionStr);
+    }
+    if (params->mpiRank != 0) {
+        return;
+    }
+    //
+    loadEnvFile(argc, argv, envp, TRAINING_CSV,   &params->trainingCsv,   &params->trainingFile,    "r");
+    // envErrors += params->trainingFile == NULL;
+    loadEnvFile(argc, argv, envp, MODEL_CSV,      &params->modelCsv,      &params->modelFile,       "r");
+    // envErrors += params->modelFile == NULL;
+    loadEnvFile(argc, argv, envp, EXAMPLES_CSV,   &params->examplesCsv,   &params->examplesFile,    "r");
+    if (!params->isModelServer)
+        envErrors += params->examplesFile == NULL;
+    loadEnvFile(argc, argv, envp, MATCHES_CSV,    &params->matchesCsv,    &params->matchesFile,     "w");
+    if (!params->isModelServer)
+        envErrors += params->matchesFile == NULL;
+    loadEnvFile(argc, argv, envp, TIMING_LOG,     &params->timingLog,     &params->timingFile,      "a");
+    // envErrors += params->timingFile == NULL;
+    //
+    // printf(
+    //     "isModelServer          %d\n"
+    //     "Using kParam as        %d\n"
+    //     "Using dimension as     %d\n"
+    //     "Reading training from  (%p) '%s'\n"
+    //     "Reading model from     (%p) '%s'\n"
+    //     "Reading examples from  (%p) '%s'\n"
+    //     "Writing matchesFile to (%p) '%s'\n"
+    //     "Writing timingFile to  (%p) '%s'\n",
+    //     params->isModelServer, params->kParam, params->dimension,
+    //     params->trainingFile, params->trainingCsv,
+    //     params->modelFile, params->modelCsv,
+    //     params->examplesFile, params->examplesCsv,
+    //     params->matchesFile, params->matchesCsv,
+    //     params->timingFile, params->timingLog);
+    fflush(stdout);
+    if (envErrors != 0) {
+        MPI_Finalize();
+        errx(EXIT_FAILURE, "Environment errors %d. At "__FILE__":%d\n", envErrors, __LINE__);
     }
 }
 

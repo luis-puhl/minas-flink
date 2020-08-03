@@ -1,6 +1,8 @@
 #ifndef MFOG_C
 #define MFOG_C
 
+#include "./minas-mpi.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -263,5 +265,24 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
     return 0;
 }
 */
+
+// void initMPI(int argc, char *argv[], char **envp, mfog_params_t *params) {
+//     int mpiReturn;
+//     mpiReturn = MPI_Init(&argc, &argv);
+//     if (mpiReturn != MPI_SUCCESS) {
+//         MPI_Abort(MPI_COMM_WORLD, mpiReturn);
+//         errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
+//     }
+//     int mpiRank, mpiSize;
+//     mpiReturn = MPI_Comm_size(MPI_COMM_WORLD, &mpiSize);
+//     mpiReturn = MPI_Comm_rank(MPI_COMM_WORLD, &mpiRank);
+//     if (mpiReturn != MPI_SUCCESS) {
+//         MPI_Abort(MPI_COMM_WORLD, mpiReturn);
+//         errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
+//     }
+//     printf("MPI rank / size => %d/%d\n", mpiRank, mpiSize);
+//     params->mpiRank = mpiRank;
+//     params->mpiSize = mpiSize;
+// }
 
 #endif // MFOG_C

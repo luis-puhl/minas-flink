@@ -2,6 +2,10 @@
 #define _LOAD_ENV_H 1
 
 #include <stdio.h>
+#include <mpi.h>
+
+#include "./net.h"
+#include "../mpi/minas-mpi.h"
 
 char* findEnvVar(int argc, char *argv[], char **envp, char *varName);
 int loadEnvVar(int argc, char *argv[], char **envp, char varType, char *varName, char **strVarPtr, int *valuePtr);
@@ -17,5 +21,27 @@ int findEnvFlag(int argc, char *argv[], char **envp, char *varName);
 #define PRINT_TIMING(timing, executable, nProcesses, start, nItens)                                      \
     fprintf(timing, PRINT_TIMING_FORMAT, PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens));
     // fprintf(stderr, PRINT_TIMING_FORMAT, PRINT_TIMING_ARGUMENTS(executable, nProcesses, start, nItens))
+
+typedef struct {
+    int mpiRank, mpiSize;
+    char *executable;
+    int kParam, dimension, isModelServer;
+    char *kParamStr, *dimensionStr;
+    char *trainingCsv, *modelCsv, *examplesCsv, *matchesCsv, *timingLog;
+    FILE *trainingFile, *modelFile, *examplesFile, *matchesFile, *timingFile;
+    SOCKET modelStore;
+    double noveltyThreshold;
+    int minExCluster;
+    int maxUnkSize;
+    int thresholdForgettingPast;
+} mfog_params_t;
+
+#define TRAINING_CSV "TRAINING_CSV"
+#define MODEL_CSV "MODEL_CSV"
+#define EXAMPLES_CSV "EXAMPLES_CSV"
+#define MATCHES_CSV "MATCHES_CSV"
+#define TIMING_LOG "TIMING_LOG"
+
+void initEnv(int argc, char *argv[], char **envp, mfog_params_t *params);
 
 #endif // !_LOAD_ENV_H
