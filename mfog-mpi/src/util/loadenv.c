@@ -196,9 +196,16 @@ void initEnv(int argc, char *argv[], char **envp, mfog_params_t *params) {
     params->mpiSize = mpiSize;
     //
     params->executable = argv[0];
+    //
     params->kParam = 100;
     params->dimension = 22;
+    params->noveltyThreshold = 2;
+    params->minExCluster = 20;
+    params->maxUnkSize = params->kParam * params->minExCluster;
+    params->thresholdForgettingPast = 10000;
+    //
     params->isModelServer = 0;
+    params->useModelStore = 0;
     params->trainingCsv = NULL;
     params->trainingFile = NULL;
     params->modelCsv = NULL;
@@ -209,10 +216,6 @@ void initEnv(int argc, char *argv[], char **envp, mfog_params_t *params) {
     params->matchesFile = NULL;
     params->timingLog = NULL;
     params->timingFile = NULL;
-    params->noveltyThreshold = 2;
-    params->minExCluster = 20;
-    params->maxUnkSize = params->kParam * params->minExCluster;
-    params->thresholdForgettingPast = 10000;
 
     int envErrors = 0;
     params->isModelServer += findEnvFlag(argc, argv, envp, "--cloud");
@@ -237,6 +240,7 @@ void initEnv(int argc, char *argv[], char **envp, mfog_params_t *params) {
     loadEnvFile(argc, argv, envp, TRAINING_CSV,   &params->trainingCsv,   &params->trainingFile,    "r");
     // envErrors += params->trainingFile == NULL;
     loadEnvFile(argc, argv, envp, MODEL_CSV,      &params->modelCsv,      &params->modelFile,       "r");
+    params->useModelStore = params->modelFile == NULL;
     // envErrors += params->modelFile == NULL;
     loadEnvFile(argc, argv, envp, EXAMPLES_CSV,   &params->examplesCsv,   &params->examplesFile,    "r");
     if (!params->isModelServer)
@@ -247,21 +251,22 @@ void initEnv(int argc, char *argv[], char **envp, mfog_params_t *params) {
     loadEnvFile(argc, argv, envp, TIMING_LOG,     &params->timingLog,     &params->timingFile,      "a");
     // envErrors += params->timingFile == NULL;
     //
-    // printf(
-    //     "isModelServer          %d\n"
-    //     "Using kParam as        %d\n"
-    //     "Using dimension as     %d\n"
-    //     "Reading training from  (%p) '%s'\n"
-    //     "Reading model from     (%p) '%s'\n"
-    //     "Reading examples from  (%p) '%s'\n"
-    //     "Writing matchesFile to (%p) '%s'\n"
-    //     "Writing timingFile to  (%p) '%s'\n",
-    //     params->isModelServer, params->kParam, params->dimension,
-    //     params->trainingFile, params->trainingCsv,
-    //     params->modelFile, params->modelCsv,
-    //     params->examplesFile, params->examplesCsv,
-    //     params->matchesFile, params->matchesCsv,
-    //     params->timingFile, params->timingLog);
+    printf(
+        "useModelStore          %d\n"
+        "isModelServer          %d\n"
+        "Using kParam as        %d\n"
+        "Using dimension as     %d\n"
+        "Reading training from  (%p) '%s'\n"
+        "Reading model from     (%p) '%s'\n"
+        "Reading examples from  (%p) '%s'\n"
+        "Writing matchesFile to (%p) '%s'\n"
+        "Writing timingFile to  (%p) '%s'\n",
+        params->useModelStore, params->isModelServer, params->kParam, params->dimension,
+        params->trainingFile, params->trainingCsv,
+        params->modelFile, params->modelCsv,
+        params->examplesFile, params->examplesCsv,
+        params->matchesFile, params->matchesCsv,
+        params->timingFile, params->timingLog);
     fflush(stdout);
     if (envErrors != 0) {
         MPI_Finalize();

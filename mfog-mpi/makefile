@@ -18,13 +18,13 @@ code@almoco:
 	scp almoco:/home/pi/cloud/target/mfog lanche:/home/pi/cloud/target/
 
 out/serial.csv: out target/mfog datasets/model-clean.csv datasets/test.csv
-	./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
+	./target/mfog k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/serial.csv > experiments/serial.log 2>&1
 out/mpi.csv: out target/mfog datasets/model-clean.csv datasets/test.csv
-	mpiexec ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
+	mpiexec ./target/mfog k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi.csv > experiments/mpi.log 2>&1
 out/cluster.csv: datasets/model-clean.csv datasets/test.csv
-	mpiexec --host jantar:4,almoco:4,lanche:4 ./target/mfog MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
+	mpiexec --host jantar:4,almoco:4,lanche:4 ./target/mfog k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/cluster.csv > experiments/cluster.log 2>&1
 
 # diffObjs = experiments/mpi-serial.diff experiments/cluster-serial.diff
@@ -34,18 +34,22 @@ out/cluster.csv: datasets/model-clean.csv datasets/test.csv
 experiments/serial-matrix.log: datasets/test.csv out/serial.csv
 	python3 src/minas/evaluate.py datasets/test.csv out/serial.csv > $@
 experiments/mpi-matrix.log: datasets/test.csv out/mpi.csv
-	python3 src/minas/evaluate.py datasets/test.csv out/mpi.csv > $@
+	python3 src/minas/evaluate.py datasets/test.csv out/mpi.csv \
+		out/og/2020-07-20T12-18-21.758/matches.csv datasets/model-clean.csv \
+		out/model.csv > $@
 	sort --field-separator=',' --key=1 -n out/serial.csv > out/serial-sorted.csv
 	sort --field-separator=',' --key=1 -n out/mpi.csv > out/mpi-sorted.csv
 	@-echo 'diff with serial===' >> $@
-	diff out/serial-sorted.csv out/mpi-sorted.csv >> $@
+	diff out/serial-sorted.csv out/mpi-sorted.csv -q >> $@
+	diff out/serial-sorted.csv out/mpi-sorted.csv | head >> $@
 	@-echo '===diff with serial' >> $@
 experiments/cluster-matrix.log: datasets/test.csv out/cluster.csv
 	python3 src/minas/evaluate.py datasets/test.csv out/cluster.csv > $@
 	sort --field-separator=',' --key=1 -n out/serial.csv > out/serial-sorted.csv
 	sort --field-separator=',' --key=1 -n out/cluster.csv > out/cluster-sorted.csv
 	@-echo 'diff with serial===' >> $@
-	diff out/serial-sorted.csv out/cluster-sorted.csv >> $@
+	diff out/serial-sorted.csv out/cluster-sorted.csv -q >> $@
+	diff out/serial-sorted.csv out/cluster-sorted.csv | head >> $@
 	@-echo '===diff with serial' >> $@
 
 experiments/noveltyDetection.log: target/mfog src/minas/evaluate.py

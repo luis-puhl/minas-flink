@@ -28,7 +28,8 @@ double MNS_distance(double a[], double b[], int dimension) {
 }
 
 Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
-    if (file == NULL) errx(EXIT_FAILURE, "bad file");
+    if (file == NULL)
+        errx(EXIT_FAILURE, "bad file. At "__FILE__":%d\n", __LINE__);
     clock_t start = clock();
     char line[line_len + 1];
     //
@@ -69,7 +70,8 @@ Model* readModel(int dimension, FILE *file, FILE *timing, char *executable) {
 
 size_t writeModel(FILE *file, Model *model, FILE *timing, char *executable) {
     int written = 0;
-    if (file == NULL) errx(EXIT_FAILURE, "bad file");
+    if (file == NULL)
+        errx(EXIT_FAILURE, "bad file. At "__FILE__":%d\n", __LINE__);
     clock_t start = clock();
     //
     // #id,label,category,matches,time,meanDistance,radius,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13,c14,c15,c16,c17,c18,c19,c20,c21
@@ -95,7 +97,8 @@ size_t writeModel(FILE *file, Model *model, FILE *timing, char *executable) {
 }
 
 Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, char *executable) {
-    if (file == NULL || ferror(file)) errx(EXIT_FAILURE, "bad file");
+    if (file == NULL || ferror(file))
+        errx(EXIT_FAILURE, "bad file. At "__FILE__":%d\n", __LINE__);
     clock_t start = clock();
     char line[line_len + 1];
     //
@@ -156,16 +159,13 @@ Point *readExamples(int dimension, FILE *file, int *nExamples, FILE *timing, cha
 }
 
 void classify(int dimension, Model *model, Point *ex, Match *match) {
+    // assumes dataset is normalized in [0, 1]
     match->distance = (double) dimension;
     match->pointId = ex->id;
     match->label = '-';
-    // printf("#pid_%d", ex->id);
     for (int i = 0; i < model->size; i++) {
         double distance = MNS_distance(ex->value, model->vals[i].center, dimension);
-        // printf("%le,", distance);
-        // allDistances[i] = distance;
         if (distance <= match->distance) {
-            // match->cluster = &(model->vals[i]);
             match->clusterId = model->vals[i].id;
             match->clusterLabel = model->vals[i].label;
             match->clusterCatergoy = model->vals[i].category;
@@ -176,7 +176,6 @@ void classify(int dimension, Model *model, Point *ex, Match *match) {
             match->secondDistance = distance;
         }
     }
-    // printf("\n");
     // If the border isn't included, a novelty cluster would miss the farthest
     // example that was used to create the cluster in the first place.
     // if (match->distance < match->clusterRadius) {

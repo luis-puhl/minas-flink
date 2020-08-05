@@ -8,7 +8,7 @@
 #include "../util/loadenv.h"
 
 Cluster *kMeansInit(int dimension, int k, Cluster clusters[], int nExamples, Point examples[], int initialClusterId, char label, char category, FILE *timing, char *executable) {
-    clock_t start = clock();
+    // clock_t start = clock();
     if (nExamples < k) {
         errx(EXIT_FAILURE, "Not enough examples for clustering. Needed %d and got %d\n", k, nExamples);
     }
@@ -31,9 +31,9 @@ Cluster *kMeansInit(int dimension, int k, Cluster clusters[], int nExamples, Poi
             modelCl->pointSqrSum[d] = 0.0;
         }
     }
-    if (timing) {
-        PRINT_TIMING(timing, executable, 1, start, k);
-    }
+    // if (timing) {
+    //     PRINT_TIMING(timing, executable, 1, start, k);
+    // }
     return clusters;
 }
 

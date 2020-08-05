@@ -1,24 +1,19 @@
-MPI rank / size => 0/4
 MPI rank / size => 1/4
+MPI rank / size => 0/4
 MPI rank / size => 2/4
 MPI rank / size => 3/4
-Expected argument or environment 'TRAINING_CSV' to be defined and 'r'-able.
-Expected argument or environment 'MODEL_OUT_CSV' to be defined and 'w'-able.	Will use stdout as append file.
-Reading training from  '(null)'
-Reading model from     'datasets/model-clean.csv'
-Writing model out to   'stdout'
-Reading examples from  'datasets/test.csv'
-Writing matches to     'out/mpi.csv'
-Writing timing to      'experiments/timing.csv'
-Missing 1 arguments.
-src/minas/minas.c,./target/mfog,Jul 23 2020 20:39:26,1595547580,readModel,10.1.0,1.119000e-03,1,100
-src/minas/minas.c,./target/mfog,Jul 23 2020 20:39:26,1595547582,readExamples,10.1.0,2.538056e+00,1,653457
-src/mpi/minas-mpi.c,./target/mfog,Jul 23 2020 20:39:26,1595547582,sendModel,10.1.0,1.740000e-04,4,100
-[1] Recv model with 100 clusters took 	1.770000e-04s
-[2] Recv model with 100 clusters took 	1.760000e-04s
-[3] Recv model with 100 clusters took 	1.860000e-04s
-[1] Worker classify Test with 217819 examples took 	2.470995s
-[2] Worker classify Test with 217819 examples took 	2.467387s
-[3] Worker classify Test with 217819 examples took 	2.470593s
-src/mpi/minas-mpi.c,./target/mfog,Jul 23 2020 20:39:26,1595547585,sendExamples,10.1.0,2.470103e+00,4,653457
-src/main.c,./target/mfog,Jul 23 2020 20:39:26,1595547585,mainClassify,10.1.0,2.470431e+00,4,653457
+useModelStore          0
+isModelServer          0
+Using kParam as        100
+Using dimension as     22
+Reading training from  ((nil)) '(null)'
+Reading model from     (0x55be995d8ab0) 'datasets/model-clean.csv'
+Reading examples from  (0x55be99629120) 'datasets/test.csv'
+Writing matchesFile to (0x55be99629300) 'out/mpi.csv'
+Writing timingFile to  (0x55be996294e0) 'experiments/timing.csv'
+[3] Recv model with 100 clusters took 	1.470000e-04s
+[1] Recv model with 100 clusters took 	1.600000e-04s
+[2] Recv model with 100 clusters took 	1.470000e-04s
+[1] Worker classify Test with 217819 examples took 	2.252094s
+[2] Worker classify Test with 217819 examples took 	2.250964s
+[3] Worker classify Test with 217819 examples took 	2.251718s

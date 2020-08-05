@@ -56,9 +56,10 @@ void handleUnknown(mfog_params_t *params, Model *model) {
         // bzero(memMatches, model->unknownsSize * sizeof(Match));
         size_t prevUnknownsSize = model->unknownsSize;
         model->unknownsSize = 0;
-        // int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
+        int currentForgetUnkThreshold = exampleCounter - params->thresholdForgettingPast;
         int forgotten = 0;
-        
+        int reprocessed = 0;
+
         // model->unknowns
         for (int unk = 0; unk < prevUnknownsSize; unk++) {
             Match *match = &model->memMatches[model->memMatchesSize];
@@ -66,9 +67,9 @@ void handleUnknown(mfog_params_t *params, Model *model) {
             classify(model->dimension, model, &model->unknowns[unk], match);
             if (match->label != '-') {
                 model->memMatchesSize++;
+                reprocessed++;
                 // printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
-            } else {
-                // if (unknowns[unk]->id > currentForgetUnkThreshold) {
+            } else if (model->unknowns[unk].id < currentForgetUnkThreshold) {
                 // compact unknowns
                 model->unknowns[model->unknownsSize] = model->unknowns[unk];
                 model->unknownsSize++;
@@ -77,7 +78,7 @@ void handleUnknown(mfog_params_t *params, Model *model) {
             //     forgotten++;
             // }
         }
-        printf("late classify of %ld -> %ld unknowns, forgotten %d\n", prevUnknownsSize, model->unknownsSize, forgotten);
+        printf("late classify of %ld -> %ld unknowns, forgotten %d, reprocessed %d\n", prevUnknownsSize, model->unknownsSize, forgotten, reprocessed);
         fflush(stdout);
         // free(linearGroup);
         // return memMatches;
@@ -151,9 +152,7 @@ void noveltyDetectionService(SOCKET connection, mfog_params_t *params, char *buf
                 */
                 offs += sprintf(&matchesBuffer[offs], MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(model->memMatches[i]));
                 if (offs > matchesBufferSize)
-                    errx(EXIT_FAILURE, "Stupid fuck, more memory. At "__FILE__
-                                       ":%d\n\nbuffer=%s\n",
-                         __LINE__, matchesBuffer);
+                    errx(EXIT_FAILURE, "Stupid fuck, more memory. At "__FILE__":%d\n\nbuffer=%s\n", __LINE__, matchesBuffer);
             }
             write(connection, matchesBuffer, offs);
             // free(matchesBuffer);

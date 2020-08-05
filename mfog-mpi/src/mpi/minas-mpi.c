@@ -74,13 +74,13 @@ void receiveModel(Model *model, int clRank) {
     fprintf(stderr, "[%d] Recv model with %d clusters took \t%es\n", clRank, model->size, ((double)(clock() - start)) / ((double)1000000));
 }
 
-int receiveClassifications(Match *matches) {
+int receiveClassifications(Match *memMatches) {
     int hasMessage = 0, matchesCounter = 0;
     Match match;
     MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
     while (hasMessage) {
         MPI_Recv(&match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        matches[match.pointId] = match;
+        memMatches[match.pointId] = match;
         // fprintf(matches, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(match));
         matchesCounter++;
         MPI_Iprobe(MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, &hasMessage, MPI_STATUS_IGNORE);
@@ -88,7 +88,7 @@ int receiveClassifications(Match *matches) {
     return matchesCounter;
 }
 
-int sendExamples(int dimension, Point examples[], Match matches[], int clSize, FILE *timing, char *executable) {
+int sendExamples(int dimension, Point examples[], Match memMatches[], int clSize, FILE *timing, char *executable) {
     int dest = 1, exampleCounter = 0;
     clock_t start = clock();
     int bufferSize = sizeof(Point) + dimension * sizeof(double);
@@ -104,7 +104,7 @@ int sendExamples(int dimension, Point examples[], Match matches[], int clSize, F
         MPI_Pack(ex->value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
         //
-        receiveClassifications(matches);
+        receiveClassifications(memMatches);
         //
         dest = ++dest < clSize ? dest : 1;
     }
@@ -119,7 +119,7 @@ int sendExamples(int dimension, Point examples[], Match matches[], int clSize, F
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
     }
     MPI_Barrier(MPI_COMM_WORLD);
-    receiveClassifications(matches);
+    receiveClassifications(memMatches);
     free(buffer);
     free(ex.value);
     PRINT_TIMING(timing, executable, clSize, start, exampleCounter);

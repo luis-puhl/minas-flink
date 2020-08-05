@@ -231,7 +231,8 @@ def main(
         '\tmatchesFN = %s\n' % matchesFN +
         '\tminasMatches = %s\n' % minasMatches +
         '\tmodelFN = %s\n' % modelFN +
-        '\tmfogModelFN = %s\n' % mfogModelFN
+        '\tmfogModelFN = %s\n' % mfogModelFN +
+        '\toutputDir = %s\n' % outputDir
     )
     examplesDf = getExamplesDf(examplesFN)
     countPerClass = examplesDf.groupby('class').count()[['id']]

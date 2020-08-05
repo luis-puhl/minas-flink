@@ -23,11 +23,11 @@ server_t *serverStart(short unsigned int port) {
     server_t *server = malloc(sizeof(server));
     server->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (server->serverSocket < 0)
-        errx(EXIT_FAILURE, "ERROR opening socket");
+        errx(EXIT_FAILURE, "ERROR opening socket. At "__FILE__":%d\n", __LINE__);
     //set master socket to allow multiple connections , this is just a good habit, it will work without this
     int opt = 1;
     if (setsockopt(server->serverSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
-        errx(EXIT_FAILURE, "ERROR on setsockopt");
+        errx(EXIT_FAILURE, "ERROR on setsockopt. At "__FILE__":%d\n", __LINE__);
     //
     struct sockaddr_in address;
     socklen_t addrSize = sizeof(address);
@@ -37,10 +37,10 @@ server_t *serverStart(short unsigned int port) {
     address.sin_port = htons(port);
     //
     if (bind(server->serverSocket, (struct sockaddr *)&address, addrSize) < 0)
-        errx(EXIT_FAILURE, "ERROR on binding");
+        errx(EXIT_FAILURE, "ERROR on binding. At "__FILE__":%d\n", __LINE__);
     //try to specify maximum of 3 pending connections for the master socket
     if (listen(server->serverSocket, 3) < 0)
-        errx(EXIT_FAILURE, "ERROR on listen");
+        errx(EXIT_FAILURE, "ERROR on listen. At "__FILE__":%d\n", __LINE__);
     //
     server->clients = malloc(10 * sizeof(SOCKET));
     server->clientsLen = 10;
@@ -154,11 +154,11 @@ int serverRead(SOCKET connectionFD) {
     bzero(buffer, 256);
     int n = read(connectionFD, buffer, 255);
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR reading from socket");
+        errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
     printf("Here is the message: %s\n", buffer);
     n = write(connectionFD, "I got your message", 18);
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR writing to socket");
+        errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
     // close(connectionFD);
     // close(sockfd);
     return n;
@@ -176,14 +176,14 @@ int serverMain(int argc, char *argv[]) {
     }
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        errx(EXIT_FAILURE, "ERROR opening socket");
+        errx(EXIT_FAILURE, "ERROR opening socket. At "__FILE__":%d\n", __LINE__);
     bzero((char *)&serv_addr, sizeof(serv_addr));
     portno = atoi(argv[1]);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
     if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        errx(EXIT_FAILURE, "ERROR on binding");
+        errx(EXIT_FAILURE, "ERROR on binding. At "__FILE__":%d\n", __LINE__);
     listen(sockfd, 5);
     clilen = sizeof(cli_addr);
     newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
@@ -192,11 +192,11 @@ int serverMain(int argc, char *argv[]) {
     bzero(buffer, 256);
     n = read(newsockfd, buffer, 255);
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR reading from socket");
+        errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
     printf("Here is the message: %s\n", buffer);
     n = write(newsockfd, "I got your message", 18);
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR writing to socket");
+        errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
     close(newsockfd);
     close(sockfd);
     return 0;
@@ -205,7 +205,7 @@ int serverMain(int argc, char *argv[]) {
 SOCKET clientConnect(char hostname[], short unsigned int port) {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        errx(EXIT_FAILURE, "ERROR opening socket");
+        errx(EXIT_FAILURE, "ERROR opening socket. At "__FILE__":%d\n", __LINE__);
     struct hostent *server = gethostbyname(hostname);
     if (server == NULL) {
         fprintf(stderr, "ERROR, no such host\n");
@@ -217,7 +217,7 @@ SOCKET clientConnect(char hostname[], short unsigned int port) {
     bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
     serv_addr.sin_port = htons(port);
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        errx(EXIT_FAILURE, "ERROR connecting");
+        errx(EXIT_FAILURE, "ERROR connecting. At "__FILE__":%d\n", __LINE__);
     return sockfd;
 }
 
@@ -228,11 +228,11 @@ int clientRead(SOCKET sockfd) {
     fgets(buffer, 255, stdin);
     int n = write(sockfd, buffer, strlen(buffer));
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR writing to socket");
+        errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
     bzero(buffer, 256);
     n = read(sockfd, buffer, 255);
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR reading from socket");
+        errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
     printf("%s\n", buffer);
     close(sockfd);
     return 0;
@@ -251,7 +251,7 @@ int client(int argc, char *argv[]) {
     portno = atoi(argv[2]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        errx(EXIT_FAILURE, "ERROR opening socket");
+        errx(EXIT_FAILURE, "ERROR opening socket. At "__FILE__":%d\n", __LINE__);
     server = gethostbyname(argv[1]);
     if (server == NULL) {
         fprintf(stderr, "ERROR, no such host\n");
@@ -262,17 +262,17 @@ int client(int argc, char *argv[]) {
     bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
     serv_addr.sin_port = htons(portno);
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        errx(EXIT_FAILURE, "ERROR connecting");
+        errx(EXIT_FAILURE, "ERROR connecting. At "__FILE__":%d\n", __LINE__);
     printf("Please enter the message: ");
     bzero(buffer, 256);
     fgets(buffer, 255, stdin);
     n = write(sockfd, buffer, strlen(buffer));
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR writing to socket");
+        errx(EXIT_FAILURE, "ERROR writing to socket. At "__FILE__":%d\n", __LINE__);
     bzero(buffer, 256);
     n = read(sockfd, buffer, 255);
     if (n < 0)
-        errx(EXIT_FAILURE, "ERROR reading from socket");
+        errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
     printf("%s\n", buffer);
     close(sockfd);
     return 0;

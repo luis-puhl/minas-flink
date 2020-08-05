@@ -1,18 +1,118 @@
+src/minas/evaluate.py
+	examplesFN = datasets/test.csv
+	matchesFN = out/serial.csv
+	minasMatches = out/og/2020-07-20T12-18-21.758/matches.csv
+	modelFN = datasets/model-clean.csv
+	mfogModelFN = out/model.csv
+	outputDir = out/
+
 Count per class
-       #pointId
-class          
-A        447179
-N        206278
+           id
+class        
+A      447179
+N      206278
+### Minas
+
+saving out/hits_minas.png
 Confusion Matrix
-Classes (act)       A       N   total
-Labels (pred)                        
--               19677     340   20017
-N              427502  205938  633440
-total          447179  206278  653457
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-                3774    8206        -       0
+1                 123       0        A     123
+10               3520    5130        N    5130
+11                 71     289        N     289
+12                 26       0        A      26
+2                 152      82        A     152
+3                 368      44        A     368
+4                   8       0        A       8
+5                  82       1        A      82
+6                 165       0        A     165
+7                   8     396        N     396
+8                1054     183        A    1054
+9                 161     154        A     161
+N              441395  199715        N  199715
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
+Total examples    (653457, 25)
+Total matches     (665107, 9)
+Hits               207669 ( 31.223397%)
+Misses             445458 ( 66.975389%)
+Unknowns            11980 (  1.801214%)
+Unk. reprocessed    11650 ( 97.245409%)
+Total              665107 (100.000000%)
 
+### Mfog
 
-Total examples     653457
-Total matches      653457
-Hits               205938 ( 31.515157%)
-Misses             447519 ( 68.484843%)
-Hits + Misses      653457 (100.000000%)
+saving out/hits_mfog.png
+Confusion Matrix
+Classes (act)       A      N assigned    hits
+Labels (pred)                                
+-               10593   5469        -       0
+0                  42    456        N     456
+1                 116    431        N     431
+2                1218    126        A    1218
+3                1142    262        A    1142
+4                2247     14        A    2247
+5                4888    456        A    4888
+6                1427    155        A    1427
+7                1110      0        A    1110
+8                 500    554        N     554
+9                  76   1186        N    1186
+a               28865    158        A   28865
+b               26690  34488        N   34488
+c              163999  18560        A  163999
+d               19841   7403        A   19841
+e               36628   3454        A   36628
+f                4355    743        A    4355
+g                5884   1443        A    5884
+h               14492   7422        A   14492
+i               29110   1760        A   29110
+j                4429  13558        N   13558
+k               15127   4848        A   15127
+l                5617    480        A    5617
+m                2425     80        A    2425
+n                2621    235        A    2621
+o               22798    153        A   22798
+p               20263  16089        A   20263
+q                 203   1197        N    1197
+r                  99   5878        N    5878
+s                3821    518        A    3821
+t                2778     43        A    2778
+u                  41  73331        N   73331
+v                5191    373        A    5191
+w                1844   1706        A    1844
+x                5655    386        A    5655
+y                2608     66        A    2608
+z                  26   1207        N    1207
+Classes           ['A' 'N']
+Initial labels    ['-']
+Labels            ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] 37
+Total examples    (653457, 25)
+Total matches     (653457, 9)
+Hits               538240 ( 82.368082%)
+Misses             109631 ( 16.777079%)
+Unknowns            16062 (  2.458004%)
+Unk. reprocessed        0 (  0.000000%)
+Total              663933 (101.603166%)
+
+### Diff
+
+            id j_clL     j_clR j_L       j_D c_clL     c_clR  c_L       c_D
+0            0     N  1.826296   N  0.600331   NaN       NaN  NaN       NaN
+1            1     N  1.026340   N  0.486099     k  0.542910    k  0.137431
+2            2     N  1.826296   N  0.600331   NaN       NaN  NaN       NaN
+3            3     N  1.826296   N  0.600331   NaN       NaN  NaN       NaN
+4            4     N  1.826296   N  0.594241     a  0.000000    a  0.000000
+...        ...   ...       ...  ..       ...   ...       ...  ...       ...
+676447  653452     N  1.393900   N  0.099933     e  0.019851    e  0.000149
+676448  653453    10  1.225131  10  0.487844     j  1.993061    j  0.509170
+676449  653454     N  1.723041   N  0.233748     b  1.707183    b  0.104235
+676450  653455     N  0.345571   N  0.180093     d  0.235407    d  0.038092
+676451  653456     N  1.393900   N  0.099933     e  0.019851    e  0.000149
+
+[675109 rows x 9 columns]
+saving out/model-full.png
+saving out/model-diff.png
+saving out/model-diff-matches.png
+

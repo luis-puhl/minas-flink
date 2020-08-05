@@ -54,81 +54,70 @@ int mainClassify(mfog_params_t *params, Point examples[], Model *model, int *nMa
             (*nMatches)++;
             classify(model->dimension, model, example, match);
             if (match->label == '-') {
-                sendUnk(params, example);
-            /*
-                unknowns[unknownsSize] = example;
-                unknownsSize++;
-                if (unknownsSize >= maxUnkSize) {
-                    //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
-                    lastCheck = exampleCounter;
-                    // ND
-                    Point *linearGroup = malloc(unknownsSize * sizeof(Point));
-                    printf("clustering unknowns with %5ld examples\n", unknownsSize);
-                    for (int g = 0; g < unknownsSize; g++) {
-                        linearGroup[g] = *unknowns[g];
-                    }
-                    model = noveltyDetection(params->kParam, model, unknownsSize, linearGroup,
-                        minExCluster, noveltyThreshold, params->timingFile, params->executable);
-                    char outputModelFileName[200];
-                    sprintf(outputModelFileName, "out/models/%d.csv", exampleCounter);
-                    FILE *outputModelFile = fopen(outputModelFileName, "w");
-                    if (outputModelFile != NULL) {
-                        writeModel(outputModelFile, model, params->timingFile, params->executable);
-                    }
-                    fclose(outputModelFile);
-                    //
-                    // Classify after model update
-                    size_t prevUnknownsSize = unknownsSize;
-                    unknownsSize = 0;
-                    int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
-                    int forgotten = 0;
-                    for (int unk = 0; unk < prevUnknownsSize; unk++) {
-                        match = &(memMatches[*nMatches]);
-                        classify(model->dimension, model, unknowns[unk], match);
-                        if (match->label != '-') {
-                            (*nMatches)++;
-                            // printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
-                        } else if (unknowns[unk]->id > currentForgetUnkThreshold) {
-                            // compact unknowns
-                            unknowns[unknownsSize] = unknowns[unk];
-                            unknownsSize++;
-                        } else {
-                            forgotten++;
+                if (params->useModelStore) {
+                    sendUnk(params, example);
+                } else {
+                    model->unknowns[model->unknownsSize] = *example;
+                    model->unknownsSize++;
+                    handleUnknown(params, model);
+                    /*
+                    if (model->unknownsSize >= params->maxUnkSize) {
+                        //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
+                        // lastCheck = exampleCounter;
+                        // ND
+                        Point *linearGroup = malloc(model->unknownsSize * sizeof(Point));
+                        printf("clustering unknowns with %5ld examples\n", model->unknownsSize);
+                        for (int g = 0; g < model->unknownsSize; g++) {
+                            linearGroup[g] = model->unknowns[g];
                         }
+                        model = noveltyDetection(params->kParam, model, model->unknownsSize, linearGroup,
+                            minExCluster, noveltyThreshold, params->timingFile, params->executable);
+                        char outputModelFileName[200];
+                        sprintf(outputModelFileName, "out/models/%d.csv", exampleCounter);
+                        FILE *outputModelFile = fopen(outputModelFileName, "w");
+                        if (outputModelFile != NULL) {
+                            writeModel(outputModelFile, model, params->timingFile, params->executable);
+                        }
+                        fclose(outputModelFile);
+                        //
+                        // Classify after model update
+                        size_t prevUnknownsSize = unknownsSize;
+                        unknownsSize = 0;
+                        int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
+                        int forgotten = 0;
+                        for (int unk = 0; unk < prevUnknownsSize; unk++) {
+                            match = &(memMatches[*nMatches]);
+                            classify(model->dimension, model, unknowns[unk], match);
+                            if (match->label != '-') {
+                                (*nMatches)++;
+                                // printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
+                            } else if (unknowns[unk]->id > currentForgetUnkThreshold) {
+                                // compact unknowns
+                                unknowns[unknownsSize] = unknowns[unk];
+                                unknownsSize++;
+                            } else {
+                                forgotten++;
+                            }
+                        }
+                        printf("late classify of %ld -> %ld unknowns, forgotten %d\n", prevUnknownsSize, unknownsSize, forgotten);
+                        fflush(stdout);
+                        free(linearGroup);
                     }
-                    printf("late classify of %ld -> %ld unknowns, forgotten %d\n", prevUnknownsSize, unknownsSize, forgotten);
-                    fflush(stdout);
-                    free(linearGroup);
+                    */
                 }
-            */
             }
             if (exampleCounter % params->thresholdForgettingPast == 0) {
                 // put old clusters in model to sleep
             }
-        }
-        if (params->timingFile) {
-            PRINT_TIMING(params->timingFile, params->executable, params->mpiSize, start, exampleCounter);
-        }
-        fprintf(params->matchesFile, MATCH_CSV_HEADER);
-        for (int i = 0; i < (*nMatches); i++) {
-            fprintf(params->matchesFile, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
         }
     } else if (params->mpiRank == 0) {
         MPI_Barrier(MPI_COMM_WORLD);
         sendModel(model, params->mpiRank, params->mpiSize, params->timingFile, params->executable);
         
         MPI_Barrier(MPI_COMM_WORLD);
-        int exampleCounter = sendExamples(model->dimension, examples, memMatches, params->mpiSize, params->timingFile, params->executable);
+        *nMatches = sendExamples(model->dimension, examples, memMatches, params->mpiSize, params->timingFile, params->executable);
 
         MPI_Barrier(MPI_COMM_WORLD);
-        if (params->timingFile) {
-            PRINT_TIMING(params->timingFile, params->executable, params->mpiSize, start, exampleCounter);
-        }
-        fprintf(params->matchesFile, MATCH_CSV_HEADER);
-        for (int i = 0; i < exampleCounter; i++) {
-            fprintf(params->matchesFile, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
-        }
-        // closeEnv(envSize, varNames, fileNames, values, fileModes);
     } else {
         MPI_Barrier(MPI_COMM_WORLD);
         model = malloc(sizeof(Model));
@@ -138,6 +127,16 @@ int mainClassify(mfog_params_t *params, Point examples[], Model *model, int *nMa
         receiveExamples(model->dimension, model, params->mpiRank);
 
         MPI_Barrier(MPI_COMM_WORLD);
+    }
+
+    if (params->mpiRank == 0) {
+        if (params->timingFile) {
+            PRINT_TIMING(params->timingFile, params->executable, params->mpiSize, start, exampleCounter);
+        }
+        fprintf(params->matchesFile, MATCH_CSV_HEADER);
+        for (int i = 0; i < (*nMatches); i++) {
+            fprintf(params->matchesFile, MATCH_CSV_LINE_FORMAT, MATCH_CSV_LINE_PRINT_ARGS(memMatches[i]));
+        }
     }
     return exampleCounter;
 }
@@ -161,43 +160,35 @@ int main(int argc, char *argv[], char **envp) {
         return EXIT_FAILURE;
     }
     mfog_params_t params;
-    //
-    int mpiReturn;
-    mpiReturn = MPI_Init(&argc, &argv);
-    if (mpiReturn != MPI_SUCCESS) {
-        MPI_Abort(MPI_COMM_WORLD, mpiReturn);
-        errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
-    }
-    int mpiRank, mpiSize;
-    mpiReturn = MPI_Comm_size(MPI_COMM_WORLD, &mpiSize);
-    mpiReturn = MPI_Comm_rank(MPI_COMM_WORLD, &mpiRank);
-    if (mpiReturn != MPI_SUCCESS) {
-        MPI_Abort(MPI_COMM_WORLD, mpiReturn);
-        errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
-    }
-    printf("MPI rank / size => %d/%d\n", mpiRank, mpiSize);
-    params.mpiRank = mpiRank;
-    params.mpiSize = mpiSize;
-    //
     initEnv(argc, argv, envp, &params);
     //
-    Model *model;
+    Model *model = NULL;
     if (params.isModelServer) {
         model = modelStoreService(&params);
         // MPI_Finalize(); // breaks, don't know why
         free(model);
-        return 0;
+        return EXIT_SUCCESS;
     }
-    model = getModelFromStore(&params);
-    Point *examples;
-    Match *memMatches;
+    if (params.mpiRank == 0) {
+        if (params.useModelStore) {
+            model = getModelFromStore(&params);
+        } else {
+            model = readModel(params.dimension, params.modelFile, params.timingFile, params.executable);
+        }
+    }
+    Point *examples = NULL;
+    Match *memMatches = NULL;
     int nExamples;
-    if (params.examplesCsv != NULL && params.examplesFile != NULL) {
+    if (params.mpiRank == 0 && params.examplesCsv != NULL && params.examplesFile != NULL) {
         examples = readExamples(model->dimension, params.examplesFile, &nExamples, params.timingFile, params.executable);
         // max 2 matches per example
         memMatches = calloc(2 * nExamples, sizeof(Match));
+        if (!params.useModelStore) {
+            model->memMatches = memMatches;
+            model->unknowns = calloc(nExamples, sizeof(Point));
+        }
     }
-    int nMatches;
+    int nMatches = 0;
     mainClassify(&params, examples, model, &nMatches, memMatches);
 
     if (params.mpiRank == 0) {
@@ -218,7 +209,7 @@ int main(int argc, char *argv[], char **envp) {
     free(examples);
     free(memMatches);
     MPI_Finalize();
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 #endif // MAIN

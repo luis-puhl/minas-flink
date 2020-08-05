@@ -34,6 +34,7 @@ typedef struct {
     int minExCluster;
     int maxUnkSize;
     int thresholdForgettingPast;
+    int useModelStore;
 } mfog_params_t;
 
 #define TRAINING_CSV "TRAINING_CSV"
