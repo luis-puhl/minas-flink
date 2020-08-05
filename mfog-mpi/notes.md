@@ -92,7 +92,6 @@ tratar de múltiplas classes e múltiplos rótulos.
 
 Além disso, um gráfico de acertos, erros e desconhecidos foi adicionado à avaliação.
 
-
 Função noveltyDetection, 4 execuções com total de 1.24s:
 
 - 3.585160e-01,n=2000
@@ -109,3 +108,14 @@ Função noveltyDetection, 4 execuções com total de 1.24s:
 - [ ] CluStream vs k-means (k-means é muito lento para o modelo inicial, mas aceitável para ND);
 - [ ] Envio de modelo e exemplos por socket/redis;
 - [ ] Tempo entre criação do exemplo e classificação;
+
+## Meeting 2020-08-05
+
+Seguir o paper.
+Justificar escolhas que divergem.
+Implementação atual é razoável.
+Mudanças nas decisões são resultados.
+
+Estudo da distribuição do dataset em cada um dos nós da borda.
+
+Comparação serial paralelo apenas.

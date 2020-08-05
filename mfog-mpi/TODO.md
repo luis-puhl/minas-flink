@@ -64,3 +64,14 @@
   - [ ] Apresentar o meu entendimento do algoritmo original e os detalhes de implementação,
   em especial aquelas que diferem da implementação original.
   - [ ] Reavaliar arquitetura (sockets, redis, db, ND, cloud)
+
+## Meeting 2020-08-05
+
+Seguir o paper.\
+Justificar escolhas que divergem.\
+Implementação atual é razoável.\
+Mudanças nas decisões são resultados válidos e devem ser publicados.
+
+Comparação serial (baseline) paralelo apenas.
+
+Estudo da distribuição do dataset em cada um dos nós da borda.
