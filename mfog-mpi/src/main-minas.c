@@ -4,6 +4,7 @@
 #include <err.h>
 #include <math.h>
 #include <time.h>
+#include <ctype.h>
 
 #define assertEquals(val, exp) \
     if (val != exp) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
@@ -21,6 +22,7 @@ typedef struct {
     unsigned int minExamplesPerCluster;
     double precision;
     double radiusF;
+    double noveltyF;
     const char *executable;
 } Params;
 
@@ -44,6 +46,7 @@ typedef struct {
 typedef struct {
     Cluster *clusters;
     unsigned int size;
+    unsigned int nextLabel;
 } Model;
 
 typedef struct {
@@ -54,6 +57,7 @@ typedef struct {
     double distance; // , secondDistance;
     Cluster *cluster;
     // Example *example;
+    char *labelStr;
 } Match;
 
 double euclideanDistance(unsigned int dim, double a[], double b[]) {
@@ -114,7 +118,7 @@ double kMeans(Params *params, Cluster* clusters, Example trainingSet[], unsigned
             clusters[k].matches = 0;
         }
         improvement = globalDistance - prevGlobalDistance;
-        fprintf(stderr, "[%3u] k-Means %le -> %le (%+le)\n", iteration, prevGlobalDistance, globalDistance, improvement);
+        fprintf(stderr, "\t[%3u] k-Means %le -> %le (%+le)\n", iteration, prevGlobalDistance, globalDistance, improvement);
         if (improvement < 0)
             improvement = -improvement;
         iteration++;
@@ -217,9 +221,9 @@ Model *training(Params *params) {
     }
     //
     fprintf(stderr, "Training %u examples with %d classes (%s)\n", id, nClasses, classes);
-    fflush(stdout);
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
+    model->nextLabel = '\0';
     model->clusters = calloc(1, sizeof(Cluster));
     FILE *modelFile = fopen("out/baseline-models/baseline_0.csv", "w");
     fprintf(modelFile, "#id, label, matches, distanceAvg, distanceStdDev, radius");
@@ -232,7 +236,6 @@ Model *training(Params *params) {
         unsigned int trainingSetSize = classesSize[l];
         char class = classes[l];
         fprintf(stderr, "Training %u examples from class %c\n", trainingSetSize, class);
-        fflush(stdout);
         Cluster *clusters = clustering(params, trainingSet, trainingSetSize, model->size);
         //
         unsigned int prevSize = model->size;
@@ -276,17 +279,78 @@ Match *identify(Params *params, Model *model, Example *example, Match *match) {
     return match;
 }
 
+char *printableLabel(char label) {
+    if (isalnum(label) || label == '-') {
+        char *ret = calloc(2, sizeof(char));
+        ret[0] = label;
+        return ret;
+    }
+    char *ret = calloc(20, sizeof(char));
+    sprintf(ret, "%d", label);
+    return ret;
+}
+
+void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t unknownsSize) {
+    clock_t start = clock();
+    char fileName[255];
+    sprintf(fileName, "out/baseline-models/baseline_%d.csv", model->size);
+    FILE *modelFile = fopen(fileName, "w");
+    fprintf(modelFile, "#id, label, matches, distanceAvg, distanceStdDev, radius");
+    //, linearSum, squareSum, distanceLinearSum, distanceSquareSum\n");
+    for (unsigned int d = 0; d < params->dim; d++)
+        fprintf(modelFile, ", c%u", d);
+    fprintf(modelFile, "\n");
+    //
+    Cluster *clusters = clustering(params, unknowns, unknownsSize, model->size);
+    for (size_t k = 0; k < params->k; k++) {
+        if (clusters[k].matches < params->minExamplesPerCluster) continue;
+        //
+        double minDist;
+        Cluster *nearest = NULL;
+        for (size_t i = 0; i < model->size; i++) {
+            double dist = euclideanDistance(params->dim, clusters[k].center, model->clusters[i].center);
+            if (nearest == NULL || dist < minDist) {
+                minDist = dist;
+                nearest = &model->clusters[i];
+            }
+        }
+        if (minDist <= nearest->distanceAvg + params->noveltyF * nearest->distanceStdDev) {
+            clusters[k].label = nearest->label;
+        } else {
+            clusters[k].label = model->nextLabel;
+            // inc label
+            model->nextLabel = (model->nextLabel + 1) % 255;
+            // fprintf(stderr, "Novelty %s\n", printableLabel(clusters[k].label));
+        }
+        //
+        model->size++;
+        model->clusters = realloc(model->clusters, model->size * sizeof(Cluster));
+        model->clusters[model->size - 1] = clusters[k];
+        //
+        fprintf(modelFile, "%10u, %c, %10u, %le, %le, %le",
+                clusters[k].id, clusters[k].label, clusters[k].matches,
+                clusters[k].distanceAvg, clusters[k].distanceStdDev, clusters[k].radius);
+        for (unsigned int d = 0; d < params->dim; d++)
+            fprintf(modelFile, ", %le", clusters[k].center[d]);
+        fprintf(modelFile, "\n");
+    }
+    free(clusters);
+    fclose(modelFile);
+    printTiming((int) unknownsSize);
+}
+
 void minasOnline(Params *params, Model *model) {
     clock_t start = clock();
     unsigned int id = 0;
     Match match;
     Example example;
     example.val = calloc(params->dim, sizeof(double));
-    printf("#id,label\n");
+    printf("#pointId,label\n");
     size_t unknownsMaxSize = params->minExamplesPerCluster * params->k;
     size_t noveltyDetectionTrigger = params->minExamplesPerCluster * params->k;
     Example *unknowns = calloc(unknownsMaxSize, sizeof(Example));
     size_t unknownsSize = 0;
+    size_t lastNDCheck = 0;
     int hasEmptyline = 0;
     while (!feof(stdin) && hasEmptyline != 2) {
         for (size_t d = 0; d < params->dim; d++) {
@@ -300,7 +364,7 @@ void minasOnline(Params *params, Model *model) {
         scanf("\n%n", &hasEmptyline);
         //
         identify(params, model, &example, &match);
-        printf("%10u,%c\n", example.id, match.label);
+        printf("%10u,%s\n", example.id, printableLabel(match.label));
         //
         if (match.label != UNK_LABEL) continue;
         unknowns[unknownsSize] = example;
@@ -314,8 +378,22 @@ void minasOnline(Params *params, Model *model) {
             unknowns = realloc(unknowns, unknownsMaxSize * sizeof(Example));
         }
         //
-        if (unknownsSize % noveltyDetectionTrigger == 0) {
-            fprintf(stderr, "Novelty Detection with %lu examples\n", unknownsSize);
+        if (unknownsSize % noveltyDetectionTrigger == 0 && id - lastNDCheck > noveltyDetectionTrigger) {
+            lastNDCheck = id;
+            noveltyDetection(params, model, unknowns, unknownsSize);
+            //
+            size_t reclassified = 0;
+            for (size_t ex = 0; ex < unknownsSize; ex++) {
+                identify(params, model, &unknowns[ex], &match);
+                // compress
+                unknowns[ex - reclassified] = unknowns[ex];
+                if (match.label == UNK_LABEL)
+                    continue;
+                printf("%10u,%s\n", unknowns[ex].id, printableLabel(match.label));
+                reclassified++;
+            }
+            fprintf(stderr, "Reclassified %lu\n", reclassified);
+            unknownsSize -= reclassified;
         }
     }
     printTiming(id);
@@ -334,11 +412,13 @@ int main(int argc, char const *argv[]) {
     assertEquals(scanf("precision=%lf\n", &params.precision), 1);
     assertEquals(scanf("radiusF=%lf\n", &params.radiusF), 1);
     assertEquals(scanf("minExamplesPerCluster=%u\n", &params.minExamplesPerCluster), 1);
+    assertEquals(scanf("noveltyF=%lf\n", &params.noveltyF), 1);
     fprintf(stderr, "\tk = %d\n", params.k);
     fprintf(stderr, "\tdim = %d\n", params.dim);
     fprintf(stderr, "\tprecision = %le\n", params.precision);
     fprintf(stderr, "\tradiusF = %le\n", params.radiusF);
     fprintf(stderr, "\tminExamplesPerCluster = %u\n", params.minExamplesPerCluster);
+    fprintf(stderr, "\tnoveltyF = %lf\n", params.noveltyF);
 
     Model *model = training(&params);
 
