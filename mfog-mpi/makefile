@@ -14,7 +14,10 @@ datasets/emtpyline:
 experiments/baseline.log: bin/minas minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
 	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
 		./bin/minas > out/baseline.csv 2> experiments/baseline.log
+	echo "" >> experiments/baseline.log
 	cat out/baseline.csv | awk -F, '{print $$2}' | sort | uniq -c >> experiments/baseline.log
+	echo "" >> experiments/baseline.log
+	python3 src/minas/evaluate.py datasets/test.csv out/baseline.csv >> experiments/baseline.log
 	cat experiments/baseline.log
 
 target:

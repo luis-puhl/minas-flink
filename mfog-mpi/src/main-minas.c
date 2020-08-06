@@ -396,6 +396,19 @@ void minasOnline(Params *params, Model *model) {
             unknownsSize -= reclassified;
         }
     }
+    // final flush
+    noveltyDetection(params, model, unknowns, unknownsSize);
+    size_t reclassified = 0;
+    for (size_t ex = 0; ex < unknownsSize; ex++) {
+        identify(params, model, &unknowns[ex], &match);
+        // compress
+        unknowns[ex - reclassified] = unknowns[ex];
+        if (match.label == UNK_LABEL)
+            continue;
+        printf("%10u,%s\n", unknowns[ex].id, printableLabel(match.label));
+        reclassified++;
+    }
+    fprintf(stderr, "Final flush %lu\n", reclassified);
     printTiming(id);
 }
 
