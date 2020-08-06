@@ -7,6 +7,13 @@ clean:
 	@-mkdir target out experiments 2>/dev/null
 	@echo clean
 
+bin/minas: src/main-minas.c
+	gcc -g -Wall -lm $^ -o $@
+datasets/emtpyline:
+	echo "" > datasets/emtpyline
+out/baseline.log: bin/minas minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | ./bin/minas > $@
+
 target:
 	@-mkdir target out experiments 2>/dev/null
 target/mfog: src/main.c src/minas/minas.c src/minas/nd-service.c src/util/loadenv.c src/util/kMeans.c src/util/net.c src/mpi/minas-mpi.c
