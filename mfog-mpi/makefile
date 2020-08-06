@@ -11,8 +11,11 @@ bin/minas: src/main-minas.c
 	gcc -g -Wall -lm $^ -o $@
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
-out/baseline.log: bin/minas minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
-	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | ./bin/minas > $@
+experiments/baseline.log: bin/minas minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
+		./bin/minas > out/baseline.csv 2> experiments/baseline.log
+	cat out/baseline.csv | awk -F, '{print $$2}' | sort | uniq -c >> experiments/baseline.log
+	cat experiments/baseline.log
 
 target:
 	@-mkdir target out experiments 2>/dev/null
