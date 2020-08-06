@@ -114,7 +114,7 @@ def plotHitMissUnkRate(df, assignment, off, path=None, title=None):
     df['tot'] = df['hits'] + df['misses'] + df['unks']
     # 
     df['d_hit'] = df['hits'] / df['tot']
-    df['d_mis'] = df['misses'] / df['tot']
+    # df['d_mis'] = df['misses'] / df['tot']
     df['d_unk'] = df['unks'] / df['tot']
     # 
     labelSet = set()
@@ -130,7 +130,8 @@ def plotHitMissUnkRate(df, assignment, off, path=None, title=None):
         title += ' Hit Miss Unk'
     else:
         title = 'Hit Miss Unk'
-    ax = df[['d_hit', 'd_mis', 'd_unk' ]].plot(title=title, figsize=figsize)
+    # ax = df[['d_hit', 'd_mis', 'd_unk' ]].plot(title=title, figsize=figsize)
+    ax = df[['d_hit', 'd_unk' ]].plot(title=title, figsize=figsize)
     ax.vlines(x=xcoords, ymin=-0.05, ymax=1.05, colors='gray', ls='--', lw=0.5, label='vline_multiple')
     ax.get_xaxis().set_major_formatter(matplotlib.ticker.EngFormatter())
     # 
@@ -139,11 +140,11 @@ def plotHitMissUnkRate(df, assignment, off, path=None, title=None):
         print('saving', path)
     return df
 
-def diffMinasMfog(examplesDf, minasDF, mfogDF, path=None):
-    print("### Minas\n")
-    printEval(examplesDf, minasDF, path, 'minas')
-    print("### Mfog\n")
-    printEval(examplesDf, mfogDF, path, 'mfog')
+def diffMinasMfog(examplesDf, minasDF, mfogDF, path=None, titleA='minas', titleB='mfog'):
+    print("### "+titleA+"\n")
+    printEval(examplesDf, minasDF, path, titleA)
+    print("### "+titleB+"\n")
+    printEval(examplesDf, mfogDF, path, titleB)
     # [['id', 'og', 'label']]
     m = pd.merge(minasDF, mfogDF, on='id', how='left')
     diff = m[m['label_x'] != m['label_y']]
@@ -218,6 +219,8 @@ def compareModelDf(a, b, path=None):
 
 
 def main(
+    titleA='minas',
+    titleB='mfog',
     examplesFN='datasets/test.csv',
     matchesFN='out/matches.csv',
     minasMatches='out/og/2020-07-20T12-18-21.758/matches.csv',
@@ -242,7 +245,7 @@ def main(
     mfogDF = getMatchesDf(matchesFN)
     minasDF = getMatchesDf(minasMatches)
     # ogdf = getOriginalMatchesDf('../../out/minas-og/2020-07-20T12-21-54.755/results')
-    diffMinasMfog(examplesDf, minasDF, mfogDF, outputDir)
+    diffMinasMfog(examplesDf, minasDF, mfogDF, outputDir, titleA, titleB)
 
     modelDF = getModelDf(modelFN)
     # minasFiModDF = getModelDf('../../out/minas-og/2020-07-22T01-19-11.984/model/653457_final.csv')
@@ -259,6 +262,7 @@ def main(
 
 if __name__ == "__main__":
     params = [
+        'titleA', 'titleB',
         'examplesFN',
         'matchesFN',
         'minasMatches',
