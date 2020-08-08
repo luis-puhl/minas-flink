@@ -1,0 +1,162 @@
+./bin/minas
+	k = 100
+	dim = 22
+	precision = 1.000000e-08
+	radiusF = 1.000000e-01
+	minExamplesPerCluster = 20
+	noveltyF = 1.000000
+	useCluStream = 1
+	cluStream_q_maxMicroClusters = 100
+	cluStream_time_threshold_delta_δ = 20.000000
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.124000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+CluStream final cluster 36656
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.077000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+[./bin/minas] 1.803077e+01 seconds for cluStream(72000). At src/baseline/minas.c:337
+[./bin/minas] 1.894700e+01 seconds for training(72000). At src/baseline/minas.c:490
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.016000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+CluStream final cluster 1230
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.053000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+[./bin/minas] 4.349080e-01 seconds for cluStream(2000). At src/baseline/minas.c:337
+[./bin/minas] 4.541180e-01 seconds for noveltyDetection(2000). At src/baseline/minas.c:561
+Reclassified 1797
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 1.981000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+CluStream final cluster 1217
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.058000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+[./bin/minas] 4.223720e-01 seconds for cluStream(2000). At src/baseline/minas.c:337
+[./bin/minas] 4.418490e-01 seconds for noveltyDetection(2000). At src/baseline/minas.c:561
+Reclassified 1141
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.031000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+CluStream final cluster 1276
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.048000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+[./bin/minas] 4.267740e-01 seconds for cluStream(2000). At src/baseline/minas.c:337
+[./bin/minas] 4.460790e-01 seconds for noveltyDetection(2000). At src/baseline/minas.c:561
+Reclassified 524
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.027000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+CluStream final cluster 1296
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.069000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+[./bin/minas] 4.312340e-01 seconds for cluStream(2000). At src/baseline/minas.c:337
+[./bin/minas] 4.505410e-01 seconds for noveltyDetection(2000). At src/baseline/minas.c:561
+Reclassified 1528
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.059000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+CluStream final cluster 886
+	[  0] k-Means 4.400000e+05 -> 0.000000e+00 (-4.400000e+05)
+	[  1] k-Means 0.000000e+00 -> 0.000000e+00 (+0.000000e+00)
+[./bin/minas] 2.098000e-03 seconds for kMeans(100). At src/baseline/minas.c:138
+[./bin/minas] 2.609890e-01 seconds for cluStream(1261). At src/baseline/minas.c:337
+[./bin/minas] 2.735540e-01 seconds for noveltyDetection(1261). At src/baseline/minas.c:561
+Final flush 624
+[./bin/minas] 1.225185e+01 seconds for minasOnline(653457). At src/baseline/minas.c:634
+
+   6251 -
+   3167 0
+    169 1
+    252 2
+     83 3
+    176 4
+      8 5
+   2544 6
+     74 7
+     72 8
+      1 9
+      1 label
+ 646274 N
+
+src/minas/evaluate.py
+	examplesFN = datasets/test.csv
+	matchesFN = out/baseline-clustream.csv
+	minasMatches = out/og/2020-07-20T12-18-21.758/matches.csv
+	modelFN = datasets/model-clean.csv
+	mfogModelFN = out/model.csv
+	outputDir = out/
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Reference
+
+saving out/hits_Reference.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-                3774    8206        -       0
+1                 123       0        A     123
+10               3520    5130        N    5130
+11                 71     289        N     289
+12                 26       0        A      26
+2                 152      82        A     152
+3                 368      44        A     368
+4                   8       0        A       8
+5                  82       1        A      82
+6                 165       0        A     165
+7                   8     396        N     396
+8                1054     183        A    1054
+9                 161     154        A     161
+N              441395  199715        N  199715
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
+Total examples    (653457, 25)
+Total matches     (665107, 9)
+Hits               207669 ( 31.223397%)
+Misses             445458 ( 66.975389%)
+Unknowns            11980 (  1.801214%)
+Unk. reprocessed    11650 ( 97.245409%)
+Total              665107 (100.000000%)
+
+### Baseline-Clustream
+
+saving out/hits_Baseline-Clustream.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-                5062    1189        -       0
+0                3047     120        A    3047
+1                 145      24        A     145
+2                 207      45        A     207
+3                  16      67        N      67
+4                   1     175        N     175
+5                   8       0        A       8
+6                2124     420        A    2124
+7                  74       0        A      74
+8                  44      28        A      44
+9                   0       1        N       1
+N              441247  205027        N  205027
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 12
+Total examples    (653457, 25)
+Total matches     (659071, 3)
+Hits               210919 ( 32.002470%)
+Misses             441901 ( 67.049074%)
+Unknowns             6251 (  0.948456%)
+Unk. reprocessed     5614 ( 89.809630%)
+Total              659071 (100.000000%)
+
+### Diff
+

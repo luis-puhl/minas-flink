@@ -7,18 +7,31 @@ clean:
 	@-mkdir target out experiments 2>/dev/null
 	@echo clean
 
-bin/minas: src/main-minas.c
+bin/minas: src/baseline/minas.c 
 	gcc -g -Wall -lm $^ -o $@
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
 experiments/baseline.log: bin/minas minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+	rm -rf out/baseline-models
+	mkdir -p out/baseline-models
 	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
-		./bin/minas > out/baseline.csv 2> experiments/baseline.log
+		./bin/minas > out/baseline-clustream.csv 2> experiments/baseline.log
 	echo "" >> experiments/baseline.log
 	cat out/baseline.csv | awk -F, '{print $$2}' | sort | uniq -c >> experiments/baseline.log
 	echo "" >> experiments/baseline.log
-	python3 src/minas/evaluate.py datasets/test.csv out/baseline.csv >> experiments/baseline.log
+	python3 src/minas/evaluate.py Reference Baseline datasets/test.csv out/baseline.csv >> experiments/baseline.log
 	cat experiments/baseline.log
+
+experiments/baseline-clustream.log: bin/minas minas-clustream.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+	rm -rf out/baseline-CluStream-models
+	mkdir -p out/baseline-CluStream-models
+	cat minas-clustream.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
+		./bin/minas > out/baseline-clustream.csv 2> experiments/baseline-clustream.log
+	echo "" >> experiments/baseline-clustream.log
+	cat out/baseline-clustream.csv | awk -F, '{print $$2}' | sort | uniq -c >> experiments/baseline-clustream.log
+	echo "" >> experiments/baseline-clustream.log
+	python3 src/minas/evaluate.py Reference Baseline-Clustream datasets/test.csv out/baseline-clustream.csv >> experiments/baseline-clustream.log
+	cat experiments/baseline-clustream.log
 
 target:
 	@-mkdir target out experiments 2>/dev/null
