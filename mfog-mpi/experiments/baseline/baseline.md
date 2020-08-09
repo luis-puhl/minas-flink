@@ -24,3 +24,34 @@ So, `0.1893` is close enough.
 
 This param controls _match vs unk_ and reflects in novelty detection which in
 turn gives more clusters and increased hit rate.
+
+## CluStream
+
+Using CluStream as the clustering step can be faster with params `q = k`
+but with `q = 300` and `k = 100` it was slower.
+
+| q     | k     | step      | seconds       | labels    | Hits      |
+|-------|-------|-----------|--------------:|----------:|----------:|
+| 100   | 100   | training  | 1.894700e+01  |           |           |
+| 100   | 100   | training  | 1.905754e+01  |           |           |
+| 100   | 100   | online    | 1.225185e+01  |           |           |
+| 100   | 100   | online    | 1.265624e+01  | 12        | .32002470 |
+| 200   | 100   | training  | 7.061478e+01  |           |           |
+| 200   | 100   | online    | 3.200653e+01  | 04        | .30764175 |
+| 300   | 100   | training  | 1.554176e+02  |           |           |
+| 300   | 100   | online    | 6.059204e+01  | 29        | .31826689 |
+
+Other configs used:
+
+```log
+./bin/minas
+k = 100
+dim = 22
+precision = 1.000000e-08
+radiusF = 1.000000e-01
+minExamplesPerCluster = 20
+noveltyF = 1.000000
+useCluStream = 1
+cluStream_q_maxMicroClusters = 200
+cluStream_time_threshold_delta_δ = 20.000000
+```
