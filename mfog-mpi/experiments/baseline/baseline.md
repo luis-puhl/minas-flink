@@ -55,3 +55,15 @@ useCluStream = 1
 cluStream_q_maxMicroClusters = 200
 cluStream_time_threshold_delta_δ = 20.000000
 ```
+
+## Square Distance
+
+Difference between running `sqrt()` once per cluster versus once per
+lookup nearest function. Total average per function in 2 runs.
+
+| function            | sqrt      | sqr       | ratio     |
+| --------            | ---:      | ---:      | ---:      |
+| training            | 6.04E+01  | 6.04E+01  | 100.06%   |
+| kMeans              | 2.71E+00  | 2.84E+00  | 104.89%   |
+| noveltyDetection    | 4.03E-01  | 4.07E-01  | 101.16%   |
+| minasOnline         | 4.29E+01  | 4.09E+01  | 95.40%    |

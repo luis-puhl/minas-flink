@@ -7,7 +7,7 @@ clean:
 	@-mkdir target out experiments 2>/dev/null
 	@echo clean
 
-bin/minas: src/baseline/minas.c 
+bin/minas: src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
 	gcc -g -Wall -lm $^ -o $@
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
