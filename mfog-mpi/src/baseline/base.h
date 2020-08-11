@@ -23,6 +23,21 @@ typedef struct {
     double cluStream_time_threshold_delta_δ;
 } Params;
 
+#define getParam(paramName, paramFormat, paramVal)                     \
+    assertEquals(scanf(paramName "=" paramFormat "\n", &paramVal), 1); \
+    fprintf(stderr, "\t" paramName " = " paramFormat "\n", paramVal);
+
+#define getParams(params) \
+    getParam("k", "%d", params.k) \
+    getParam("dim", "%d", params.dim) \
+    getParam("precision", "%lf", params.precision) \
+    getParam("radiusF", "%lf", params.radiusF) \
+    getParam("minExamplesPerCluster", "%u", params.minExamplesPerCluster) \
+    getParam("noveltyF", "%lf", params.noveltyF) \
+    getParam("useCluStream", "%u", params.useCluStream) \
+    getParam("cluStream_q_maxMicroClusters", "%u", params.cluStream_q_maxMicroClusters) \
+    getParam("cluStream_time_threshold_delta_δ", "%lf", params.cluStream_time_threshold_delta_δ)
+
 typedef struct {
     unsigned int id;
     char label;
@@ -62,6 +77,8 @@ typedef struct {
     // Example *example;
     char *labelStr;
 } Match;
+
+#define UNK_LABEL '-'
 
 char *printableLabel(char label);
 

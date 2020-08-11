@@ -124,9 +124,9 @@ Model *training(Params *params) {
     model->clusters = calloc(1, sizeof(Cluster));
     FILE *modelFile;
     if (params->useCluStream) {
-        modelFile = fopen("out/baseline-CluStream-models/baseline_0.csv", "w");
+        modelFile = fopen("out/baseline-CluStream-trainign.csv", "w");
     } else {
-        modelFile = fopen("out/baseline-models/baseline_0.csv", "w");
+        modelFile = fopen("out/baseline-trainign.csv", "w");
     }
     fprintf(modelFile, "#id, label, n_matches, distanceAvg, distanceStdDev, radius");
     //, ls_valLinearSum, ss_valSquareSum, distanceLinearSum, distanceSquareSum\n");
@@ -160,8 +160,6 @@ Model *training(Params *params) {
     printTiming(id);
     return model;
 }
-
-#define UNK_LABEL '-'
 
 Match *identify(Params *params, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
@@ -338,41 +336,4 @@ void minasOnline(Params *params, Model *model) {
         fprintf(modelFile, "\n");
     }
     fclose(modelFile);
-}
-
-int main(int argc, char const *argv[]) {
-    if (argc == 2) {
-        fprintf(stderr, "reading from file %s\n", argv[1]);
-        stdin = fopen(argv[1], "r");
-    }
-    Params params;
-    params.executable = argv[0];
-    fprintf(stderr, "%s\n", params.executable);
-    assertEquals(scanf("k=%d\n", &params.k), 1);
-    assertEquals(scanf("dim=%d\n", &params.dim), 1);
-    assertEquals(scanf("precision=%lf\n", &params.precision), 1);
-    assertEquals(scanf("radiusF=%lf\n", &params.radiusF), 1);
-    assertEquals(scanf("minExamplesPerCluster=%u\n", &params.minExamplesPerCluster), 1);
-    assertEquals(scanf("noveltyF=%lf\n", &params.noveltyF), 1);
-    assertEquals(scanf("useCluStream=%u\n", &params.useCluStream), 1);
-    assertEquals(scanf("cluStream_q_maxMicroClusters=%u\n", &params.cluStream_q_maxMicroClusters), 1);
-    assertEquals(scanf("cluStream_time_threshold_delta_δ=%lf\n", &params.cluStream_time_threshold_delta_δ), 1);
-    fprintf(stderr, "\tk = %d\n", params.k);
-    fprintf(stderr, "\tdim = %d\n", params.dim);
-    fprintf(stderr, "\tprecision = %le\n", params.precision);
-    fprintf(stderr, "\tradiusF = %le\n", params.radiusF);
-    fprintf(stderr, "\tminExamplesPerCluster = %u\n", params.minExamplesPerCluster);
-    fprintf(stderr, "\tnoveltyF = %lf\n", params.noveltyF);
-    fprintf(stderr, "\tuseCluStream = %u\n", params.useCluStream);
-    fprintf(stderr, "\tcluStream_q_maxMicroClusters = %u\n", params.cluStream_q_maxMicroClusters);
-    fprintf(stderr, "\tcluStream_time_threshold_delta_δ = %lf\n", params.cluStream_time_threshold_delta_δ);
-    #ifdef SQR_DIST
-    fprintf(stderr, "\tSQR_DIST = 1\n");
-    #endif
-
-    Model *model = training(&params);
-
-    minasOnline(&params, model);
-
-    return EXIT_SUCCESS;
 }
