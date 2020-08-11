@@ -67,3 +67,20 @@ lookup nearest function. Total average per function in 2 runs.
 | kMeans              | 2.71E+00  | 2.84E+00  | 104.89%   |
 | noveltyDetection    | 4.03E-01  | 4.07E-01  | 101.16%   |
 | minasOnline         | 4.29E+01  | 4.09E+01  | 95.40%    |
+
+Maybe in ARM with less FLOPS this will make a bigger difference.
+
+## Reinterpretation
+
+Optimize `f` param for total unknowns in stream.
+F is used in `radius = f * stdDev`. As the center is the mean.
+
+Use floating cluster. Meaning the summary is updated for each match.
+
+```latex
+Cluster + Delta
+(LS, SS, N) + (LS, SS, N)
+```
+
+Sempre que um novo delta chegar e propagar quando dN for relevante.
+Enviar o delta para nuvem.
