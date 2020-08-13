@@ -8,7 +8,7 @@
             "name": "(gdb) Full Stream",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/mfog-mpi/bin/minas",
+            "program": "${workspaceFolder}/mfog-mpi/bin/baseline",
             "args": [
                 "datasets/full-stream.txt"
             ],

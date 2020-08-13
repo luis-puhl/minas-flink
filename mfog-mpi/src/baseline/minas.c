@@ -6,11 +6,15 @@
 #include <time.h>
 #include <ctype.h>
 
-// #define SQR_DIST 1
-
 #include "./base.h"
 #include "./kmeans.h"
 #include "./clustream.h"
+
+char *getModelFileName(int useCluStream, int modelSize, char *suffix) {
+    char *fileName = calloc(255, sizeof(char));
+    sprintf(fileName, "out/baseline-models/baseline_%s%d%s.csv", useCluStream ? "CluStream-" : "", modelSize, suffix);
+    return fileName;
+}
 
 Cluster* clustering(Params *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
     Cluster *clusters;
@@ -30,22 +34,23 @@ Cluster* clustering(Params *params, Example trainingSet[], unsigned int training
         clusters[k].distanceSquareSum = 0.0;
     }
     for (size_t i = 0; i < trainingSetSize; i++) {
-        double minDist;
+        // double minDist;
+        // Cluster *nearest = NULL;
+        // for (size_t k = 0; k < params->k; k++) {
+        //     double dist = euclideanDistance(params->dim, clusters[k].center, trainingSet[i].val);
+        //     if (nearest == NULL || dist <= minDist) {
+        //         minDist = dist;
+        //         nearest = &clusters[k];
+        //     }
+        // }
+        // Cluster *nearestB = NULL;
+        // double minDistB = nearestClusterVal(params, clusters, params->k, trainingSet[i].val, &nearestB);
+        // if (nearest != nearestB || minDist != minDistB) {
+        //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
+        //     " At "__FILE__":%d\n", minDist, nearest, minDistB, nearestB, __LINE__);
+        // }
         Cluster *nearest = NULL;
-        for (size_t k = 0; k < params->k; k++) {
-            #ifdef SQR_DIST
-            double dist = euclideanSqrDistance(params->dim, clusters[k].center, trainingSet[i].val);
-            #else
-            double dist = euclideanDistance(params->dim, clusters[k].center, trainingSet[i].val);
-            #endif
-            if (nearest == NULL || dist <= minDist) {
-                minDist = dist;
-                nearest = &clusters[k];
-            }
-        }
-        #ifdef SQR_DIST
-        minDist = sqrt(minDist);
-        #endif
+        double minDist = nearestClusterVal(params, clusters, params->k, trainingSet[i].val, &nearest);
         distances[i] = minDist;
         n_matches[i] = nearest;
         //
@@ -68,7 +73,7 @@ Cluster* clustering(Params *params, Example trainingSet[], unsigned int training
             }
         }
         clusters[k].distanceStdDev = sqrt(clusters[k].distanceStdDev);
-        clusters[k].radius = clusters[k].distanceAvg + params->radiusF * clusters[k].distanceStdDev;
+        clusters[k].radius = params->radiusF * clusters[k].distanceStdDev;
     }
     return clusters;
 }
@@ -122,12 +127,9 @@ Model *training(Params *params) {
     model->size = 0;
     model->nextLabel = '\0';
     model->clusters = calloc(1, sizeof(Cluster));
-    FILE *modelFile;
-    if (params->useCluStream) {
-        modelFile = fopen("out/baseline-CluStream-trainign.csv", "w");
-    } else {
-        modelFile = fopen("out/baseline-trainign.csv", "w");
-    }
+    char *fileName = getModelFileName(params->useCluStream, model->size, "-init");
+    FILE *modelFile = fopen(fileName, "w");
+    free(fileName);
     fprintf(modelFile, "#id, label, n_matches, distanceAvg, distanceStdDev, radius");
     //, ls_valLinearSum, ss_valSquareSum, distanceLinearSum, distanceSquareSum\n");
     for (unsigned int d = 0; d < params->dim; d++)
@@ -164,33 +166,45 @@ Model *training(Params *params) {
 Match *identify(Params *params, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
     match->label = UNK_LABEL;
-    match->cluster = NULL;
-    for (size_t k = 0; k < model->size; k++) {
-        #ifdef SQR_DIST
-        double dist = euclideanSqrDistance(params->dim, example->val, model->clusters[k].center);
-        #else
-        double dist = euclideanDistance(params->dim, example->val, model->clusters[k].center);
-        #endif
-        if (match->cluster == NULL || dist <= match->distance) {
-            match->distance = dist;
-            match->cluster = &model->clusters[k];
-        }
-    }
+    // Cluster *nearest = NULL;
+    // double minDist;
+    // for (size_t k = 0; k < model->size; k++) {
+    //     double dist = euclideanDistance(params->dim, example->val, model->clusters[k].center);
+    //     if (nearest == NULL || dist <= minDist) {
+    //         minDist = dist;
+    //         nearest = &model->clusters[k];
+    //     }
+    // }
+    // match->distance = minDist;
+    // match->cluster = nearest;
+    // Cluster *nearestB = NULL;
+    // double minDistB = nearestClusterVal(params, model->clusters, model->size, example->val, &nearestB);
+    // if (match->cluster != nearestB || match->distance != minDistB) {
+    //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
+    //     " At "__FILE__":%d\n", match->distance, match->cluster, minDistB, nearestB, __LINE__);
+    // }
+    match->distance = nearestClusterVal(params, model->clusters, model->size, example->val, &match->cluster);
     assertDiffer(match->cluster, NULL);
-    #ifdef SQR_DIST
-    match->distance = sqrt(match->distance);
-    #endif
     if (match->distance <= match->cluster->radius) {
         match->label = match->cluster->label;
+        #ifdef _USE_MOVING_CLUSTER
+        match->cluster->n_matches++;
+        match->cluster->timeLinearSum += example->id;
+        match->cluster->timeSquareSum += example->id * example->id;
+        for (size_t d = 0; d < params->dim; d++) {
+            match->cluster->ls_valLinearSum[d] += example->val[d];
+            match->cluster->ss_valSquareSum[d] += example->val[d] * example->val[d];
+        }
+        #endif // _USE_MOVING_CLUSTER
     }
     return match;
 }
 
 void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t unknownsSize) {
-    clock_t start = clock();
-    char fileName[255];
-    sprintf(fileName, "out/baseline-%smodels/baseline_%d.csv", params->useCluStream ? "CluStream-" : "", model->size);
+    // clock_t start = clock();
+    char *fileName = getModelFileName(params->useCluStream, model->size, "");
     FILE *modelFile = fopen(fileName, "w");
+    free(fileName);
     fprintf(modelFile, "#id, label, n_matches, distanceAvg, distanceStdDev, radius");
     //, ls_valLinearSum, ss_valSquareSum, distanceLinearSum, distanceSquareSum\n");
     for (unsigned int d = 0; d < params->dim; d++)
@@ -198,32 +212,36 @@ void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t un
     fprintf(modelFile, "\n");
     //
     Cluster *clusters = clustering(params, unknowns, unknownsSize, model->size);
+    int extensions = 0, novelties = 0;
     for (size_t k = 0; k < params->k; k++) {
         if (clusters[k].n_matches < params->minExamplesPerCluster) continue;
         //
-        double minDist;
+        // double minDist;
+        // Cluster *nearest = NULL;
+        // for (size_t i = 0; i < model->size; i++) {
+        //     double dist = euclideanDistance(params->dim, clusters[k].center, model->clusters[i].center);
+        //     if (nearest == NULL || dist <= minDist) {
+        //         minDist = dist;
+        //         nearest = &model->clusters[i];
+        //     }
+        // }
+        // Cluster *nearestB = NULL;
+        // double minDistB = nearestClusterVal(params, model->clusters, model->size, clusters[k].center, &nearestB);
+        // if (nearest != nearestB || minDist != minDistB) {
+        //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
+        //     " At "__FILE__":%d\n", minDist, nearest, minDistB, nearestB, __LINE__);
+        // }
         Cluster *nearest = NULL;
-        for (size_t i = 0; i < model->size; i++) {
-            #ifdef SQR_DIST
-            double dist = euclideanSqrDistance(params->dim, clusters[k].center, model->clusters[i].center);
-            #else
-            double dist = euclideanDistance(params->dim, clusters[k].center, model->clusters[i].center);
-            #endif
-            if (nearest == NULL || dist < minDist) {
-                minDist = dist;
-                nearest = &model->clusters[i];
-            }
-        }
-        #ifdef SQR_DIST
-        minDist = sqrt(minDist);
-        #endif
-        if (minDist <= nearest->distanceAvg + params->noveltyF * nearest->distanceStdDev) {
+        double minDist = nearestClusterVal(params, model->clusters, model->size, clusters[k].center, &nearest);
+        if (minDist <= params->noveltyF * nearest->distanceStdDev) {
             clusters[k].label = nearest->label;
+            extensions++;
         } else {
             clusters[k].label = model->nextLabel;
             // inc label
             model->nextLabel = (model->nextLabel + 1) % 255;
             // fprintf(stderr, "Novelty %s\n", printableLabel(clusters[k].label));
+            novelties++;
         }
         //
         clusters[k].id = model->size;
@@ -238,9 +256,10 @@ void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t un
             fprintf(modelFile, ", %le", clusters[k].center[d]);
         fprintf(modelFile, "\n");
     }
+    fprintf(stderr, "ND clusters: %d extensions, %d novelties\n", extensions, novelties);
     free(clusters);
     fclose(modelFile);
-    printTiming((int) unknownsSize);
+    // printTiming((int) unknownsSize);
 }
 
 void minasOnline(Params *params, Model *model) {
@@ -301,7 +320,8 @@ void minasOnline(Params *params, Model *model) {
         }
     }
     // final flush
-    noveltyDetection(params, model, unknowns, unknownsSize);
+    if (unknownsSize > params->k)
+        noveltyDetection(params, model, unknowns, unknownsSize);
     size_t reclassified = 0;
     for (size_t ex = 0; ex < unknownsSize; ex++) {
         identify(params, model, &unknowns[ex], &match);
@@ -315,12 +335,9 @@ void minasOnline(Params *params, Model *model) {
     fprintf(stderr, "Final flush %lu\n", reclassified);
     printTiming(id);
     //
-    FILE *modelFile;
-    if (params->useCluStream) {
-        modelFile = fopen("out/baseline-CluStream-models/baseline_final.csv", "w");
-    } else {
-        modelFile = fopen("out/baseline-models/baseline_final.csv", "w");
-    }
+    char *fileName = getModelFileName(params->useCluStream, model->size, "-final");
+    FILE *modelFile = fopen(fileName, "w");
+    free(fileName);
     fprintf(modelFile, "#id, label, n_matches, distanceAvg, distanceStdDev, radius");
     //, ls_valLinearSum, ss_valSquareSum, distanceLinearSum, distanceSquareSum\n");
     for (unsigned int d = 0; d < params->dim; d++)

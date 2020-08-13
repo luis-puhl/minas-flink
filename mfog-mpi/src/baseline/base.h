@@ -1,6 +1,9 @@
 #ifndef _BASE_H
 #define _BASE_H
 
+#include <stdlib.h>
+#include <err.h>
+
 #define assertEquals(val, exp) \
     if (val != exp) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
 
@@ -21,6 +24,7 @@ typedef struct {
     const char *executable;
     unsigned int useCluStream, cluStream_q_maxMicroClusters;
     double cluStream_time_threshold_delta_δ;
+    int fast;
 } Params;
 
 #define getParam(paramName, paramFormat, paramVal)                     \
@@ -28,12 +32,13 @@ typedef struct {
     fprintf(stderr, "\t" paramName " = " paramFormat "\n", paramVal);
 
 #define getParams(params) \
+    getParam("fast", "%d", params.fast) \
     getParam("k", "%d", params.k) \
     getParam("dim", "%d", params.dim) \
-    getParam("precision", "%lf", params.precision) \
-    getParam("radiusF", "%lf", params.radiusF) \
+    getParam("precision", "%le", params.precision) \
+    getParam("radiusF", "%le", params.radiusF) \
     getParam("minExamplesPerCluster", "%u", params.minExamplesPerCluster) \
-    getParam("noveltyF", "%lf", params.noveltyF) \
+    getParam("noveltyF", "%le", params.noveltyF) \
     getParam("useCluStream", "%u", params.useCluStream) \
     getParam("cluStream_q_maxMicroClusters", "%u", params.cluStream_q_maxMicroClusters) \
     getParam("cluStream_time_threshold_delta_δ", "%lf", params.cluStream_time_threshold_delta_δ)
@@ -84,5 +89,6 @@ char *printableLabel(char label);
 
 double euclideanSqrDistance(unsigned int dim, double a[], double b[]);
 double euclideanDistance(unsigned int dim, double a[], double b[]);
+double nearestClusterVal(Params *params, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest);
 
 #endif // !_BASE_H

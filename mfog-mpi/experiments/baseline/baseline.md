@@ -5,9 +5,9 @@
 Optimize `f` param for total unknowns in stream.
 F is used in `radius = mean + f * stdDev`.
 
-| Summary           | Minas                 | Mfog      |
-|---                | ---:                   | ---:|
-| Unknowns          |   11980 (  1.801214%) |    8661 (  1.313407%)             |
+| Summary           | Minas                 | Mfog                  |
+|---                | ---:                  | ---:                  |
+| Unknowns          |   11980 (  1.801214%) |    8661 (  1.313407%) |
 
 | F param           | Unknowns  |
 |---:               | ---:      |
@@ -68,12 +68,32 @@ lookup nearest function. Total average per function in 2 runs.
 | noveltyDetection    | 4.03E-01  | 4.07E-01  | 101.16%   |
 | minasOnline         | 4.29E+01  | 4.09E+01  | 95.40%    |
 
-Maybe in ARM with less FLOPS this will make a bigger difference.
+~~Maybe in ARM with less FLOPS this will make a bigger difference.~~
+Found out there was a mistake. Redo experiment.
+
+| function          | common        | fast          | ratio         |
+| --------          | ---:          | ---:          | ---:          |
+| training          | 6.850990e+01  | 3.009816e+01  | 0.439325703   |
+| noveltyDetection  | 2.555810e-01  | -             | -             |
+| minasOnline       | 1.187446e+01  | 1.674746e+01  | 1.410376556   |
 
 ## Reinterpretation
 
 Optimize `f` param for total unknowns in stream.
 F is used in `radius = f * stdDev`. As the center is the mean.
+
+| Radius F.     | Novelty F.    | Unknowns  | n-Labels  | Hits          | Online Time   |
+|---:           |---:           | ---:      | ---:      | ---:          | ---:          |
+<!-- | (ref) 2.0     | (ref) 1.0     | 11980 (r) | 14 (r)    |               |
+| 5.000000e-01  | 1.000000e+00  |  7005     | 11        |               |
+| 3.500000e-01  | 1.000000e+00  | 31883     | 6         |               |
+| 4.000000e-01  | 1.000000e+00  | 13840     | 12        |               |
+| 4.500000e-01  | 1.000000e+00  | 13537     | 12        | 5.516883e+01  |
+| 4.750000e-01  | 1.000000e+00  |  9317     | 11        | 3.285049e+01  |
+| 4.625000e-01  | 1.000000e+00  | 12387     | 10        | 4.449486e+01  |
+| 4.700000e-01  | 1.000000e+00  | 10850     | 11        | 3.484519e+01  |
+| 4.600000e-01  | 1.000000e+00  | 11503     | 10        | 5.027491e+01  | -->
+| 2.500000e-01  | 1.400000e+00  | 12844     | 15        | 31.134635%    | 1.674746e+01  |
 
 Use floating cluster. Meaning the summary is updated for each match.
 

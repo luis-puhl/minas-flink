@@ -6,8 +6,6 @@
 #include <time.h>
 #include <ctype.h>
 
-// #define SQR_DIST 1
-
 #include "./base.h"
 #include "./minas.h"
 // #include "./kmeans.h"
@@ -22,9 +20,6 @@ int main(int argc, char const *argv[]) {
     params.executable = argv[0];
     fprintf(stderr, "%s\n", params.executable);
     getParams(params);
-    #ifdef SQR_DIST
-    fprintf(stderr, "\tSQR_DIST = 1\n");
-    #endif
 
     Model *model = training(&params);
 

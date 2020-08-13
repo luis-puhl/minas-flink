@@ -1,5 +1,5 @@
-#ifndef _KMEANS_C
-#define _KMEANS_C
+#ifndef _K_MEANS_C
+#define _K_MEANS_C
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +23,8 @@ Cluster* kMeansInit(Params *params, Example trainingSet[], unsigned int training
         // clusters[i].valStdDev = calloc(params->dim, sizeof(double));
         for (size_t d = 0; d < params->dim; d++) {
             clusters[i].center[d] = trainingSet[i].val[d];
-            clusters[i].ls_valLinearSum[d] = 0.0;
-            clusters[i].ls_valLinearSum[d] = 0.0;
+            clusters[i].ls_valLinearSum[d] = trainingSet[i].val[d];
+            clusters[i].ss_valSquareSum[d] = trainingSet[i].val[d] * trainingSet[i].val[d];
             // clusters[i].valAverage[d] = 0.0;
             // clusters[i].valStdDev[d] = 0.0;
         }
@@ -33,33 +33,35 @@ Cluster* kMeansInit(Params *params, Example trainingSet[], unsigned int training
 }
 
 double kMeans(Params *params, Cluster* clusters, Example trainingSet[], unsigned int trainingSetSize) {
-    clock_t start = clock();
+    // clock_t start = clock();
     double improvement, prevGlobalDistance, globalDistance = params->dim * params->k * trainingSetSize * 2;
     unsigned int iteration = 0;
     do {
         prevGlobalDistance = globalDistance;
         globalDistance = 0.0;
         for (size_t i = 0; i < trainingSetSize; i++) {
-            double minDist;
+            // double minDist;
+            // Cluster *nearest = NULL;
+            // for (size_t k = 0; k < params->k; k++) {
+            //     double dist = euclideanDistance(params->dim, clusters[k].center, trainingSet[i].val);
+            //     if (nearest == NULL || dist <= minDist) {
+            //         minDist = dist;
+            //         nearest = &clusters[k];
+            //     }
+            // }
+            // Cluster *nearestB = NULL;
+            // double minDistB = nearestClusterVal(params, clusters, params->k, trainingSet[i].val, &nearestB);
+            // if (nearest != nearestB || minDist != minDistB) {
+            //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
+            //     " At "__FILE__":%d\n", minDist, nearest, minDistB, nearestB, __LINE__);
+            // }
             Cluster *nearest = NULL;
-            for (size_t k = 0; k < params->k; k++) {
-                #ifdef SQR_DIST
-                double dist = euclideanSqrDistance(params->dim, clusters[k].center, trainingSet[i].val);
-                #else
-                double dist = euclideanDistance(params->dim, clusters[k].center, trainingSet[i].val);
-                #endif
-                if (nearest == NULL || dist <= minDist) {
-                    minDist = dist;
-                    nearest = &clusters[k];
-                }
-            }
-            #ifdef SQR_DIST
-            minDist = sqrt(minDist);
-            #endif
+            double minDist = nearestClusterVal(params, clusters, params->k, trainingSet[i].val, &nearest);
             globalDistance += minDist;
             nearest->n_matches++;
             for (size_t d = 0; d < params->dim; d++) {
                 nearest->ls_valLinearSum[d] += trainingSet[i].val[d];
+                nearest->ss_valSquareSum[d] += trainingSet[i].val[d] * trainingSet[i].val[d];
             }
         }
         for (size_t k = 0; k < params->k; k++) {
@@ -72,13 +74,11 @@ double kMeans(Params *params, Cluster* clusters, Example trainingSet[], unsigned
             clusters[k].n_matches = 0;
         }
         improvement = globalDistance - prevGlobalDistance;
-        fprintf(stderr, "\t[%3u] k-Means %le -> %le (%+le)\n", iteration, prevGlobalDistance, globalDistance, improvement);
-        if (improvement < 0)
-            improvement = -improvement;
+        // fprintf(stderr, "\t[%3u] k-Means %le -> %le (%+le)\n", iteration, prevGlobalDistance, globalDistance, improvement);
         iteration++;
-    } while (improvement > params->precision && iteration < 100);
-    printTiming(trainingSetSize);
+    } while (fabs(improvement) > params->precision && iteration < 100);
+    // printTiming(trainingSetSize);
     return globalDistance;
 }
 
-#endif // !_KMEANS_C
+#endif // !_K_MEANS_C
