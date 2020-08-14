@@ -24,17 +24,22 @@ experiments/baseline.log: bin/baseline src/minas/evaluate.py minas.conf datasets
 
 bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
 	gcc -g -Wall -lm $^ -o $@
-bin/classifier: src/modules/classifier.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
+bin/classifier: src/modules/classifier.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
 	gcc -g -Wall -lm $^ -o $@
 
 out/baseline-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
-	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@
-experiments/mfog.log: src/modules/store.py minas.conf out/baseline-model.csv
+	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
+experiments/mfog.log: bin/classifier src/modules/store.py minas.conf datasets/emtpyline out/baseline-model.csv
 	python3 src/modules/store.py >> $@ &
-	sleep 2
+	sleep 1
 	cat out/baseline-model.csv datasets/emtpyline | nc localhost 7000 > /dev/null 2>> $@
-	./bin/classifier minas.conf > out/mfog-matches.csv 2>> $@
+	nc -lvp 7001 2>> $@ | wc -l >> $@ &
+	sleep 1
+	cat minas.conf datasets/emtpyline datasets/test.csv | ./bin/classifier > out/mfog-matches.csv 2>> $@
 	echo "q" | nc localhost 7000
+	echo "" >> $@
+	python3 src/minas/evaluate.py Reference Mfog datasets/test.csv out/mfog-matches.csv >> $@
+	cat $@
 
 target:
 	@-mkdir target out experiments 2>/dev/null

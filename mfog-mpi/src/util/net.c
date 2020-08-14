@@ -228,7 +228,7 @@ SOCKET clientConnect(char hostname[], short unsigned int port) {
     bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
     serv_addr.sin_port = htons(port);
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        errx(EXIT_FAILURE, "ERROR connecting. At "__FILE__":%d\n", __LINE__);
+        errx(EXIT_FAILURE, "ERROR connecting to %s:%u. At "__FILE__":%d\n", hostname, port, __LINE__);
     fprintf(stderr, "clientConnect\n");
     return sockfd;
 }

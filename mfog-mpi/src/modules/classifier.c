@@ -85,38 +85,11 @@ int appendClusterFromStore(Params *params, SOCKET modelStore, char *buffer, size
     return consumed;
 }
 
-int main(int argc, char const *argv[]) {
-    if (argc == 2) {
-        fprintf(stderr, "reading from file %s\n", argv[1]);
-        stdin = fopen(argv[1], "r");
-    }
-    Params *params = calloc(1, sizeof(Params));
-    params->executable = argv[0];
-    fprintf(stderr, "%s\n", params->executable);
-    getParams((*params));
-
-    // Model *model = training(&params);
-
-    Model *model = calloc(1, sizeof(Model));
-    model->size = 0;
-    model->clusters = calloc(params->k, sizeof(Cluster));
-    // 
-    int maxBuffSize = 1024;
-    char *buffer = calloc(maxBuffSize, sizeof(char));
-    int buffRead;
-    //
-    SOCKET modelStore = clientConnect("localhost", MODEL_STORE_PORT);
-    struct pollfd pfDs;
-    pfDs.fd = modelStore;
-    pfDs.events = POLLIN;
-    do {
-        int ready = poll(&pfDs, 1, 2);
-        if (ready == 0 ||pfDs.revents == 0) {
-            fprintf(stderr, "No events in poll\n");
-            break;
-        }
-        // if (pfDs.revents & POLLIN)
-        buffRead = read(modelStore, buffer, maxBuffSize - 1);
+int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, char *buffer, size_t maxBuffSize) {
+    size_t prevSize = model->size;
+    while (poll(modelStorePoll, 1, timeout) != 0 && modelStorePoll->revents != 0 && modelStorePoll->revents & POLLIN) {
+        bzero(buffer, maxBuffSize);
+        ssize_t buffRead = read(modelStore, buffer, maxBuffSize - 1);
         if (buffRead < 0)
             errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
         if (buffRead == 0)
@@ -137,7 +110,7 @@ int main(int argc, char const *argv[]) {
                 fprintf(stderr, "incomplete line '%s'\n", line);
                 // if (lineSize >= buffRead) {
                 // compact buffer and read;
-                fprintf(stderr, "compact buffer lineSize=%d, buffRead=%d\n", lineSize, buffRead);
+                fprintf(stderr, "compact buffer lineSize=%d, buffRead=%ld\n", lineSize, buffRead);
                 for (size_t i = 0; i < lineSize && (lineSize + i) < buffRead; i++) {
                     buffer[i] = buffer[i + lineSize];
                 }
@@ -160,12 +133,87 @@ int main(int argc, char const *argv[]) {
             consumed += appendClusterFromStore(params, modelStore, line, lineSize, model);
         }
         // fprintf(stderr, "buffRead %d\n", buffRead);
-    } while(buffRead > 0);
-    
-    fprintf(stderr, "Model(size=%d)\n", model->size);
+    }
+    if (prevSize < model->size)
+        fprintf(stderr, "Model(size=%d)\n", model->size);
+    return model->size;
+}
 
-    // SOCKET noveltyDetectionService = clientConnect("localhost", 7001);
+int classifier(Params *params, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, SOCKET noveltyDetectionService, char *buffer, size_t maxBuffSize) {
+    clock_t start = clock();
+    unsigned int id = 0;
+    Match match;
+    Example example;
+    example.val = calloc(params->dim, sizeof(double));
+    printf("#pointId,label\n");
+    int hasEmptyline = 0;
+    unsigned int unknowns = 0;
+    while (!feof(stdin) && hasEmptyline != 2) {
+        for (size_t d = 0; d < params->dim; d++) {
+            assertEquals(scanf("%lf,", &example.val[d]), 1);
+        }
+        // ignore class
+        char class;
+        assertEquals(scanf("%c", &class), 1);
+        example.id = id;
+        id++;
+        scanf("\n%n", &hasEmptyline);
+        //
+        identify(params, model, &example, &match);
+        printf("%10u,%s\n", example.id, printableLabel(match.label));
+        //
+        if (match.label != UNK_LABEL) continue;
+        // send to novelty detection service
+        unknowns++;
+        bzero(buffer, maxBuffSize);
+        int offset = sprintf(buffer, "%10u", example.id);
+        for (size_t d = 0; d < params->dim; d++) {
+            offset += sprintf(&buffer[offset], ", %le", example.val[d]);
+        }
+        offset += sprintf(&buffer[offset], "\n");
+        write(noveltyDetectionService, buffer, offset);
+        //
+        modelStoreComm(params, 0, model, modelStore, modelStorePoll, buffer, maxBuffSize);
+    }
+    fprintf(stderr, "unknowns = %u\n", unknowns);
+    printTiming(id);
+    return id;
+}
+
+int main(int argc, char const *argv[]) {
+    if (argc == 2) {
+        fprintf(stderr, "reading from file %s\n", argv[1]);
+        stdin = fopen(argv[1], "r");
+    }
+    Params *params = calloc(1, sizeof(Params));
+    params->executable = argv[0];
+    fprintf(stderr, "%s\n", params->executable);
+    getParams((*params));
+
+    // Model *model = training(&params);
+
+    Model *model = calloc(1, sizeof(Model));
+    model->size = 0;
+    model->clusters = calloc(params->k, sizeof(Cluster));
+    // 
+    int maxBuffSize = 1024;
+    char *buffer = calloc(maxBuffSize, sizeof(char));
+    //
+    SOCKET modelStore = clientConnect("localhost", MODEL_STORE_PORT);
+    struct pollfd modelStorePoll;
+    modelStorePoll.fd = modelStore;
+    modelStorePoll.events = POLLIN;
+    // int ready = poll(&pfDs, 1, 2);
+    // if (ready == 0 ||pfDs.revents == 0) {
+    //     fprintf(stderr, "No events in poll\n");
+    //     break;
+    // }
+    // if (pfDs.revents & POLLIN)
+    modelStoreComm(params, 2, model, modelStore, &modelStorePoll, buffer, maxBuffSize);
+
+    SOCKET noveltyDetectionService = clientConnect("localhost", 7001);
     // minasOnline(&params, model);
+    classifier(params, model, modelStore, &modelStorePoll, noveltyDetectionService, buffer, maxBuffSize);
 
     return EXIT_SUCCESS;
 }

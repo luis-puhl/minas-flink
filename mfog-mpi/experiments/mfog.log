@@ -1,6 +1,20 @@
+./bin/training
+	fast = 1
+	k = 100
+	dim = 22
+	precision = 1.000000e-08
+	radiusF = 1.000000e-01
+	minExamplesPerCluster = 20
+	noveltyF = 2.000000e+00
+	useCluStream = 0
+	cluStream_q_maxMicroClusters = 0
+	cluStream_time_threshold_delta_δ = 0.000000
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+[./bin/training] 2.249643e+01 seconds for training(72000). At src/baseline/minas.c:151
+Model size =      37804
 Listening for connections on 0.0.0.0:7000
-Accepted new connection from 127.0.0.1:37278
-reading from file minas.conf
+Accepted new connection from 127.0.0.1:39232
 ./bin/classifier
 	fast = 1
 	k = 100
@@ -13,10 +27,80 @@ reading from file minas.conf
 	cluStream_q_maxMicroClusters = 0
 	cluStream_time_threshold_delta_δ = 0.000000
 clientConnect
-Closed connection from 127.0.0.1:37278
-Accepted new connection from 127.0.0.1:37280
-No events in poll
-Model(size=15)	 sum=135
-Accepted new connection from 127.0.0.1:37282
-Closed connection 127.0.0.1:37280
+Closed connection from 127.0.0.1:39232
+Accepted new connection from 127.0.0.1:39234
+Model(size=15)
+clientConnect
+Connection from 127.0.0.1:57958
+Model(size=17)
+unknowns = 534984
+[./bin/classifier] 1.051296e+01 seconds for classifier(653457). At src/modules/classifier.c:179
+534984
+Accepted new connection from 127.0.0.1:39238
+Closed connection 127.0.0.1:39234
 Closed server
+
+src/minas/evaluate.py
+	examplesFN = datasets/test.csv
+	matchesFN = out/mfog-matches.csv
+	minasMatches = out/og/2020-07-20T12-18-21.758/matches.csv
+	modelFN = datasets/model-clean.csv
+	mfogModelFN = out/model.csv
+	outputDir = out/
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Reference
+
+saving out/hits_Reference.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-                3774    8206        -       0
+1                 123       0        A     123
+10               3520    5130        N    5130
+11                 71     289        N     289
+12                 26       0        A      26
+2                 152      82        A     152
+3                 368      44        A     368
+4                   8       0        A       8
+5                  82       1        A      82
+6                 165       0        A     165
+7                   8     396        N     396
+8                1054     183        A    1054
+9                 161     154        A     161
+N              441395  199715        N  199715
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
+Total examples    (653457, 25)
+Total matches     (665107, 9)
+Hits               207669 ( 31.223397%)
+Misses             445458 ( 66.975389%)
+Unknowns            11980 (  1.801214%)
+Unk. reprocessed    11650 ( 97.245409%)
+Total              665107 (100.000000%)
+
+### Mfog
+
+saving out/hits_Mfog.png
+Confusion Matrix
+Classes (act)       A       N assigned   hits
+Labels (pred)                                
+-              366814  168170        -      0
+N               80365   38108        N  38108
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', 'N'] 2
+Total examples    (653457, 25)
+Total matches     (653457, 3)
+Hits                38108 (  5.831753%)
+Misses              80365 ( 12.298437%)
+Unknowns           534984 ( 81.869809%)
+Unk. reprocessed        0 (  0.000000%)
+Total              653457 (100.000000%)
+
+
