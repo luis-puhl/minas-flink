@@ -9,10 +9,6 @@ clean:
 
 bin/baseline: src/baseline/baseline.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
 	gcc -g -Wall -lm $^ -o $@
-bin/model_store: src/modules/modelSotre.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
-	gcc -g -Wall -lm $^ -o $@
-bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
-	gcc -g -Wall -lm $^ -o $@
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
 experiments/baseline.log: bin/baseline src/minas/evaluate.py minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
@@ -25,6 +21,20 @@ experiments/baseline.log: bin/baseline src/minas/evaluate.py minas.conf datasets
 	echo "" >> experiments/baseline.log
 	python3 src/minas/evaluate.py Reference Baseline datasets/test.csv out/baseline.csv >> experiments/baseline.log
 	cat experiments/baseline.log
+
+bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
+	gcc -g -Wall -lm $^ -o $@
+bin/classifier: src/modules/classifier.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
+	gcc -g -Wall -lm $^ -o $@
+
+out/baseline-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
+	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@
+experiments/mfog.log: src/modules/store.py minas.conf out/baseline-model.csv
+	python3 src/modules/store.py >> $@ &
+	sleep 2
+	cat out/baseline-model.csv datasets/emtpyline | nc localhost 7000 > /dev/null 2>> $@
+	./bin/classifier minas.conf > out/mfog-matches.csv 2>> $@
+	echo "q" | nc localhost 7000
 
 target:
 	@-mkdir target out experiments 2>/dev/null

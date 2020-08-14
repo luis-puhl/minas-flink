@@ -15,7 +15,7 @@ typedef struct {
 // int server(int argc, char *argv[]);
 server_t *serverStart(short unsigned int port);
 SOCKET serverAccept(SOCKET sockfd);
-void serverSelect(server_t *server);
+int serverSelect(server_t *server);
 void serverDisconnect(server_t *server, SOCKET connection, int connectionIndex);
 int serverRead(SOCKET connectionFD);
 

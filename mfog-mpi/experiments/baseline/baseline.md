@@ -134,7 +134,7 @@ Cluster + Delta
 
 1. Sans moving cluster.
 
-Moving cluster, way better.
+Moving cluster, better but only 10k more matches.
 
 ### Distribuição
 

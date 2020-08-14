@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <err.h>
@@ -47,6 +48,7 @@ server_t *serverStart(short unsigned int port) {
     for (int i = 0; i < server->clientsLen; i++) {
         server->clients[i] = 0;
     }
+    fprintf(stderr, "serverStart(%u)\n", port);
     return server;
 }
 
@@ -73,7 +75,7 @@ void serverDisconnect(server_t *server, SOCKET connection, int connectionIndex) 
     server->clients[connectionIndex] = 0;
 }
 
-void serverSelect(server_t *server) {
+int serverSelect(server_t *server) {
     FD_ZERO(&server->readfds);
     FD_SET(server->serverSocket, &server->readfds);
     int max_sd = server->serverSocket;
@@ -85,7 +87,18 @@ void serverSelect(server_t *server) {
             max_sd = sd;
     }
     //wait for an activity on one of the sockets , timeout is NULL , so wait indefinitely
-    int activity = select(max_sd + 1, &server->readfds, NULL, NULL, NULL);
+    int activity = 0;
+    // activity = select(max_sd + 1, &server->readfds, NULL, NULL, NULL);
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    activity = select(max_sd + 1, &server->readfds, NULL, NULL, &timeout);
+    // while(activity == 0) {
+    //     activity = select(max_sd + 1, &server->readfds, NULL, NULL, &timeout);
+    //     if (activity == 0) {
+    //         printf("timeout\n");
+    //     }
+    // }
     if ((activity < 0) && (errno != EINTR)) {
         printf("select error");
     }
@@ -98,15 +111,14 @@ void serverSelect(server_t *server) {
         if (new_socket < 0)
             errx(EXIT_FAILURE, "ERROR on accept. At "__FILE__":%d\n", __LINE__);
         //inform user of socket number - used in send and receive commands
-        printf("New connection , socket fd is %d , ip is : %s , port : %d \n",
+        fprintf(stderr, "New connection , socket fd is %d , ip is : %s , port : %d \n",
             new_socket, inet_ntoa(remoteIAddr.sin_addr), ntohs(remoteIAddr.sin_port));
 
         //send new connection greeting message
-        //a message
-        // char *message = "ECHO Daemon v1.0 \r\n";
-        // if (send(new_socket, message, strlen(message), 0) != strlen(message)) {
-        //     perror("send");
-        // }
+        char *message = "MFOG Daemon v1.0 \r\n";
+        if (send(new_socket, message, strlen(message), 0) != strlen(message)) {
+            perror("send");
+        }
         // puts("Welcome message sent successfully");
 
         //add new socket to array of sockets
@@ -119,6 +131,7 @@ void serverSelect(server_t *server) {
             }
         }
     }
+    return activity;
     /*
     //else its some IO operation on some other socket :)
     for (size_t i = 0; i < server->clientsLen; i++) {
@@ -207,10 +220,8 @@ SOCKET clientConnect(char hostname[], short unsigned int port) {
     if (sockfd < 0)
         errx(EXIT_FAILURE, "ERROR opening socket. At "__FILE__":%d\n", __LINE__);
     struct hostent *server = gethostbyname(hostname);
-    if (server == NULL) {
-        fprintf(stderr, "ERROR, no such host\n");
-        exit(0);
-    }
+    if (server == NULL)
+        errx(EXIT_FAILURE, "ERROR, no such host called '%s'. At "__FILE__":%d\n", hostname, __LINE__);
     struct sockaddr_in serv_addr;
     bzero((char *)&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
@@ -218,6 +229,7 @@ SOCKET clientConnect(char hostname[], short unsigned int port) {
     serv_addr.sin_port = htons(port);
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         errx(EXIT_FAILURE, "ERROR connecting. At "__FILE__":%d\n", __LINE__);
+    fprintf(stderr, "clientConnect\n");
     return sockfd;
 }
 

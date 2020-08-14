@@ -1,0 +1,5 @@
+
+python3 src/modules/store.py
+cat out/baseline-models/baseline_0-init.csv | nc localhost 7000
+make bin/classifier && ./bin/classifier minas.conf 2>&1
+echo "q" | nc localhost 7000

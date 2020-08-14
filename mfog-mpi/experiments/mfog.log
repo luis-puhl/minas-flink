@@ -1,0 +1,22 @@
+Listening for connections on 0.0.0.0:7000
+Accepted new connection from 127.0.0.1:37278
+reading from file minas.conf
+./bin/classifier
+	fast = 1
+	k = 100
+	dim = 22
+	precision = 1.000000e-08
+	radiusF = 1.000000e-01
+	minExamplesPerCluster = 20
+	noveltyF = 2.000000e+00
+	useCluStream = 0
+	cluStream_q_maxMicroClusters = 0
+	cluStream_time_threshold_delta_δ = 0.000000
+clientConnect
+Closed connection from 127.0.0.1:37278
+Accepted new connection from 127.0.0.1:37280
+No events in poll
+Model(size=15)	 sum=135
+Accepted new connection from 127.0.0.1:37282
+Closed connection 127.0.0.1:37280
+Closed server
