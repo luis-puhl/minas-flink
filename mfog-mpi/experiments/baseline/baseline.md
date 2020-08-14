@@ -118,12 +118,25 @@ Reprocessing of unknowns is now done with new clusters only and by max distance.
 2. Wrap around of labels and elipses of confusion matrix.
 3. Added same clusters and maxDist modification to final flush.
 
-Use floating cluster. Meaning the summary is updated for each match.
+### Use floating cluster. Meaning the summary is updated for each match
 
 ```latex
 Cluster + Delta
 (LS, SS, N) + (LS, SS, N)
 ```
+
+| MinEx  | Radius F. | Novelty F.| Unknowns (rep)    | n-Labels  | Hits          | Online Time   |
+| ---:   |---:       | ---:      | ---:              | ---:      | ---:          | ---:          |
+| 50 (1) | 5.0e-02   | 2.0e-01   | 186433 (185853)   | 102       | 294306 (35%)  | 3.056771e+01  |
+| 50     | 5.0e-02   | 2.0e-01   | 614597 (613930)   | 95        | 295251 (23%)  | 6.490573e+01  |
+| 20 (1) | 1.0e-01   | 2.0e+00   | 72830 (72587)     | 8         | 208056 (28%)  | 1.863111e+01  |
+| 20     | 1.0e-01   | 2.0e+00   | 622312 (622066)   | 24        | 213911 (16%)  | 8.612032e+01  |
+
+1. Sans moving cluster.
+
+Moving cluster, way better.
+
+### Distribuição
 
 Sempre que um novo delta chegar e propagar quando dN for relevante.
 Enviar o delta para nuvem.

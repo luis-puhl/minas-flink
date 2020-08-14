@@ -35,21 +35,6 @@ Cluster* clustering(Params *params, Example trainingSet[], unsigned int training
         clusters[k].distanceSquareSum = 0.0;
     }
     for (size_t i = 0; i < trainingSetSize; i++) {
-        // double minDist;
-        // Cluster *nearest = NULL;
-        // for (size_t k = 0; k < params->k; k++) {
-        //     double dist = euclideanDistance(params->dim, clusters[k].center, trainingSet[i].val);
-        //     if (nearest == NULL || dist <= minDist) {
-        //         minDist = dist;
-        //         nearest = &clusters[k];
-        //     }
-        // }
-        // Cluster *nearestB = NULL;
-        // double minDistB = nearestClusterVal(params, clusters, params->k, trainingSet[i].val, &nearestB);
-        // if (nearest != nearestB || minDist != minDistB) {
-        //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
-        //     " At "__FILE__":%d\n", minDist, nearest, minDistB, nearestB, __LINE__);
-        // }
         Cluster *nearest = NULL;
         double minDist = nearestClusterVal(params, clusters, params->k, trainingSet[i].val, &nearest);
         distances[i] = minDist;
@@ -170,35 +155,26 @@ Model *training(Params *params) {
 Match *identify(Params *params, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
     match->label = UNK_LABEL;
-    // Cluster *nearest = NULL;
-    // double minDist;
-    // for (size_t k = 0; k < model->size; k++) {
-    //     double dist = euclideanDistance(params->dim, example->val, model->clusters[k].center);
-    //     if (nearest == NULL || dist <= minDist) {
-    //         minDist = dist;
-    //         nearest = &model->clusters[k];
-    //     }
-    // }
-    // match->distance = minDist;
-    // match->cluster = nearest;
-    // Cluster *nearestB = NULL;
-    // double minDistB = nearestClusterVal(params, model->clusters, model->size, example->val, &nearestB);
-    // if (match->cluster != nearestB || match->distance != minDistB) {
-    //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
-    //     " At "__FILE__":%d\n", match->distance, match->cluster, minDistB, nearestB, __LINE__);
-    // }
     match->distance = nearestClusterVal(params, model->clusters, model->size, example->val, &match->cluster);
     assertDiffer(match->cluster, NULL);
     if (match->distance <= match->cluster->radius) {
         match->label = match->cluster->label;
+        // #define _USE_MOVING_CLUSTER
         #ifdef _USE_MOVING_CLUSTER
         match->cluster->n_matches++;
         match->cluster->timeLinearSum += example->id;
         match->cluster->timeSquareSum += example->id * example->id;
+        match->cluster->radius = 0.0;
         for (size_t d = 0; d < params->dim; d++) {
             match->cluster->ls_valLinearSum[d] += example->val[d];
             match->cluster->ss_valSquareSum[d] += example->val[d] * example->val[d];
+            //
+            match->cluster->center[d] = match->cluster->ls_valLinearSum[d] /
+                match->cluster->n_matches;
+            double v = example->val[d] - match->cluster->center[d];
+            match->cluster->radius += v * v;
         }
+        match->cluster->radius = sqrt(match->cluster->radius / match->cluster->n_matches);
         #endif // _USE_MOVING_CLUSTER
     }
     return match;
@@ -220,21 +196,6 @@ void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t un
     for (size_t k = 0; k < params->k; k++) {
         if (clusters[k].n_matches < params->minExamplesPerCluster) continue;
         //
-        // double minDist;
-        // Cluster *nearest = NULL;
-        // for (size_t i = 0; i < model->size; i++) {
-        //     double dist = euclideanDistance(params->dim, clusters[k].center, model->clusters[i].center);
-        //     if (nearest == NULL || dist <= minDist) {
-        //         minDist = dist;
-        //         nearest = &model->clusters[i];
-        //     }
-        // }
-        // Cluster *nearestB = NULL;
-        // double minDistB = nearestClusterVal(params, model->clusters, model->size, clusters[k].center, &nearestB);
-        // if (nearest != nearestB || minDist != minDistB) {
-        //     errx(EXIT_FAILURE, "Assert error, expected %le (%p) and got %le (%p)."
-        //     " At "__FILE__":%d\n", minDist, nearest, minDistB, nearestB, __LINE__);
-        // }
         Cluster *nearest = NULL;
         double minDist = nearestClusterVal(params, model->clusters, model->size, clusters[k].center, &nearest);
         if (minDist <= params->noveltyF * nearest->distanceStdDev) {
