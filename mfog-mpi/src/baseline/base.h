@@ -55,7 +55,7 @@ typedef struct {
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
     // double *valAverage, *valStdDev;
-    double distanceLinearSum, distanceSquareSum;
+    double distanceLinearSum, distanceSquareSum, distanceMax;
     double timeLinearSum, timeSquareSum;
     double distanceAvg, distanceStdDev, radius;
     double time_mu_μ, time_sigma_σ;

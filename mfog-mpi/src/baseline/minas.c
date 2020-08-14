@@ -30,6 +30,7 @@ Cluster* clustering(Params *params, Example trainingSet[], unsigned int training
     for (size_t k = 0; k < params->k; k++) {
         clusters[k].radius = 0.0;
         clusters[k].n_matches = 0;
+        clusters[k].distanceMax = 0.0;
         clusters[k].distanceLinearSum = 0.0;
         clusters[k].distanceSquareSum = 0.0;
     }
@@ -57,6 +58,9 @@ Cluster* clustering(Params *params, Example trainingSet[], unsigned int training
         nearest->n_matches++;
         nearest->distanceLinearSum += minDist;
         nearest->distanceSquareSum += minDist * minDist;
+        if (minDist > nearest->distanceMax) {
+            nearest->distanceMax = minDist;
+        }
         for (size_t d = 0; d < params->dim; d++) {
             nearest->ls_valLinearSum[d] += trainingSet[i].val[d];
             nearest->ss_valSquareSum[d] += trainingSet[i].val[d] * trainingSet[i].val[d];
@@ -239,7 +243,9 @@ void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t un
         } else {
             clusters[k].label = model->nextLabel;
             // inc label
-            model->nextLabel = (model->nextLabel + 1) % 255;
+            do {
+                model->nextLabel = (model->nextLabel + 1) % 255;
+            } while (isalpha(model->nextLabel) || model->nextLabel == '-');
             // fprintf(stderr, "Novelty %s\n", printableLabel(clusters[k].label));
             novelties++;
         }
@@ -303,36 +309,56 @@ void minasOnline(Params *params, Model *model) {
         //
         if (unknownsSize % noveltyDetectionTrigger == 0 && id - lastNDCheck > noveltyDetectionTrigger) {
             lastNDCheck = id;
+            unsigned int prevSize = model->size;
             noveltyDetection(params, model, unknowns, unknownsSize);
+            unsigned int nNewClusters = model->size - prevSize;
             //
             size_t reclassified = 0;
             for (size_t ex = 0; ex < unknownsSize; ex++) {
-                identify(params, model, &unknowns[ex], &match);
                 // compress
                 unknowns[ex - reclassified] = unknowns[ex];
-                if (match.label == UNK_LABEL)
-                    continue;
-                printf("%10u,%s\n", unknowns[ex].id, printableLabel(match.label));
-                reclassified++;
+                // identify(params, model, &unknowns[ex], &match);
+                // match.label = UNK_LABEL;
+                // use only new clusters
+                Cluster *nearest;
+                double distance = nearestClusterVal(params, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
+                // match.distance = nearestClusterVal(params, model->clusters, model->size, unknowns[ex].val, &match.cluster);
+                assertDiffer(nearest, NULL);
+                if (distance <= nearest->distanceMax) {
+                    printf("%10u,%s\n", unknowns[ex].id, printableLabel(nearest->label));
+                    reclassified++;
+                }
+                // if (match.label == UNK_LABEL)
+                //     continue;
+                // printf("%10u,%s\n", unknowns[ex].id, printableLabel(match.label));
+                // reclassified++;
             }
             fprintf(stderr, "Reclassified %lu\n", reclassified);
             unknownsSize -= reclassified;
         }
     }
+    fprintf(stderr, "Final flush %lu\n", unknownsSize);
     // final flush
-    if (unknownsSize > params->k)
+    if (unknownsSize > params->k) {
+        unsigned int prevSize = model->size;
         noveltyDetection(params, model, unknowns, unknownsSize);
-    size_t reclassified = 0;
-    for (size_t ex = 0; ex < unknownsSize; ex++) {
-        identify(params, model, &unknowns[ex], &match);
-        // compress
-        unknowns[ex - reclassified] = unknowns[ex];
-        if (match.label == UNK_LABEL)
-            continue;
-        printf("%10u,%s\n", unknowns[ex].id, printableLabel(match.label));
-        reclassified++;
+        unsigned int nNewClusters = model->size - prevSize;
+        //
+        size_t reclassified = 0;
+        for (size_t ex = 0; ex < unknownsSize; ex++) {
+            // compress
+            unknowns[ex - reclassified] = unknowns[ex];
+            Cluster *nearest;
+            double distance = nearestClusterVal(params, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
+            assertDiffer(nearest, NULL);
+            if (distance <= nearest->distanceMax) {
+                printf("%10u,%s\n", unknowns[ex].id, printableLabel(nearest->label));
+                reclassified++;
+            }
+        }
+        fprintf(stderr, "Reclassified %lu\n", reclassified);
+        unknownsSize -= reclassified;
     }
-    fprintf(stderr, "Final flush %lu\n", reclassified);
     printTiming(id);
     //
     char *fileName = getModelFileName(params->useCluStream, model->size, "-final");

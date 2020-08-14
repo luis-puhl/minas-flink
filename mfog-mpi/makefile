@@ -15,7 +15,7 @@ bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c sr
 	gcc -g -Wall -lm $^ -o $@
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
-experiments/baseline.log: bin/baseline minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+experiments/baseline.log: bin/baseline src/minas/evaluate.py minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
 	# rm -rf out/baseline-models
 	# mkdir -p out/baseline-models
 	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \

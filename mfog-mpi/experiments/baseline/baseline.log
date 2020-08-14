@@ -3,69 +3,348 @@
 	k = 100
 	dim = 22
 	precision = 1.000000e-08
-	radiusF = 2.500000e-01
+	radiusF = 5.000000e-02
 	minExamplesPerCluster = 20
-	noveltyF = 1.400000e+00
+	noveltyF = 4.000000e-01
 	useCluStream = 0
 	cluStream_q_maxMicroClusters = 0
 	cluStream_time_threshold_delta_δ = 0.000000
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/baseline] 2.288579e+01 seconds for training(72000). At src/baseline/minas.c:162
-ND clusters: 22 extensions, 1 novelties
-Reclassified 1204
-ND clusters: 29 extensions, 2 novelties
-Reclassified 859
-ND clusters: 22 extensions, 0 novelties
-Reclassified 941
-ND clusters: 25 extensions, 2 novelties
-Reclassified 750
-ND clusters: 29 extensions, 1 novelties
-Reclassified 484
-ND clusters: 24 extensions, 0 novelties
-Reclassified 644
-ND clusters: 31 extensions, 1 novelties
-Reclassified 486
-ND clusters: 31 extensions, 1 novelties
-Reclassified 347
-ND clusters: 34 extensions, 1 novelties
-Reclassified 196
-ND clusters: 35 extensions, 0 novelties
-Reclassified 90
-ND clusters: 30 extensions, 0 novelties
-Reclassified 81
-ND clusters: 30 extensions, 0 novelties
-Reclassified 102
-ND clusters: 34 extensions, 0 novelties
-Reclassified 62
-ND clusters: 57 extensions, 2 novelties
-Reclassified 967
-ND clusters: 54 extensions, 1 novelties
-Reclassified 715
-ND clusters: 54 extensions, 1 novelties
-Reclassified 732
-ND clusters: 51 extensions, 1 novelties
-Reclassified 585
-ND clusters: 54 extensions, 0 novelties
-Final flush 251
-[./bin/baseline] 1.557297e+01 seconds for minasOnline(653457). At src/baseline/minas.c:336
+[./bin/baseline] 2.653882e+01 seconds for training(72000). At src/baseline/minas.c:166
+ND clusters: 16 extensions, 2 novelties
+Reclassified 1784
+ND clusters: 14 extensions, 6 novelties
+Reclassified 1874
+ND clusters: 16 extensions, 6 novelties
+Reclassified 1776
+ND clusters: 2 extensions, 1 novelties
+Reclassified 1755
+ND clusters: 11 extensions, 5 novelties
+Reclassified 1769
+ND clusters: 12 extensions, 2 novelties
+Reclassified 1768
+ND clusters: 15 extensions, 2 novelties
+Reclassified 1778
+ND clusters: 11 extensions, 2 novelties
+Reclassified 1766
+ND clusters: 3 extensions, 1 novelties
+Reclassified 1779
+ND clusters: 4 extensions, 1 novelties
+Reclassified 1788
+ND clusters: 5 extensions, 0 novelties
+Reclassified 1755
+ND clusters: 9 extensions, 0 novelties
+Reclassified 1799
+ND clusters: 17 extensions, 3 novelties
+Reclassified 1832
+ND clusters: 13 extensions, 4 novelties
+Reclassified 1849
+ND clusters: 12 extensions, 1 novelties
+Reclassified 1841
+ND clusters: 4 extensions, 1 novelties
+Reclassified 1815
+ND clusters: 8 extensions, 1 novelties
+Reclassified 1792
+ND clusters: 12 extensions, 2 novelties
+Reclassified 1753
+ND clusters: 18 extensions, 3 novelties
+Reclassified 1879
+ND clusters: 13 extensions, 3 novelties
+Reclassified 1794
+ND clusters: 17 extensions, 2 novelties
+Reclassified 1800
+ND clusters: 9 extensions, 2 novelties
+Reclassified 1762
+ND clusters: 17 extensions, 1 novelties
+Reclassified 1692
+ND clusters: 16 extensions, 4 novelties
+Reclassified 1722
+ND clusters: 5 extensions, 2 novelties
+Reclassified 1681
+ND clusters: 14 extensions, 1 novelties
+Reclassified 1713
+ND clusters: 10 extensions, 3 novelties
+Reclassified 1711
+ND clusters: 15 extensions, 3 novelties
+Reclassified 1678
+ND clusters: 14 extensions, 1 novelties
+Reclassified 1723
+ND clusters: 16 extensions, 1 novelties
+Reclassified 1766
+ND clusters: 13 extensions, 1 novelties
+Reclassified 1731
+ND clusters: 13 extensions, 2 novelties
+Reclassified 1738
+ND clusters: 18 extensions, 1 novelties
+Reclassified 1753
+ND clusters: 8 extensions, 3 novelties
+Reclassified 1766
+ND clusters: 8 extensions, 0 novelties
+Reclassified 1717
+ND clusters: 15 extensions, 1 novelties
+Reclassified 1694
+ND clusters: 14 extensions, 0 novelties
+Reclassified 1668
+ND clusters: 16 extensions, 1 novelties
+Reclassified 1719
+ND clusters: 16 extensions, 2 novelties
+Reclassified 1710
+ND clusters: 13 extensions, 2 novelties
+Reclassified 1693
+ND clusters: 12 extensions, 1 novelties
+Reclassified 1654
+ND clusters: 14 extensions, 2 novelties
+Reclassified 1660
+ND clusters: 14 extensions, 2 novelties
+Reclassified 1676
+ND clusters: 18 extensions, 2 novelties
+Reclassified 1692
+ND clusters: 12 extensions, 0 novelties
+Reclassified 1608
+ND clusters: 16 extensions, 0 novelties
+Reclassified 1646
+ND clusters: 16 extensions, 0 novelties
+Reclassified 1668
+ND clusters: 17 extensions, 1 novelties
+Reclassified 1677
+ND clusters: 12 extensions, 1 novelties
+Reclassified 1642
+ND clusters: 11 extensions, 0 novelties
+Reclassified 1651
+ND clusters: 10 extensions, 1 novelties
+Reclassified 1637
+ND clusters: 16 extensions, 3 novelties
+Reclassified 1717
+ND clusters: 15 extensions, 2 novelties
+Reclassified 1694
+ND clusters: 16 extensions, 2 novelties
+Reclassified 1665
+ND clusters: 4 extensions, 0 novelties
+Reclassified 1659
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1641
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1638
+ND clusters: 2 extensions, 1 novelties
+Reclassified 1631
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1646
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1634
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1635
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1617
+ND clusters: 4 extensions, 0 novelties
+Reclassified 1646
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1622
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1590
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1584
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1581
+ND clusters: 4 extensions, 0 novelties
+Reclassified 1608
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1581
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1584
+ND clusters: 3 extensions, 0 novelties
+Reclassified 1584
+ND clusters: 3 extensions, 1 novelties
+Reclassified 1625
+ND clusters: 4 extensions, 1 novelties
+Reclassified 1663
+ND clusters: 16 extensions, 1 novelties
+Reclassified 1767
+ND clusters: 10 extensions, 0 novelties
+Reclassified 1804
+ND clusters: 6 extensions, 1 novelties
+Reclassified 1781
+ND clusters: 20 extensions, 1 novelties
+Reclassified 1801
+ND clusters: 17 extensions, 0 novelties
+Reclassified 1734
+ND clusters: 16 extensions, 2 novelties
+Reclassified 1794
+ND clusters: 12 extensions, 0 novelties
+Reclassified 1721
+ND clusters: 15 extensions, 1 novelties
+Reclassified 1767
+ND clusters: 16 extensions, 1 novelties
+Reclassified 1740
+ND clusters: 15 extensions, 0 novelties
+Reclassified 1759
+ND clusters: 3 extensions, 1 novelties
+Reclassified 1758
+ND clusters: 4 extensions, 0 novelties
+Reclassified 1756
+ND clusters: 2 extensions, 0 novelties
+Reclassified 1735
+ND clusters: 4 extensions, 1 novelties
+Reclassified 1761
+ND clusters: 5 extensions, 0 novelties
+Reclassified 1698
+ND clusters: 4 extensions, 0 novelties
+Reclassified 1718
+ND clusters: 14 extensions, 2 novelties
+Reclassified 1755
+ND clusters: 15 extensions, 5 novelties
+Reclassified 1778
+ND clusters: 12 extensions, 1 novelties
+Reclassified 1754
+ND clusters: 13 extensions, 0 novelties
+Reclassified 1728
+ND clusters: 14 extensions, 0 novelties
+Reclassified 1764
+ND clusters: 15 extensions, 3 novelties
+Reclassified 1766
+ND clusters: 15 extensions, 0 novelties
+Reclassified 1752
+ND clusters: 12 extensions, 2 novelties
+Reclassified 1830
+ND clusters: 14 extensions, 2 novelties
+Reclassified 1794
+ND clusters: 8 extensions, 1 novelties
+Reclassified 1754
+ND clusters: 13 extensions, 0 novelties
+Reclassified 1731
+Final flush 927
+ND clusters: 8 extensions, 1 novelties
+Reclassified 633
+[./bin/baseline] 4.111075e+01 seconds for minasOnline(653457). At src/baseline/minas.c:362
 
-  12844 -
-    397 0
-   1243 1
-      8 10
-     39 11
-     10 13
-    297 2
-      7 3
-     98 4
-     91 5
-    191 6
-     41 7
-    621 8
-     37 9
+ 172866 -
+     22 0
+   2394 1
+   4686 10
+    337 -100
+     35 -101
+     30 -102
+     79 -103
+     23 -104
+     23 -105
+     25 -106
+     26 -107
+     28 -108
+     43 -109
+    108 11
+     31 -110
+     23 -111
+    137 -112
+     59 -113
+     21 -114
+     73 -115
+     24 -116
+     20 -117
+    503 -118
+     20 -119
+   1773 12
+     72 -120
+     22 -121
+     81 -122
+   1332 -123
+     96 123
+     45 -124
+    222 124
+    149 -125
+    662 125
+    299 -126
+    227 126
+    175 -127
+     82 127
+     51 -128
+   2910 13
+   2346 14
+    128 15
+    108 16
+     82 17
+    645 18
+    504 19
+     23 2
+    394 20
+     29 21
+   2730 22
+     22 23
+   1781 24
+    710 25
+     32 26
+     26 27
+    226 28
+    524 29
+    384 3
+    465 30
+     20 31
+   2690 32
+   2302 33
+    325 34
+    561 35
+    134 36
+     80 37
+     21 38
+     30 39
+     75 4
+    175 40
+    254 41
+    925 42
+     21 43
+   2096 44
+     33 46
+    195 47
+    922 48
+     29 49
+    459 5
+    146 50
+     61 51
+    100 52
+    141 53
+    631 54
+     25 55
+    659 56
+     27 57
+    239 58
+     32 59
+    234 6
+     28 60
+     62 61
+     74 62
+     27 63
+     22 64
+   2299 7
+     27 -79
+    363 8
+    114 -80
+     37 -81
+     46 -82
+     36 -83
+     47 -84
+     82 -85
+     94 -86
+     31 -87
+     22 -88
+     50 -89
+    227 9
+     46 -90
+     22 -91
+     42 91
+     36 -92
+     87 92
+    152 -93
+     36 93
+   1439 -94
+    981 94
+     86 -95
+     22 95
+     21 -96
+     25 96
+    384 -97
+     29 -98
+     22 -99
       1 label
- 647029 N
+ 604276 N
 
 src/minas/evaluate.py
 	examplesFN = datasets/test.csv
@@ -117,31 +396,142 @@ saving out/hits_Baseline.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--                9487    3357        -       0
-0                 357      40        A     357
-1                1086     157        A    1086
-10                  0       8        N       8
-11                 39       0        A      39
-13                  0      10        N      10
-2                 293       4        A     293
-3                   0       7        N       7
-4                   0      98        N      98
-5                   0      91        N      91
-6                  98      93        A      98
-7                  37       4        A      37
-8                   0     621        N     621
-9                   0      37        N      37
-N              443403  203626        N  203626
+-               82830   90036        -       0
+-100              315      22        A     315
+-101                0      35        N      35
+-102                0      30        N      30
+-103               72       7        A      72
+-104                0      23        N      23
+-105                0      23        N      23
+-106                0      25        N      25
+-107               18       8        A      18
+-108               10      18        N      18
+-109               43       0        A      43
+-110                0      31        N      31
+-111               18       5        A      18
+-112              137       0        A     137
+-113               59       0        A      59
+-114               16       5        A      16
+-115               64       9        A      64
+-116                0      24        N      24
+-117                0      20        N      20
+-118              474      29        A     474
+-119               20       0        A      20
+-120               71       1        A      71
+-121                0      22        N      22
+-122               81       0        A      81
+-123             1230     102        A    1230
+-124                0      45        N      45
+-125              149       0        A     149
+-126              292       7        A     292
+-127              175       0        A     175
+-128               32      19        A      32
+-79                 0      27        N      27
+-80                14     100        N     100
+-81                37       0        A      37
+-82                 0      46        N      46
+-83                36       0        A      36
+-84                31      16        A      31
+-85                30      52        N      52
+-86                83      11        A      83
+-87                27       4        A      27
+-88                22       0        A      22
+-89                50       0        A      50
+-90                38       8        A      38
+-91                 0      22        N      22
+-92                 0      36        N      36
+-93               152       0        A     152
+-94              1332     107        A    1332
+-95                 9      77        N      77
+-96                 3      18        N      18
+-97               365      19        A     365
+-98                24       5        A      24
+-99                 0      22        N      22
+0                  22       0        A      22
+1                2375      19        A    2375
+10               4174     512        A    4174
+11                102       6        A     102
+12               1698      75        A    1698
+123                89       7        A      89
+124               222       0        A     222
+125               594      68        A     594
+126                 0     227        N     227
+127                66      16        A      66
+13               2747     163        A    2747
+14               2126     220        A    2126
+15                125       3        A     125
+16                106       2        A     106
+17                 80       2        A      80
+18                566      79        A     566
+19                251     253        N     253
+2                  20       3        A      20
+20                366      28        A     366
+21                 25       4        A      25
+22               2082     648        A    2082
+23                 12      10        A      12
+24               1730      51        A    1730
+25                643      67        A     643
+26                  8      24        N      24
+27                  9      17        N      17
+28                134      92        A     134
+29                475      49        A     475
+3                 362      22        A     362
+30                443      22        A     443
+31                 20       0        A      20
+32               2633      57        A    2633
+33               2280      22        A    2280
+34                305      20        A     305
+35                444     117        A     444
+36                111      23        A     111
+37                 80       0        A      80
+38                 17       4        A      17
+39                 23       7        A      23
+4                  69       6        A      69
+40                175       0        A     175
+41                237      17        A     237
+42                914      11        A     914
+43                 21       0        A      21
+44               2051      45        A    2051
+46                  0      33        N      33
+47                  1     194        N     194
+48                647     275        A     647
+49                 19      10        A      19
+5                 433      26        A     433
+50                  0     146        N     146
+51                 58       3        A      58
+52                 80      20        A      80
+53                134       7        A     134
+54                584      47        A     584
+55                 16       9        A      16
+56                637      22        A     637
+57                 27       0        A      27
+58                237       2        A     237
+59                 10      22        N      22
+6                 231       3        A     231
+60                 13      15        N      15
+61                 62       0        A      62
+62                 57      17        A      57
+63                 21       6        A      21
+64                  0      22        N      22
+7                   0    2299        N    2299
+8                 356       7        A     356
+9                 221       6        A     221
+91                  9      33        N      33
+92                  0      87        N      87
+93                 24      12        A      24
+94                  0     981        N     981
+95                 22       0        A      22
+96                 23       2        A      23
+N              406671  197605        N  197605
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels            ['-', '0', '1', '10', '11', '13', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 15
+Labels            ['-', '-100', '-101', '-102', '-103', '-104', '-105', '-106', '-107', '-108', '-109', '-110', '-111', '-112', '-113', '-114', '-115', '-116', '-117', '-118', '-119', '-120', '-121', '-122', '-123', '-124', '-125', '-126', '-127', '-128', '-79', '-80', '-81', '-82', '-83', '-84', '-85', '-86', '-87', '-88', '-89', '-90', '-91', '-92', '-93', '-94', '-95', '-96', '-97', '-98', '-99', '0', '1', '10', '11', '12', '123', '124', '125', '126', '127', '13', '14', '15', '16', '17', '18', '19', '2', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '3', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '4', '40', '41', '42', '43', '44', '46', '47', '48', '49', '5', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '6', '60', '61', '62', '63', '64', '7', '8', '9', '91', '92', '93', '94', '95', '96', 'N'] 127
 Total examples    (653457, 25)
-Total matches     (662953, 3)
-Hits               206408 ( 31.134635%)
-Misses             443701 ( 66.927972%)
-Unknowns            12844 (  1.937392%)
-Unk. reprocessed     9496 ( 73.933354%)
-Total              662953 (100.000000%)
+Total matches     (826029, 3)
+Hits               242770 ( 29.390009%)
+Misses             410393 ( 49.682638%)
+Unknowns           172866 ( 20.927352%)
+Unk. reprocessed   172572 ( 99.829926%)
+Total              826029 (100.000000%)
 
-### Diff
 

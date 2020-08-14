@@ -74,7 +74,8 @@ def printEval(exDf, maDf, path=None, title=None):
     cf, classes, labels, off, ass = confusionMatrix(df)
     df = plotHitMissUnkRate(df, ass, off, path, title)
     print("Confusion Matrix")
-    print(cf)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+        print(cf)
 
     totalExamples = exDf.shape[0]
     totalMatches = maDf.shape[0]
@@ -146,16 +147,20 @@ def diffMinasMfog(examplesDf, minasDF, mfogDF, path=None, titleA='minas', titleB
     print("### "+titleB+"\n")
     printEval(examplesDf, mfogDF, path, titleB)
     # [['id', 'og', 'label']]
-    m = pd.merge(minasDF, mfogDF, on='id', how='left')
-    diff = m[m['label_x'] != m['label_y']]
-    toRename = {'clusterLabel_x': 'j_clL', 'clusterRadius_x': 'j_clR',
-                'label_x': 'j_L', 'distance_x': 'j_D',
-                'clusterLabel_y': 'c_clL', 'clusterRadius_y': 'c_clR',
-                'label_y': 'c_L', 'distance_y': 'c_D'}
-    toKeep = ['id', 'j_clL', 'j_clR', 'j_L', 'j_D', 'c_clL', 'c_clR', 'c_L', 'c_D']
-    print("### Diff\n")
-    print(diff.rename(columns=toRename)[toKeep])
-    return diff
+    # m = pd.merge(minasDF, mfogDF, on='id', how='left')
+    # diff = m[m['label_x'] != m['label_y']]
+    # print("### Diff\n")
+    # if 'clusterLabel_x' in diff.columns:
+    #     toRename = {'clusterLabel_x': 'j_clL', 'clusterRadius_x': 'j_clR',
+    #                 'label_x': 'j_L', 'distance_x': 'j_D',
+    #                 'clusterLabel_y': 'c_clL', 'clusterRadius_y': 'c_clR',
+    #                 'label_y': 'c_L', 'distance_y': 'c_D'}
+    #     toKeep = ['id', 'j_clL', 'j_clR', 'j_L', 'j_D', 'c_clL', 'c_clR', 'c_L', 'c_D']
+    #     print(diff.rename(columns=toRename)[toKeep])
+    # else:
+    #     print(diff[['id', 'label_x', 'label_y']])
+    # print(diff.columns)
+    # return diff
 
 def getModelDf(path):
     assert os.path.isfile(path), "file '%s' not found." % path
@@ -247,10 +252,10 @@ def main(
     # ogdf = getOriginalMatchesDf('../../out/minas-og/2020-07-20T12-21-54.755/results')
     diffMinasMfog(examplesDf, minasDF, mfogDF, outputDir, titleA, titleB)
 
-    modelDF = getModelDf(modelFN)
-    # minasFiModDF = getModelDf('../../out/minas-og/2020-07-22T01-19-11.984/model/653457_final.csv')
-    mfogModelDF = getModelDf(mfogModelFN)
-    compareModelDf(modelDF, mfogModelDF, outputDir)
+    # modelDF = getModelDf(modelFN)
+    # # minasFiModDF = getModelDf('../../out/minas-og/2020-07-22T01-19-11.984/model/653457_final.csv')
+    # mfogModelDF = getModelDf(mfogModelFN)
+    # compareModelDf(modelDF, mfogModelDF, outputDir)
 
     # d['meanDistance'].abs().sum()
     # d.min().min()
