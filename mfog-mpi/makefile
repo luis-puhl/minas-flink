@@ -24,10 +24,11 @@ experiments/baseline.log: bin/baseline src/minas/evaluate.py minas.conf datasets
 
 bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
 	gcc -g -Wall -lm $^ -o $@
-bin/classifier: src/modules/classifier.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
+bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
 	gcc -g -Wall -lm $^ -o $@
 
 out/baseline-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
+	echo "" > experiments/mfog.log
 	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
 experiments/mfog.log: bin/classifier src/modules/store.py minas.conf datasets/emtpyline out/baseline-model.csv
 	python3 src/modules/store.py >> $@ &

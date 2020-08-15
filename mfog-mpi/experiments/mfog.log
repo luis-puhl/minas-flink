@@ -11,10 +11,10 @@
 	cluStream_time_threshold_delta_δ = 0.000000
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/training] 2.249643e+01 seconds for training(72000). At src/baseline/minas.c:151
+[./bin/training] 2.582959e+01 seconds for training(72000). At src/baseline/minas.c:151
 Model size =      37804
 Listening for connections on 0.0.0.0:7000
-Accepted new connection from 127.0.0.1:39232
+Accepted new connection from 127.0.0.1:39690
 ./bin/classifier
 	fast = 1
 	k = 100
@@ -27,17 +27,17 @@ Accepted new connection from 127.0.0.1:39232
 	cluStream_q_maxMicroClusters = 0
 	cluStream_time_threshold_delta_δ = 0.000000
 clientConnect
-Closed connection from 127.0.0.1:39232
-Accepted new connection from 127.0.0.1:39234
-Model(size=15)
+Closed connection from 127.0.0.1:39738
+Accepted new connection from 127.0.0.1:39740
+Model(size=16)
+Connection from 127.0.0.1:58464
 clientConnect
-Connection from 127.0.0.1:57958
-Model(size=17)
-unknowns = 534984
-[./bin/classifier] 1.051296e+01 seconds for classifier(653457). At src/modules/classifier.c:179
-534984
-Accepted new connection from 127.0.0.1:39238
-Closed connection 127.0.0.1:39234
+Model(size=18)
+unknowns = 522545
+[./bin/classifier] 1.355459e+01 seconds for classifier(653457). At src/modules/classifier.c:66
+522545
+Accepted new connection from 127.0.0.1:39750
+Closed connection 127.0.0.1:39740
 Closed server
 
 src/minas/evaluate.py
@@ -90,16 +90,16 @@ saving out/hits_Mfog.png
 Confusion Matrix
 Classes (act)       A       N assigned   hits
 Labels (pred)                                
--              366814  168170        -      0
-N               80365   38108        N  38108
+-              355509  167036        -      0
+N               91670   39242        N  39242
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels            ['-', 'N'] 2
 Total examples    (653457, 25)
 Total matches     (653457, 3)
-Hits                38108 (  5.831753%)
-Misses              80365 ( 12.298437%)
-Unknowns           534984 ( 81.869809%)
+Hits                39242 (  6.005292%)
+Misses              91670 ( 14.028467%)
+Unknowns           522545 ( 79.966241%)
 Unk. reprocessed        0 (  0.000000%)
 Total              653457 (100.000000%)
 
