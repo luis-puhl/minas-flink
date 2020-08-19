@@ -140,3 +140,11 @@ Moving cluster, better but only 10k more matches.
 
 Sempre que um novo delta chegar e propagar quando dN for relevante.
 Enviar o delta para nuvem.
+
+### Registrar como cheguei no baseline
+
+Deck mostrando o que é o baseline, o que são os parâmetros, como parâmetros
+foram utilizados, resultados das modificações dos parâmetros.
+Mencionar as diferenças da implementação de referência.
+
+Adicionar esse registro a uma seção de artigo e capítulo da dissertação.
