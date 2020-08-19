@@ -90,12 +90,6 @@ int main(int argc, char const *argv[]) {
     struct pollfd modelStorePoll;
     modelStorePoll.fd = modelStore;
     modelStorePoll.events = POLLIN;
-    // int ready = poll(&pfDs, 1, 2);
-    // if (ready == 0 ||pfDs.revents == 0) {
-    //     fprintf(stderr, "No events in poll\n");
-    //     break;
-    // }
-    // if (pfDs.revents & POLLIN)
     modelStoreComm(params, 3, model, modelStore, &modelStorePoll, buffer, maxBuffSize);
 
     SOCKET noveltyDetectionService = clientConnect("localhost", 7001);

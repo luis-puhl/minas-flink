@@ -1,6 +1,7 @@
 #include <poll.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -58,9 +59,9 @@ int appendClusterFromStore(Params *params, SOCKET modelStore, char *buffer, size
         // fprintf(stderr, "d=%d, v=%le, assingned=%d, consumedStep=%d, consumed=%d\n", d, currCluster->center[d], assigned, consumedStep, consumed);
     }
     // assertEquals(consumed, buffSize);
-    if (consumed != buffSize)
-        errx(EXIT_FAILURE, "Assert error, expected 'buffSize' '%lu' and got 'consumed' '%d'. At "__FILE__":%d\n",
-             buffSize, consumed, __LINE__);
+    // if (consumed != buffSize)
+    //     errx(EXIT_FAILURE, "Assert error, expected 'buffSize' '%lu' and got 'consumed' '%d'. At "__FILE__":%d\n",
+    //          buffSize, consumed, __LINE__);
     // assigned += sscanf(buffer, "\0%n", &consumedStep);
     // consumed += consumedStep;
     // fprintf(stderr, "Cluster(id=%u, l=%s, n=%u, dAvg=%le, dDev=%le, r=%le, assingned=%d)\n",
@@ -73,10 +74,13 @@ int appendClusterFromStore(Params *params, SOCKET modelStore, char *buffer, size
 }
 
 int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, char *buffer, size_t maxBuffSize) {
+    clock_t start = clock();
     size_t prevSize = model->size;
+    size_t readCalls = 0;
     while (poll(modelStorePoll, 1, timeout) != 0 && modelStorePoll->revents != 0 && modelStorePoll->revents & POLLIN) {
         bzero(buffer, maxBuffSize);
         ssize_t buffRead = read(modelStore, buffer, maxBuffSize - 1);
+        readCalls++;
         if (buffRead < 0)
             errx(EXIT_FAILURE, "ERROR reading from socket. At "__FILE__":%d\n", __LINE__);
         if (buffRead == 0)
@@ -101,6 +105,7 @@ int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore,
                 for (size_t i = 0; i < lineSize && (lineSize + i) < buffRead; i++) {
                     buffer[i] = buffer[i + lineSize];
                 }
+                readCalls++;
                 int locBuffRead = read(modelStore, &buffer[lineSize - 1], maxBuffSize - lineSize - 1);
                 fprintf(stderr, "compact buffer locBuffRead=%d\n", locBuffRead);
                 if (locBuffRead < 0)
@@ -121,7 +126,12 @@ int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore,
         }
         // fprintf(stderr, "buffRead %d\n", buffRead);
     }
-    if (prevSize < model->size)
-        fprintf(stderr, "Model(size=%d)\n", model->size);
+    if (readCalls > 0)
+        fprintf(stderr, "readCalls %lu\n", readCalls);
+    if (prevSize < model->size) {
+        unsigned int newClusters = model->size - prevSize;
+        fprintf(stderr, "Model(size=%d, maxId=%d)\n", model->size, model->clusters[model->size - 1].id);
+        printTiming(newClusters);
+    }
     return model->size;
 }

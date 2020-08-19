@@ -1,0 +1,15 @@
+./bin/training
+	fast = 1
+	k = 100
+	dim = 22
+	precision = 1.000000e-08
+	radiusF = 1.000000e-01
+	minExamplesPerCluster = 20
+	noveltyF = 2.000000e+00
+	useCluStream = 0
+	cluStream_q_maxMicroClusters = 0
+	cluStream_time_threshold_delta_δ = 0.000000
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+[./bin/training] 2.431258e+01 seconds for training(72000). At src/baseline/minas.c:151
+Model size =      37804
