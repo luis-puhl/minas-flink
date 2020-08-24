@@ -11,8 +11,10 @@ from matplotlib.colors import LogNorm
 # get_ipython().run_line_magic('matplotlib', 'inline')
 # plt.close('all')
 
-dpi = 300
-figsize = (1920 / dpi, 1080 / dpi)
+# dpi = 300
+# figsize = (1920 / dpi, 1080 / dpi)
+
+from plotHitMissUnkRate import plotHitMissUnkRate
 
 def getExamplesDf(path):
     assert os.path.isfile(path), "file '%s' not found." % path
@@ -98,48 +100,6 @@ def printEval(exDf, maDf, path=None, title=None):
     print('Total            %8d (%10f%%)' % (hits + misses + unks, ((hits + misses + unks)/tot) * 100.0))
     print('')
     return df, cf, classes, labels, off, ass
-
-def plotHitMissUnkRate(df, assignment, off, path=None, title=None):
-    if (path is not None):
-        path = path + 'hits_' + title + '.png'
-    df['assigned'] = df['label'].map(assignment)
-    df['hit'] = (df['assigned'] == df['class']).map({False: 0, True: 1})
-    df['miss'] = (df['assigned'] != df['class']).map({False: 0, True: 1})
-    df['unk'] = (df['assigned'] == '-').map({False: 0, True: 1})
-    df['miss'] = df['miss'] - df['unk']
-    # 
-    df['hits'] = df['hit'].cumsum()
-    df['misses'] = df['miss'].cumsum()
-    df['unks'] = df['unk'].cumsum()
-    # 
-    df['tot'] = df['hits'] + df['misses'] + df['unks']
-    # 
-    df['d_hit'] = df['hits'] / df['tot']
-    # df['d_mis'] = df['misses'] / df['tot']
-    df['d_unk'] = df['unks'] / df['tot']
-    # 
-    labelSet = set()
-    xcoords = []
-    prevLen = len(off)
-    for i, l in zip(df.index, df['label']):
-        labelSet.add(l)
-        if len(labelSet) > prevLen:
-            prevLen = len(labelSet)
-            xcoords += [i]
-    # 
-    if (title is not None):
-        title += ' Hit Miss Unk'
-    else:
-        title = 'Hit Miss Unk'
-    # ax = df[['d_hit', 'd_mis', 'd_unk' ]].plot(title=title, figsize=figsize)
-    ax = df[['d_hit', 'd_unk' ]].plot(title=title, figsize=figsize)
-    ax.vlines(x=xcoords, ymin=-0.05, ymax=1.05, colors='gray', ls='--', lw=0.5, label='vline_multiple')
-    ax.get_xaxis().set_major_formatter(matplotlib.ticker.EngFormatter())
-    # 
-    if (path is not None):
-        plt.savefig(path, dpi=dpi, bbox_inches='tight')
-        print('saving', path)
-    return df
 
 def diffMinasMfog(examplesDf, minasDF, mfogDF, path=None, titleA='minas', titleB='mfog'):
     print("### "+titleA+"\n")

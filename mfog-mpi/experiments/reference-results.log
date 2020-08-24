@@ -1,0 +1,43 @@
+Evaluate
+	title = Reference-results
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/og/kmeans-nd/results
+	plotSavePath = experiments/reference-results-hits.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Reference-results
+
+saving experiments/reference-results-hits.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits          og_labels
+Labels (pred)                                                    
+-                3774    8206        -       0              [Unk]
+1                 123       0        A     123         [ExtNov 1]
+10               2489    4066        N    4066  [ExtNov 10, N 10]
+11                 71     289        N     289  [ExtNov 11, N 11]
+12                 26       0        A      26  [N 12, ExtNov 12]
+2                 145      79        A     145         [ExtNov 2]
+3                 368      44        A     368         [ExtNov 3]
+4                   8       0        A       8         [ExtNov 4]
+5                  52       0        A      52         [ExtNov 5]
+6                 165       0        A     165    [N 6, ExtNov 6]
+7                   1     229        N     229         [ExtNov 7]
+8                1046     181        A    1046    [N 8, ExtNov 8]
+9                 161     154        A     161              [N 9]
+N              438750  193030        N  193030    [C N, ExtCon N]
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
+Total examples    (653457, 25)
+Total matches     (653457, 3)
+Hits               199708 ( 30.561766%)
+Misses             441769 ( 67.604907%)
+Unknowns            11980 (  1.833326%)
+Unk. reprocessed        0 (  0.000000%)
+Total              653457 (100.000000%)
+
+

@@ -1,5 +1,5 @@
 Listening for connections on 0.0.0.0:7000
-Accepted new connection from 127.0.0.1:56678
+Accepted new connection from 127.0.0.1:56664
 ./bin/classifier
 	fast = 1
 	k = 100
@@ -12,83 +12,50 @@ Accepted new connection from 127.0.0.1:56678
 	cluStream_q_maxMicroClusters = 0
 	cluStream_time_threshold_delta_δ = 0.000000
 clientConnect
-Closed connection from 127.0.0.1:56678
-Accepted new connection from 127.0.0.1:56680
-readCalls 58
-Model(size=56, maxId=55)
-[./bin/classifier] 8.800000e-04 seconds for modelStoreComm(56). At src/modules/modules.c:134
+Closed connection from 127.0.0.1:56664
+Accepted new connection from 127.0.0.1:56666
+readCalls 18
+Model(size=14, maxId=16)
+[./bin/classifier] 4.160000e-04 seconds for modelStoreComm(14). At src/modules/modules.c:134
 clientConnect
-Connection from 127.0.0.1:60130
-readCalls 16
-Model(size=57, maxId=57)
-[./bin/classifier] 9.100000e-05 seconds for modelStoreComm(1). At src/modules/modules.c:134
-unknowns = 232187
-[./bin/classifier] 8.312801e+00 seconds for classifier(653457). At src/modules/classifier.c:66
-232187
-Accepted new connection from 127.0.0.1:56686
-Closed connection 127.0.0.1:56680
+Connection from 127.0.0.1:58232
+readCalls 29
+Model(size=16, maxId=90)
+[./bin/classifier] 1.470000e-04 seconds for modelStoreComm(2). At src/modules/modules.c:134
+unknowns = 397814
+[./bin/classifier] 9.890210e+00 seconds for classifier(653457). At src/modules/classifier.c:66
+397814
+Accepted new connection from 127.0.0.1:56674
+Closed connection 127.0.0.1:56666
 Closed server
 
-src/minas/evaluate.py
-	examplesFN = datasets/test.csv
-	matchesFN = out/mfog-matches.csv
-	minasMatches = out/og/2020-07-20T12-18-21.758/matches.csv
-	modelFN = datasets/model-clean.csv
-	mfogModelFN = out/model.csv
-	outputDir = out/
+Evaluate
+	title = Mfog
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/mfog-matches.csv
+	plotSavePath = experiments/mfog-hits.png
 
 Count per class
            id
 class        
 A      447179
 N      206278
-### Reference
-
-saving out/hits_Reference.png
-Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--                3774    8206        -       0
-1                 123       0        A     123
-10               3520    5130        N    5130
-11                 71     289        N     289
-12                 26       0        A      26
-2                 152      82        A     152
-3                 368      44        A     368
-4                   8       0        A       8
-5                  82       1        A      82
-6                 165       0        A     165
-7                   8     396        N     396
-8                1054     183        A    1054
-9                 161     154        A     161
-N              441395  199715        N  199715
-Classes           ['A' 'N']
-Initial labels    ['-', 'N']
-Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
-Total examples    (653457, 25)
-Total matches     (665107, 9)
-Hits               207669 ( 31.223397%)
-Misses             445458 ( 66.975389%)
-Unknowns            11980 (  1.801214%)
-Unk. reprocessed    11650 ( 97.245409%)
-Total              665107 (100.000000%)
-
 ### Mfog
 
-saving out/hits_Mfog.png
+saving experiments/mfog-hits.png
 Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--              133599   98588        -       0
-N              313580  107690        N  107690
+Classes (act)       A       N assigned   hits
+Labels (pred)                                
+-              224454  173360        -      0
+N              222725   32918        N  32918
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels            ['-', 'N'] 2
 Total examples    (653457, 25)
-Total matches     (653457, 3)
-Hits               107690 ( 16.480044%)
-Misses             313580 ( 47.987855%)
-Unknowns           232187 ( 35.532101%)
+Total matches     (653457, 4)
+Hits                32918 (  5.037516%)
+Misses             222725 ( 34.084110%)
+Unknowns           397814 ( 60.878375%)
 Unk. reprocessed        0 (  0.000000%)
 Total              653457 (100.000000%)
 

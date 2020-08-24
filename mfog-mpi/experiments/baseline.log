@@ -11,7 +11,7 @@
 	cluStream_time_threshold_delta_δ = 0.000000
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/baseline] 2.374178e+01 seconds for training(72000). At src/baseline/minas.c:151
+[./bin/baseline] 2.457762e+01 seconds for training(72000). At src/baseline/minas.c:151
 ND clusters: 26 extensions, 0 novelties
 Reclassified 1869
 ND clusters: 13 extensions, 0 novelties
@@ -97,7 +97,7 @@ Reclassified 1714
 Final flush 1795
 ND clusters: 19 extensions, 0 novelties
 Reclassified 1552
-[./bin/baseline] 1.863111e+01 seconds for minasOnline(653457). At src/baseline/minas.c:323
+[./bin/baseline] 1.824951e+01 seconds for minasOnline(653457). At src/baseline/minas.c:323
 
   72830 -
     678 0
@@ -109,53 +109,20 @@ Reclassified 1552
       1 label
  650629 N
 
-src/minas/evaluate.py
-	examplesFN = datasets/test.csv
-	matchesFN = out/baseline.csv
-	minasMatches = out/og/2020-07-20T12-18-21.758/matches.csv
-	modelFN = datasets/model-clean.csv
-	mfogModelFN = out/model.csv
-	outputDir = out/
+Evaluate
+	title = Baseline
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/baseline.csv
+	plotSavePath = experiments/baseline-hits.png
 
 Count per class
            id
 class        
 A      447179
 N      206278
-### Reference
-
-saving out/hits_Reference.png
-Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--                3774    8206        -       0
-1                 123       0        A     123
-10               3520    5130        N    5130
-11                 71     289        N     289
-12                 26       0        A      26
-2                 152      82        A     152
-3                 368      44        A     368
-4                   8       0        A       8
-5                  82       1        A      82
-6                 165       0        A     165
-7                   8     396        N     396
-8                1054     183        A    1054
-9                 161     154        A     161
-N              441395  199715        N  199715
-Classes           ['A' 'N']
-Initial labels    ['-', 'N']
-Labels            ['-', '1', '10', '11', '12', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 14
-Total examples    (653457, 25)
-Total matches     (665107, 9)
-Hits               207669 ( 31.223397%)
-Misses             445458 ( 66.975389%)
-Unknowns            11980 (  1.801214%)
-Unk. reprocessed    11650 ( 97.245409%)
-Total              665107 (100.000000%)
-
 ### Baseline
 
-saving out/hits_Baseline.png
+saving experiments/baseline-hits.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
@@ -171,7 +138,7 @@ Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels            ['-', '0', '1', '2', '3', '4', '5', 'N'] 8
 Total examples    (653457, 25)
-Total matches     (726044, 3)
+Total matches     (726044, 4)
 Hits               208056 ( 28.656115%)
 Misses             445158 ( 61.312813%)
 Unknowns            72830 ( 10.031072%)
