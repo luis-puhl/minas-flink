@@ -17,10 +17,10 @@ experiments/reference.log: src/evaluation/evaluate.py datasets/test.csv out/og/k
 	python3 src/evaluation/evaluate.py Reference datasets/test.csv out/og/kmeans-nd/matches.csv experiments/reference-hits.png > experiments/reference.log
 experiments/reference-results.log: src/evaluation/evaluate.py
 	python3 src/evaluation/evaluate.py Reference-results datasets/test.csv out/og/kmeans-nd/results experiments/reference-results-hits.png > experiments/reference-results.log
-experiments/baseline.log: bin/baseline src/evaluation/evaluate.py experiments/reference.log minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+experiments/baseline.log: bin/baseline src/evaluation/evaluate.py experiments/reference.log minas-base.conf datasets/emtpyline datasets/training.csv datasets/test.csv
 	# rm -rf out/baseline-models
 	# mkdir -p out/baseline-models
-	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
+	cat minas-base.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
 		./bin/baseline > out/baseline.csv 2> experiments/baseline.log
 	echo "" >> experiments/baseline.log
 	cat out/baseline.csv | awk -F, '{print $$2}' | sort | uniq -c >> experiments/baseline.log
