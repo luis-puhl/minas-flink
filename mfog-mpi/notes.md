@@ -1,13 +1,18 @@
+# Notes: a random notebook
 
+Proto-arquitetura:
+
+```log
 - N0-T0: dispach
     - 2: classify
     - 3: classify
     - ...
     - N: classify
 - N0-T1: recv match -> ND
+```
 
-
-$ sudo vi /etc/resolv.conf 
+```sh
+$ sudo vi /etc/resolv.conf
 
 ...
 
@@ -15,6 +20,7 @@ nameserver 200.18.99.1
 # nameserver 127.0.0.53
 ...
 $ sudo ip route add default via 192.168.0.1
+```
 
 # Resumo semana 30 de 2020
 
@@ -43,7 +49,6 @@ modelo inicial, tentando simplificar a implementação e manter o algoritmo.
 
 Porém não tive sucesso, o resultado mudou em comparação com o modelo estático,
 então assumi que a diferença entre a implementação original e a nova era aceitável.
-
 
 ### Confusion Matrix
 
@@ -142,14 +147,16 @@ Desafios de arquitetura e validação:
 
 Desafios de implementação:
 
-<!-- - Definição de raio: desvio padrão das distâncias versus distancia máxima;
+<!--
+- Definição de raio: desvio padrão das distâncias versus distancia máxima;
 - Atualização do micro-cluster limita-se à atualização do atributo \texttt{T};
 - Remoção de exemplos na implementação de referência é feita somente para o algoritmo \textit{CluStream};
 - Inclusão de borda: algoritmo inclui ($<=$), referência não inclui ($<$);
 - Seguiu-se as mesmas divergências anteriores para comparação dos resultados com a implementação referência;
 - Inclusão da borda;
 - Comportamento do mecânismo de \textit{sleep-model} não está definido, portanto não está ativo;
-- Processo de clusterização é limitado ao algoritmo \textit{K-Means}. Algoritmo \textit{CluStream} não está implementado; -->
+- Processo de clusterização é limitado ao algoritmo \textit{K-Means}. Algoritmo \textit{CluStream} não está implementado;
+- -->
 
 - `Double vs Float`:
   - Na implementação de referência, java double é utilizado;
@@ -173,10 +180,11 @@ Desafios de implementação:
 Próximos desafios:
 
 - Distribuição e paralelização para minimização de latência entre novo item no fluxo e sua classificação:
-  - Tempo de passagem da instancia pelo classificador;
+  - Tempo de passagem da instância pelo classificador;
   - Volume máximo do sistema;
   - Diferenças de precisão de acordo com a carga;
 - Detecção de novidades e manutenção de modelo em ambiente distribuído:
-  - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
+  - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo
+    (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
   - Mecanismo de esquecimento local vs global (modelo único ou por nó);
   - Atraso na reclassificação dos desconhecidos;
