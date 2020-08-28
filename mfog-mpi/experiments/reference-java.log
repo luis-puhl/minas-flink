@@ -1,0 +1,233 @@
+
+Minas with
+	filenameOffline = datasets/training.csv
+	filenameOnline = datasets/test.csv
+
+	outputDirectory = out/minas-og//2020-08-25T12-18-16.272
+	algClusteringOff = kmeans
+	algClusteringOnl = kmeans
+
+	threshold = 2.0
+	flagEvaluationType = 1
+	thresholdForgettingPast = 10000
+	numMicro = 100
+	flagMicroClusters = true
+
+	minExCluster = 20
+	validationCriterion = dec
+	isValidationCriterionDec = true
+
+	isGUIEnabled = false
+
+ Processing out/minas-og//2020-08-25T12-18-16.272_ initial phase...
+
+
+********************** Offline phase ****************************
+
+ Classes for the training phase (offline): 1
+Class N
+earlyReturn i=73
+Storing model
+Storing model
+Offline time 99.651
+********************** Online phase****************************
+10000
+20000
+30000
+40000
+50000
+earlyReturn i=27
+earlyReturn i=10
+60000
+earlyReturn i=21
+earlyReturn i=22
+earlyReturn i=22
+earlyReturn i=15
+70000
+earlyReturn i=23
+earlyReturn i=15
+earlyReturn i=22
+earlyReturn i=22
+80000
+earlyReturn i=23
+earlyReturn i=17
+earlyReturn i=17
+earlyReturn i=17
+earlyReturn i=19
+90000
+earlyReturn i=19
+earlyReturn i=19
+earlyReturn i=24
+earlyReturn i=24
+earlyReturn i=22
+100000
+earlyReturn i=22
+earlyReturn i=22
+earlyReturn i=22
+earlyReturn i=22
+110000
+earlyReturn i=22
+earlyReturn i=22
+earlyReturn i=22
+120000
+earlyReturn i=22
+earlyReturn i=22
+earlyReturn i=22
+earlyReturn i=24
+130000
+140000
+150000
+160000
+170000
+180000
+190000
+200000
+210000
+220000
+230000
+240000
+250000
+260000
+270000
+280000
+earlyReturn i=29
+290000
+300000
+310000
+320000
+330000
+340000
+350000
+360000
+370000
+380000
+earlyReturn i=4
+390000
+400000
+410000
+420000
+430000
+440000
+450000
+460000
+470000
+480000
+490000
+500000
+earlyReturn i=7
+earlyReturn i=7
+earlyReturn i=6
+510000
+earlyReturn i=6
+earlyReturn i=7
+earlyReturn i=7
+520000
+earlyReturn i=7
+earlyReturn i=7
+earlyReturn i=7
+earlyReturn i=8
+530000
+earlyReturn i=8
+earlyReturn i=7
+540000
+earlyReturn i=7
+earlyReturn i=6
+earlyReturn i=9
+550000
+560000
+570000
+earlyReturn i=24
+580000
+590000
+600000
+610000
+620000
+earlyReturn i=18
+earlyReturn i=18
+earlyReturn i=16
+earlyReturn i=19
+630000
+earlyReturn i=18
+earlyReturn i=17
+earlyReturn i=18
+earlyReturn i=25
+earlyReturn i=22
+640000
+earlyReturn i=24
+earlyReturn i=23
+earlyReturn i=26
+earlyReturn i=39
+650000
+earlyReturn i=39
+earlyReturn i=39
+Storing model
+Online time 52.964
+********************** Results ****************************
+
+Final Confusion Matrix: 
+	C N	N 1	N 2	N 3	N 4	N 5	N 6	N 7	N 8	N 9	N 10	N 11	N 12	N 13	N 14	Unk
+ ------------------------------------------------------------------------------------------------
+C N	181391	0	13	0	43	0	0	314	97	826	13887	142	5793	35	10	3727
+
+C A	437837	123	35	6	483	52	164	2	939	2133	3752	349	1121	0	39	144
+
+
+
+
+Impressao em forma de porcentagem: 
+	C N	N 1	N 2	N 3	N 4	N 5	N 6	N 7	N 8	N 9	N 10	N 11	N 12	N 13	N 14	Unk
+ ------------------------------------------------------------------------------------------------
+C N	0.8793521364372352	0.0	6.30217473506627E-5	0.0	2.0845654892911506E-4	0.0	0.0	0.0015222175898544682	4.702391917703294E-4	0.004004304870126723	0.06732176965066561	6.883913941380079E-4	0.028083460184799156	1.6967393517486112E-4	4.847826719281746E-5	0.01806785018276307
+
+C A	0.9791090368733774	2.7505763911096006E-4	7.826843389336261E-5	1.3417445810290734E-5	0.001080104387728404	1.1628453035585303E-4	3.667435188146134E-4	4.472481936763578E-6	0.0020998302693104997	0.004769901985558355	0.008390376113368472	7.804480979652443E-4	0.0025068261255559855	0.0	8.721339776688977E-5	3.220186994469776E-4
+
+
+
+Results time 2.335
+execution time 154.951
+total time 155.06
+Evaluate
+	title = Reference-Rerun-results
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/minas-og/2020-08-25T12-18-16.272/results
+	plotSavePath = experiments/reference-java.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Reference-Rerun-results
+
+saving experiments/reference-java.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits          og_labels
+Labels (pred)                                                    
+-                4135   10885        -       0              [Unk]
+1                 123       0        A     123         [ExtNov 1]
+10               2647   10992        N   10992  [ExtNov 10, N 10]
+11                349     142        A     349        [ExtNov 11]
+12               1121    5793        N    5793  [N 12, ExtNov 12]
+13                  0      35        N      35  [N 13, ExtNov 13]
+14                 39      10        A      39  [N 14, ExtNov 14]
+2                  35      13        A      35         [ExtNov 2]
+3                   6       0        A       6         [ExtNov 3]
+4                 483      43        A     483         [ExtNov 4]
+5                  52       0        A      52         [ExtNov 5]
+6                 164       0        A     164    [N 6, ExtNov 6]
+7                   2     314        N     314         [ExtNov 7]
+8                 939      97        A     939    [N 8, ExtNov 8]
+9                 161     154        A     161              [N 9]
+N              436923  177800        N  177800    [C N, ExtCon N]
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', '1', '10', '11', '12', '13', '14', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 16
+Total examples    (653457, 25)
+Total matches     (653457, 3)
+Hits               197285 ( 30.190969%)
+Misses             441152 ( 67.510487%)
+Unknowns            15020 (  2.298545%)
+Unk. reprocessed        0 (  0.000000%)
+Total              653457 (100.000000%)
+
+

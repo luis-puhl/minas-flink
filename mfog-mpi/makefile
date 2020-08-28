@@ -103,13 +103,24 @@ cluster@almoco: code@almoco
 	mkdir -p experiments/rpi
 	scp almoco:~/cloud/experiments/* experiments/rpi/
 
-runJava:
-	java -classpath '../ref-git/src-minas/out/artifacts/src_minas_jar/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
-		datasets/training.csv datasets/test.csv out/KDD/ \
-		clustream clustream \
-		2.0 1 10000 100 true
-	# intellij args
-	# datasets/KDD/KDDTe5Classes_fold1_ini.csv datasets/KDD/KDDTe5Classes_fold1_onl.csv out/KDD clustream clustream 2.0 1 10000 100 true
+experiments/reference-java.log:
+	java -classpath 'bin/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
+		datasets/training.csv datasets/test.csv out/minas-og/ \
+		kmeans kmeans \
+		2.0 1 10000 100 true > $@
+	python3 src/evaluation/evaluate.py Reference-Rerun-results \
+		datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results \
+		experiments/reference-java.png >> $@
+experiments/reference-java-nf.log:
+	java -ea -classpath 'bin/src-minas-mfogFormat.jar:' br.ufu.noveltydetection.minas.MinasOg \
+		datasets/training.csv datasets/test.csv out/minas-og/ \
+		kmeans kmeans \
+		2.0 lit 10000 100 false false > $@
+	python3 src/evaluation/evaluate.py Reference-Rerun-results \
+		datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results \
+		experiments/reference-java.png >> $@
+# intellij args
+# datasets/KDD/KDDTe5Classes_fold1_ini.csv datasets/KDD/KDDTe5Classes_fold1_onl.csv out/KDD clustream clustream 2.0 1 10000 100 true
 
 # target/mpi-test: target src/util/mpi-test.c
 # 	mpicc src/util/mpi-test.c -o target/mpi-test -lm -Wall -g

@@ -33,7 +33,8 @@ def getMatchesDf(path):
     with open(path) as matchesFile:
         firstLine = matchesFile.read(10)
         # print('firstLine', firstLine)
-        isOriginalFormat = firstLine.startswith('Ex: ')
+        isOriginalFormatWithHeader = firstLine.startswith('Results')
+        isOriginalFormat = firstLine.startswith('Ex: ') or isOriginalFormatWithHeader
         isMfog = firstLine.startswith('#pointId,')
     # 
     if isMfog:
@@ -43,7 +44,10 @@ def getMatchesDf(path):
         return df
     # 
     if isOriginalFormat:
-        df = pd.read_table(filepath_or_buffer=path, header=None)
+        if isOriginalFormatWithHeader:
+            df = pd.read_table(filepath_or_buffer=path, header=None, skiprows=4)
+        else:
+            df = pd.read_table(filepath_or_buffer=path, header=None)
         df.columns = ['id', 'class', 'label']
         df = df[df['id'].str.startswith('Ex:')]
 
