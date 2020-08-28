@@ -119,3 +119,64 @@ Mudanças nas decisões são resultados.
 Estudo da distribuição do dataset em cada um dos nós da borda.
 
 Comparação serial paralelo apenas.
+
+## Meeting 2020-08-26 (and others in August)
+
+- Desafio, resposta, justificativa.
+- Artigo para setembro ou outubro.
+- Revisão dos valores da avaliação.
+
+### Desafios, Respostas e Justificativas
+
+Desafios de arquitetura e validação:
+
+- Construção de um protótipo da arquitetura IDSA-IoT:
+  - Kafka (Python): Distribuição e balanceamento pelo cluster kafka, hipótese refutada.
+  - Flink (Java ou Scala): Execução do cluster nos dispositivos de névoa, hipótese refutada.
+  - MPI (C e Python): Execução do cluster nos dispositivos de névoa, hipótese aceita.
+- Reimplementação do algoritmo MINAS com fidelidade:
+  - Duas versões: a descrita e a implementação de referência (em Java).
+  - Resolução: utilizar a descrição, não *seguir* a imp. referência, apenas como ponto de comparação. Exemplos:
+    - Definição de raio `r = f * σ` (fator vezes desvio padrão) para `r = max(distance)` (distância máxima);
+    - Tamanho do buffer de desconhecidos e frequência de execução do passo de detecção de novidade;
+
+Desafios de implementação:
+
+<!-- - Definição de raio: desvio padrão das distâncias versus distancia máxima;
+- Atualização do micro-cluster limita-se à atualização do atributo \texttt{T};
+- Remoção de exemplos na implementação de referência é feita somente para o algoritmo \textit{CluStream};
+- Inclusão de borda: algoritmo inclui ($<=$), referência não inclui ($<$);
+- Seguiu-se as mesmas divergências anteriores para comparação dos resultados com a implementação referência;
+- Inclusão da borda;
+- Comportamento do mecânismo de \textit{sleep-model} não está definido, portanto não está ativo;
+- Processo de clusterização é limitado ao algoritmo \textit{K-Means}. Algoritmo \textit{CluStream} não está implementado; -->
+
+- `Double vs Float`:
+  - Na implementação de referência, java double é utilizado;
+  - Na nova implementação duas versões foram testadas e a diferença de precisão entre as duas é de `5 E-8`;
+  - **Solução:** Use `float32` e economize os bits já que haverá comunicação entre nós e módulos;
+- Formato do fluxo de saída:
+  - Implementação de referência utiliza a tripla `(id, classe, etiqueta)`;
+  - Primeira implementação em C utiliza `(id, clusterLabel, clusterId, clusterRadius, label, distance, secondDistance)`;
+  - Segunda implementação utiliza dupla `(id, label)`;
+  - Na etapa de avaliação, independente de versão, o fluxo original é lido;
+  - **Solução:** O formato mínimo é `(id, label)`;
+- Reprocessamento dos exemplos utilizados para atualização do modelo:
+  - Muda o comportamento do operador de fluxo de `Map` para `Flatmap`, ou seja,
+    requer outro fluxo de saída para a transmissão de padrões novidade (alarmes);
+  - Para reclassificação a definição de raio é modificada de `r = f * σ` (fator
+    multiplicando desvio padrão) para `r = max(distance)` (distância máxima);
+  - Passível da crítica de *overfitting*. Isto é, este processo pode
+    inflar a métrica de precisão;
+  - **Solução:** *em aberto*;
+
+Próximos desafios:
+
+- Distribuição e paralelização para minimização de latência entre novo item no fluxo e sua classificação:
+  - Tempo de passagem da instancia pelo classificador;
+  - Volume máximo do sistema;
+  - Diferenças de precisão de acordo com a carga;
+- Detecção de novidades e manutenção de modelo em ambiente distribuído:
+  - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
+  - Mecanismo de esquecimento local vs global (modelo único ou por nó);
+  - Atraso na reclassificação dos desconhecidos;
