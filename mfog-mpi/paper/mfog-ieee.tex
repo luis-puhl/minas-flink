@@ -11,7 +11,7 @@
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Distributed FOG IDS with MINAS: Design, Implementation and Evaluation
+\title{Edge Intrusion Detection with Distributed Novelty Detection: Design, Implementation and Evaluation
 \thanks{CNPq}
 }
 
@@ -34,7 +34,34 @@
 \maketitle
 
 \begin{abstract}
-  Abstract
+  
+  The implementation of the Internet of Things (IoT) is sharply increasing the small
+  devices count and variety on edge networks and, following this increase the
+  attack opportunities for hostile agents also increases, putting more pressure
+  on the network administrator's need for tools to detect and react to those
+  threats.
+
+  One such tool are the Intrusion Detection Systems (IDS) where the network
+  traffic is captured and analysed raising alarms when a known attack pattern or
+  new pattern is detected. To build an IDS one option for base algorithm are
+  the Data Stream (DS) Novelty Detection (ND) being MINAS one of those.
+  
+  Furthermore, for a network security tool to operate in the context of edge and
+  IoT it has to comply with processing time, storage space and energy
+  requirements alongside with traditional requirements for stream and network
+  analysis like accuracy and scalability.
+
+  This paper addresses the construction details and evaluation of an prototype
+  distributed IDS using MINAS ND algorithm.
+  We discuss the algorithm steps, how it can be deployed in a distributed architecture,
+  the impacts on the accuracy of MINAS and evaluate the performance and scalability
+  using a cluster of constrained devices commonly found in IoT scenarios.
+
+  We found an increase of \textit{0.0 y} processed network flow descriptors per core
+  added to the cluster. Also \textit{0.0 x1\%} and \textit{0.0 x2\%} change in
+  \textit{F1Score} in the tested datasets when stream was unlimited in speed and
+  limited to \textit{0.0 z MB/s} respectively.
+
 % This document is a model and instructions for \LaTeX.
 % This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.].
 % *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
@@ -42,7 +69,8 @@
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert
+% Detecção de Novidades, Detecção de Intrusão, Fluxos de Dados, Computação Distribuı́da, Computação em Névoa, Internet das Coisas.
+novelty detection, intrusion detection, data streams, distributed system, edge computing, internet of things
 \end{IEEEkeywords}
 
 \section{Introduction}
