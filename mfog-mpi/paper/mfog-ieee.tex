@@ -52,8 +52,8 @@
   analysis like accuracy and scalability.
 
   This paper addresses the construction details and evaluation of an prototype
-  distributed IDS using MINAS ND algorithm.
-  We discuss the algorithm steps, how it can be deployed in a distributed architecture,
+  distributed IDS using MINAS ND algorithm following up the previously defined IDSA-IoT architecture.
+  We discuss the algorithm steps, how it can be deployed in a distributed environment,
   the impacts on the accuracy of MINAS and evaluate the performance and scalability
   using a cluster of constrained devices commonly found in IoT scenarios.
 
@@ -76,6 +76,22 @@ novelty detection, intrusion detection, data streams, distributed system, edge c
 \section{Introduction}
 % This document is a model and instructions for \LaTeX.
 % Please observe the conference page limits. 
+
+\section{Experimental Setup}
+
+% For the experiments, we used the Kyoto 2006+ dataset
+% which contains data collected from 2006 to December 2015.
+% We selected examples from one month, December, 2015. Only the examples of known
+% attack types and known IDS alert code with a minimum of 10,000 occurrences (for
+% significance) were considered. The offline training was performed with 72,000
+% examples (i.e., 10\% of the dataset) using the holdout technique.
+
+Kyoto December 2015.
+
+\section{Implementation}
+
+\input{experiments/ref-CM.tex}
+\input{experiments/ref-eval-CM.tex}
 
 \section*{Acknowledgment}
 

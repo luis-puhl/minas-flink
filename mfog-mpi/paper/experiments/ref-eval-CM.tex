@@ -1,0 +1,35 @@
+\small
+\begin{tabular}
+  { l                     | r           | r           }
+  \textbf{Classes (act)}  & \textbf{A}  & \textbf{N}  \\% assigned    hits          og_labels
+  \textbf{Labels (pred)}  &             &             \\
+  \hline
+  \hline \textbf{-}       &   $3774_u$    &   $8206_u$  \\% -              0               [Unk]
+  \hline \textbf{1}       &    $123_h$    &      $0_m$  \\% A            123          [ExtNov 1]
+  \hline \textbf{10}      &   $2489_m$    &   $4066_h$  \\% N           4066   [ExtNov 10, N 10]
+  \hline \textbf{11}      &     $71_m$    &    $289_h$  \\% N            289   [ExtNov 11, N 11]
+  \hline \textbf{12}      &     $26_h$    &      $0_m$  \\% A             26   [N 12, ExtNov 12]
+  \hline \textbf{2}       &    $145_h$    &     $79_m$  \\% A            145          [ExtNov 2]
+  \hline \textbf{3}       &    $368_h$    &     $44_m$  \\% A            368          [ExtNov 3]
+  \hline \textbf{4}       &      $8_h$    &      $0_m$  \\% A              8          [ExtNov 4]
+  \hline \textbf{5}       &     $52_h$    &      $0_m$  \\% A             52          [ExtNov 5]
+  \hline \textbf{6}       &    $165_h$    &      $0_m$  \\% A            165     [N 6, ExtNov 6]
+  \hline \textbf{7}       &      $1_m$    &    $229_h$  \\% N            229          [ExtNov 7]
+  \hline \textbf{8}       &   $1046_h$    &    $181_m$  \\% A           1046     [N 8, ExtNov 8]
+  \hline \textbf{9}       &    $161_h$    &    $154_m$  \\% A            161               [N 9]
+  \hline \textbf{N}       & $438750_m$    & $193030_h$  \\% N         193030     [C N, ExtCon N]
+  \hline
+  \hline \textbf{Metric}  & \textbf{Value}  & \textbf{Ratio}   \\
+  \hline Total input      & $653457$        &               \\
+  \hline Total output     & $653457$        &               \\
+  % hits 123 + 4066 + 289 + 26 + 145 + 368 + 8 + 52 + 165 + 229 + 1046 + 161 + 193030 = 199708
+  \hline Hits             & $199708$        & $0.30561766$  \\
+  % m 0 + 2489 + 71 + 0 + 79 + 44 + 0 + 0 + 0 + 1 + 181 + 154 + 438750 = 453749
+  \hline Misses           & $441769$        & $0.67604907$ \\
+  % unk 3774 + 8206 = 11980
+  \hline Unknowns         & $11980$         & $0.01833326$ \\
+  \hline Reprocessed      & $0$             & $0.00000000$ \\
+  % 0.30561766 + 0.67604907 + 0.01833326 + 0.00000000 = 0.99999999
+  % 199708 + 441769 + 11980 = 0.99999999 = 653457
+\end{tabular}
+\normalsize
