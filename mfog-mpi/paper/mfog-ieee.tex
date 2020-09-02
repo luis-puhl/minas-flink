@@ -1,4 +1,8 @@
+% !TeX root = ./mfog-ieee.tex
+% \documentclass{article}
 \documentclass[conference]{lib/IEEEtran}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
@@ -17,24 +21,23 @@
 
 \author{
   \IEEEauthorblockN{Luís Puhl, Hermes Senger, Guilherme Weigert Cassales}
-\IEEEauthorblockA{Universidade Federal de São Carlos, Brasil \\
-  Email: \{luispuhl, gwcassales\}@gmail.com, hermes@ufscar.br
-}
-% \IEEEauthorblockN{Luís Puhl}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\luispuhl@gmail.com}\and
-% \IEEEauthorblockN{Hermes Senger}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\hermes@ufscar.br}\and
-% \IEEEauthorblockN{Guilherme Weigert Cassales}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\gwcassales@gmail.com}
-% \and
-% \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-% \textit{name of organization (of Aff.)}\\
-% City, Country \\
-% email address or ORCID}
+  \IEEEauthorblockA{Universidade Federal de São Carlos, Brasil \\
+    Email: \{luispuhl, gwcassales\}@gmail.com, hermes@ufscar.br
+  }
+  % \IEEEauthorblockN{Luís Puhl}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\luispuhl@gmail.com}\and
+  % \IEEEauthorblockN{Hermes Senger}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\hermes@ufscar.br}\and
+  % \IEEEauthorblockN{Guilherme Weigert Cassales}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\gwcassales@gmail.com}
+  % \and
+  % \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
+  % \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+  % \textit{name of organization (of Aff.)}\\
+  % City, Country \\
+  % email address or ORCID}
 }
 
 \maketitle
 
 \begin{abstract}
-  
   The implementation of the Internet of Things (IoT) is sharply increasing the small
   devices count and variety on edge networks and, following this increase the
   attack opportunities for hostile agents also increases, putting more pressure
@@ -61,11 +64,6 @@
   added to the cluster. Also \textit{0.0 x1\%} and \textit{0.0 x2\%} change in
   \textit{F1Score} in the tested datasets when stream was unlimited in speed and
   limited to \textit{0.0 z MB/s} respectively.
-
-% This document is a model and instructions for \LaTeX.
-% This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.].
-% *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
-% or Math in Paper Title or Abstract.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -74,21 +72,124 @@ novelty detection, intrusion detection, data streams, distributed system, edge c
 \end{IEEEkeywords}
 
 \section{Introduction}
-% This document is a model and instructions for \LaTeX.
-% Please observe the conference page limits. 
+
+% - Desafio, resposta, justificativa.
+% - Artigo para setembro ou outubro.
+% - Revisão dos valores da avaliação.
+
+% ### Desafios, Respostas e Justificativas
+
+% Desafios de arquitetura e validação:
+
+% - Construção de um protótipo da arquitetura IDSA-IoT:
+%   - Kafka (Python): Distribuição e balanceamento pelo cluster kafka, hipótese refutada.
+%   - Flink (Java ou Scala): Execução do cluster nos dispositivos de névoa, hipótese refutada.
+%   - MPI (C e Python): Execução do cluster nos dispositivos de névoa, hipótese aceita.
+% - Reimplementação do algoritmo MINAS com fidelidade:
+%   - Duas versões: a descrita e a implementação de referência (em Java).
+%   - Resolução: utilizar a descrição, não *seguir* a imp. referência, apenas como ponto de comparação. Exemplos:
+%     - Definição de raio `r = f * σ` (fator vezes desvio padrão) para `r = max(distance)` (distância máxima);
+%     - Tamanho do buffer de desconhecidos e frequência de execução do passo de detecção de novidade;
+
+\section{Implementation}
+
+The original MINAS algorithm has a companion implementation (\textit{ref})
+written in Java using MOA library base algorithms such as K-means and CluStream.
+\textit{Ref} employs Java's double, a $64 bits$ number whose precision is not
+absolutely necessary and, as it is often necessary to shuffle between nodes via
+network and a small economy could be made with only a float number with $32 bits$.
+
+% Desafios de implementação:
+% <!--
+% - Definição de raio: desvio padrão das distâncias versus distancia máxima;
+% - Atualização do micro-cluster limita-se à atualização do atributo \texttt{T};
+% - Remoção de exemplos na implementação de referência é feita somente para o algoritmo \textit{CluStream};
+% - Inclusão de borda: algoritmo inclui ($<=$), referência não inclui ($<$);
+% - Seguiu-se as mesmas divergências anteriores para comparação dos resultados com a implementação referência;
+% - Inclusão da borda;
+% - Comportamento do mecânismo de \textit{sleep-model} não está definido, portanto não está ativo;
+% - Processo de clusterização é limitado ao algoritmo \textit{K-Means}. Algoritmo \textit{CluStream} não está implementado;
+% - -->
+% - `Double vs Float`:
+%   - Na implementação de referência, java double é utilizado;
+%   - Na nova implementação duas versões foram testadas e a diferença de precisão entre as duas é de `5 E-8`;
+%   - **Solução:** Use `float32` e economize os bits já que haverá comunicação entre nós e módulos;
+% - Formato do fluxo de saída:
+%   - Implementação de referência utiliza a tripla `(id, classe, etiqueta)`;
+%   - Primeira implementação em C utiliza `(id, clusterLabel, clusterId, clusterRadius, label, distance, secondDistance)`;
+%   - Segunda implementação utiliza dupla `(id, label)`;
+%   - Na etapa de avaliação, independente de versão, o fluxo original é lido;
+%   - **Solução:** O formato mínimo é `(id, label)`;
+
+The stream format for input and output also of note.
+Input information needed is the value of the item, this value is a number
+sequence of length $d$ (referenced as dimension).
+In addition to the value for evaluation and training purposes the class
+identifier as single character, optimality an unique item identifier
+(\textit{uid}) can be provided.
+For output information and format the decision isn't so clear as we can't
+predict future system integrations needs like only novelty alarms or every
+item's original value with assigned label so, we have a compromise and put only
+enough information for the Evaluation Module (where the full information
+from the testing file or stream can de accessed) meaning the format can be
+defined as a tuple containing \textit{uid} and assigned label.
+
+% - Reprocessamento dos exemplos utilizados para atualização do modelo:
+%   - Muda o comportamento do operador de fluxo de `Map` para `Flatmap`, ou seja,
+%     requer outro fluxo de saída para a transmissão de padrões novidade (alarmes);
+%   - Para reclassificação a definição de raio é modificada de `r = f * σ` (fator
+%     multiplicando desvio padrão) para `r = max(distance)` (distância máxima);
+%   - Passível da crítica de *overfitting*. Isto é, este processo pode
+%     inflar a métrica de precisão;
+%   - **Solução:** *em aberto*;
+
+Another implementation decision related to the output stream is whether or not
+to reprocess, and add to the output stream, examples in the unknown buffer after
+the novelty detection procedure, meaning one item can be classified once as
+unknown and again with a label.
+Our tests using this technique had increased true positives when compared to
+not using it.
+However this changes the stream operator behavior from a \textit{Map} to a
+\textit{FlatMap} having duplicate entries on the output stream as previously
+mentioned.
+Regardless of choice the classification of the unknown buffer after a model
+update, using the full model or just the added set of clusters, is done to
+remove the examples "consumed" in the creation of a new cluster in the internals
+of the clustering algorithm.
+% This removal can be made less complex if using only new clusters 
+
+% Próximos desafios:
+
+% - Distribuição e paralelização para minimização de latência entre novo item no fluxo e sua classificação:
+%   - Tempo de passagem da instância pelo classificador;
+%   - Volume máximo do sistema;
+%   - Diferenças de precisão de acordo com a carga;
+% - Detecção de novidades e manutenção de modelo em ambiente distribuído:
+%   - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo
+%     (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
+%   - Mecanismo de esquecimento local vs global (modelo único ou por nó);
+%   - Atraso na reclassificação dos desconhecidos;
+
+
+The Evaluation Module was also build following reference techniques like
+multi-class confusion matrix with label-class association
+\cite{Faria2016minas}
+to extract classification quality metrics.
 
 \section{Experimental Setup}
 
-% For the experiments, we used the Kyoto 2006+ dataset
-% which contains data collected from 2006 to December 2015.
-% We selected examples from one month, December, 2015. Only the examples of known
-% attack types and known IDS alert code with a minimum of 10,000 occurrences (for
-% significance) were considered. The offline training was performed with 72,000
-% examples (i.e., 10\% of the dataset) using the holdout technique.
-
+The experimental setup is composed of 2 environments and 3 datasets.
 Kyoto December 2015.
 
-\section{Implementation}
+\begin{quote}
+  For the experiments, we used the Kyoto 2006+ dataset
+  which contains data collected from 2006 to December 2015.
+  We selected examples from one month, December, 2015. Only the examples of known
+  attack types and known IDS alert code with a minimum of 10,000 occurrences (for
+  significance) were considered. The offline training was performed with 72,000
+  examples (i.e., 10\% of the dataset) using the holdout technique.
+\end{quote} \cite{Cassales2019a}
+
 
 \input{experiments/ref-CM.tex}
 \input{experiments/ref-eval-CM.tex}
@@ -100,7 +201,7 @@ Kyoto December 2015.
 % Instead, try ``R. B. G. thanks$\ldots$''.
 % Put sponsor  acknowledgments in the unnumbered footnote on the first page.
 The authors thank CAPES (Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Código de Financiamento 001).
-Hermes Senger also thanks CNPQ (Contract 305032/2015-1) and FAPESP (Contract 2018/00452-2, and Contract 2015/24461-2) for their support.
+Hermes Senger also thanks CNPq (Contract 305032/2015-1) and FAPESP (Contract 2018/00452-2, and Contract 2015/24461-2) for their support.
 
 \bibliography{refs.bib}
 \end{document}
