@@ -1,10 +1,11 @@
 % !TeX root = ./mfog-ieee.tex
 % \documentclass{article}
 \documentclass[conference]{lib/IEEEtran}
-\usepackage[brazil]{babel}
+\usepackage{babel}
 \usepackage[utf8]{inputenc}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{xspace}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -15,9 +16,8 @@
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{Edge Intrusion Detection with Distributed Novelty Detection: Design, Implementation and Evaluation
-\thanks{CNPq}
-}
+\title{[DRAFT] Edge Intrusion Detection with Distributed Novelty Detection:
+Design, Implementation and Evaluation \thanks{CNPq}}
 
 \author{
   \IEEEauthorblockN{Luís Puhl, Hermes Senger, Guilherme Weigert Cassales}
@@ -44,24 +44,26 @@
   on the network administrator's need for tools to detect and react to those
   threats.
 
-  One such tool are the Intrusion Detection Systems (IDS) where the network
+  One such tool are the Intrusion Detection Systems where the network
   traffic is captured and analysed raising alarms when a known attack pattern or
-  new pattern is detected. To build an IDS one option for base algorithm are
-  the Data Stream (DS) Novelty Detection (ND) being MINAS one of those.
+  new pattern is detected.
+  To build an Intrusion Detection System one option for base algorithm are
+  the Data Stream Novelty Detection being MINAS one of those.
   
   Furthermore, for a network security tool to operate in the context of edge and
   IoT it has to comply with processing time, storage space and energy
-  requirements alongside with traditional requirements for stream and network
+  requirements alongside traditional requirements for stream and network
   analysis like accuracy and scalability.
 
   This paper addresses the construction details and evaluation of an prototype
-  distributed IDS using MINAS ND algorithm following up the previously defined IDSA-IoT architecture.
+  distributed Intrusion Detection System using MINAS Novelty Detection algorithm
+  following up the previously defined IDSA-IoT architecture.
   We discuss the algorithm steps, how it can be deployed in a distributed environment,
   the impacts on the accuracy of MINAS and evaluate the performance and scalability
-  using a cluster of constrained devices commonly found in IoT scenarios.
+  using a cluster of constrained devices commonly found in Internet of Things scenarios.
 
-  We found an increase of \textit{0.0 y} processed network flow descriptors per core
-  added to the cluster. Also \textit{0.0 x1\%} and \textit{0.0 x2\%} change in
+  We found an increase of \textit{A 0.0} processed network flow descriptors per core
+  added to the cluster. Also \textit{B 0.0\%} and \textit{C 0.0\%} change in
   \textit{F1Score} in the tested datasets when stream was unlimited in speed and
   limited to \textit{0.0 z MB/s} respectively.
 \end{abstract}
@@ -71,7 +73,20 @@
 novelty detection, intrusion detection, data streams, distributed system, edge computing, internet of things
 \end{IEEEkeywords}
 
+\newcommand{\refminas}{\textit{Ref}\xspace}
+\newcommand{\mfog}{\textit{MFOG}\xspace}
+
 \section{Introduction}
+
+The advent of Internet of Things is growing the count and diversity of devices
+on edge networks increasing network traffic patterns and extending opportunities
+for cyber attacks.
+This scenario presents new challenges for network administrators and, to address
+those challenges, new Intrusion Detection Systems (IDS) and techniques can be
+explored.
+Such systems are often build using Data Stream (DS) al
+
+% Data Stream (DS)
 
 % - Desafio, resposta, justificativa.
 % - Artigo para setembro ou outubro.
@@ -91,13 +106,40 @@ novelty detection, intrusion detection, data streams, distributed system, edge c
 %     - Definição de raio `r = f * σ` (fator vezes desvio padrão) para `r = max(distance)` (distância máxima);
 %     - Tamanho do buffer de desconhecidos e frequência de execução do passo de detecção de novidade;
 
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/mfog-arch-v2_en.png}}
+\caption{\mfog architecture overview.}
+\label{fig:mfog-architecture}
+\end{figure}
+
+Expected results:
+A system that embraces and explores the inherent distribution of fog computing
+in a IoT scenario opposing regular systems where data streams are collected and
+centralized before processing;
+Impact assessment of the impact of distributed, regional flow characteristics,
+local vs global vs distributed forgetting mechanism and other polices.
+
+
+\section{Background}
+
+IDS characteristics and description of physical scenario.
+
+MINAS characteristics.
+
+Distribution and IDSA-IoT architecture.
+
 \section{Implementation}
 
-The original MINAS algorithm has a companion implementation (\textit{ref})
+The original MINAS algorithm has a companion implementation (\refminas)
 written in Java using MOA library base algorithms such as K-means and CluStream.
-\textit{Ref} employs Java's double, a $64 bits$ number whose precision is not
+\refminas employs Java's double, a $64 bits$ number whose precision is not
 absolutely necessary and, as it is often necessary to shuffle between nodes via
 network and a small economy could be made with only a float number with $32 bits$.
+Another difference between \refminas and \mfog is cluster radius calculation
+from the distances of elements forming the cluster and the cluster's center,
+where the former uses the maximum distance, the latter uses the standard deviation
+of all distances as described in
+\cite{Faria2016minas}.
 
 % Desafios de implementação:
 % <!--
@@ -154,21 +196,25 @@ However this changes the stream operator behavior from a \textit{Map} to a
 mentioned.
 Regardless of choice the classification of the unknown buffer after a model
 update, using the full model or just the added set of clusters, is done to
-remove the examples "consumed" in the creation of a new cluster in the internals
+remove the examples ``consumed'' in the creation of a new cluster in the internals
 of the clustering algorithm.
 % This removal can be made less complex if using only new clusters 
 
 % Próximos desafios:
-
 % - Distribuição e paralelização para minimização de latência entre novo item no fluxo e sua classificação:
 %   - Tempo de passagem da instância pelo classificador;
 %   - Volume máximo do sistema;
 %   - Diferenças de precisão de acordo com a carga;
+
+% adfa
+
 % - Detecção de novidades e manutenção de modelo em ambiente distribuído:
 %   - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo
 %     (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
 %   - Mecanismo de esquecimento local vs global (modelo único ou por nó);
 %   - Atraso na reclassificação dos desconhecidos;
+
+Polices
 
 
 The Evaluation Module was also build following reference techniques like
@@ -188,8 +234,8 @@ Kyoto December 2015.
   attack types and known IDS alert code with a minimum of 10,000 occurrences (for
   significance) were considered. The offline training was performed with 72,000
   examples (i.e., 10\% of the dataset) using the holdout technique.
-\end{quote} \cite{Cassales2019a}
-
+  \cite{Cassales2019a}
+\end{quote}
 
 \input{experiments/ref-CM.tex}
 \input{experiments/ref-eval-CM.tex}
