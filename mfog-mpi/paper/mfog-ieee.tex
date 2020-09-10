@@ -16,13 +16,13 @@
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{[DRAFT] Edge Intrusion Detection with Distributed Novelty Detection:
+\title{[DRAFT] IoT Intrusion Detection with Distributed Novelty Detection:
 Design, Implementation and Evaluation \thanks{CNPq}}
 
 \author{
-  \IEEEauthorblockN{Luís Puhl, Hermes Senger, Guilherme Weigert Cassales}
+  \IEEEauthorblockN{Luís Puhl, Guilherme Weigert Cassales, Hermes Senger, Helio Crestana Guardia}
   \IEEEauthorblockA{Universidade Federal de São Carlos, Brasil \\
-    Email: \{luispuhl, gwcassales\}@gmail.com, hermes@ufscar.br
+    Email: \{luispuhl, gwcassales\}@gmail.com, \{hermes@, helio@dc.\}ufscar.br
   }
   % \IEEEauthorblockN{Luís Puhl}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\luispuhl@gmail.com}\and
   % \IEEEauthorblockN{Hermes Senger}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\hermes@ufscar.br}\and
@@ -40,28 +40,25 @@ Design, Implementation and Evaluation \thanks{CNPq}}
 \begin{abstract}
   The implementation of the Internet of Things (IoT) is sharply increasing the small
   devices count and variety on edge networks and, following this increase the
-  attack opportunities for hostile agents also increases, putting more pressure
-  on the network administrator's need for tools to detect and react to those
+  attack opportunities for hostile agents also increases, requiring more from
+  the network administrator role and the need for tools to detect and react to those
   threats.
-
-  One such tool are the Intrusion Detection Systems where the network
+  % 
+  One such tool are the Intrusion Detection Systems (IDS) where the network
   traffic is captured and analysed raising alarms when a known attack pattern or
   new pattern is detected.
-  To build an Intrusion Detection System one option for base algorithm are
-  the Data Stream Novelty Detection being MINAS one of those.
-  
-  Furthermore, for a network security tool to operate in the context of edge and
+  For a network security tool to operate in the context of edge and
   IoT it has to comply with processing time, storage space and energy
   requirements alongside traditional requirements for stream and network
   analysis like accuracy and scalability.
-
-  This paper addresses the construction details and evaluation of an prototype
-  distributed Intrusion Detection System using MINAS Novelty Detection algorithm
+  % 
+  This work addresses the construction details and evaluation of an prototype
+  distributed IDS using MINAS Novelty Detection algorithm
   following up the previously defined IDSA-IoT architecture.
   We discuss the algorithm steps, how it can be deployed in a distributed environment,
   the impacts on the accuracy of MINAS and evaluate the performance and scalability
-  using a cluster of constrained devices commonly found in Internet of Things scenarios.
-
+  using a cluster of constrained devices commonly found in IoT scenarios.
+  % 
   We found an increase of \textit{A 0.0} processed network flow descriptors per core
   added to the cluster. Also \textit{B 0.0\%} and \textit{C 0.0\%} change in
   \textit{F1Score} in the tested datasets when stream was unlimited in speed and
@@ -73,18 +70,55 @@ Design, Implementation and Evaluation \thanks{CNPq}}
 novelty detection, intrusion detection, data streams, distributed system, edge computing, internet of things
 \end{IEEEkeywords}
 
-\newcommand{\refminas}{\textit{Ref}\xspace}
-\newcommand{\mfog}{\textit{MFOG}\xspace}
-
 \section{Introduction}
 
-The advent of Internet of Things is growing the count and diversity of devices
-on edge networks increasing network traffic patterns and extending opportunities
-for cyber attacks.
-This scenario presents new challenges for network administrators and, to address
-those challenges, new Intrusion Detection Systems (IDS) and techniques can be
-explored.
-Such systems are often build using Data Stream (DS) al
+% skel
+  % The implementation of the Internet of Things (IoT) is sharply increasing the small
+  % devices count and variety on edge networks and, following this increase the
+  % attack opportunities for hostile agents also increases, requiring more from
+  % the network administrator role and the need for tools to detect and react to those
+  % threats.
+  % % 
+  % One such tool are the Intrusion Detection Systems (IDS) where the network
+  % traffic is captured and analysed raising alarms when a known attack pattern or
+  % new pattern is detected.
+  % To build an IDS one option for base algorithm are
+  % the Data Stream Novelty Detection being MINAS one of those.
+  % % 
+  % Furthermore, for a network security tool to operate in the context of edge and
+  % IoT it has to comply with processing time, storage space and energy
+  % requirements alongside traditional requirements for stream and network
+  % analysis like accuracy and scalability.
+  % % 
+  % This work addresses the construction details and evaluation of an prototype
+  % distributed IDS using MINAS Novelty Detection algorithm
+  % following up the previously defined IDSA-IoT architecture.
+  % We discuss the algorithm steps, how it can be deployed in a distributed environment,
+  % the impacts on the accuracy of MINAS and evaluate the performance and scalability
+  % using a cluster of constrained devices commonly found in IoT scenarios.
+  % % 
+  % We found an increase of \textit{A 0.0} processed network flow descriptors per core
+  % added to the cluster. Also \textit{B 0.0\%} and \textit{C 0.0\%} change in
+  % \textit{F1Score} in the tested datasets when stream was unlimited in speed and
+  % limited to \textit{0.0 z MB/s} respectively.
+
+\newcommand{\refminas}{\textit{Ref}\xspace}
+\newcommand{\mfog}{\textit{MFOG}\xspace}
+\newcommand{\iot}{IoT\xspace}
+
+The advent of Internet of Things (\iot) is growing the count and diversity of
+devices on edge networks, this growth increases network traffic patterns and
+extends opportunities for cyber attacks presenting new challenges for network
+administrators.
+To address those challenges new Intrusion Detection Systems (IDS) and
+architectures can be explored, especially in Fog Computing and Data Stream (DS)
+areas.
+
+Recent works explored those areas, to name a few: BigFlow 
+\cite{Viegas2019}
+employing Apache Flink, Apache Kafka for distributed stream processing
+, CATRACA 
+\cite{Lopez2018}.
 
 % Data Stream (DS)
 
@@ -123,6 +157,8 @@ local vs global vs distributed forgetting mechanism and other polices.
 \section{Background}
 
 IDS characteristics and description of physical scenario.
+
+
 
 MINAS characteristics.
 
