@@ -1,12 +1,13 @@
 % !TeX root = ./mfog-ieee.tex
 % \documentclass{article}
-\documentclass[conference]{lib/IEEEtran}
+% \documentclass[conference]{lib/IEEEtran}
+\documentclass[conference]{IEEEtran}
 \usepackage{babel}
 \usepackage[utf8]{inputenc}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{xspace}
-\usepackage{cite}
+% \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
@@ -16,8 +17,8 @@
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{[DRAFT] IoT Intrusion Detection with Distributed Novelty Detection:
-Design, Implementation and Evaluation \thanks{CNPq}}
+\title{IoT Intrusion Detection with Distributed Novelty Detection:
+Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
 
 \author{
   \IEEEauthorblockN{Luís Puhl, Guilherme Weigert Cassales, Hermes Senger, Helio Crestana Guardia}
@@ -44,7 +45,7 @@ Design, Implementation and Evaluation \thanks{CNPq}}
   the network administrator role and the need for tools to detect and react to those
   threats.
   % 
-  One such tool are the Intrusion Detection Systems (IDS) where the network
+  One such tool are the Network Intrusion Detection Systems (NIDS) where the network
   traffic is captured and analysed raising alarms when a known attack pattern or
   new pattern is detected.
   For a network security tool to operate in the context of edge and
@@ -110,7 +111,7 @@ The advent of Internet of Things (\iot) is growing the count and diversity of
 devices on edge networks, this growth increases network traffic patterns and
 extends opportunities for cyber attacks presenting new challenges for network
 administrators.
-To address those challenges new Intrusion Detection Systems (IDS) and
+To address those challenges new Network Intrusion Detection Systems (NIDS) and
 architectures can be explored, especially in Fog Computing and Data Stream (DS)
 areas.
 
@@ -285,5 +286,7 @@ Kyoto December 2015.
 The authors thank CAPES (Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Código de Financiamento 001).
 Hermes Senger also thanks CNPq (Contract 305032/2015-1) and FAPESP (Contract 2018/00452-2, and Contract 2015/24461-2) for their support.
 
+% \bibliography{IEEEabrv,refs.bib}
+\bibliographystyle{lib/IEEEtran.bst}
 \bibliography{refs.bib}
 \end{document}
