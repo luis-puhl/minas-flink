@@ -115,11 +115,11 @@ To address those challenges new Network Intrusion Detection Systems (NIDS) and
 architectures can be explored, especially in Fog Computing and Data Stream (DS)
 areas.
 
-Recent works explored those areas, to name a few: BigFlow 
-\cite{Viegas2019}
-employing Apache Flink, Apache Kafka for distributed stream processing
-, CATRACA 
-\cite{Lopez2018}.
+Recent works explored those areas, to name a few: BigFlow \cite{Viegas2019}
+employing Apache Kafka and Apache Flink for distributed stream processing
+evaluating with package stream dataset,
+CATRACA \cite{Lopez2018,AndreoniLopez2019a} uses 
+Apache Kafka and Apache Spark for stream processing and 
 
 % Data Stream (DS)
 
@@ -245,13 +245,16 @@ of the clustering algorithm.
 
 % adfa
 
-% - Detecção de novidades e manutenção de modelo em ambiente distribuído:
-%   - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo
-%     (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
-%   - Mecanismo de esquecimento local vs global (modelo único ou por nó);
-%   - Atraso na reclassificação dos desconhecidos;
-
 Polices
+
+- Detecção de novidades e manutenção de modelo em ambiente distribuído:
+
+  - Mecanismo de ND local (síncrono) vs nuvem quanto à atraso de definição de modelo
+    (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
+
+  - Mecanismo de esquecimento local vs global (modelo único ou por nó);
+
+  - Atraso na reclassificação dos desconhecidos;
 
 
 The Evaluation Module was also build following reference techniques like
