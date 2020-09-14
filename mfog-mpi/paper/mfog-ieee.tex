@@ -25,15 +25,14 @@ Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
   \IEEEauthorblockA{Universidade Federal de São Carlos, Brasil \\
     Email: \{luispuhl, gwcassales\}@gmail.com, \{hermes@, helio@dc.\}ufscar.br
   }
-  % \IEEEauthorblockN{Luís Puhl}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\luispuhl@gmail.com}\and
   % \IEEEauthorblockN{Hermes Senger}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\hermes@ufscar.br}\and
-  % \IEEEauthorblockN{Guilherme Weigert Cassales}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\gwcassales@gmail.com}
-  % \and
-  % \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-  % \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-  % \textit{name of organization (of Aff.)}\\
-  % City, Country \\
-  % email address or ORCID}
+    % \IEEEauthorblockN{Guilherme Weigert Cassales}\IEEEauthorblockA{\textit{Universidade Federal de São Carlos}, Brasil \\gwcassales@gmail.com}
+    % \and
+    % \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
+    % \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+    % \textit{name of organization (of Aff.)}\\
+    % City, Country \\
+    % email address or ORCID}
 }
 
 \maketitle
@@ -115,12 +114,6 @@ To address those challenges new Network Intrusion Detection Systems (NIDS) and
 architectures can be explored, especially in Fog Computing and Data Stream (DS)
 areas.
 
-Recent works explored those areas, to name a few: BigFlow \cite{Viegas2019}
-employing Apache Kafka and Apache Flink for distributed stream processing
-evaluating with package stream dataset,
-CATRACA \cite{Lopez2018,AndreoniLopez2019a} uses 
-Apache Kafka and Apache Spark for stream processing and 
-
 % Data Stream (DS)
 
 % - Desafio, resposta, justificativa.
@@ -141,12 +134,6 @@ Apache Kafka and Apache Spark for stream processing and
 %     - Definição de raio `r = f * σ` (fator vezes desvio padrão) para `r = max(distance)` (distância máxima);
 %     - Tamanho do buffer de desconhecidos e frequência de execução do passo de detecção de novidade;
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.45\textwidth]{figures/mfog-arch-v2_en.png}}
-\caption{\mfog architecture overview.}
-\label{fig:mfog-architecture}
-\end{figure}
-
 Expected results:
 A system that embraces and explores the inherent distribution of fog computing
 in a IoT scenario opposing regular systems where data streams are collected and
@@ -154,18 +141,37 @@ centralized before processing;
 Impact assessment of the impact of distributed, regional flow characteristics,
 local vs global vs distributed forgetting mechanism and other polices.
 
-
-\section{Background}
-
 IDS characteristics and description of physical scenario.
-
-
 
 MINAS characteristics.
 
 Distribution and IDSA-IoT architecture.
 
-\section{Implementation}
+This paper is structured as follows:
+Section \ref{sec:related} presents previous works that addresses related
+problems and how they influenced our solution.
+Section \ref{sec:implementation} address our proposal, the work done, issues
+found during implementation and discusses parameters and configurations options
+and how we arrived at our choices.
+Section \ref{sec:experiments} shows experiments layouts and results, we
+compare serial and distributed implementation's metrics for validation,
+we also evaluate communication delay effects on classification metrics and
+conclude with the speedup per core and overall maximum stream speed.
+Section \ref{sec:conclusion} summarizes the research results and presents our
+final conclusions and future works.
+
+
+% ----------------------------------------------------------------------------------------------------------------------
+\section{Related Work}\label{sec:related}
+
+Recent works explored those areas, to name a few: BigFlow \cite{Viegas2019}
+employing Apache Kafka and Apache Flink for distributed stream processing
+evaluating with package stream dataset,
+CATRACA \cite{Lopez2018,AndreoniLopez2019a} uses 
+Apache Kafka and Apache Spark for stream processing and 
+
+% ----------------------------------------------------------------------------------------------------------------------
+\section{Implementation}\label{sec:implementation}
 
 The original MINAS algorithm has a companion implementation (\refminas)
 written in Java using MOA library base algorithms such as K-means and CluStream.
@@ -175,8 +181,13 @@ network and a small economy could be made with only a float number with $32 bits
 Another difference between \refminas and \mfog is cluster radius calculation
 from the distances of elements forming the cluster and the cluster's center,
 where the former uses the maximum distance, the latter uses the standard deviation
-of all distances as described in
-\cite{Faria2016minas}.
+of all distances as described in \cite{Faria2016minas}.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/mfog-arch-v2_en.png}}
+\caption{\mfog architecture overview.}
+\label{fig:mfog-architecture}
+\end{figure}
 
 % Desafios de implementação:
 % <!--
@@ -243,8 +254,6 @@ of the clustering algorithm.
 %   - Volume máximo do sistema;
 %   - Diferenças de precisão de acordo com a carga;
 
-% adfa
-
 Polices
 
 - Detecção de novidades e manutenção de modelo em ambiente distribuído:
@@ -262,7 +271,8 @@ multi-class confusion matrix with label-class association
 \cite{Faria2016minas}
 to extract classification quality metrics.
 
-\section{Experimental Setup}
+% ----------------------------------------------------------------------------------------------------------------------
+\section{Experimental Setup and Results}\label{sec:experiments}
 
 The experimental setup is composed of 2 environments and 3 datasets.
 Kyoto December 2015.
@@ -280,6 +290,10 @@ Kyoto December 2015.
 \input{experiments/ref-CM.tex}
 \input{experiments/ref-eval-CM.tex}
 
+% ----------------------------------------------------------------------------------------------------------------------
+\section{Conclusion}\label{sec:conclusion}
+
+% ----------------------------------------------------------------------------------------------------------------------
 \section*{Acknowledgment}
 
 % The preferred spelling of the word ``acknowledgment'' in America is without an ``e'' after the ``g''.
