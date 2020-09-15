@@ -33,7 +33,7 @@ ufscar-cloud
 cloud/openmpi-*
 usr/
 **/.ipynb_checkpoints
-logs
+# logs
 bin
 __pycache__
 
@@ -42,13 +42,13 @@ __pycache__
 *.aux
 *.bbl
 *.blg
-*.log
+# *.log
 *.synctex*
 *.toc
 *.fdb_latexmk
 *.fls
 *.lof
-*.out
+# *.out
 *temp.tex
 *.brf
 *.idx
@@ -61,7 +61,7 @@ __pycache__
 *.tdo
 
 # resultantes, adicionar com -f
-*.pdf
+# *.pdf
 *.dvi
 !00.beamer.pdf
 !00.main.pdf
