@@ -126,11 +126,12 @@ int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore,
         }
         // fprintf(stderr, "buffRead %d\n", buffRead);
     }
-    if (readCalls > 0)
+    if (readCalls > 0) {
         fprintf(stderr, "readCalls %lu\n", readCalls);
+        fprintf(stderr, "Model(size=%d, maxId=%d)\n", model->size, model->clusters[model->size - 1].id);
+    }
     if (prevSize < model->size) {
         unsigned int newClusters = model->size - prevSize;
-        fprintf(stderr, "Model(size=%d, maxId=%d)\n", model->size, model->clusters[model->size - 1].id);
         printTiming(newClusters);
     }
     return model->size;

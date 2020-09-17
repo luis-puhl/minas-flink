@@ -11,7 +11,7 @@
 	cluStream_time_threshold_delta_δ = 0.000000
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/baseline] 2.470590e+01 seconds for training(72000). At src/baseline/minas.c:151
+[./bin/baseline] 2.463363e+01 seconds for training(72000). At src/baseline/minas.c:151
 ND clusters: 22 extensions, 1 novelties
 Reclassified 1844
 ND clusters: 13 extensions, 3 novelties
@@ -29,7 +29,7 @@ Reclassified 1663
 Final flush 1184
 ND clusters: 11 extensions, 2 novelties
 Reclassified 921
-[./bin/baseline] 8.180662e+00 seconds for minasOnline(653457). At src/baseline/minas.c:323
+[./bin/baseline] 7.991242e+00 seconds for minasOnline(653457). At src/baseline/minas.c:323
 
   13385 -
    1846 0

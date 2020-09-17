@@ -23,8 +23,12 @@ if __name__ == "__main__":
                 continue
             if connections[sndSock]['index'] < len(model):
                 try:
-                    sndSock.send(model[connections[sndSock]['index']].encode('utf-8'))
-                    connections[sndSock]['index'] += 1
+                    # sndSock.send(model[connections[sndSock]['index']].encode('utf-8'))
+                    msg = b""
+                    for i in range(connections[sndSock]['index'], len(model)):
+                        msg += model[i].encode('utf-8')
+                        connections[sndSock]['index'] += 1
+                    sndSock.send(msg)
                     # print('.', end='', flush=True, file=sys.stderr)
                     # if connections[sndSock]['index'] == len(model):
                     #     print('done', flush=True, file=sys.stderr)
@@ -50,7 +54,7 @@ if __name__ == "__main__":
                 sockets_list.append(client_socket)
                 connections[client_socket] = {'addr': client_address, 'sock': client_socket, 'index': 0}
                 sock = client_socket
-                # print('connections', connections)
+                # sock.send((len(model) - connections[sock]['index']).encode('utf-8'))
                 print('Accepted new connection from {}:{}'.format(*connections[sock]['addr']), flush=True)
                 continue
             #

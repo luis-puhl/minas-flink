@@ -1,5 +1,20 @@
+./bin/training
+	fast = 1
+	k = 100
+	dim = 22
+	precision = 1.000000e-08
+	radiusF = 1.000000e-01
+	minExamplesPerCluster = 20
+	noveltyF = 2.000000e+00
+	useCluStream = 0
+	cluStream_q_maxMicroClusters = 0
+	cluStream_time_threshold_delta_δ = 0.000000
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+[./bin/training] 2.627930e+01 seconds for training(72000). At src/baseline/minas.c:151
+Model size =      37804
 Listening for connections on 0.0.0.0:7000
-Accepted new connection from 127.0.0.1:56664
+Accepted new connection from 127.0.0.1:35200
 ./bin/classifier
 	fast = 1
 	k = 100
@@ -12,21 +27,18 @@ Accepted new connection from 127.0.0.1:56664
 	cluStream_q_maxMicroClusters = 0
 	cluStream_time_threshold_delta_δ = 0.000000
 clientConnect
-Closed connection from 127.0.0.1:56664
-Accepted new connection from 127.0.0.1:56666
-readCalls 18
-Model(size=14, maxId=16)
-[./bin/classifier] 4.160000e-04 seconds for modelStoreComm(14). At src/modules/modules.c:134
+Closed connection from 127.0.0.1:35200
+Accepted new connection from 127.0.0.1:35202
+readCalls 37
+Model(size=1, maxId=0)
+[./bin/classifier] 3.140000e-04 seconds for modelStoreComm(1). At src/modules/modules.c:134
 clientConnect
-Connection from 127.0.0.1:58232
-readCalls 29
-Model(size=16, maxId=90)
-[./bin/classifier] 1.470000e-04 seconds for modelStoreComm(2). At src/modules/modules.c:134
-unknowns = 397814
-[./bin/classifier] 9.890210e+00 seconds for classifier(653457). At src/modules/classifier.c:66
-397814
-Accepted new connection from 127.0.0.1:56674
-Closed connection 127.0.0.1:56666
+Connection from 127.0.0.1:32950
+unknowns = 652398
+[./bin/classifier] 1.349541e+01 seconds for classifier(653457). At src/modules/classifier.c:66
+652398
+Accepted new connection from 127.0.0.1:35208
+Closed connection 127.0.0.1:35202
 Closed server
 
 Evaluate
@@ -44,18 +56,77 @@ N      206278
 
 saving experiments/mfog-hits.png
 Confusion Matrix
-Classes (act)       A       N assigned   hits
-Labels (pred)                                
--              224454  173360        -      0
-N              222725   32918        N  32918
+Classes (act)       A       N assigned  hits
+Labels (pred)                               
+-              447179  205219        -     0
+N                   0    1059        N  1059
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels            ['-', 'N'] 2
 Total examples    (653457, 25)
 Total matches     (653457, 4)
-Hits                32918 (  5.037516%)
-Misses             222725 ( 34.084110%)
-Unknowns           397814 ( 60.878375%)
+Hits                 1059 (  0.162061%)
+Misses                  0 (  0.000000%)
+Unknowns           652398 ( 99.837939%)
+Unk. reprocessed        0 (  0.000000%)
+Total              653457 (100.000000%)
+
+
+Listening for connections on 0.0.0.0:7000
+Accepted new connection from 127.0.0.1:35274
+./bin/classifier
+	fast = 1
+	k = 100
+	dim = 22
+	precision = 1.000000e-08
+	radiusF = 1.000000e-01
+	minExamplesPerCluster = 20
+	noveltyF = 2.000000e+00
+	useCluStream = 0
+	cluStream_q_maxMicroClusters = 0
+	cluStream_time_threshold_delta_δ = 0.000000
+clientConnect
+Closed connection from 127.0.0.1:35274
+Accepted new connection from 127.0.0.1:35276
+readCalls 37
+Model(size=1, maxId=0)
+[./bin/classifier] 4.050000e-04 seconds for modelStoreComm(1). At src/modules/modules.c:135
+clientConnect
+Connection from 127.0.0.1:33024
+unknowns = 652398
+[./bin/classifier] 1.339319e+01 seconds for classifier(653457). At src/modules/classifier.c:66
+652398
+Accepted new connection from 127.0.0.1:35284
+Closed connection 127.0.0.1:35276
+Closed server
+
+Evaluate
+	title = Mfog
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/mfog-matches.csv
+	plotSavePath = experiments/mfog-hits.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog
+
+saving experiments/mfog-hits.png
+Confusion Matrix
+Classes (act)       A       N assigned  hits
+Labels (pred)                               
+-              447179  205219        -     0
+N                   0    1059        N  1059
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels            ['-', 'N'] 2
+Total examples    (653457, 25)
+Total matches     (653457, 4)
+Hits                 1059 (  0.162061%)
+Misses                  0 (  0.000000%)
+Unknowns           652398 ( 99.837939%)
 Unk. reprocessed        0 (  0.000000%)
 Total              653457 (100.000000%)
 
