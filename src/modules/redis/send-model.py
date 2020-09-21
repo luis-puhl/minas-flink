@@ -15,7 +15,8 @@ if __name__ == "__main__":
             continue
         id = int(line[0])
         fullline = ','.join(line)
-        print(fullline, line)
         cli.publish('model', fullline)
+        cli.rpush('model', fullline)
+        print(line[1])
 
     cli.close()
