@@ -37,13 +37,11 @@ out/baseline-model.csv: bin/training minas.conf datasets/emtpyline datasets/trai
 	echo "" > experiments/mfog.log
 	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
 experiments/mfog.log: bin/classifier src/modules/store.py minas.conf datasets/emtpyline out/baseline-model.csv
-	python3 src/modules/store.py >> $@ &
-	sleep 1
-	cat out/baseline-model.csv datasets/emtpyline | nc localhost 7000 > /dev/null 2>> $@
+	redis-cli FLUSHALL
+	cat out/baseline-model.csv | python3 src/modules/redis/send-model.py
 	nc -lvp 7001 2>> $@ | wc -l >> $@ &
 	sleep 1
 	cat minas.conf datasets/emtpyline datasets/test.csv | ./bin/classifier > out/mfog-matches.csv 2>> $@
-	echo "q" | nc localhost 7000
 	echo "" >> $@
 	python3 src/evaluation/evaluate.py Mfog datasets/test.csv out/mfog-matches.csv experiments/mfog-hits.png >> $@
 	cat $@
