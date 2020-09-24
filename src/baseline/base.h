@@ -22,6 +22,7 @@ typedef struct {
     double radiusF;
     double noveltyF;
     const char *executable;
+    char *remoteRedis;
     unsigned int useCluStream, cluStream_q_maxMicroClusters;
     double cluStream_time_threshold_delta_δ;
     int fast;
@@ -42,6 +43,8 @@ typedef struct {
     getParam("useCluStream", "%u", params.useCluStream) \
     getParam("cluStream_q_maxMicroClusters", "%u", params.cluStream_q_maxMicroClusters) \
     getParam("cluStream_time_threshold_delta_δ", "%lf", params.cluStream_time_threshold_delta_δ)
+    
+// getParam("remoteRedis", "%s", &(params.remoteRedis))
 
 typedef struct {
     unsigned int id;

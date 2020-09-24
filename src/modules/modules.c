@@ -14,7 +14,7 @@
 
 #include "./modules.h"
 
-int appendClusterFromStore(Params *params, SOCKET modelStore, char *buffer, size_t buffSize, Model *model) {
+int appendClusterFromStore(Params *params, char *buffer, size_t buffSize, Model *model) {
     // printf("cluster line (%ld) \t'%s'\n", buffSize, buffer);
     int assigned = 0, consumed = 0, consumedStep = 0;
     if (model->size > 0 && model->size % params->k == 0) {
@@ -122,7 +122,7 @@ int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore,
                 lineSize++;
                 continue;
             }
-            consumed += appendClusterFromStore(params, modelStore, line, lineSize, model);
+            consumed += appendClusterFromStore(params, line, lineSize, model);
         }
         // fprintf(stderr, "buffRead %d\n", buffRead);
     }

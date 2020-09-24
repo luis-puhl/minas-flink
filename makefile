@@ -9,7 +9,7 @@ clean:
 	@echo clean
 
 bin/baseline: src/baseline/baseline.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
-	gcc -g -Wall -lm $^ -o $@
+	gcc -g -Wall -lm -lhiredis $^ -o $@
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
 
@@ -29,9 +29,9 @@ experiments/baseline.log: bin/baseline src/evaluation/evaluate.py experiments/re
 	cat experiments/baseline.log
 
 bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
-	gcc -g -Wall -lm $^ -o $@
+	gcc -g -Wall -lm -lhiredis $^ -o $@
 bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
-	gcc -g -Wall -lm $^ -o $@
+	gcc -g -Wall -lm -lhiredis $^ -o $@
 
 out/baseline-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
 	echo "" > experiments/mfog.log
