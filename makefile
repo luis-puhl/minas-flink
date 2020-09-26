@@ -30,21 +30,29 @@ experiments/baseline.log: bin/baseline src/evaluation/evaluate.py experiments/re
 
 bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
 	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
+bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c src/modules/redis/redis-connect.c
+	gcc -g -Wall -lm -lhiredis $^ -o $@
+bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c src/modules/redis/redis-connect.c
 	gcc -g -Wall -lm -lhiredis $^ -o $@
 
 out/baseline-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
 	echo "" > experiments/mfog.log
 	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
-experiments/mfog.log: bin/classifier src/modules/store.py minas.conf datasets/emtpyline out/baseline-model.csv
+clean-mfog:
+	@-rm out/baseline-model.csv experiments/mfog.log experiments/mfog-hits.png
 	redis-cli FLUSHALL
+experiments/mfog.log: bin/classifier bin/noveltyDetection src/modules/store.py minas.conf datasets/emtpyline out/baseline-model.csv
+	cat minas.conf datasets/emtpyline | ./bin/noveltyDetection 2>&1 | tee $@ &
 	cat out/baseline-model.csv | python3 src/modules/redis/send-model.py
-	nc -lvp 7001 2>> $@ | wc -l >> $@ &
-	sleep 1
 	cat minas.conf datasets/emtpyline datasets/test.csv | ./bin/classifier > out/mfog-matches.csv 2>> $@
 	echo "" >> $@
 	python3 src/evaluation/evaluate.py Mfog datasets/test.csv out/mfog-matches.csv experiments/mfog-hits.png >> $@
 	cat $@
+experiments/noveltyDetection.log: bin/noveltyDetection minas.conf datasets/emtpyline
+	cat minas.conf datasets/emtpyline | ./bin/noveltyDetection
+experiments/nd.log: bin/noveltyDetection minas.conf datasets/emtpyline
+	cat minas.conf datasets/emtpyline | ./bin/noveltyDetection 2>&1 | tee $@ &
+	# cat $@
 
 target:
 	@-mkdir target out experiments 2>/dev/null
