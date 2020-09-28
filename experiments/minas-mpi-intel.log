@@ -1,0 +1,43 @@
+MPI rank / size => 0/4
+MPI rank / size => 1/4
+MPI rank / size => 2/4
+MPI rank / size => 3/4
+useModelStore          0
+isModelServer          0
+Using kParam as        100
+Using dimension as     22
+Reading training from  ((nil)) '(null)'
+Reading model from     (0x56104c693ab0) 'datasets/model-clean.csv'
+Reading examples from  (0x56104c6e4120) 'datasets/test.csv'
+Writing matchesFile to (0x56104c6e4300) 'out/mpi-intel.csv'
+Writing timingFile to  (0x56104c6e44e0) 'experiments/timing.csv'
+Evaluate
+	title = Minas-MPI-intel
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/mpi-intel.csv
+	plotSavePath = experiments/minas-mpi-intel-hits.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Minas-MPI-intel
+
+saving experiments/minas-mpi-intel-hits.png
+Confusion Matrix
+Classes (act)       A       N assigned  hits
+Labels (pred)                               
+-              447179  206278        -     0
+Classes           ['A' 'N']
+Initial labels    ['-']
+Labels            ['-'] 1
+Total examples    (653457, 25)
+Total matches     (653457, 10)
+Hits                    0 (  0.000000%)
+Misses                  0 (  0.000000%)
+Unknowns           653457 (100.000000%)
+Unk. reprocessed        0 (  0.000000%)
+Total              653457 (100.000000%)
+
+

@@ -1,0 +1,542 @@
+MPI rank / size => 0/1
+useModelStore          0
+isModelServer          0
+Using kParam as        100
+Using dimension as     22
+Reading training from  ((nil)) '(null)'
+Reading model from     (0x557c3e658450) 'datasets/model-clean.csv'
+Reading examples from  (0x557c3e62a8b0) 'datasets/test.csv'
+Writing matchesFile to (0x557c3e6a3600) 'out/serial.csv'
+Writing timingFile to  (0x557c3e6a37e0) 'experiments/timing.csv'
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 5.752891e+02 (2.876446e-01 avg) (2.514951e+01 better)
+	[  1] Global dist of 3.001153e+02 (1.500576e-01 avg) (4.783227e-01 better)
+	[  2] Global dist of 1.974278e+02 (9.871391e-02 avg) (3.421601e-01 better)
+	[  3] Global dist of 1.742769e+02 (8.713845e-02 avg) (1.172626e-01 better)
+	[  4] Global dist of 1.521407e+02 (7.607036e-02 avg) (1.270174e-01 better)
+	[  5] Global dist of 1.500506e+02 (7.502530e-02 avg) (1.373804e-02 better)
+	[  6] Global dist of 1.497549e+02 (7.487745e-02 avg) (1.970607e-03 better)
+	[  7] Global dist of 1.497118e+02 (7.485589e-02 avg) (2.880064e-04 better)
+	[  8] Global dist of 1.493726e+02 (7.468630e-02 avg) (2.265484e-03 better)
+	[  9] Global dist of 1.488782e+02 (7.443908e-02 avg) (3.310149e-03 better)
+	[ 10] Global dist of 1.485514e+02 (7.427570e-02 avg) (2.194787e-03 better)
+	[ 11] Global dist of 1.475763e+02 (7.378817e-02 avg) (6.563780e-03 better)
+	[ 12] Global dist of 1.471106e+02 (7.355529e-02 avg) (3.156162e-03 better)
+	[ 13] Global dist of 1.463687e+02 (7.318436e-02 avg) (5.042845e-03 better)
+	[ 14] Global dist of 1.460614e+02 (7.303071e-02 avg) (2.099529e-03 better)
+	[ 15] Global dist of 1.459658e+02 (7.298291e-02 avg) (6.544195e-04 better)
+	[ 16] Global dist of 1.459168e+02 (7.295842e-02 avg) (3.355292e-04 better)
+	[ 17] Global dist of 1.457291e+02 (7.286455e-02 avg) (1.286728e-03 better)
+	[ 18] Global dist of 1.453135e+02 (7.265674e-02 avg) (2.851912e-03 better)
+	[ 19] Global dist of 1.450980e+02 (7.254902e-02 avg) (1.482599e-03 better)
+	[ 20] Global dist of 1.450757e+02 (7.253786e-02 avg) (1.538304e-04 better)
+	[ 21] Global dist of 1.450513e+02 (7.252563e-02 avg) (1.686257e-04 better)
+	[ 22] Global dist of 1.450349e+02 (7.251744e-02 avg) (1.129631e-04 better)
+	[ 23] Global dist of 1.450341e+02 (7.251706e-02 avg) (5.255004e-06 better)
+	[ 24] Global dist of 1.450341e+02 (7.251706e-02 avg) (0.000000e+00 better)
+	New pattern in    86 examples. Nearest cluster in model 1.732051e+00 distant and ndThreshold=3.473520e-01. Will call this novelty 'a'.
+	New pattern in    94 examples. Nearest cluster in model 1.416003e+00 distant and ndThreshold=0.000000e+00. Will call this novelty 'b'.
+	New pattern in    27 examples. Nearest cluster in model 1.404818e+00 distant and ndThreshold=1.987136e+00. Is extension of 'b' concept.
+	New pattern in    23 examples. Nearest cluster in model 1.038231e-01 distant and ndThreshold=1.191156e-01. Is extension of 'b' concept.
+	New pattern in    76 examples. Nearest cluster in model 8.266871e-01 distant and ndThreshold=1.191156e-01. Will call this novelty 'c'.
+	New pattern in    20 examples. Nearest cluster in model 1.305446e-01 distant and ndThreshold=1.191156e-01. Will call this novelty 'd'.
+	New pattern in    38 examples. Nearest cluster in model 2.705078e-01 distant and ndThreshold=7.203656e-01. Is extension of 'c' concept.
+	New pattern in    20 examples. Nearest cluster in model 1.417817e+00 distant and ndThreshold=0.000000e+00. Will call this novelty 'e'.
+	New pattern in    45 examples. Nearest cluster in model 9.858141e-01 distant and ndThreshold=1.987136e+00. Is extension of 'b' concept.
+	New pattern in    27 examples. Nearest cluster in model 1.002923e-01 distant and ndThreshold=1.258416e-01. Is extension of 'd' concept.
+	New pattern in    44 examples. Nearest cluster in model 1.729140e-01 distant and ndThreshold=2.624670e-01. Is extension of 'c' concept.
+	New pattern in    24 examples. Nearest cluster in model 5.450046e-01 distant and ndThreshold=0.000000e+00. Will call this novelty 'f'.
+	New pattern in    20 examples. Nearest cluster in model 1.149992e+00 distant and ndThreshold=3.452907e-01. Will call this novelty 'g'.
+	New pattern in    53 examples. Nearest cluster in model 1.428283e+00 distant and ndThreshold=3.300307e-01. Will call this novelty 'h'.
+	New pattern in   108 examples. Nearest cluster in model 7.272227e-01 distant and ndThreshold=3.452907e-01. Will call this novelty 'i'.
+	New pattern in    72 examples. Nearest cluster in model 1.861853e+00 distant and ndThreshold=3.473520e-01. Will call this novelty 'j'.
+	New pattern in    20 examples. Nearest cluster in model 5.623079e-02 distant and ndThreshold=1.083173e-01. Is extension of 'b' concept.
+	New pattern in    33 examples. Nearest cluster in model 4.061325e-02 distant and ndThreshold=1.083173e-01. Is extension of 'b' concept.
+	New pattern in    21 examples. Nearest cluster in model 3.994394e-02 distant and ndThreshold=1.083173e-01. Is extension of 'b' concept.
+	New pattern in    31 examples. Nearest cluster in model 2.128010e-01 distant and ndThreshold=3.857616e-01. Is extension of 'i' concept.
+	New pattern in   118 examples. Nearest cluster in model 1.008378e-01 distant and ndThreshold=3.809115e-01. Is extension of 'i' concept.
+	New pattern in    94 examples. Nearest cluster in model 1.079468e+00 distant and ndThreshold=8.959569e-01. Will call this novelty 'k'.
+	New pattern in    28 examples. Nearest cluster in model 1.945170e-01 distant and ndThreshold=3.452907e-01. Is extension of 'e' concept.
+	New pattern in    73 examples. Nearest cluster in model 1.584725e-01 distant and ndThreshold=1.528180e-01. Will call this novelty 'l'.
+	New pattern in    28 examples. Nearest cluster in model 9.636258e-02 distant and ndThreshold=7.996120e-02. Will call this novelty 'm'.
+	New pattern in   134 examples. Nearest cluster in model 1.010271e-01 distant and ndThreshold=3.452907e-01. Is extension of 'e' concept.
+	New pattern in   124 examples. Nearest cluster in model 1.368537e-01 distant and ndThreshold=5.294682e-01. Is extension of 'b' concept.
+	New pattern in    48 examples. Nearest cluster in model 8.489762e-02 distant and ndThreshold=7.996120e-02. Will call this novelty 'n'.
+	New pattern in    68 examples. Nearest cluster in model 2.780381e-01 distant and ndThreshold=3.857616e-01. Is extension of 'i' concept.
+	New pattern in    22 examples. Nearest cluster in model 2.013504e-01 distant and ndThreshold=5.294682e-01. Is extension of 'b' concept.
+	New pattern in    44 examples. Nearest cluster in model 2.852213e-01 distant and ndThreshold=2.076157e-01. Will call this novelty 'o'.
+	New pattern in    46 examples. Nearest cluster in model 6.192264e-02 distant and ndThreshold=1.528180e-01. Is extension of 'e' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1777
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 1.842668e+03 (9.213338e-01 avg) (8.275762e+01 better)
+	[  1] Global dist of 4.923852e+02 (2.461926e-01 avg) (7.327868e-01 better)
+	[  2] Global dist of 4.785187e+02 (2.392594e-01 avg) (2.816186e-02 better)
+	[  3] Global dist of 4.686252e+02 (2.343126e-01 avg) (2.067526e-02 better)
+	[  4] Global dist of 4.651542e+02 (2.325771e-01 avg) (7.406897e-03 better)
+	[  5] Global dist of 4.606401e+02 (2.303201e-01 avg) (9.704369e-03 better)
+	[  6] Global dist of 4.585155e+02 (2.292578e-01 avg) (4.612276e-03 better)
+	[  7] Global dist of 4.571973e+02 (2.285986e-01 avg) (2.874985e-03 better)
+	[  8] Global dist of 4.566573e+02 (2.283287e-01 avg) (1.181000e-03 better)
+	[  9] Global dist of 4.564782e+02 (2.282391e-01 avg) (3.922290e-04 better)
+	[ 10] Global dist of 4.561818e+02 (2.280909e-01 avg) (6.493954e-04 better)
+	[ 11] Global dist of 4.561198e+02 (2.280599e-01 avg) (1.358434e-04 better)
+	[ 12] Global dist of 4.560979e+02 (2.280490e-01 avg) (4.804085e-05 better)
+	[ 13] Global dist of 4.561058e+02 (2.280529e-01 avg) (1.726016e-05 better)
+	[ 14] Global dist of 4.561180e+02 (2.280590e-01 avg) (2.667589e-05 better)
+	[ 15] Global dist of 4.561180e+02 (2.280590e-01 avg) (0.000000e+00 better)
+	New pattern in   766 examples. Nearest cluster in model 1.177967e+00 distant and ndThreshold=8.959569e-01. Will call this novelty 'p'.
+	New pattern in   156 examples. Nearest cluster in model 4.250883e-01 distant and ndThreshold=2.076157e-01. Will call this novelty 'q'.
+	New pattern in   249 examples. Nearest cluster in model 1.399752e-01 distant and ndThreshold=4.497120e-01. Is extension of 'q' concept.
+	New pattern in   197 examples. Nearest cluster in model 4.198867e-01 distant and ndThreshold=1.729222e-01. Will call this novelty 'r'.
+	New pattern in   356 examples. Nearest cluster in model 1.318428e-01 distant and ndThreshold=2.013838e-01. Is extension of 'r' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1697
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 5.598984e+02 (2.799492e-01 avg) (2.444993e+01 better)
+	[  1] Global dist of 2.393179e+02 (1.196589e-01 avg) (5.725692e-01 better)
+	[  2] Global dist of 2.078244e+02 (1.039122e-01 avg) (1.315969e-01 better)
+	[  3] Global dist of 2.028412e+02 (1.014206e-01 avg) (2.397775e-02 better)
+	[  4] Global dist of 2.006525e+02 (1.003262e-01 avg) (1.079039e-02 better)
+	[  5] Global dist of 1.991393e+02 (9.956966e-02 avg) (7.541185e-03 better)
+	[  6] Global dist of 1.985829e+02 (9.929145e-02 avg) (2.794121e-03 better)
+	[  7] Global dist of 1.984882e+02 (9.924412e-02 avg) (4.766427e-04 better)
+	[  8] Global dist of 1.983577e+02 (9.917883e-02 avg) (6.579061e-04 better)
+	[  9] Global dist of 1.983040e+02 (9.915198e-02 avg) (2.707449e-04 better)
+	[ 10] Global dist of 1.983040e+02 (9.915198e-02 avg) (0.000000e+00 better)
+	New pattern in    50 examples. Nearest cluster in model 3.990360e-02 distant and ndThreshold=7.215301e-02. Is extension of 'b' concept.
+	New pattern in    29 examples. Nearest cluster in model 8.194603e-02 distant and ndThreshold=2.642701e-01. Is extension of 'b' concept.
+	New pattern in   107 examples. Nearest cluster in model 4.448417e-01 distant and ndThreshold=3.300307e-01. Will call this novelty 's'.
+	New pattern in    25 examples. Nearest cluster in model 6.450629e-02 distant and ndThreshold=1.258416e-01. Is extension of 'd' concept.
+	New pattern in    26 examples. Nearest cluster in model 8.243032e-02 distant and ndThreshold=1.258416e-01. Is extension of 'd' concept.
+	New pattern in    24 examples. Nearest cluster in model 1.080019e-01 distant and ndThreshold=5.142795e-02. Will call this novelty 't'.
+	New pattern in   287 examples. Nearest cluster in model 4.987007e-01 distant and ndThreshold=3.562148e-01. Will call this novelty 'u'.
+	New pattern in    29 examples. Nearest cluster in model 2.275911e-02 distant and ndThreshold=3.970149e-02. Is extension of 'e' concept.
+	New pattern in    26 examples. Nearest cluster in model 5.591508e-01 distant and ndThreshold=1.117076e+00. Is extension of 'g' concept.
+	New pattern in    20 examples. Nearest cluster in model 2.052644e+00 distant and ndThreshold=3.329497e+00. Is extension of 'h' concept.
+	New pattern in    96 examples. Nearest cluster in model 1.004825e+00 distant and ndThreshold=0.000000e+00. Will call this novelty 'v'.
+	New pattern in    23 examples. Nearest cluster in model 1.936333e-01 distant and ndThreshold=3.452907e-01. Is extension of 'e' concept.
+	New pattern in    26 examples. Nearest cluster in model 4.517518e-02 distant and ndThreshold=1.856523e-01. Is extension of 'd' concept.
+	New pattern in   200 examples. Nearest cluster in model 3.662917e-02 distant and ndThreshold=5.142795e-02. Is extension of 'i' concept.
+	New pattern in    62 examples. Nearest cluster in model 8.669706e-01 distant and ndThreshold=1.085821e+00. Is extension of 'k' concept.
+	New pattern in    28 examples. Nearest cluster in model 8.806254e-02 distant and ndThreshold=1.528180e-01. Is extension of 'e' concept.
+	New pattern in    53 examples. Nearest cluster in model 4.581332e-01 distant and ndThreshold=8.959569e-01. Is extension of 'j' concept.
+	New pattern in    24 examples. Nearest cluster in model 1.444243e+00 distant and ndThreshold=0.000000e+00. Will call this novelty 'w'.
+	New pattern in    20 examples. Nearest cluster in model 1.324165e-01 distant and ndThreshold=2.076157e-01. Is extension of 'b' concept.
+	New pattern in   297 examples. Nearest cluster in model 2.351463e-01 distant and ndThreshold=0.000000e+00. Will call this novelty 'x'.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1462
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 1.000357e+03 (5.001783e-01 avg) (4.447076e+01 better)
+	[  1] Global dist of 4.825486e+02 (2.412743e-01 avg) (5.176235e-01 better)
+	[  2] Global dist of 3.862481e+02 (1.931241e-01 avg) (1.995663e-01 better)
+	[  3] Global dist of 3.265643e+02 (1.632821e-01 avg) (1.545221e-01 better)
+	[  4] Global dist of 3.085073e+02 (1.542536e-01 avg) (5.529391e-02 better)
+	[  5] Global dist of 3.067912e+02 (1.533956e-01 avg) (5.562372e-03 better)
+	[  6] Global dist of 3.057763e+02 (1.528882e-01 avg) (3.308113e-03 better)
+	[  7] Global dist of 3.051354e+02 (1.525677e-01 avg) (2.095879e-03 better)
+	[  8] Global dist of 3.048511e+02 (1.524255e-01 avg) (9.319202e-04 better)
+	[  9] Global dist of 3.044089e+02 (1.522044e-01 avg) (1.450570e-03 better)
+	[ 10] Global dist of 3.035571e+02 (1.517786e-01 avg) (2.798108e-03 better)
+	[ 11] Global dist of 3.032005e+02 (1.516003e-01 avg) (1.174767e-03 better)
+	[ 12] Global dist of 3.029909e+02 (1.514954e-01 avg) (6.913101e-04 better)
+	[ 13] Global dist of 3.029271e+02 (1.514636e-01 avg) (2.105220e-04 better)
+	[ 14] Global dist of 3.029434e+02 (1.514717e-01 avg) (5.383945e-05 better)
+	[ 15] Global dist of 3.029713e+02 (1.514856e-01 avg) (9.202294e-05 better)
+	[ 16] Global dist of 3.029713e+02 (1.514856e-01 avg) (0.000000e+00 better)
+	New pattern in    48 examples. Nearest cluster in model 8.004658e-01 distant and ndThreshold=8.959569e-01. Is extension of 'j' concept.
+	New pattern in   236 examples. Nearest cluster in model 3.369708e-01 distant and ndThreshold=5.234227e-01. Is extension of 'u' concept.
+	New pattern in    23 examples. Nearest cluster in model 6.331623e-02 distant and ndThreshold=0.000000e+00. Will call this novelty 'y'.
+	New pattern in    28 examples. Nearest cluster in model 7.189444e-02 distant and ndThreshold=3.448723e-01. Is extension of 'm' concept.
+	New pattern in    35 examples. Nearest cluster in model 1.001022e+00 distant and ndThreshold=0.000000e+00. Will call this novelty 'z'.
+	New pattern in    43 examples. Nearest cluster in model 6.534517e-02 distant and ndThreshold=1.260539e-01. Is extension of 'b' concept.
+	New pattern in    58 examples. Nearest cluster in model 4.640231e-01 distant and ndThreshold=1.085821e+00. Is extension of 'k' concept.
+	New pattern in    35 examples. Nearest cluster in model 1.423147e-01 distant and ndThreshold=1.779723e-01. Is extension of 'g' concept.
+	New pattern in    25 examples. Nearest cluster in model 5.809889e-02 distant and ndThreshold=2.157476e-01. Is extension of 'b' concept.
+	New pattern in    29 examples. Nearest cluster in model 1.462496e+00 distant and ndThreshold=2.382789e+00. Is extension of 'w' concept.
+	New pattern in    23 examples. Nearest cluster in model 1.414443e+00 distant and ndThreshold=1.563600e-01. Will call this novelty '0'.
+	New pattern in    24 examples. Nearest cluster in model 2.586616e-01 distant and ndThreshold=8.570065e-01. Is extension of 'u' concept.
+	New pattern in    43 examples. Nearest cluster in model 1.161771e-01 distant and ndThreshold=1.258416e-01. Is extension of 'd' concept.
+	New pattern in    40 examples. Nearest cluster in model 8.614472e-02 distant and ndThreshold=1.729222e-01. Is extension of 'd' concept.
+	New pattern in    31 examples. Nearest cluster in model 7.520568e-01 distant and ndThreshold=7.203656e-01. Will call this novelty '1'.
+	New pattern in   102 examples. Nearest cluster in model 2.179259e-01 distant and ndThreshold=3.562148e-01. Is extension of 'r' concept.
+	New pattern in    47 examples. Nearest cluster in model 3.941576e-02 distant and ndThreshold=3.970149e-02. Is extension of 'e' concept.
+	New pattern in   281 examples. Nearest cluster in model 7.670445e-01 distant and ndThreshold=1.085821e+00. Is extension of 'k' concept.
+	New pattern in    43 examples. Nearest cluster in model 1.546884e-01 distant and ndThreshold=2.013838e-01. Is extension of 'r' concept.
+	New pattern in    50 examples. Nearest cluster in model 4.329850e-02 distant and ndThreshold=2.061695e-01. Is extension of 'i' concept.
+	New pattern in    29 examples. Nearest cluster in model 5.391208e-02 distant and ndThreshold=2.922977e-02. Will call this novelty '2'.
+	New pattern in    52 examples. Nearest cluster in model 5.252463e-01 distant and ndThreshold=6.559757e-01. Is extension of 'q' concept.
+	New pattern in    51 examples. Nearest cluster in model 1.129300e-01 distant and ndThreshold=2.624670e-01. Is extension of 'c' concept.
+	New pattern in    43 examples. Nearest cluster in model 4.214154e-02 distant and ndThreshold=2.922977e-02. Will call this novelty '3'.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1262
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 5.202458e+02 (2.601229e-01 avg) (2.264754e+01 better)
+	[  1] Global dist of 2.182028e+02 (1.091014e-01 avg) (5.805775e-01 better)
+	[  2] Global dist of 1.639811e+02 (8.199056e-02 avg) (2.484921e-01 better)
+	[  3] Global dist of 1.497065e+02 (7.485323e-02 avg) (8.705066e-02 better)
+	[  4] Global dist of 1.459487e+02 (7.297433e-02 avg) (2.510113e-02 better)
+	[  5] Global dist of 1.442107e+02 (7.210537e-02 avg) (1.190777e-02 better)
+	[  6] Global dist of 1.425569e+02 (7.127846e-02 avg) (1.146801e-02 better)
+	[  7] Global dist of 1.419994e+02 (7.099972e-02 avg) (3.910540e-03 better)
+	[  8] Global dist of 1.415536e+02 (7.077679e-02 avg) (3.139939e-03 better)
+	[  9] Global dist of 1.413005e+02 (7.065024e-02 avg) (1.788008e-03 better)
+	[ 10] Global dist of 1.409981e+02 (7.049906e-02 avg) (2.139896e-03 better)
+	[ 11] Global dist of 1.408027e+02 (7.040136e-02 avg) (1.385783e-03 better)
+	[ 12] Global dist of 1.407790e+02 (7.038949e-02 avg) (1.686602e-04 better)
+	[ 13] Global dist of 1.407790e+02 (7.038949e-02 avg) (0.000000e+00 better)
+	New pattern in    43 examples. Nearest cluster in model 8.882836e-02 distant and ndThreshold=9.203699e-01. Is extension of 'e' concept.
+	New pattern in    24 examples. Nearest cluster in model 7.651109e-01 distant and ndThreshold=8.043778e-01. Is extension of 'v' concept.
+	New pattern in    90 examples. Nearest cluster in model 2.356383e-02 distant and ndThreshold=0.000000e+00. Will call this novelty '4'.
+	New pattern in    43 examples. Nearest cluster in model 2.745192e-01 distant and ndThreshold=5.234227e-01. Is extension of 'u' concept.
+	New pattern in   132 examples. Nearest cluster in model 2.846270e-01 distant and ndThreshold=1.856523e-01. Will call this novelty '5'.
+	New pattern in    27 examples. Nearest cluster in model 5.785519e-01 distant and ndThreshold=1.085821e+00. Is extension of 'k' concept.
+	New pattern in    92 examples. Nearest cluster in model 2.459266e-01 distant and ndThreshold=3.235334e-01. Is extension of '5' concept.
+	New pattern in   102 examples. Nearest cluster in model 1.000127e+00 distant and ndThreshold=7.996120e-02. Will call this novelty '6'.
+	New pattern in    29 examples. Nearest cluster in model 2.268499e-01 distant and ndThreshold=1.001597e+00. Is extension of '5' concept.
+	New pattern in    29 examples. Nearest cluster in model 7.629087e-02 distant and ndThreshold=1.260539e-01. Is extension of 'b' concept.
+	New pattern in    97 examples. Nearest cluster in model 1.266484e-01 distant and ndThreshold=1.001597e+00. Is extension of '5' concept.
+	New pattern in   459 examples. Nearest cluster in model 1.568127e-01 distant and ndThreshold=2.624670e-01. Is extension of 'c' concept.
+	New pattern in   114 examples. Nearest cluster in model 1.418380e-01 distant and ndThreshold=3.235334e-01. Is extension of '5' concept.
+	New pattern in    96 examples. Nearest cluster in model 1.218974e-01 distant and ndThreshold=3.235334e-01. Is extension of '5' concept.
+	New pattern in    20 examples. Nearest cluster in model 1.202958e+00 distant and ndThreshold=2.382789e+00. Is extension of 'w' concept.
+	New pattern in    32 examples. Nearest cluster in model 3.873476e-02 distant and ndThreshold=2.642701e-01. Is extension of 'b' concept.
+	New pattern in    23 examples. Nearest cluster in model 1.042236e+00 distant and ndThreshold=6.096545e-01. Will call this novelty '7'.
+	New pattern in    65 examples. Nearest cluster in model 3.330808e-01 distant and ndThreshold=6.509691e-01. Is extension of 'o' concept.
+	New pattern in    53 examples. Nearest cluster in model 4.893014e-01 distant and ndThreshold=6.096545e-01. Is extension of '6' concept.
+	New pattern in    30 examples. Nearest cluster in model 7.057602e-02 distant and ndThreshold=1.713337e-01. Is extension of 'd' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1524
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 6.662456e+02 (3.331228e-01 avg) (2.928389e+01 better)
+	[  1] Global dist of 4.153441e+02 (2.076720e-01 avg) (3.765902e-01 better)
+	[  2] Global dist of 2.911972e+02 (1.455986e-01 avg) (2.989012e-01 better)
+	[  3] Global dist of 2.704584e+02 (1.352292e-01 avg) (7.121908e-02 better)
+	[  4] Global dist of 2.675476e+02 (1.337738e-01 avg) (1.076259e-02 better)
+	[  5] Global dist of 2.648126e+02 (1.324063e-01 avg) (1.022244e-02 better)
+	[  6] Global dist of 2.638374e+02 (1.319187e-01 avg) (3.682648e-03 better)
+	[  7] Global dist of 2.637956e+02 (1.318978e-01 avg) (1.582869e-04 better)
+	[  8] Global dist of 2.618054e+02 (1.309027e-01 avg) (7.544804e-03 better)
+	[  9] Global dist of 2.510182e+02 (1.255091e-01 avg) (4.120313e-02 better)
+	[ 10] Global dist of 2.506430e+02 (1.253215e-01 avg) (1.494430e-03 better)
+	[ 11] Global dist of 2.505389e+02 (1.252694e-01 avg) (4.155444e-04 better)
+	[ 12] Global dist of 2.503127e+02 (1.251563e-01 avg) (9.028136e-04 better)
+	[ 13] Global dist of 2.501166e+02 (1.250583e-01 avg) (7.834724e-04 better)
+	[ 14] Global dist of 2.496278e+02 (1.248139e-01 avg) (1.954218e-03 better)
+	[ 15] Global dist of 2.494524e+02 (1.247262e-01 avg) (7.027426e-04 better)
+	[ 16] Global dist of 2.494524e+02 (1.247262e-01 avg) (0.000000e+00 better)
+	New pattern in    35 examples. Nearest cluster in model 5.671406e-02 distant and ndThreshold=1.022250e-01. Is extension of 'c' concept.
+	New pattern in    20 examples. Nearest cluster in model 1.182379e+00 distant and ndThreshold=1.914768e+00. Is extension of 'k' concept.
+	New pattern in    70 examples. Nearest cluster in model 2.034937e-01 distant and ndThreshold=1.260539e-01. Will call this novelty '8'.
+	New pattern in    85 examples. Nearest cluster in model 9.428602e-02 distant and ndThreshold=1.329850e-01. Is extension of 'y' concept.
+	New pattern in    22 examples. Nearest cluster in model 1.805420e-01 distant and ndThreshold=1.157022e-01. Will call this novelty '9'.
+	New pattern in    33 examples. Nearest cluster in model 7.423114e-02 distant and ndThreshold=2.642701e-01. Is extension of 'b' concept.
+	New pattern in    55 examples. Nearest cluster in model 1.688541e-01 distant and ndThreshold=3.857616e-01. Is extension of 'i' concept.
+	New pattern in   100 examples. Nearest cluster in model 6.675471e-02 distant and ndThreshold=1.022250e-01. Is extension of 'c' concept.
+	New pattern in    80 examples. Nearest cluster in model 1.001794e-01 distant and ndThreshold=6.864971e-01. Is extension of 'e' concept.
+	New pattern in    30 examples. Nearest cluster in model 4.200142e-01 distant and ndThreshold=1.022250e-01. Will call this novelty 'a'.
+	New pattern in    29 examples. Nearest cluster in model 1.889282e-02 distant and ndThreshold=2.922977e-02. Is extension of 'b' concept.
+	New pattern in    36 examples. Nearest cluster in model 2.120596e-01 distant and ndThreshold=2.677782e-01. Is extension of 'c' concept.
+	New pattern in    29 examples. Nearest cluster in model 9.824897e-01 distant and ndThreshold=9.180980e-01. Will call this novelty 'b'.
+	New pattern in    28 examples. Nearest cluster in model 5.789319e-01 distant and ndThreshold=1.563600e-01. Will call this novelty 'c'.
+	New pattern in   130 examples. Nearest cluster in model 1.388850e-01 distant and ndThreshold=1.729222e-01. Is extension of 'd' concept.
+	New pattern in    29 examples. Nearest cluster in model 2.214614e-01 distant and ndThreshold=1.563600e-01. Will call this novelty 'd'.
+	New pattern in    49 examples. Nearest cluster in model 4.160953e-01 distant and ndThreshold=2.578447e-01. Will call this novelty 'e'.
+	New pattern in    24 examples. Nearest cluster in model 2.350724e-01 distant and ndThreshold=3.252867e-01. Is extension of 'b' concept.
+	New pattern in    55 examples. Nearest cluster in model 1.635642e-01 distant and ndThreshold=2.578447e-01. Is extension of 'd' concept.
+	New pattern in    20 examples. Nearest cluster in model 6.210820e-01 distant and ndThreshold=1.001597e+00. Is extension of '5' concept.
+	New pattern in    91 examples. Nearest cluster in model 1.176872e-01 distant and ndThreshold=2.578447e-01. Is extension of 'd' concept.
+	New pattern in    43 examples. Nearest cluster in model 7.462860e-01 distant and ndThreshold=4.665364e-01. Will call this novelty 'f'.
+	New pattern in    29 examples. Nearest cluster in model 8.919000e-01 distant and ndThreshold=3.269627e+00. Is extension of '9' concept.
+	New pattern in    23 examples. Nearest cluster in model 4.638119e-01 distant and ndThreshold=4.683860e-01. Is extension of '7' concept.
+	New pattern in    64 examples. Nearest cluster in model 2.314154e-01 distant and ndThreshold=2.076157e-01. Will call this novelty 'g'.
+	New pattern in    38 examples. Nearest cluster in model 3.051881e-01 distant and ndThreshold=4.665364e-01. Is extension of 'd' concept.
+	New pattern in    39 examples. Nearest cluster in model 9.508700e-02 distant and ndThreshold=1.713337e-01. Is extension of 'd' concept.
+	New pattern in    33 examples. Nearest cluster in model 1.072878e-01 distant and ndThreshold=1.568458e-01. Is extension of 'd' concept.
+	New pattern in   152 examples. Nearest cluster in model 7.840348e-02 distant and ndThreshold=7.318231e-02. Will call this novelty 'h'.
+	New pattern in    35 examples. Nearest cluster in model 4.047593e-01 distant and ndThreshold=3.269627e+00. Is extension of '9' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1282
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 6.328508e+02 (3.164254e-01 avg) (2.776595e+01 better)
+	[  1] Global dist of 2.568061e+02 (1.284031e-01 avg) (5.942075e-01 better)
+	[  2] Global dist of 2.020843e+02 (1.010421e-01 avg) (2.130862e-01 better)
+	[  3] Global dist of 1.878169e+02 (9.390843e-02 avg) (7.060129e-02 better)
+	[  4] Global dist of 1.852785e+02 (9.263927e-02 avg) (1.351490e-02 better)
+	[  5] Global dist of 1.831403e+02 (9.157013e-02 avg) (1.154083e-02 better)
+	[  6] Global dist of 1.803613e+02 (9.018065e-02 avg) (1.517396e-02 better)
+	[  7] Global dist of 1.792878e+02 (8.964390e-02 avg) (5.951945e-03 better)
+	[  8] Global dist of 1.785275e+02 (8.926376e-02 avg) (4.240564e-03 better)
+	[  9] Global dist of 1.776374e+02 (8.881871e-02 avg) (4.985816e-03 better)
+	[ 10] Global dist of 1.769330e+02 (8.846648e-02 avg) (3.965645e-03 better)
+	[ 11] Global dist of 1.753526e+02 (8.767628e-02 avg) (8.932240e-03 better)
+	[ 12] Global dist of 1.748925e+02 (8.744625e-02 avg) (2.623634e-03 better)
+	[ 13] Global dist of 1.747238e+02 (8.736189e-02 avg) (9.647646e-04 better)
+	[ 14] Global dist of 1.746743e+02 (8.733717e-02 avg) (2.828731e-04 better)
+	[ 15] Global dist of 1.746503e+02 (8.732516e-02 avg) (1.374975e-04 better)
+	[ 16] Global dist of 1.746663e+02 (8.733316e-02 avg) (9.153383e-05 better)
+	[ 17] Global dist of 1.746663e+02 (8.733316e-02 avg) (0.000000e+00 better)
+	New pattern in    34 examples. Nearest cluster in model 6.202006e-02 distant and ndThreshold=1.209180e-01. Is extension of 'd' concept.
+	New pattern in    61 examples. Nearest cluster in model 1.602688e-01 distant and ndThreshold=4.968969e-01. Is extension of 'c' concept.
+	New pattern in    27 examples. Nearest cluster in model 3.558180e-01 distant and ndThreshold=7.203656e-01. Is extension of 'c' concept.
+	New pattern in    28 examples. Nearest cluster in model 2.050124e-01 distant and ndThreshold=3.300307e-01. Is extension of 'f' concept.
+	New pattern in    28 examples. Nearest cluster in model 1.371586e+00 distant and ndThreshold=9.332808e-01. Will call this novelty 'i'.
+	New pattern in   606 examples. Nearest cluster in model 5.641909e-02 distant and ndThreshold=1.022250e-01. Is extension of 'c' concept.
+	New pattern in    23 examples. Nearest cluster in model 2.858751e-02 distant and ndThreshold=3.970149e-02. Is extension of 'e' concept.
+	New pattern in    25 examples. Nearest cluster in model 1.970386e-01 distant and ndThreshold=2.864649e-01. Is extension of 'b' concept.
+	New pattern in    26 examples. Nearest cluster in model 1.423021e-01 distant and ndThreshold=4.395472e-01. Is extension of 'g' concept.
+	New pattern in    22 examples. Nearest cluster in model 2.391669e-01 distant and ndThreshold=1.563600e-01. Will call this novelty 'j'.
+	New pattern in    32 examples. Nearest cluster in model 1.265617e-01 distant and ndThreshold=1.563600e-01. Is extension of 'z' concept.
+	New pattern in   115 examples. Nearest cluster in model 3.247445e-02 distant and ndThreshold=7.318231e-02. Is extension of 'o' concept.
+	New pattern in   171 examples. Nearest cluster in model 2.618957e-01 distant and ndThreshold=2.624670e-01. Is extension of 'c' concept.
+	New pattern in    70 examples. Nearest cluster in model 2.357996e-01 distant and ndThreshold=5.001202e-01. Is extension of 'c' concept.
+	New pattern in    22 examples. Nearest cluster in model 1.960475e-01 distant and ndThreshold=2.777499e-01. Is extension of 'd' concept.
+	New pattern in    72 examples. Nearest cluster in model 1.123699e-01 distant and ndThreshold=2.197177e-01. Is extension of 'c' concept.
+	New pattern in    32 examples. Nearest cluster in model 9.699058e-03 distant and ndThreshold=2.922977e-02. Is extension of 'b' concept.
+	New pattern in    27 examples. Nearest cluster in model 3.954114e-01 distant and ndThreshold=5.001202e-01. Is extension of 'c' concept.
+	New pattern in    44 examples. Nearest cluster in model 5.845870e-01 distant and ndThreshold=8.959569e-01. Is extension of 'j' concept.
+	New pattern in    30 examples. Nearest cluster in model 3.758214e-02 distant and ndThreshold=5.142795e-02. Is extension of 'i' concept.
+	New pattern in    29 examples. Nearest cluster in model 2.729326e-02 distant and ndThreshold=2.642701e-01. Is extension of 'b' concept.
+	New pattern in    26 examples. Nearest cluster in model 1.667888e-01 distant and ndThreshold=3.235334e-01. Is extension of '5' concept.
+	New pattern in    83 examples. Nearest cluster in model 1.000000e-02 distant and ndThreshold=0.000000e+00. Will call this novelty 'k'.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1562
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 6.454931e+02 (3.227465e-01 avg) (2.834059e+01 better)
+	[  1] Global dist of 3.813232e+02 (1.906616e-01 avg) (4.092528e-01 better)
+	[  2] Global dist of 3.197976e+02 (1.598988e-01 avg) (1.613478e-01 better)
+	[  3] Global dist of 3.093372e+02 (1.546686e-01 avg) (3.270917e-02 better)
+	[  4] Global dist of 3.077813e+02 (1.538907e-01 avg) (5.029801e-03 better)
+	[  5] Global dist of 3.070683e+02 (1.535342e-01 avg) (2.316570e-03 better)
+	[  6] Global dist of 3.065711e+02 (1.532856e-01 avg) (1.619286e-03 better)
+	[  7] Global dist of 3.063500e+02 (1.531750e-01 avg) (7.211271e-04 better)
+	[  8] Global dist of 3.044900e+02 (1.522450e-01 avg) (6.071550e-03 better)
+	[  9] Global dist of 3.039322e+02 (1.519661e-01 avg) (1.831873e-03 better)
+	[ 10] Global dist of 3.033332e+02 (1.516666e-01 avg) (1.970900e-03 better)
+	[ 11] Global dist of 3.026949e+02 (1.513475e-01 avg) (2.104170e-03 better)
+	[ 12] Global dist of 3.022865e+02 (1.511432e-01 avg) (1.349508e-03 better)
+	[ 13] Global dist of 3.020956e+02 (1.510478e-01 avg) (6.314904e-04 better)
+	[ 14] Global dist of 3.017922e+02 (1.508961e-01 avg) (1.004248e-03 better)
+	[ 15] Global dist of 3.014155e+02 (1.507078e-01 avg) (1.248066e-03 better)
+	[ 16] Global dist of 3.012205e+02 (1.506103e-01 avg) (6.470040e-04 better)
+	[ 17] Global dist of 3.011651e+02 (1.505826e-01 avg) (1.838777e-04 better)
+	[ 18] Global dist of 3.011451e+02 (1.505725e-01 avg) (6.659856e-05 better)
+	[ 19] Global dist of 3.011090e+02 (1.505545e-01 avg) (1.199058e-04 better)
+	[ 20] Global dist of 3.010466e+02 (1.505233e-01 avg) (2.070988e-04 better)
+	[ 21] Global dist of 3.009931e+02 (1.504966e-01 avg) (1.776569e-04 better)
+	[ 22] Global dist of 3.009353e+02 (1.504676e-01 avg) (1.921935e-04 better)
+	[ 23] Global dist of 3.008557e+02 (1.504279e-01 avg) (2.642993e-04 better)
+	[ 24] Global dist of 3.007915e+02 (1.503958e-01 avg) (2.134484e-04 better)
+	[ 25] Global dist of 3.007979e+02 (1.503990e-01 avg) (2.139074e-05 better)
+	[ 26] Global dist of 3.007979e+02 (1.503990e-01 avg) (0.000000e+00 better)
+	New pattern in    28 examples. Nearest cluster in model 4.956436e-02 distant and ndThreshold=1.322024e-01. Is extension of 'd' concept.
+	New pattern in    35 examples. Nearest cluster in model 1.816660e-01 distant and ndThreshold=2.061695e-01. Is extension of 'i' concept.
+	New pattern in    22 examples. Nearest cluster in model 1.953708e-01 distant and ndThreshold=3.035376e-01. Is extension of 'd' concept.
+	New pattern in    25 examples. Nearest cluster in model 1.694989e-01 distant and ndThreshold=3.167643e-01. Is extension of '5' concept.
+	New pattern in   155 examples. Nearest cluster in model 1.164440e+00 distant and ndThreshold=2.856620e+00. Is extension of 'j' concept.
+	New pattern in    27 examples. Nearest cluster in model 2.173269e-01 distant and ndThreshold=8.570724e-02. Will call this novelty 'l'.
+	New pattern in   150 examples. Nearest cluster in model 2.192977e-01 distant and ndThreshold=3.420570e-01. Is extension of 't' concept.
+	New pattern in   131 examples. Nearest cluster in model 8.000000e-02 distant and ndThreshold=0.000000e+00. Will call this novelty 'm'.
+	New pattern in    24 examples. Nearest cluster in model 2.338602e-01 distant and ndThreshold=1.260539e-01. Will call this novelty 'n'.
+	New pattern in    58 examples. Nearest cluster in model 1.495379e-01 distant and ndThreshold=3.448276e-02. Will call this novelty 'o'.
+	New pattern in    20 examples. Nearest cluster in model 7.288079e-02 distant and ndThreshold=2.864649e-01. Is extension of 'b' concept.
+	New pattern in    49 examples. Nearest cluster in model 4.946760e-02 distant and ndThreshold=5.142795e-02. Is extension of 'i' concept.
+	New pattern in    21 examples. Nearest cluster in model 8.446619e-02 distant and ndThreshold=1.729222e-01. Is extension of 'd' concept.
+	New pattern in    28 examples. Nearest cluster in model 8.066367e-01 distant and ndThreshold=6.374193e-01. Will call this novelty 'p'.
+	New pattern in    37 examples. Nearest cluster in model 2.868359e-02 distant and ndThreshold=2.703854e-02. Will call this novelty 'q'.
+	New pattern in    33 examples. Nearest cluster in model 1.300868e-01 distant and ndThreshold=3.324803e-01. Is extension of 'l' concept.
+	New pattern in    22 examples. Nearest cluster in model 1.899008e-01 distant and ndThreshold=3.809115e-01. Is extension of 'i' concept.
+	New pattern in    41 examples. Nearest cluster in model 6.010326e-02 distant and ndThreshold=1.209180e-01. Is extension of 'd' concept.
+	New pattern in    29 examples. Nearest cluster in model 2.069318e-02 distant and ndThreshold=3.448276e-02. Is extension of 'e' concept.
+	New pattern in    30 examples. Nearest cluster in model 6.742534e-02 distant and ndThreshold=7.547421e-02. Is extension of 'o' concept.
+	New pattern in    28 examples. Nearest cluster in model 4.818481e-01 distant and ndThreshold=5.079336e-01. Is extension of 'h' concept.
+	New pattern in    28 examples. Nearest cluster in model 1.090583e-01 distant and ndThreshold=3.324803e-01. Is extension of 'l' concept.
+	New pattern in    40 examples. Nearest cluster in model 6.877748e-02 distant and ndThreshold=7.996120e-02. Is extension of 'l' concept.
+	New pattern in    24 examples. Nearest cluster in model 5.695730e-02 distant and ndThreshold=1.083173e-01. Is extension of 'b' concept.
+	New pattern in    36 examples. Nearest cluster in model 4.309873e-02 distant and ndThreshold=2.642701e-01. Is extension of 'b' concept.
+	New pattern in    83 examples. Nearest cluster in model 1.245135e-01 distant and ndThreshold=4.395472e-01. Is extension of 'g' concept.
+	New pattern in    36 examples. Nearest cluster in model 7.607159e-02 distant and ndThreshold=7.547421e-02. Will call this novelty 'r'.
+	New pattern in    69 examples. Nearest cluster in model 1.188946e-01 distant and ndThreshold=2.197177e-01. Is extension of 'c' concept.
+	New pattern in    75 examples. Nearest cluster in model 1.851063e-01 distant and ndThreshold=1.981593e-01. Is extension of 'i' concept.
+	New pattern in    27 examples. Nearest cluster in model 7.414589e-01 distant and ndThreshold=4.020825e-01. Will call this novelty 's'.
+	New pattern in    63 examples. Nearest cluster in model 3.706581e-02 distant and ndThreshold=7.318231e-02. Is extension of 'o' concept.
+	New pattern in    37 examples. Nearest cluster in model 5.831039e-02 distant and ndThreshold=2.197177e-01. Is extension of 'c' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1294
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 4.247268e+02 (2.123634e-01 avg) (1.830577e+01 better)
+	[  1] Global dist of 3.058060e+02 (1.529030e-01 avg) (2.799936e-01 better)
+	[  2] Global dist of 2.869676e+02 (1.434838e-01 avg) (6.160246e-02 better)
+	[  3] Global dist of 2.785110e+02 (1.392555e-01 avg) (2.946911e-02 better)
+	[  4] Global dist of 2.742994e+02 (1.371497e-01 avg) (1.512184e-02 better)
+	[  5] Global dist of 2.704027e+02 (1.352013e-01 avg) (1.420589e-02 better)
+	[  6] Global dist of 2.675568e+02 (1.337784e-01 avg) (1.052464e-02 better)
+	[  7] Global dist of 2.641587e+02 (1.320794e-01 avg) (1.270037e-02 better)
+	[  8] Global dist of 2.634348e+02 (1.317174e-01 avg) (2.740614e-03 better)
+	[  9] Global dist of 2.628118e+02 (1.314059e-01 avg) (2.364744e-03 better)
+	[ 10] Global dist of 2.622794e+02 (1.311397e-01 avg) (2.025720e-03 better)
+	[ 11] Global dist of 2.621844e+02 (1.310922e-01 avg) (3.623246e-04 better)
+	[ 12] Global dist of 2.619407e+02 (1.309703e-01 avg) (9.296766e-04 better)
+	[ 13] Global dist of 2.617526e+02 (1.308763e-01 avg) (7.179528e-04 better)
+	[ 14] Global dist of 2.616921e+02 (1.308461e-01 avg) (2.310461e-04 better)
+	[ 15] Global dist of 2.616204e+02 (1.308102e-01 avg) (2.740257e-04 better)
+	[ 16] Global dist of 2.615338e+02 (1.307669e-01 avg) (3.311447e-04 better)
+	[ 17] Global dist of 2.615338e+02 (1.307669e-01 avg) (0.000000e+00 better)
+	New pattern in    24 examples. Nearest cluster in model 1.443910e-01 distant and ndThreshold=2.458409e-01. Is extension of 'j' concept.
+	New pattern in   110 examples. Nearest cluster in model 5.391515e-01 distant and ndThreshold=5.170311e-01. Will call this novelty 't'.
+	New pattern in    21 examples. Nearest cluster in model 1.200479e+00 distant and ndThreshold=3.261905e-01. Will call this novelty 'u'.
+	New pattern in    33 examples. Nearest cluster in model 2.071901e-02 distant and ndThreshold=3.785996e-02. Is extension of 'o' concept.
+	New pattern in    27 examples. Nearest cluster in model 3.386514e-01 distant and ndThreshold=9.258021e-01. Is extension of 'c' concept.
+	New pattern in    40 examples. Nearest cluster in model 3.373966e-02 distant and ndThreshold=4.194185e-01. Is extension of 't' concept.
+	New pattern in    86 examples. Nearest cluster in model 1.357604e-01 distant and ndThreshold=4.194185e-01. Is extension of 't' concept.
+	New pattern in    80 examples. Nearest cluster in model 1.578457e-01 distant and ndThreshold=2.076157e-01. Is extension of 'b' concept.
+	New pattern in    46 examples. Nearest cluster in model 1.122396e-01 distant and ndThreshold=6.526162e-01. Is extension of 'b' concept.
+	New pattern in    22 examples. Nearest cluster in model 7.322334e-02 distant and ndThreshold=4.194185e-01. Is extension of 't' concept.
+	New pattern in    34 examples. Nearest cluster in model 3.977801e-02 distant and ndThreshold=5.102069e-02. Is extension of 't' concept.
+	New pattern in    24 examples. Nearest cluster in model 4.490188e-01 distant and ndThreshold=8.609108e-01. Is extension of 'f' concept.
+	New pattern in    66 examples. Nearest cluster in model 1.381849e-01 distant and ndThreshold=2.677782e-01. Is extension of 'c' concept.
+	New pattern in    27 examples. Nearest cluster in model 1.000462e-02 distant and ndThreshold=8.906782e-03. Will call this novelty 'v'.
+	New pattern in    99 examples. Nearest cluster in model 8.081662e-02 distant and ndThreshold=9.647192e-02. Is extension of 't' concept.
+	New pattern in    44 examples. Nearest cluster in model 9.516125e-02 distant and ndThreshold=6.864971e-01. Is extension of 'e' concept.
+	New pattern in    51 examples. Nearest cluster in model 2.008323e-02 distant and ndThreshold=9.126174e-03. Will call this novelty 'w'.
+	New pattern in   145 examples. Nearest cluster in model 4.509321e-02 distant and ndThreshold=2.109424e-15. Will call this novelty 'x'.
+	New pattern in    25 examples. Nearest cluster in model 8.718168e-01 distant and ndThreshold=1.117076e+00. Is extension of 'g' concept.
+	New pattern in    46 examples. Nearest cluster in model 1.002811e-02 distant and ndThreshold=2.535197e-02. Is extension of 'w' concept.
+	New pattern in    31 examples. Nearest cluster in model 6.445050e-02 distant and ndThreshold=9.572485e-01. Is extension of 'i' concept.
+	New pattern in    26 examples. Nearest cluster in model 3.486710e-02 distant and ndThreshold=8.906782e-03. Will call this novelty 'y'.
+	New pattern in    22 examples. Nearest cluster in model 4.333123e-03 distant and ndThreshold=1.466064e-03. Will call this novelty 'z'.
+	New pattern in    52 examples. Nearest cluster in model 5.230160e-01 distant and ndThreshold=9.222894e-01. Is extension of 'a' concept.
+	New pattern in    23 examples. Nearest cluster in model 1.125055e-03 distant and ndThreshold=9.218182e-06. Will call this novelty '0'.
+	New pattern in    80 examples. Nearest cluster in model 1.500800e-02 distant and ndThreshold=2.535197e-02. Is extension of 'w' concept.
+	New pattern in    88 examples. Nearest cluster in model 5.205071e-02 distant and ndThreshold=4.194185e-01. Is extension of 't' concept.
+	New pattern in    71 examples. Nearest cluster in model 6.161810e-01 distant and ndThreshold=1.827047e+00. Is extension of 'g' concept.
+	New pattern in    40 examples. Nearest cluster in model 1.166633e-01 distant and ndThreshold=2.578447e-01. Is extension of 'd' concept.
+	New pattern in    55 examples. Nearest cluster in model 1.686252e-01 distant and ndThreshold=2.013838e-01. Is extension of 'r' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1153
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 1.197838e+03 (5.989191e-01 avg) (5.344719e+01 better)
+	[  1] Global dist of 7.769583e+02 (3.884792e-01 avg) (3.513662e-01 better)
+	[  2] Global dist of 5.596531e+02 (2.798266e-01 avg) (2.796871e-01 better)
+	[  3] Global dist of 5.156881e+02 (2.578440e-01 avg) (7.855768e-02 better)
+	[  4] Global dist of 4.830991e+02 (2.415495e-01 avg) (6.319517e-02 better)
+	[  5] Global dist of 4.355266e+02 (2.177633e-01 avg) (9.847359e-02 better)
+	[  6] Global dist of 4.048751e+02 (2.024376e-01 avg) (7.037789e-02 better)
+	[  7] Global dist of 4.000276e+02 (2.000138e-01 avg) (1.197282e-02 better)
+	[  8] Global dist of 4.000276e+02 (2.000138e-01 avg) (1.686788e-09 better)
+	[  9] Global dist of 4.000276e+02 (2.000138e-01 avg) (1.864157e-09 better)
+	[ 10] Global dist of 4.000276e+02 (2.000138e-01 avg) (1.878440e-10 better)
+	[ 11] Global dist of 4.000276e+02 (2.000138e-01 avg) (2.121283e-10 better)
+	[ 12] Global dist of 4.000276e+02 (2.000138e-01 avg) (3.178351e-10 better)
+	[ 13] Global dist of 4.000276e+02 (2.000138e-01 avg) (0.000000e+00 better)
+	New pattern in    34 examples. Nearest cluster in model 7.336725e-01 distant and ndThreshold=3.658632e+00. Is extension of 'p' concept.
+	New pattern in    30 examples. Nearest cluster in model 5.173636e-02 distant and ndThreshold=5.294682e-01. Is extension of 'b' concept.
+	New pattern in    38 examples. Nearest cluster in model 5.618378e-01 distant and ndThreshold=2.100086e+00. Is extension of 'g' concept.
+	New pattern in    33 examples. Nearest cluster in model 3.221421e-01 distant and ndThreshold=6.225393e-01. Is extension of 'g' concept.
+	New pattern in    99 examples. Nearest cluster in model 1.226337e-01 distant and ndThreshold=6.864971e-01. Is extension of 'e' concept.
+	New pattern in    83 examples. Nearest cluster in model 5.010745e-01 distant and ndThreshold=2.893666e+00. Is extension of 'y' concept.
+	New pattern in   370 examples. Nearest cluster in model 7.823285e-02 distant and ndThreshold=5.754907e-01. Is extension of 'b' concept.
+	New pattern in   313 examples. Nearest cluster in model 1.473563e-01 distant and ndThreshold=4.020825e-01. Is extension of 't' concept.
+	New pattern in   147 examples. Nearest cluster in model 1.213903e-02 distant and ndThreshold=0.000000e+00. Will call this novelty '1'.
+	New pattern in    31 examples. Nearest cluster in model 2.000508e-02 distant and ndThreshold=6.886957e-07. Will call this novelty '2'.
+	New pattern in    33 examples. Nearest cluster in model 8.738540e-02 distant and ndThreshold=2.624349e-01. Is extension of '3' concept.
+	New pattern in    40 examples. Nearest cluster in model 1.417200e+00 distant and ndThreshold=1.950409e+00. Is extension of '9' concept.
+	New pattern in    27 examples. Nearest cluster in model 2.588676e-01 distant and ndThreshold=3.167643e-01. Is extension of '5' concept.
+	New pattern in   337 examples. Nearest cluster in model 3.552415e-01 distant and ndThreshold=3.562148e-01. Is extension of 'r' concept.
+	New pattern in    31 examples. Nearest cluster in model 3.082145e-01 distant and ndThreshold=5.234227e-01. Is extension of 'u' concept.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1108
+kMeans with k = 100 and  2000 examples
+	[  0] Global dist of 9.748666e+02 (4.874333e-01 avg) (4.331212e+01 better)
+	[  1] Global dist of 5.568086e+02 (2.784043e-01 avg) (4.288360e-01 better)
+	[  2] Global dist of 4.480027e+02 (2.240014e-01 avg) (1.954099e-01 better)
+	[  3] Global dist of 3.483939e+02 (1.741970e-01 avg) (2.223397e-01 better)
+	[  4] Global dist of 3.412912e+02 (1.706456e-01 avg) (2.038717e-02 better)
+	[  5] Global dist of 3.382655e+02 (1.691327e-01 avg) (8.865424e-03 better)
+	[  6] Global dist of 3.360219e+02 (1.680109e-01 avg) (6.632733e-03 better)
+	[  7] Global dist of 3.367391e+02 (1.683695e-01 avg) (2.134450e-03 better)
+	[  8] Global dist of 3.330389e+02 (1.665195e-01 avg) (1.098817e-02 better)
+	[  9] Global dist of 3.254663e+02 (1.627331e-01 avg) (2.273811e-02 better)
+	[ 10] Global dist of 3.125095e+02 (1.562547e-01 avg) (3.980992e-02 better)
+	[ 11] Global dist of 3.086148e+02 (1.543074e-01 avg) (1.246252e-02 better)
+	[ 12] Global dist of 3.086253e+02 (1.543126e-01 avg) (3.396034e-05 better)
+	[ 13] Global dist of 3.086253e+02 (1.543126e-01 avg) (0.000000e+00 better)
+	New pattern in    28 examples. Nearest cluster in model 5.334327e-02 distant and ndThreshold=2.624349e-01. Is extension of '3' concept.
+	New pattern in    24 examples. Nearest cluster in model 4.004823e-02 distant and ndThreshold=7.215301e-02. Is extension of 'b' concept.
+	New pattern in    45 examples. Nearest cluster in model 2.560148e-02 distant and ndThreshold=1.652194e-02. Will call this novelty '3'.
+	New pattern in    33 examples. Nearest cluster in model 3.516078e-02 distant and ndThreshold=2.109424e-15. Will call this novelty '4'.
+	New pattern in    29 examples. Nearest cluster in model 1.017180e+00 distant and ndThreshold=1.020394e+00. Is extension of '9' concept.
+	New pattern in    20 examples. Nearest cluster in model 9.902493e-01 distant and ndThreshold=8.043778e-01. Will call this novelty '5'.
+	New pattern in    29 examples. Nearest cluster in model 1.616541e-01 distant and ndThreshold=1.157022e-01. Will call this novelty '6'.
+	New pattern in   258 examples. Nearest cluster in model 1.308956e-01 distant and ndThreshold=2.417761e-01. Is extension of 'd' concept.
+	New pattern in    66 examples. Nearest cluster in model 9.888944e-02 distant and ndThreshold=1.022250e-01. Is extension of 'c' concept.
+	New pattern in    25 examples. Nearest cluster in model 3.539129e-01 distant and ndThreshold=5.079336e-01. Is extension of 'h' concept.
+	New pattern in    94 examples. Nearest cluster in model 3.245416e-01 distant and ndThreshold=6.499914e-01. Is extension of 'u' concept.
+	New pattern in   100 examples. Nearest cluster in model 5.225910e-01 distant and ndThreshold=2.856620e+00. Is extension of 'j' concept.
+	New pattern in    74 examples. Nearest cluster in model 1.265745e-01 distant and ndThreshold=7.514168e-01. Is extension of '3' concept.
+	New pattern in    27 examples. Nearest cluster in model 3.942749e-02 distant and ndThreshold=7.996120e-02. Is extension of 'l' concept.
+	New pattern in   336 examples. Nearest cluster in model 4.192340e-01 distant and ndThreshold=2.273166e-01. Will call this novelty '7'.
+	New pattern in    46 examples. Nearest cluster in model 1.003170e+00 distant and ndThreshold=1.987136e+00. Is extension of 'b' concept.
+	New pattern in    26 examples. Nearest cluster in model 8.143741e-02 distant and ndThreshold=1.209180e-01. Is extension of 'd' concept.
+	New pattern in    58 examples. Nearest cluster in model 8.963423e-02 distant and ndThreshold=2.772643e-01. Is extension of 'b' concept.
+	New pattern in    29 examples. Nearest cluster in model 6.899198e-02 distant and ndThreshold=1.329622e-01. Is extension of 'b' concept.
+	New pattern in    28 examples. Nearest cluster in model 1.582473e-01 distant and ndThreshold=2.777499e-01. Is extension of 'd' concept.
+	New pattern in    35 examples. Nearest cluster in model 1.724872e-01 distant and ndThreshold=2.428427e-01. Is extension of 'd' concept.
+	New pattern in   175 examples. Nearest cluster in model 6.446902e-02 distant and ndThreshold=3.463589e-02. Will call this novelty '8'.
+late classify of 2000 -> 0 unknowns, forgotten 0, reprocessed 1291
+Evaluate
+	title = Minas-MPI-serial
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/serial.csv
+	plotSavePath = experiments/minas-mpi-serial-hits.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Minas-MPI-serial
+
+saving experiments/minas-mpi-serial-hits.png
+Confusion Matrix
+Classes (act)       A      N assigned    hits
+Labels (pred)                                
+-               10593   5469        -       0
+0                  42    456        N     456
+1                 116    431        N     431
+2                1218    126        A    1218
+3                1142    262        A    1142
+4                2247     14        A    2247
+5                4888    456        A    4888
+6                1427    155        A    1427
+7                1110      0        A    1110
+8                 500    554        N     554
+9                  76   1186        N    1186
+a               28865    158        A   28865
+b               26690  34488        N   34488
+c              163999  18560        A  163999
+d               19841   7403        A   19841
+e               36628   3454        A   36628
+f                4355    743        A    4355
+g                5884   1443        A    5884
+h               14492   7422        A   14492
+i               29110   1760        A   29110
+j                4429  13558        N   13558
+k               15127   4848        A   15127
+l                5617    480        A    5617
+m                2425     80        A    2425
+n                2621    235        A    2621
+o               22798    153        A   22798
+p               20263  16089        A   20263
+q                 203   1197        N    1197
+r                  99   5878        N    5878
+s                3821    518        A    3821
+t                2778     43        A    2778
+u                  41  73331        N   73331
+v                5191    373        A    5191
+w                1844   1706        A    1844
+x                5655    386        A    5655
+y                2608     66        A    2608
+z                  26   1207        N    1207
+Classes           ['A' 'N']
+Initial labels    ['-']
+Labels            ['-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] 37
+Total examples    (653457, 25)
+Total matches     (653457, 10)
+Hits               538240 ( 82.368082%)
+Misses             109631 ( 16.777079%)
+Unknowns            16062 (  2.458004%)
+Unk. reprocessed        0 (  0.000000%)
+Total              663933 (101.603166%)
+
+
