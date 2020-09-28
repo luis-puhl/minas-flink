@@ -14,3 +14,5 @@
 SUBSCR r: 02-REDIS_REPLY_ARRAY
 	[0]: subscribe
 	[3]: (null)
+noveltyDetection: Redis error 3 'Server closed the connection': At src/modules/novelty-detection.c:72
+

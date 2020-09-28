@@ -42,22 +42,23 @@ const char* get_redis_reply_strings(int code) {
     return redis_reply_strings[code];
 }
 
+#define __REPLY_HEADER "[%10.10s] "
 int printReply(const char* request, redisReply* reply) {
     if (reply == NULL) {
-        return printf("%6.6s r: (null)\n", request);
+        return printf(__REPLY_HEADER "(null)\n", request);
     }
     const char* repTypeString = redis_reply_strings[reply->type];
     switch (reply->type){
     case REDIS_REPLY_PUSH:
-        return printf("%6.6s r: %2.2d-%s\n", request, reply->type, repTypeString);
+        return printf(__REPLY_HEADER "%2.2d-%s\n", request, reply->type, repTypeString);
     case REDIS_REPLY_INTEGER:
-        return printf("%6.6s r: %2.2d-%s %lld\n", request, reply->type, repTypeString, reply->integer);
+        return printf(__REPLY_HEADER "%2.2d-%s %lld\n", request, reply->type, repTypeString, reply->integer);
     case REDIS_REPLY_ARRAY:
-        return printf("%6.6s r: %2.2d-%s\n"
+        return printf(__REPLY_HEADER "%2.2d-%s\n"
             "\t[0]: %s\n\t[%ld]: %s\n", request, reply->type, repTypeString,
             reply->element[0]->str, reply->elements, reply->element[reply->elements - 1]->str);
     default:
-        return printf("%6.6s r: %2.2d-%s %s\n", request, reply->type, repTypeString, reply->str);
+        return printf(__REPLY_HEADER "%2.2d-%s %s\n", request, reply->type, repTypeString, reply->str);
     }
 }
 

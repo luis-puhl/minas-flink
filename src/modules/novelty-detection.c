@@ -55,14 +55,12 @@ int main(int argc, char const *argv[], char *env[]) {
     fflush(stdout);
     while (counter) {
         if (redisGetReply(redisCtx, replyPtr) == REDIS_OK && reply != NULL) {
-            fprintf(stderr, "%s\n", get_redis_reply_strings(reply->type));
-            printReply("Loop", reply);
+            printReply("Loop gReply", reply);
             gotPush++;
             freeReplyObject(reply);
         }
         if (redisGetReplyFromReader(redisCtx, replyPtr) == REDIS_OK && reply != NULL) {
-            printReply("Loop", reply);
-            printf("r: %d (%s) %s\n", reply->type, get_redis_reply_strings(reply->type), reply->str);
+            printReply("Loop fReader", reply);
             gotPush++;
             freeReplyObject(reply);
         } else {
