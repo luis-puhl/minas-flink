@@ -22,11 +22,9 @@
 #ifndef MAIN
 #define MAIN 1
 
-#include "./minas/minas.h"
-#include "./mpi/minas-mpi.h"
-#include "./minas/nd-service.h"
-#include "./util/loadenv.h"
-#include "./util/net.h"
+#include "./baseline/base.h"
+#include "./baseline/minas.h"
+#include "./mpi/mfog-mpi.h"
 
 /**
  * Experiments are based in this Minas config
@@ -40,19 +38,47 @@
  *      validationCriterion = dec
 */
 
-int mainClassify(mfog_params_t *params, Point examples[], Model *model, int *nMatches, Match *memMatches) {
+int mainClassify(Params *params, Example examples[], Model *model, int *nMatches, Match *memMatches) {
     clock_t start = clock();
-    int exampleCounter = 0;
     *nMatches = 0;
     // int lastCheck = 0;
-    if (params->mpiSize == 1) {
-        // Point ** unknowns = malloc(maxUnkSize * sizeof(Point *));
-        // size_t unknownsSize = 0;
-        for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
-            Point *example = &(examples[exampleCounter]);
+    tradeModel(params, model);
+    // Example ** unknowns = malloc(maxUnkSize * sizeof(Example *));
+    // size_t unknownsSize = 0;
+    int exampleBufferSize;
+    char *exampleBuffer;
+    double *valuePtr;
+    Example *example;
+    Match *match;
+    if (params->mpiRank == 0) {
+        exampleBufferSize = sizeof(Example) + params->dim * sizeof(double);
+        exampleBuffer = malloc(exampleBufferSize);
+        MPI_Bcast(&exampleBufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    } else {
+        MPI_Bcast(&exampleBufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        exampleBuffer = malloc(exampleBufferSize);
+        valuePtr = calloc(params->dim + 1, sizeof(double));
+        example = calloc(1, sizeof(Example));
+        match = calloc(1, sizeof(Match));
+    }
+    int running = 1, exampleCounter = 0, sendIt = 0, dest = 0;
+    while (running) {
+        if (params->mpiRank == 0) {
+            if (examples[exampleCounter].val == NULL) {
+                running = 0;
+                break;
+            }
+            exampleCounter++;
+            //
+            example = &(examples[exampleCounter]);
             Match *match = &(memMatches[*nMatches]);
             (*nMatches)++;
-            classify(model->dimension, model, example, match);
+            if (sendIt) {
+                tradeExample(params, example, exampleBuffer, exampleBufferSize, &dest, valuePtr);
+                tradeMatch(params, match, exampleBuffer, exampleBufferSize, &dest, valuePtr);
+            } else {
+                classify(params->dim, model, example, match);
+            }
             if (match->label == '-') {
                 if (params->useModelStore) {
                     sendUnk(params, example);
@@ -60,75 +86,16 @@ int mainClassify(mfog_params_t *params, Point examples[], Model *model, int *nMa
                     model->unknowns[model->unknownsSize] = *example;
                     model->unknownsSize++;
                     handleUnknown(params, model);
-                    /*
-                    if (model->unknownsSize >= params->maxUnkSize) {
-                        //  && (lastCheck + (k * minExCluster) < exampleCounter)) {
-                        // lastCheck = exampleCounter;
-                        // ND
-                        Point *linearGroup = malloc(model->unknownsSize * sizeof(Point));
-                        printf("clustering unknowns with %5ld examples\n", model->unknownsSize);
-                        for (int g = 0; g < model->unknownsSize; g++) {
-                            linearGroup[g] = model->unknowns[g];
-                        }
-                        model = noveltyDetection(params->kParam, model, model->unknownsSize, linearGroup,
-                            minExCluster, noveltyThreshold, params->timingFile, params->executable);
-                        char outputModelFileName[200];
-                        sprintf(outputModelFileName, "out/models/%d.csv", exampleCounter);
-                        FILE *outputModelFile = fopen(outputModelFileName, "w");
-                        if (outputModelFile != NULL) {
-                            writeModel(outputModelFile, model, params->timingFile, params->executable);
-                        }
-                        fclose(outputModelFile);
-                        //
-                        // Classify after model update
-                        size_t prevUnknownsSize = unknownsSize;
-                        unknownsSize = 0;
-                        int currentForgetUnkThreshold = exampleCounter - thresholdForgettingPast;
-                        int forgotten = 0;
-                        for (int unk = 0; unk < prevUnknownsSize; unk++) {
-                            match = &(memMatches[*nMatches]);
-                            classify(model->dimension, model, unknowns[unk], match);
-                            if (match->label != '-') {
-                                (*nMatches)++;
-                                // printf("late classify %d %c\n", unkMatch.pointId, unkMatch.label);
-                            } else if (unknowns[unk]->id > currentForgetUnkThreshold) {
-                                // compact unknowns
-                                unknowns[unknownsSize] = unknowns[unk];
-                                unknownsSize++;
-                            } else {
-                                forgotten++;
-                            }
-                        }
-                        printf("late classify of %ld -> %ld unknowns, forgotten %d\n", prevUnknownsSize, unknownsSize, forgotten);
-                        fflush(stdout);
-                        free(linearGroup);
-                    }
-                    */
                 }
             }
-            if (exampleCounter % params->thresholdForgettingPast == 0) {
-                // put old clusters in model to sleep
-            }
+        } else {
+            tradeExample(params, example, exampleBuffer, exampleBufferSize, &dest, valuePtr);
+            classify(params->dim, model, example, match);
+            tradeMatch(params, match, exampleBuffer, exampleBufferSize, &dest, valuePtr);
         }
-    } else if (params->mpiRank == 0) {
-        MPI_Barrier(MPI_COMM_WORLD);
-        sendModel(model, params->mpiRank, params->mpiSize, params->timingFile, params->executable);
-        
-        MPI_Barrier(MPI_COMM_WORLD);
-        *nMatches = sendExamples(model->dimension, examples, memMatches, params->mpiSize, params->timingFile, params->executable);
-
-        MPI_Barrier(MPI_COMM_WORLD);
-    } else {
-        MPI_Barrier(MPI_COMM_WORLD);
-        model = malloc(sizeof(Model));
-        receiveModel(model, params->mpiRank);
-        MPI_Barrier(MPI_COMM_WORLD);
-
-        receiveExamples(model->dimension, model, params->mpiRank);
-
-        MPI_Barrier(MPI_COMM_WORLD);
     }
-
+    MPI_Barrier(MPI_COMM_WORLD);
+    //
     if (params->mpiRank == 0) {
         if (params->timingFile) {
             PRINT_TIMING(params->timingFile, params->executable, params->mpiSize, start, exampleCounter);
@@ -159,7 +126,7 @@ int main(int argc, char *argv[], char **envp) {
         fputs("An error occurred while setting a signal handler.\n", stderr);
         return EXIT_FAILURE;
     }
-    mfog_params_t params;
+    Params params;
     initEnv(argc, argv, envp, &params);
     //
     Model *model = NULL;
@@ -176,16 +143,16 @@ int main(int argc, char *argv[], char **envp) {
             model = readModel(params.dimension, params.modelFile, params.timingFile, params.executable);
         }
     }
-    Point *examples = NULL;
+    Example *examples = NULL;
     Match *memMatches = NULL;
     int nExamples;
     if (params.mpiRank == 0 && params.examplesCsv != NULL && params.examplesFile != NULL) {
-        examples = readExamples(model->dimension, params.examplesFile, &nExamples, params.timingFile, params.executable);
+        examples = readExamples(params->dim, params.examplesFile, &nExamples, params.timingFile, params.executable);
         // max 2 matches per example
         memMatches = calloc(2 * nExamples, sizeof(Match));
         if (!params.useModelStore) {
             model->memMatches = memMatches;
-            model->unknowns = calloc(nExamples, sizeof(Point));
+            model->unknowns = calloc(nExamples, sizeof(Example));
         }
     }
     int nMatches = 0;

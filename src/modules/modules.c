@@ -9,9 +9,6 @@
 
 #include "../baseline/base.h"
 #include "../baseline/minas.h"
-
-#include "../util/net.h"
-
 #include "./modules.h"
 
 int appendClusterFromStore(Params *params, char *buffer, size_t buffSize, Model *model) {
@@ -73,6 +70,7 @@ int appendClusterFromStore(Params *params, char *buffer, size_t buffSize, Model 
     return consumed;
 }
 
+/*
 int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, char *buffer, size_t maxBuffSize) {
     clock_t start = clock();
     size_t prevSize = model->size;
@@ -136,3 +134,4 @@ int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore,
     }
     return model->size;
 }
+*/

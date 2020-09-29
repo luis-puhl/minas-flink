@@ -25,7 +25,7 @@ typedef struct {
     char *remoteRedis;
     unsigned int useCluStream, cluStream_q_maxMicroClusters;
     double cluStream_time_threshold_delta_δ;
-    int fast;
+    int mpiRank, mpiSize;
 } Params;
 
 #define getParam(paramName, paramFormat, paramVal)                     \
@@ -33,7 +33,6 @@ typedef struct {
     fprintf(stderr, "\t" paramName " = " paramFormat "\n", paramVal);
 
 #define getParams(params) \
-    getParam("fast", "%d", params.fast) \
     getParam("k", "%d", params.k) \
     getParam("dim", "%d", params.dim) \
     getParam("precision", "%le", params.precision) \
@@ -76,7 +75,7 @@ typedef struct {
 } Model;
 
 typedef struct {
-    // int pointId, clusterId;
+    int pointId, clusterId;
     // char clusterLabel, clusterCatergoy;
     // double clusterRadius;
     char label;

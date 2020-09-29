@@ -127,3 +127,12 @@ sys     9m50.067s    5m9.445s     4m1.866s
 
 40 vs 8
 
+
+Helio Crestana Guardia6:00 PM
+430  iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j MASQUERADE
+  431  cd /etc/ufw/
+  432  ls
+  433  vi before.rules
+  434  exit
+  435  passwd puhl
+  436  history

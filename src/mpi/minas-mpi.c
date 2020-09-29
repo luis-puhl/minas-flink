@@ -11,22 +11,17 @@
 #include <string.h>
 #include <mpi.h>
 
-#include "../minas/minas.h"
-#include "../util/loadenv.h"
+#include "../baseline/base.h"
 
-#define MFOG_MASTER_RANK 0
-#define DEBUG_LN
-#ifdef DEBUG
-#define DEBUG_LN fprintf(stderr, "%d %s\n", __LINE__, __FUNCTION__); fflush(stderr);
-#endif
-#define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
+// #include "../minas/minas.h"
+// #include "../util/loadenv.h"
 
-void sendModel(Model *model, int clRank, int clSize, FILE *timing, char *executable) {
+void sendModel(Params* params, Model *model, int clRank, int clSize, FILE *timing, char *executable) {
     int mpiReturn;
     clock_t start = clock();
     int bufferSize = sizeof(Model) +
         (model->size) * sizeof(Cluster) +
-        model->dimension * (model->size) * sizeof(double);
+        params->dim * (model->size) * sizeof(double);
     char *buffer = malloc(bufferSize);
     int position = 0;
     mpiReturn = MPI_Pack(model, sizeof(Model), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
@@ -34,40 +29,40 @@ void sendModel(Model *model, int clRank, int clSize, FILE *timing, char *executa
         MPI_Abort(MPI_COMM_WORLD, mpiReturn);
         errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
     }
-    DEBUG_LN mpiReturn = MPI_Pack(model->vals, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+    mpiReturn = MPI_Pack(model->clusters, model->size * sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
     MPI_RETURN
     for (int i = 0; i < model->size; i++) {
-        mpiReturn = MPI_Pack(model->vals[i].center, model->dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        mpiReturn = MPI_Pack(model->clusters[i].center, params->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_RETURN
     }
-    DEBUG_LN if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
-    DEBUG_LN mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
+    mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     MPI_RETURN
-    DEBUG_LN mpiReturn = MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    mpiReturn = MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     MPI_RETURN
-    DEBUG_LN 
+    
     free(buffer);
     PRINT_TIMING(timing, executable, clSize, start, model->size);
 }
 
-void receiveModel(Model *model, int clRank) {
+void receiveModel(Params* params, Model *model, int clRank) {
     clock_t start = clock();
     int bufferSize, mpiReturn;
-    DEBUG_LN mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     MPI_RETURN
     char *buffer = malloc(bufferSize);
-    DEBUG_LN mpiReturn = MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+    mpiReturn = MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     MPI_RETURN
 
     int position = 0;
-    DEBUG_LN mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model, sizeof(Model), MPI_BYTE, MPI_COMM_WORLD);
+    mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model, sizeof(Model), MPI_BYTE, MPI_COMM_WORLD);
     MPI_RETURN
-    model->vals = malloc(model->size * sizeof(Cluster));
-    DEBUG_LN mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model->vals, model->size * sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD);
+    model->clusters = malloc(model->size * sizeof(Cluster));
+    mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model->clusters, model->size * sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD);
     MPI_RETURN
     for (int i = 0; i < model->size; i++) {
-        model->vals[i].center = malloc(model->dimension * sizeof(double));
-        mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model->vals[i].center, model->dimension, MPI_DOUBLE, MPI_COMM_WORLD);
+        model->clusters[i].center = malloc(params->dim * sizeof(double));
+        mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model->clusters[i].center, params->dim, MPI_DOUBLE, MPI_COMM_WORLD);
         MPI_RETURN
     }
     free(buffer);
@@ -88,19 +83,19 @@ int receiveClassifications(Match *memMatches) {
     return matchesCounter;
 }
 
-int sendExamples(int dimension, Point examples[], Match memMatches[], int clSize, FILE *timing, char *executable) {
+int sendExamples(int dimension, Example examples[], Match memMatches[], int clSize, FILE *timing, char *executable) {
     int dest = 1, exampleCounter = 0;
     clock_t start = clock();
-    int bufferSize = sizeof(Point) + dimension * sizeof(double);
+    int bufferSize = sizeof(Example) + dimension * sizeof(double);
     char *buffer = malloc(bufferSize);
     MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
     //
     //Match match;
 
     for (exampleCounter = 0; examples[exampleCounter].value != NULL; exampleCounter++) {
-        Point *ex = &(examples[exampleCounter]);
+        Example *ex = &(examples[exampleCounter]);
         int position = 0;
-        MPI_Pack(ex, sizeof(Point), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        MPI_Pack(ex, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Pack(ex->value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
         //
@@ -108,13 +103,13 @@ int sendExamples(int dimension, Point examples[], Match memMatches[], int clSize
         //
         dest = ++dest < clSize ? dest : 1;
     }
-    Point ex;
+    Example ex;
     ex.id = -1;
     ex.value = malloc(dimension * sizeof(double));
     for (int dest = 1; dest < clSize; dest++) {
         int position = 0;
         // TODO: enviar apenas o point com id=-1, o valor não é utilizado
-        MPI_Pack(&ex, sizeof(Point), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        MPI_Pack(&ex, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Pack(ex.value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
     }
@@ -127,7 +122,7 @@ int sendExamples(int dimension, Point examples[], Match memMatches[], int clSize
 }
 
 int receiveExamples(int dimension, Model *model, int clRank) {
-    Point ex;
+    Example ex;
     double *valuePtr = malloc((dimension + 1) * sizeof(double));
     ex.id = 0;
     Match match;
@@ -142,12 +137,12 @@ int receiveExamples(int dimension, Model *model, int clRank) {
     while (ex.id >= 0) {
         MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         int position = 0;
-        MPI_Unpack(buffer, bufferSize, &position, &ex, sizeof(Point), MPI_BYTE, MPI_COMM_WORLD);
+        MPI_Unpack(buffer, bufferSize, &position, &ex, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD);
         if (ex.id < 0) break;
         MPI_Unpack(buffer, bufferSize, &position, valuePtr, dimension, MPI_DOUBLE, MPI_COMM_WORLD);
-        ex.value = valuePtr;
+        ex.val = valuePtr;
         //
-        classify(dimension, model, &ex, &match);
+        identify(params, model, &ex, &match);
         MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_MASTER_RANK, 2005, MPI_COMM_WORLD);
         //
         exampleCounter++;
@@ -238,7 +233,7 @@ int MNS_mfog_main(int argc, char *argv[], char **envp) {
         );
 
         model = readModel(dimension, modelFile, timing, executable);
-        Point *examples;
+        Example *examples;
         int nExamples;
         examples = readExamples(dimension, examplesFile, &nExamples, timing, executable);
         Match *memMatches = malloc(nExamples * sizeof(Match));

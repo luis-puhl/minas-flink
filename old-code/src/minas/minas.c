@@ -392,4 +392,32 @@ Model *noveltyDetection(int k, Model *model, int unknownsSize, Point unknowns[],
     return model;
 }
 
+Match *identify(Params *params, Model *model, Example *example, Match *match) {
+    // Match *match = calloc(1, sizeof(Match));
+    match->label = UNK_LABEL;
+    match->distance = nearestClusterVal(params, model->clusters, model->size, example->val, &match->cluster);
+    assertDiffer(match->cluster, NULL);
+    if (match->distance <= match->cluster->radius) {
+        match->label = match->cluster->label;
+        // // #define _USE_MOVING_CLUSTER
+        // #ifdef _USE_MOVING_CLUSTER
+            // match->cluster->n_matches++;
+            // match->cluster->timeLinearSum += example->id;
+            // match->cluster->timeSquareSum += example->id * example->id;
+            // match->cluster->radius = 0.0;
+            // for (size_t d = 0; d < params->dim; d++) {
+            //     match->cluster->ls_valLinearSum[d] += example->val[d];
+            //     match->cluster->ss_valSquareSum[d] += example->val[d] * example->val[d];
+            //     //
+            //     match->cluster->center[d] = match->cluster->ls_valLinearSum[d] /
+            //         match->cluster->n_matches;
+            //     double v = example->val[d] - match->cluster->center[d];
+            //     match->cluster->radius += v * v;
+            // }
+            // match->cluster->radius = sqrt(match->cluster->radius / match->cluster->n_matches);
+        // #endif // _USE_MOVING_CLUSTER
+    }
+    return match;
+}
+
 #endif // MINAS_C

@@ -11,7 +11,6 @@
 #include <poll.h>
 
 #include "../baseline/base.h"
-#include "../util/net.h"
 
 #define MODEL_STORE_PORT 7000
 #define MODEL_STORE_REMOTE_REDIS_PORT 6379
@@ -25,6 +24,6 @@
 // #define MODEL_STORE_REQUEST_SEND_ALL "# Model(dimension="
 
 int appendClusterFromStore(Params *params, char *buffer, size_t buffSize, Model *model);
-int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, char *buffer, size_t maxBuffSize);
+// int modelStoreComm(Params *params, int timeout, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, char *buffer, size_t maxBuffSize);
 
 #endif // _MODULES_H

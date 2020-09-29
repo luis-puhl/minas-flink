@@ -23,54 +23,10 @@
 #include "../baseline/kmeans.h"
 #include "../baseline/clustream.h"
 #include "../baseline/minas.h"
-
-// #include "../util/net.h"
+#include "../mpi/mfog-mpi.h"
 
 #include "./modules.h"
 #include "./redis/redis-connect.h"
-
-/*
-int classifier(Params *params, Model *model, SOCKET modelStore, struct pollfd *modelStorePoll, SOCKET noveltyDetectionService, char *buffer, size_t maxBuffSize) {
-    clock_t start = clock();
-    unsigned int id = 0;
-    Match match;
-    Example example;
-    example.val = calloc(params->dim, sizeof(double));
-    printf("#pointId,label\n");
-    int hasEmptyline = 0;
-    unsigned int unknowns = 0;
-    while (!feof(stdin) && hasEmptyline != 2) {
-        for (size_t d = 0; d < params->dim; d++) {
-            assertEquals(scanf("%lf,", &example.val[d]), 1);
-        }
-        // ignore class
-        char class;
-        assertEquals(scanf("%c", &class), 1);
-        example.id = id;
-        id++;
-        scanf("\n%n", &hasEmptyline);
-        //
-        identify(params, model, &example, &match);
-        printf("%10u,%s\n", example.id, printableLabel(match.label));
-        //
-        if (match.label != UNK_LABEL) continue;
-        // send to novelty detection service
-        unknowns++;
-        bzero(buffer, maxBuffSize);
-        int offset = sprintf(buffer, "%10u", example.id);
-        for (size_t d = 0; d < params->dim; d++) {
-            offset += sprintf(&buffer[offset], ", %le", example.val[d]);
-        }
-        offset += sprintf(&buffer[offset], "\n");
-        write(noveltyDetectionService, buffer, offset);
-        //
-        modelStoreComm(params, 0, model, modelStore, modelStorePoll, buffer, maxBuffSize);
-    }
-    fprintf(stderr, "unknowns = %u\n", unknowns);
-    printTiming(id);
-    return id;
-}
-*/
 
 #define fail(c) \
     if (c->err != 0) errx(EXIT_FAILURE, "Redis error %d '%s': At "__FILE__":%d\n", c->err, c->errstr, __LINE__);
@@ -165,36 +121,18 @@ int main(int argc, char const *argv[], char *env[]) {
     params->executable = argv[0];
     fprintf(stderr, "%s\n", params->executable);
     getParams((*params));
-    int useRedis = 1;
     // scanf("remoteRedis" "=" "%s" "\n", params->remoteRedis);
     // params->remoteRedis = "ec2-18-191-2-174.us-east-2.compute.amazonaws.com";
     params->remoteRedis = "localhost";
     fprintf(stderr, "\t" "remoteRedis" " = " "%s" "\n", params->remoteRedis);
 
-    // Model *model = training(&params);
-
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
     model->clusters = calloc(params->k, sizeof(Cluster));
-    // 
+    //
     int maxBuffSize = 1024;
     char *buffer = calloc(maxBuffSize, sizeof(char));
     //
-    if (useRedis) {
-        classifierRedis(params, model, buffer, maxBuffSize);
-        return EXIT_SUCCESS;
-    }
-    /*
-    SOCKET modelStore = clientConnect("localhost", MODEL_STORE_PORT);
-    struct pollfd modelStorePoll;
-    modelStorePoll.fd = modelStore;
-    modelStorePoll.events = POLLIN;
-    modelStoreComm(params, 3, model, modelStore, &modelStorePoll, buffer, maxBuffSize);
-
-    SOCKET noveltyDetectionService = clientConnect("localhost", 7001);
-    // minasOnline(&params, model);
-    classifier(params, model, modelStore, &modelStorePoll, noveltyDetectionService, buffer, maxBuffSize);
-    */
-
+    classifierRedis(params, model, buffer, maxBuffSize);
     return EXIT_SUCCESS;
 }

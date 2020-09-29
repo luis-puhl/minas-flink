@@ -22,16 +22,18 @@ bin/redis: src/modules/redis/get-model.c
 	gcc -g -Wall -lm -lhiredis -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -lglib-2.0 $^ -o $@
 
 # -------------------------- Bin Executables -----------------------------------
-bin/minas-mpi: src/main.c src/minas/minas.c src/minas/nd-service.c src/util/loadenv.c src/util/kMeans.c src/util/net.c src/mpi/minas-mpi.c
-	mpicc src/main.c src/minas/minas.c src/minas/nd-service.c src/util/loadenv.c src/util/kMeans.c src/util/net.c src/mpi/minas-mpi.c -o $@ -lm -Wall -g
+bin/minas-mpi: src/main.c src/baseline/minas.c src/mpi/minas-mpi.c
+	mpicc $^ -o $@ -lm -Wall -g
 
 bin/baseline: src/baseline/baseline.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
 	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c
+bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
 	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c src/modules/redis/redis-connect.c
+bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/modules/redis/redis-connect.c
 	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/util/net.c src/modules/redis/redis-connect.c
+bin/classifier-mpi: src/modules/classifier-mpi.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/modules/redis/redis-connect.c
+	mpicc -g -Wall -lm -lhiredis $^ -o $@
+bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/modules/redis/redis-connect.c
 	gcc -g -Wall -lm -lhiredis $^ -o $@
 
 # -------------------------- Experiments ---------------------------------------
@@ -66,16 +68,16 @@ experiments/baseline.log: bin/baseline src/evaluation/evaluate.py experiments/re
 	python3 src/evaluation/evaluate.py Baseline datasets/test.csv out/baseline.csv experiments/baseline-hits.png >> experiments/baseline.log
 	cat experiments/baseline.log
 # Experiments: Minas with MPI
-experiments/minas-mpi-serial.log: bin/mfog datasets/model-clean.csv datasets/test.csv
-	./bin/mfog k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
+experiments/minas-mpi-serial.log: bin/minas-mpi datasets/model-clean.csv datasets/test.csv
+	./bin/minas-mpi k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/serial.csv 2>&1 >> $@
 	python3 src/evaluation/evaluate.py Minas-MPI-serial datasets/test.csv out/serial.csv experiments/minas-mpi-serial-hits.png >> $@
-experiments/minas-mpi-intel.log: bin/mfog datasets/model-clean.csv datasets/test.csv
-	mpiexec ./bin/mfog k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
+experiments/minas-mpi-intel.log: bin/minas-mpi datasets/model-clean.csv datasets/test.csv
+	mpiexec ./bin/minas-mpi k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi-intel.csv 2>&1 >> $@
 	python3 src/evaluation/evaluate.py Minas-MPI-intel datasets/test.csv out/mpi-intel.csv experiments/minas-mpi-intel-hits.png >> $@
 experiments/minas-mpi-picluster.log: datasets/model-clean.csv datasets/test.csv
-	mpiexec --host jantar:4,almoco:4,lanche:4 ./bin/mfog k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
+	mpiexec --host jantar:4,almoco:4,lanche:4 ./bin/minas-mpi k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
 		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/picluster.csv 2>&1 >> $@
 	python3 src/evaluation/evaluate.py Minas-MPI-picluster datasets/test.csv out/picluster.csv experiments/minas-mpi-picluster-hits.png >> $@
 experiments/minas-mpi.log: out/serial.csv out/mpi.csv out/picluster.csv

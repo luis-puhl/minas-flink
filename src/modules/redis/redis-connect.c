@@ -25,8 +25,6 @@
 #include "../../baseline/clustream.h"
 #include "../../baseline/minas.h"
 
-#include "../../util/net.h"
-
 #include "../modules.h"
 
 #include "./redis-connect.h"
