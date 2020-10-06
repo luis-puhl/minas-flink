@@ -5,7 +5,7 @@
 
 #include "./base.h"
 
-typedef struct {
+typedef struct t_example {
     unsigned int id;
     char label;
     double *val;

@@ -96,8 +96,10 @@ int main(int argc, char const *argv[], char *env[]) {
         errx(s, "pthread_attr_init");
 
     thread_info classifierTinfo, modelCommTinfo, noveltyDetectionTinfo;
-    // examples -> classify -> match -> ND
-    // init model ->  î  <-  model  <- |
+    /**
+     * examples -> classify -> match -> ND
+     * init model ->  î  <-  model  <- |
+     **/
     pthread_create(&classifierTinfo.thread_id, &attr, &classifierEntryFunc, &classifierTinfo);
     pthread_create(&modelCommTinfo.thread_id, &attr, &modelCommEntryFunc, &modelCommTinfo);
     pthread_create(&noveltyDetectionTinfo.thread_id, &attr, &noveltyDetectionEntryFunc, &noveltyDetectionTinfo);

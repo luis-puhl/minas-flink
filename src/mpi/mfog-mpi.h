@@ -1,6 +1,8 @@
 #ifndef _MFOG_MPI_H
 #define _MFOG_MPI_H 1
 
+#include <mpi.h>
+
 #include "../base/base.h"
 #include "../base/minas.h"
 

@@ -1,0 +1,33 @@
+
+cria estruturas
+
+pthread_create (&classificador, ...
+pthread_create (&envia_unknows, …
+pthread_create (&recebe_modelo, …
+
+
+classificador:
+loop: {
+espera amostra
+classifica,
+se unknown, 
+	insere amostra na lista de unknowns
+	se atingiu threshold, 
+		troca ponteiros das listas, (passa a criar nova lista de unkowns)
+		ativa thread de envio (semáforo)
+}
+
+enviador:
+loop {
+espera threshold (semáforo)
+envia amostras: mensagem bloqueante MPI
+}
+
+recebe_modelo:
+loop {
+espera modelo: mensagem bloqueante MPI
+cria nova lista de modelos
+bloqueia acesso à lista
+troca lista de modelos 
+libera acesso à nova lista
+}

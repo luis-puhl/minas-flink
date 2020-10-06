@@ -201,3 +201,20 @@ In the _modules_ case, 4 communication and parallelism libraries can be had:
 - *MPI*: only for a classifier cluster;
 - *REDIS*: local and cloud, model sharing is ok. unknown trading is not fast enough;
 - *threads*: proposed yesterday, so a new executable with the modules inside is needed;
+
+Threads:
+
+- um processo por nó em cluster MPI
+- Rank 0 é novelty Detector
+- Classificador em uma thread
+- MPI_Calls em outra(s): Envio de unk, Recebimento de modelo
+- pré-particionar dataset para cada nó MPI
+
+Abordagem em Catraca e BigFlow: 10 Gbps -> IDS {cluster spark/flink} -> ND
+
+Abordagem em mfog: captura distribuída em fog -> IDS {nó MPI} -> ND {rank0}
+
+```sh
+cat test.csv | partition $(netcat 01) $(netcat 02) $(netcat 03) > matches.csv
+netcat -l 01 <> classifier
+```
