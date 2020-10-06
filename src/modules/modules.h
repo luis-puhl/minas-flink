@@ -10,7 +10,8 @@
 // #include <arpa/inet.h>
 #include <poll.h>
 
-#include "../baseline/base.h"
+#include "../base/base.h"
+#include "../base/minas.h"
 
 #define MODEL_STORE_PORT 7000
 #define MODEL_STORE_REMOTE_REDIS_PORT 6379

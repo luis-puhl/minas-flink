@@ -11,11 +11,13 @@
 #include <string.h>
 #include <mpi.h>
 
-#include "../baseline/base.h"
-#include "../baseline/minas.h"
+#include "../base/base.h"
+#include "../base/minas.h"
 
-#define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
-#define MFOG_MASTER_RANK 0
+#include "./mfog-mpi.h"
+
+// #define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
+// #define MFOG_MASTER_RANK 0
 
 int tradeModel(Params *params, Model *model) {
     int mpiReturn, bufferSize;
@@ -23,10 +25,10 @@ int tradeModel(Params *params, Model *model) {
     MPI_Barrier(MPI_COMM_WORLD);
     if (params->mpiRank == 0) {
         bufferSize = sizeof(Model) + (model->size) * sizeof(Cluster) + params->dim * (model->size) * sizeof(double);
-        mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MAIN_RANK, MPI_COMM_WORLD);
         MPI_RETURN
     } else {
-        mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        mpiReturn = MPI_Bcast(&bufferSize, 1, MPI_INT, MFOG_MAIN_RANK, MPI_COMM_WORLD);
         MPI_RETURN
     }
     char *buffer = malloc(bufferSize);
@@ -41,10 +43,10 @@ int tradeModel(Params *params, Model *model) {
             MPI_RETURN
         }
         if (position != bufferSize) errx(EXIT_FAILURE, "Buffer sizing error. Used %d of %d.\n", position, bufferSize);
-        mpiReturn = MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        mpiReturn = MPI_Bcast(buffer, position, MPI_PACKED, MFOG_MAIN_RANK, MPI_COMM_WORLD);
         MPI_RETURN
     } else {
-        mpiReturn = MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        mpiReturn = MPI_Bcast(buffer, bufferSize, MPI_PACKED, MFOG_MAIN_RANK, MPI_COMM_WORLD);
         MPI_RETURN
         model = malloc(sizeof(Model));
         mpiReturn = MPI_Unpack(buffer, bufferSize, &position, model, sizeof(Model), MPI_BYTE, MPI_COMM_WORLD);
@@ -64,7 +66,7 @@ int tradeModel(Params *params, Model *model) {
 }
 
 Example* tradeExample(Params *params, Example *example, char *exampleBuffer, int exampleBufferSize, int *dest, double *valuePtr) {
-    if (params->mpiRank == 0) {
+    if (params->mpiRank == MFOG_MAIN_RANK) {
         int position = 0;
         MPI_Pack(example, sizeof(Example), MPI_BYTE, exampleBuffer, exampleBufferSize, &position, MPI_COMM_WORLD);
         MPI_Pack(example->val, params->dim, MPI_DOUBLE, exampleBuffer, exampleBufferSize, &position, MPI_COMM_WORLD);
@@ -89,7 +91,7 @@ Match* tradeMatch(Params *params, Match *match, char *matchBuffer, int matchBuff
             MPI_Recv(match, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, 2005, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     } else {
-        MPI_Send(match, sizeof(Match), MPI_BYTE, MFOG_MASTER_RANK, 2005, MPI_COMM_WORLD);
+        MPI_Send(match, sizeof(Match), MPI_BYTE, MFOG_MAIN_RANK, 2005, MPI_COMM_WORLD);
     }
     return match;
 }

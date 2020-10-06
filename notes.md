@@ -188,3 +188,16 @@ Próximos desafios:
     (nesse ponto é onde a hipótese prevê maior diferença, grande ponto de interesse);
   - Mecanismo de esquecimento local vs global (modelo único ou por nó);
   - Atraso na reclassificação dos desconhecidos;
+
+commit>
+[WIP] 🪓💣 a LOT of changes, moving code around...
+
+So, this code integration thing is a mess
+previously we had (still have) many definitions for the same functionality thus behavior is erratic.
+We aim to have 2 modes, _inline_ and _modules_, in 4 executables: `baseline` (inline) and `[training, classification, noveltyDetection]` (one binary for each module)
+In the _modules_ case, 4 communication and parallelism libraries can be had:
+
+- *bash pipes*: worked, not anymore, needs redo;
+- *MPI*: only for a classifier cluster;
+- *REDIS*: local and cloud, model sharing is ok. unknown trading is not fast enough;
+- *threads*: proposed yesterday, so a new executable with the modules inside is needed;

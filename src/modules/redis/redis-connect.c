@@ -20,10 +20,10 @@
 
 #include <hiredis/hiredis.h>
 
-#include "../../baseline/base.h"
-#include "../../baseline/kmeans.h"
-#include "../../baseline/clustream.h"
-#include "../../baseline/minas.h"
+#include "../../base/base.h"
+#include "../../base/kmeans.h"
+#include "../../base/clustream.h"
+#include "../../base/minas.h"
 
 #include "../modules.h"
 
@@ -47,6 +47,10 @@ int printReply(const char* request, redisReply* reply) {
     }
     const char* repTypeString = redis_reply_strings[reply->type];
     switch (reply->type){
+    case REDIS_REPLY_ERROR:
+        printf(__REPLY_HEADER "%2.2d-%s\n", request, reply->type, repTypeString);
+        errx(EXIT_FAILURE, "Redis got error response: At "__FILE__":%d\n", __LINE__);
+        return EXIT_FAILURE;
     case REDIS_REPLY_PUSH:
         return printf(__REPLY_HEADER "%2.2d-%s\n", request, reply->type, repTypeString);
     case REDIS_REPLY_INTEGER:
@@ -91,7 +95,11 @@ redisContext* makeConnection(Params *params, Model *model) {
     }
     int nClusters = reply->elements;
     for (size_t j = 0; j < nClusters; j++) {
-        appendClusterFromStore(params, reply->element[j]->str, reply->element[j]->len, model);
+        if (reply->element[j]->type == REDIS_REPLY_STRING) {
+            appendClusterFromStore(params, reply->element[j]->str, reply->element[j]->len, model);
+        } else {
+            errx(EXIT_FAILURE, "Model Store error. At "__FILE__":%d\n", __LINE__);
+        }
     }
     freeReplyObject(reply);
     //
@@ -108,7 +116,7 @@ redisContext* makeConnection(Params *params, Model *model) {
     // }
     // freeReplyObject(reply);
     //
-    printTiming(nClusters);
+    printTiming(makeConnection, nClusters);
     return redisCtx;
 }
 

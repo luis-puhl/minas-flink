@@ -1,11 +1,11 @@
 #ifndef _MFOG_MPI_H
 #define _MFOG_MPI_H 1
 
-#include "../baseline/base.h"
-#include "../baseline/minas.h"
+#include "../base/base.h"
+#include "../base/minas.h"
 
 #define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
-#define MFOG_MASTER_RANK 0
+#define MFOG_MAIN_RANK 0
 
 int tradeModel(Params *params, Model *model);
 Example* tradeExample(Params *params, Example *example, char *exampleBuffer, int exampleBufferSize, int *dest, double *valuePtr);

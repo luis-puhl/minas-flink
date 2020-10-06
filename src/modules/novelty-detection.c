@@ -10,30 +10,16 @@
 
 #define MAIN
 
-#include "../baseline/base.h"
-// #include "../baseline/kmeans.h"
-// #include "../baseline/clustream.h"
-// #include "../baseline/minas.h"
-
-#include "../util/net.h"
+#include "../base/base.h"
 
 #include "./modules.h"
 #include "./redis/redis-connect.h"
 
 int main(int argc, char const *argv[], char *env[]) {
     clock_t start = clock();
-    if (argc == 2) {
-        fprintf(stderr, "reading from file %s\n", argv[1]);
-        stdin = fopen(argv[1], "r");
-    }
-    Params *params = calloc(1, sizeof(Params));
-    params->executable = argv[0];
-    fprintf(stderr, "%s\n", params->executable);
-    getParams((*params));
-    params->remoteRedis = "localhost"; // "ec2-18-191-2-174.us-east-2.compute.amazonaws.com";
-    fprintf(stderr, "\t" "remoteRedis" " = " "%s" "\n", params->remoteRedis);
-
+    Params *params = setup(argc, argv, env);
     Model *model = calloc(1, sizeof(Model));
+    size_t unknownsSize;
     model->size = 0;
     model->clusters = calloc(params->k, sizeof(Cluster));
     //
@@ -41,41 +27,64 @@ int main(int argc, char const *argv[], char *env[]) {
     // char *buffer = calloc(maxBuffSize, sizeof(char));
     //
     // redisContext *redisCtx = makeConnection(params, model);
-    redisContext *redisCtx = redisConnect(params->remoteRedis, MODEL_STORE_REMOTE_REDIS_PORT);
-    //
+    redisContext *redisCtx;
     redisReply *reply;
     void **replyPtr = (void **)&reply;
-    reply = redisCommand(redisCtx, "LLEN " MODEL_STORE_UNKNOWNS_LIST);
-    printReply("LLEN", reply);
-    //
-    int gotPush = 0;
-    int counter = 10;
-    reply = redisCommand(redisCtx, "SUBSCRIBE " MODEL_STORE_UNKNOWNS_CH);
-    printReply("SUBSCRIBE", reply);
+    if (params->useRedis) {
+        redisCtx = redisConnect(params->remoteRedis, MODEL_STORE_REMOTE_REDIS_PORT);
+        reply = redisCommand(redisCtx, "LLEN " MODEL_STORE_UNKNOWNS_LIST);
+        printReply("LLEN", reply);
+        unknownsSize = reply->integer;
+        reply = redisCommand(redisCtx, "SUBSCRIBE " MODEL_STORE_UNKNOWNS_CH);
+        printReply("SUBSCRIBE", reply);
+    } else {
+        printf("Reading from stdin\n");
+    }
+    int gotPush = 0, counter = 10;
+    Example *example, *unknowns;
+    unknowns = calloc(unknownsSize + 1, sizeof(Example));
+    example = calloc(1, sizeof(Example));
     fflush(stdout);
     while (counter) {
-        if (redisGetReply(redisCtx, replyPtr) == REDIS_OK && reply != NULL) {
-            printReply("Loop gReply", reply);
-            gotPush++;
-            freeReplyObject(reply);
-        }
-        if (redisGetReplyFromReader(redisCtx, replyPtr) == REDIS_OK && reply != NULL) {
-            printReply("Loop fReader", reply);
-            gotPush++;
-            freeReplyObject(reply);
+        if (params->useRedis) {
+            if (redisGetReply(redisCtx, replyPtr) == REDIS_OK && reply != NULL) {
+                printReply("Loop gReply", reply);
+                gotPush++;
+                freeReplyObject(reply);
+            }
+            if (redisGetReplyFromReader(redisCtx, replyPtr) == REDIS_OK && reply != NULL) {
+                printReply("Loop fReader", reply);
+                gotPush++;
+                freeReplyObject(reply);
+            } else {
+                // break;
+                counter--;
+            }
+            fail(redisCtx);
         } else {
-            // break;
-            counter--;
+            if (next(params, &example) == NULL) {
+                break;
+            }
+            unknownsSize++;
+            unknowns = realloc(unknowns, unknownsSize * sizeof(Example));
+            
         }
-        fail(redisCtx);
     }
-    reply = redisCommand(redisCtx, "LLEN " MODEL_STORE_UNKNOWNS_LIST);
-    printReply("LLEN", reply);
-    printf("final unknowns = %lld\n", reply->integer);
+    if (params->useRedis) {
+        reply = redisCommand(redisCtx, "UNSUBSCRIBE " MODEL_STORE_UNKNOWNS_CH);
+        printReply("UNSUBSCRIBE", reply);
+        reply = redisCommand(redisCtx, "LLEN " MODEL_STORE_UNKNOWNS_LIST);
+        printReply("LLEN", reply);
+        unknownsSize = reply->integer;
+    } else {
+        //
+    }
+    printf("final unknowns = %ld\n", unknownsSize);
     printf("final counter = %d\n", counter);
     printf("final gotPush = %d\n", gotPush);
     fflush(stdout);
     //
-    printTiming(model->size);
+    printTiming(main, model->size);
+    printTimeLog(params);
     return EXIT_SUCCESS;
 }

@@ -7,8 +7,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "../baseline/base.h"
-#include "../baseline/minas.h"
+#include "../base/base.h"
+#include "../base/minas.h"
 #include "./modules.h"
 
 int appendClusterFromStore(Params *params, char *buffer, size_t buffSize, Model *model) {

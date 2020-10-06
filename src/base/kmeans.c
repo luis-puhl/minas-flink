@@ -4,14 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 // #include <string.h>
-// #include <err.h>
+#include <err.h>
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
 
 #include "./base.h"
+#include "./minas.h"
 
 Cluster* kMeansInit(Params *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
+    if (trainingSetSize < params->k) {
+        errx(EXIT_FAILURE, "Not enough examples for K-means. At "__FILE__":%d\n", __LINE__);
+    }
     Cluster *clusters = calloc(params->k, sizeof(Cluster));
     for (size_t i = 0; i < params->k; i++) {
         clusters[i].id = initalId + i;
@@ -77,7 +81,7 @@ double kMeans(Params *params, Cluster* clusters, Example trainingSet[], unsigned
         // fprintf(stderr, "\t[%3u] k-Means %le -> %le (%+le)\n", iteration, prevGlobalDistance, globalDistance, improvement);
         iteration++;
     } while (fabs(improvement) > params->precision && iteration < 100);
-    // printTiming(trainingSetSize);
+    // printTiming(kMeans, trainingSetSize);
     return globalDistance;
 }
 

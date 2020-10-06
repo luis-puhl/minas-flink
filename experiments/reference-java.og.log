@@ -2,7 +2,7 @@ class br.ufu.noveltydetection.minas.Minas with
 	filenameOffline = datasets/training.csv
 	filenameOnline = datasets/test.csv
 
-	outputDirectory = out/minas-og//2020-10-05T15-42-52.789
+	outputDirectory = out/minas-og//2020-10-05T12-04-42.564
 	algClusteringOff = kmeans
 	algClusteringOnl = kmeans
 
@@ -18,7 +18,7 @@ class br.ufu.noveltydetection.minas.Minas with
 
 	isGUIEnabled = false
 
- Processing out/minas-og//2020-10-05T15-42-52.789_ initial phase...
+ Processing out/minas-og//2020-10-05T12-04-42.564_ initial phase...
 
 
 ********************** Offline phase ****************************
@@ -27,22 +27,22 @@ class br.ufu.noveltydetection.minas.Minas with
 Class N
 Storing model
 Storing model
-Offline time 93.529
+Offline time 126.847
 ********************** Online phase****************************
 Evaluate
-	title = Reference-Java
+	title = Reference-Rerun-results
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/minas-og/2020-08-25T12-18-16.272/results
-	plotSavePath = experiments/reference-java.log.png
+	plotSavePath = experiments/reference-java.png
 
 Count per class
            id
 class        
 A      447179
 N      206278
-### Reference-Java
+### Reference-Rerun-results
 
-saving experiments/reference-java.log.png
+saving experiments/reference-java.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits          og_labels
 Labels (pred)                                                    
@@ -64,7 +64,7 @@ Labels (pred)
 N              436923  177800        N  177800    [C N, ExtCon N]
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19), ('2', 58967), ('5', 68703), ('1', 72359), ('4', 82210), ('6', 89216), ('8', 92969), ('7', 102815), ('3', 104440), ('9', 132969), ('11', 286467), ('10', 286497), ('12', 504979), ('13', 523952), ('14', 542799)] 16
+Labels            ['-', '1', '10', '11', '12', '13', '14', '2', '3', '4', '5', '6', '7', '8', '9', 'N'] 16
 Total examples    (653457, 25)
 Total matches     (653457, 3)
 Hits               197285 ( 30.190969%)

@@ -84,7 +84,7 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
     #
     # return (cf, classes, labels, off, assignment)
     # 
-    df = plotHitMissUnkRate(merged, assignment, off, plotSavePath, title)
+    df, labelSet = plotHitMissUnkRate(merged, assignment, off, plotSavePath, title)
     print("Confusion Matrix")
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
         print(cf)
@@ -99,7 +99,7 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
 
     print('Classes          ', classes)
     print('Initial labels   ', off)
-    print('Labels           ', labels, len(labels))
+    print('Labels (item)    ', labelSet, len(labelSet))
     # print('Assignment       ', assignment)
     print('Total examples   ', exDf.shape)
     print('Total matches    ', maDf.shape)
@@ -108,7 +108,6 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
     print('Unknowns         %8d (%10f%%)' % (unks, (unks/tot) * 100.0))
     print('Unk. reprocessed %8d (%10f%%)' % (repro, (repro/unks) * 100.0))
     print('Total            %8d (%10f%%)' % (hits + misses + unks, ((hits + misses + unks)/tot) * 100.0))
-    print('')
     return df, cf, classes, labels, off, assignment, ogLabelsMap
 
 def main(
@@ -117,6 +116,8 @@ def main(
     matchesFileName='out/og/kmeans-nd/results',
     plotSavePath='out/hits.png',
 ):
+    if len(plotSavePath) == 0:
+        plotSavePath = None
     print(
         'Evaluate\n' +
         '\ttitle = %s\n' % title +

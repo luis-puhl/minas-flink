@@ -1,5 +1,5 @@
 # all: clean experiments/serial-matrix.log experiments/mpi-matrix.log
-all: experiments/reference.log experiments/reference-results.log experiments/baseline.log experiments/mfog.log
+all: experiments/reference-java.log experiments/baseline.log experiments/mfog.log
 # cluster@almoco
 # experiments/mpi-test.log
 
@@ -22,71 +22,63 @@ bin/redis: src/modules/redis/get-model.c
 	gcc -g -Wall -lm -lhiredis -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -lglib-2.0 $^ -o $@
 
 # -------------------------- Bin Executables -----------------------------------
-bin/minas-mpi: src/main.c src/baseline/minas.c src/mpi/minas-mpi.c
+bin/minas-mpi: src/main.c src/base/minas.c src/mpi/minas-mpi.c
 	mpicc $^ -o $@ -lm -Wall -g
+bin/mfog-threads: src/modules/mfog-threads.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+	gcc -g -Wall -lm -lpthread $^ -o $@
 
-bin/baseline: src/baseline/baseline.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
-	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/training: src/modules/training.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c
-	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/classifier: src/modules/classifier.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/modules/redis/redis-connect.c
-	gcc -g -Wall -lm -lhiredis $^ -o $@
-bin/classifier-mpi: src/modules/classifier-mpi.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/modules/redis/redis-connect.c
+bin/baseline: src/modules/baseline.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+	gcc -g -Wall -lm $^ -o $@
+bin/training: src/modules/training.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
-bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c src/baseline/minas.c src/baseline/base.c src/baseline/kmeans.c src/baseline/clustream.c src/modules/redis/redis-connect.c
-	gcc -g -Wall -lm -lhiredis $^ -o $@
+bin/classifier: src/modules/classifier.c src/mpi/mfog-mpi.c src/modules/modules.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c src/modules/redis/redis-connect.c
+	mpicc -g -Wall -lm -lhiredis $^ -o $@
+bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c src/modules/redis/redis-connect.c
+	mpicc -g -Wall -lm -lhiredis $^ -o $@
 
 # -------------------------- Experiments ---------------------------------------
-# Experiments: Java reference
-experiments/reference-java.log:
-	java -classpath 'bin/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
+# --------- Experiments: Java reference ---------
+experiments/reference-java.log: bin/minas/src-minas.jar datasets/training.csv datasets/test.csv
+	java -classpath 'bin/minas/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
 		datasets/training.csv datasets/test.csv out/minas-og/ \
 		kmeans kmeans \
-		2.0 1 10000 100 true > $@
-	python3 src/evaluation/evaluate.py Reference-Rerun-results \
-		datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results \
-		experiments/reference-java.png >> $@
-experiments/reference-java-nf.log:
-	java -ea -classpath 'bin/src-minas-mfogFormat.jar:' br.ufu.noveltydetection.minas.MinasOg \
-		datasets/training.csv datasets/test.csv out/minas-og/ \
+		2.0 1 10000 100 true | tee -a $@
+experiments/reference-java.log.png: experiments/reference-java.log out/minas-og/2020-08-25T12-18-16.272/results
+	python3 src/evaluation/evaluate.py Reference-Java datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results $@ >> experiments/reference-java.log
+experiments/reference-java-nf.log: bin/minas/src-minas-mfogFormat.jar datasets/training.csv datasets/test.csv
+	java -ea -classpath 'bin/minas/src-minas-mfogFormat.jar:' br.ufu.noveltydetection.minas.MinasOg \
+		datasets/training.csv datasets/test.csv out/minas-nf/ \
 		kmeans kmeans \
 		2.0 lit 10000 100 false false > $@
-	python3 src/evaluation/evaluate.py Reference-Rerun-results \
-		datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results \
-		experiments/reference-java.png >> $@
-experiments/reference.log: src/evaluation/evaluate.py datasets/test.csv out/og/kmeans-nd/matches.csv
-	python3 src/evaluation/evaluate.py Reference datasets/test.csv out/og/kmeans-nd/matches.csv experiments/reference-hits.png > experiments/reference.log
-experiments/reference-results.log: src/evaluation/evaluate.py
-	python3 src/evaluation/evaluate.py Reference-results datasets/test.csv out/og/kmeans-nd/results experiments/reference-results-hits.png > experiments/reference-results.log
-# Experiments: Baseline
-experiments/baseline.log: bin/baseline src/evaluation/evaluate.py experiments/reference.log minas-base.conf datasets/emtpyline datasets/training.csv datasets/test.csv
-	cat minas-base.conf datasets/emtpyline datasets/training.csv datasets/emtpyline datasets/test.csv | \
-		./bin/baseline > out/baseline.csv 2> experiments/baseline.log
-	echo "" >> experiments/baseline.log
-	cat out/baseline.csv | awk -F, '{print $$2}' | sort | uniq -c >> experiments/baseline.log
-	echo "" >> experiments/baseline.log
-	python3 src/evaluation/evaluate.py Baseline datasets/test.csv out/baseline.csv experiments/baseline-hits.png >> experiments/baseline.log
-	cat experiments/baseline.log
-# Experiments: Minas with MPI
-experiments/minas-mpi-serial.log: bin/minas-mpi datasets/model-clean.csv datasets/test.csv
-	./bin/minas-mpi k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
-		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/serial.csv 2>&1 >> $@
-	python3 src/evaluation/evaluate.py Minas-MPI-serial datasets/test.csv out/serial.csv experiments/minas-mpi-serial-hits.png >> $@
-experiments/minas-mpi-intel.log: bin/minas-mpi datasets/model-clean.csv datasets/test.csv
-	mpiexec ./bin/minas-mpi k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
-		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/mpi-intel.csv 2>&1 >> $@
-	python3 src/evaluation/evaluate.py Minas-MPI-intel datasets/test.csv out/mpi-intel.csv experiments/minas-mpi-intel-hits.png >> $@
-experiments/minas-mpi-picluster.log: datasets/model-clean.csv datasets/test.csv
-	mpiexec --host jantar:4,almoco:4,lanche:4 ./bin/minas-mpi k=100 dimension=22 MODEL_CSV=datasets/model-clean.csv EXAMPLES_CSV=datasets/test.csv \
-		TIMING_LOG=experiments/timing.csv MATCHES_CSV=out/picluster.csv 2>&1 >> $@
-	python3 src/evaluation/evaluate.py Minas-MPI-picluster datasets/test.csv out/picluster.csv experiments/minas-mpi-picluster-hits.png >> $@
-experiments/minas-mpi.log: out/serial.csv out/mpi.csv out/picluster.csv
-# Experiments: Mfog with Redis
+experiments/reference-java-nf.log.png: experiments/reference-java-nf.log out/minas-nf/2020-10-05T15-55-37.147/results
+	python3 src/evaluation/evaluate.py Reference-Java datasets/test.csv out/minas-nf/2020-10-05T15-55-37.147/results $@ >> experiments/reference-java-nf.log
+#
+
+# --------- Experiments: Baseline ---------
+experiments/baseline.log: bin/baseline src/evaluation/evaluate.py minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+	cat datasets/training.csv datasets/emtpyline datasets/test.csv \
+		| env $$(cat minas.conf | xargs) ./bin/baseline \
+		> out/baseline.csv 2> $@
+	python3 src/evaluation/evaluate.py Baseline datasets/test.csv out/baseline.csv $@.png >> $@
+	cat $@
+# Experiments: Minas with MPI and Redis
 out/mfog-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
 	echo "" > experiments/mfog.log
-	cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
+	# cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
+	cat datasets/training.csv datasets/emtpyline | env $$(cat minas.conf | xargs) ./bin/training > $@ 2>> experiments/mfog.log
+experiments/mfog-serial-sansNd.log: bin/classifier minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
+	cat out/mfog-model-serial.csv datasets/emtpyline datasets/test.csv \
+		| env $$(cat minas.conf | xargs) ./bin/classifier 2> $@ \
+		> out/mfog-serial-sansNd.csv
+experiments/mfog-serial.log: bin/training bin/classifier bin/noveltyDetection minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
+	cat out/mfog-model-serial.csv datasets/emtpyline - datasets/test.csv \
+		| env $$(cat minas.conf | xargs) ./bin/classifier 2> $@ \
+		| tee out/mfog-matches.csv \
+		| ./bin/noveltyDetection minas.conf 2>&1 | tee $@
+	python3 src/evaluation/evaluate.py Mfog-Serial datasets/test.csv out/mfog-matches.csv experiments/mfog-hits.png >> $@
+	cat $@
 experiments/mfog.log: bin/classifier bin/noveltyDetection minas.conf datasets/emtpyline out/mfog-model.csv
-	cat minas.conf datasets/emtpyline | ./bin/noveltyDetection 2>&1 | tee $@ &
+	./bin/noveltyDetection minas.conf 2>&1 | tee $@ &
 	cat out/mfog-model.csv | python3 src/modules/redis/send-model.py
 	cat minas.conf datasets/emtpyline datasets/test.csv | ./bin/classifier > out/mfog-matches.csv 2>> $@
 	echo "" >> $@

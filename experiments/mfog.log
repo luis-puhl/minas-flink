@@ -1,62 +1,30 @@
-./bin/training
-	fast = 1
-	k = 100
-	dim = 22
-	precision = 1.000000e-08
-	radiusF = 1.000000e-01
-	minExamplesPerCluster = 20
-	noveltyF = 2.000000e+00
-	useCluStream = 0
-	cluStream_q_maxMicroClusters = 0
-	cluStream_time_threshold_delta_δ = 0.000000
-Training 72000 examples with 1 classes (N)
-Training 72000 examples from class N
-[./bin/training] 2.351036e+01 seconds for training(72000). At src/baseline/minas.c:151
-Model size =      37804
-./bin/classifier
-	fast = 1
-	k = 100
-	dim = 22
-	precision = 1.000000e-08
-	radiusF = 1.000000e-01
-	minExamplesPerCluster = 20
-	noveltyF = 2.000000e+00
-	useCluStream = 0
-	cluStream_q_maxMicroClusters = 0
-	cluStream_time_threshold_delta_δ = 0.000000
-	remoteRedis = localhost
-model size = 100
-unknowns = 158781
-[./bin/classifier] 9.335666e+00 seconds for classifierRedis(653457). At src/modules/classifier.c:175
+reading from file minas.conf
+./bin/noveltyDetection
+	k=100
+	dim=22
+	precision=1.000000e-08
+	radiusF=1.000000e-01
+	minExamplesPerCluster=20
+	noveltyF=2.000000e+00
+	useCluStream=0
+	cluStream_q_maxMicroClusters=0
+	cluStream_time_threshold_delta_δ=0.000000
+	remoteRedis=localhost
+	useMPI=0
+	useInlineND=1
+	useReclassification=0
+setup done
+Reading from stdin
+noveltyDetection: Assert error. At src/base/minas.c:90
 
-Evaluate
-	title = Mfog
-	examplesFileName = datasets/test.csv
-	matchesFileName = out/mfog-matches.csv
-	plotSavePath = experiments/mfog-hits.png
-
-Count per class
-           id
-class        
-A      447179
-N      206278
-### Mfog
-
-saving experiments/mfog-hits.png
-Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--              112817   45964        -       0
-N              334362  160314        N  160314
-Classes           ['A' 'N']
-Initial labels    ['-', 'N']
-Labels            ['-', 'N'] 2
-Total examples    (653457, 25)
-Total matches     (653457, 4)
-Hits               160314 ( 24.533213%)
-Misses             334362 ( 51.168172%)
-Unknowns           158781 ( 24.298615%)
-Unk. reprocessed        0 (  0.000000%)
-Total              653457 (100.000000%)
-
-
+	radiusF=1.000000e-01
+	minExamplesPerCluster=20
+	noveltyF=2.000000e+00
+	useCluStream=0
+	cluStream_q_maxMicroClusters=0
+	cluStream_time_threshold_delta_δ=0.000000
+	remoteRedis=localhost
+	useMPI=0
+	useInlineND=1
+	useReclassification=0
+setup done

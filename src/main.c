@@ -25,6 +25,7 @@
 #include "./baseline/base.h"
 #include "./baseline/minas.h"
 #include "./mpi/mfog-mpi.h"
+// #include "./action.h"
 
 /**
  * Experiments are based in this Minas config
@@ -38,6 +39,7 @@
  *      validationCriterion = dec
 */
 
+// /*
 int mainClassify(Params *params, Example examples[], Model *model, int *nMatches, Match *memMatches) {
     clock_t start = clock();
     *nMatches = 0;
@@ -53,9 +55,9 @@ int mainClassify(Params *params, Example examples[], Model *model, int *nMatches
     if (params->mpiRank == 0) {
         exampleBufferSize = sizeof(Example) + params->dim * sizeof(double);
         exampleBuffer = malloc(exampleBufferSize);
-        MPI_Bcast(&exampleBufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        MPI_Bcast(&exampleBufferSize, 1, MPI_INT, MFOG_MAIN_RANK, MPI_COMM_WORLD);
     } else {
-        MPI_Bcast(&exampleBufferSize, 1, MPI_INT, MFOG_MASTER_RANK, MPI_COMM_WORLD);
+        MPI_Bcast(&exampleBufferSize, 1, MPI_INT, MFOG_MAIN_RANK, MPI_COMM_WORLD);
         exampleBuffer = malloc(exampleBufferSize);
         valuePtr = calloc(params->dim + 1, sizeof(double));
         example = calloc(1, sizeof(Example));
@@ -120,15 +122,30 @@ void sighandler(int signum) {
    printf("Done signal %d\n", signum);
    exit(1);
 }
+// */
 
 int main(int argc, char *argv[], char **envp) {
-    if (signal(SIGINT, sighandler) == SIG_ERR) {
-        fputs("An error occurred while setting a signal handler.\n", stderr);
-        return EXIT_FAILURE;
+    clock_t start = clock();
+    TimingLog timingLog;
+    timingLog.len = 0;
+    timingLog.maxLen = 10;
+    timingLog.listHead = calloc(timingLog.maxLen, sizeof(TimingLogEntry));
+    if (argc == 2) {
+        fprintf(stderr, "reading from file %s\n", argv[1]);
+        stdin = fopen(argv[1], "r");
     }
-    Params params;
-    initEnv(argc, argv, envp, &params);
+    Params *params = calloc(1, sizeof(Params));
+    params->executable = argv[0];
+    fprintf(stderr, "%s\n", params->executable);
+    // getParams((*params));
+    // scanf("remoteRedis" "=" "%s" "\n", params->remoteRedis);
+    // params->remoteRedis = "ec2-18-191-2-174.us-east-2.compute.amazonaws.com";
+    params->remoteRedis = "localhost";
+    fprintf(stderr, "\t" "remoteRedis" " = " "%s" "\n", params->remoteRedis);
     //
+    printTiming(main, 1);
+    // return action(params);
+    /*
     Model *model = NULL;
     if (params.isModelServer) {
         model = modelStoreService(&params);
@@ -177,6 +194,7 @@ int main(int argc, char *argv[], char **envp) {
     free(memMatches);
     MPI_Finalize();
     return EXIT_SUCCESS;
+    */
 }
 
 #endif // MAIN

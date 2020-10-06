@@ -1,6 +1,7 @@
 import redis
 import sys
 import csv
+import time
 
 #define MODEL_STORE_UNKNOWNS_LIST "minas-unkowns"
 #define MODEL_STORE_MODEL_LIST "minas-clusters"
@@ -25,6 +26,6 @@ if __name__ == "__main__":
             cli.rpush('minas-clusters', fullline)
             # print(line[1])
         pipe.execute()
-    cli.publish('model-up-ch', fullline)
+    cli.publish('model-up-ch', time.asctime())
 
     cli.close()

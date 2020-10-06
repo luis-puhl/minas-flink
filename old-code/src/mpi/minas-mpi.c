@@ -110,13 +110,13 @@ int sendExamples(int dimension, Example examples[], Match memMatches[], int clSi
         int position = 0;
         // TODO: enviar apenas o point com id=-1, o valor não é utilizado
         MPI_Pack(&ex, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD);
-        MPI_Pack(ex.value, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
+        MPI_Pack(ex.val, dimension, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(buffer, position, MPI_PACKED, dest, 2004, MPI_COMM_WORLD);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     receiveClassifications(memMatches);
     free(buffer);
-    free(ex.value);
+    free(ex.val);
     PRINT_TIMING(timing, executable, clSize, start, exampleCounter);
     return exampleCounter;
 }

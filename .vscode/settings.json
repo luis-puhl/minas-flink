@@ -8,7 +8,15 @@
         "random": "c",
         "cstdio": "cpp",
         "fstream": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "*.ipp": "c",
+        "bitset": "c",
+        "functional": "c",
+        "istream": "c",
+        "ranges": "c",
+        "streambuf": "c",
+        "variant": "c",
+        "tuple": "c"
     },
     "cSpell.words": [
         "Flink",

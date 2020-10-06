@@ -1,3 +1,6 @@
+#ifndef _MINAS_C
+#define _MINAS_C 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +10,7 @@
 #include <ctype.h>
 
 #include "./base.h"
+#include "./minas.h"
 #include "./kmeans.h"
 #include "./clustream.h"
 
@@ -16,7 +20,88 @@ char *getModelFileName(int useCluStream, int modelSize, char *suffix) {
     return fileName;
 }
 
+double nearestClusterValStd(Params *params, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest) {
+    double minDist;
+    *nearest = NULL;
+    for (size_t k = 0; k < nClusters; k++) {
+        // double dist = 0.0;
+        // for (size_t d = 0; d < params->dim; d++) {
+        //     double v = (clusters[k].center[d] - val[d]);
+        //     dist += v * v;
+        // }
+        // dist = sqrt(dist);
+        double dist = euclideanDistance(params->dim, val, clusters[k].center);
+        if (*nearest == NULL || dist <= minDist) {
+            minDist = dist;
+            *nearest = &clusters[k];
+        }
+    }
+    return minDist;
+}
+
+double nearestClusterVal(Params *params, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest) {
+    double minDist;
+    *nearest = NULL;
+    for (size_t k = 0; k < nClusters; k++) {
+        double dist = 0.0;
+        for (size_t d = 0; d < params->dim; d++) {
+            double v = (clusters[k].center[d] - val[d]);
+            // dist += fabs(v);
+            dist += v * v;
+            if (k > 0 && dist > minDist) break;
+        }
+        if (k == 0 || dist <= minDist) {
+            minDist = dist;
+            *nearest = &clusters[k];
+        }
+    }
+    return sqrt(minDist);
+    // // redo distance, because early skip
+    // double dist = 0.0;
+    // for (size_t d = 0; d < params->dim; d++) {
+    //     double v = ((*nearest)->center[d] - val[d]);
+    //     dist += v * v;
+    // }
+    // return sqrt(dist);
+}
+
+Example *next(Params *params, Example **reuse) {
+    if (feof(stdin)){
+        return NULL;
+    }
+    unsigned int hasEmptyline;
+    scanf("\n%n", &hasEmptyline);
+    if (hasEmptyline > 0) {
+        return NULL;
+    }
+    if ((*reuse) == NULL) {
+        (*reuse) = calloc(1, sizeof(Example));
+        (*reuse)->id = 0;
+        (*reuse)->val = calloc(params->dim, sizeof(double));
+    } else {
+        // increment id
+        (*reuse)->id++;
+    }
+    int idTemp;
+    if (scanf("%10u,", &idTemp) == 1) {
+        (*reuse)->id = idTemp;
+    }
+    for (size_t d = 0; d < params->dim; d++) {
+        if (scanf("%lf,", &((*reuse)->val[d])) != 1) {
+            return NULL;
+        }
+    }
+    // ignore class
+    // char class;
+    // assertEquals(scanf("%c", &class), 1);
+    if (scanf("%*c") != 1) {
+        return NULL;
+    }
+    return (*reuse);
+}
+
 Cluster* clustering(Params *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
+    clock_t start = clock();
     Cluster *clusters;
     if (params->useCluStream) {
         clusters = cluStream(params, trainingSet, trainingSetSize, initalId);
@@ -64,6 +149,7 @@ Cluster* clustering(Params *params, Example trainingSet[], unsigned int training
         clusters[k].distanceStdDev = sqrt(clusters[k].distanceStdDev);
         clusters[k].radius = params->radiusF * clusters[k].distanceStdDev;
     }
+    printTiming(clustering, trainingSetSize);
     return clusters;
 }
 
@@ -79,7 +165,8 @@ Model *training(Params *params) {
         classesSize[l] = 0;
         classes[l] = '\0';
     }
-    while (1) {
+    fprintf(stderr, "Taking training set from stdin\n");
+    while (!feof(stdin)) {
         double *value = calloc(params->dim, sizeof(double));
         for (size_t d = 0; d < params->dim; d++) {
             scanf("%lf,", &value[d]);
@@ -112,6 +199,9 @@ Model *training(Params *params) {
     }
     //
     fprintf(stderr, "Training %u examples with %d classes (%s)\n", id, nClasses, classes);
+    if (id < params->k) {
+        errx(EXIT_FAILURE, "Not enough examples for training. At "__FILE__":%d\n", __LINE__);
+    }
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
     model->nextLabel = '\0';
@@ -148,7 +238,7 @@ Model *training(Params *params) {
         free(clusters);
     }
     fclose(modelFile);
-    printTiming(id);
+    printTiming(training, id);
     return model;
 }
 
@@ -181,7 +271,7 @@ Match *identify(Params *params, Model *model, Example *example, Match *match) {
 }
 
 void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t unknownsSize) {
-    // clock_t start = clock();
+    clock_t start = clock();
     char *fileName = getModelFileName(params->useCluStream, model->size, "");
     FILE *modelFile = fopen(fileName, "w");
     free(fileName);
@@ -226,7 +316,7 @@ void noveltyDetection(Params *params, Model *model, Example *unknowns, size_t un
     fprintf(stderr, "ND clusters: %d extensions, %d novelties\n", extensions, novelties);
     free(clusters);
     fclose(modelFile);
-    // printTiming((int) unknownsSize);
+    printTiming(training, unknownsSize);
 }
 
 void minasOnline(Params *params, Model *model) {
@@ -242,6 +332,7 @@ void minasOnline(Params *params, Model *model) {
     size_t unknownsSize = 0;
     size_t lastNDCheck = 0;
     int hasEmptyline = 0;
+    fprintf(stderr, "Taking test stream from stdin\n");
     while (!feof(stdin) && hasEmptyline != 2) {
         for (size_t d = 0; d < params->dim; d++) {
             assertEquals(scanf("%lf,", &example.val[d]), 1);
@@ -286,7 +377,9 @@ void minasOnline(Params *params, Model *model) {
                 // match.distance = nearestClusterVal(params, model->clusters, model->size, unknowns[ex].val, &match.cluster);
                 assertDiffer(nearest, NULL);
                 if (distance <= nearest->distanceMax) {
-                    printf("%10u,%s\n", unknowns[ex].id, printableLabel(nearest->label));
+                    if (params->useReclassification) {
+                        printf("%10u,%s\n", unknowns[ex].id, printableLabel(nearest->label));
+                    }
                     reclassified++;
                 }
                 // if (match.label == UNK_LABEL)
@@ -320,7 +413,7 @@ void minasOnline(Params *params, Model *model) {
         fprintf(stderr, "Reclassified %lu\n", reclassified);
         unknownsSize -= reclassified;
     }
-    printTiming(id);
+    printTiming(minasOnline, id);
     //
     char *fileName = getModelFileName(params->useCluStream, model->size, "-final");
     FILE *modelFile = fopen(fileName, "w");
@@ -341,3 +434,5 @@ void minasOnline(Params *params, Model *model) {
     }
     fclose(modelFile);
 }
+
+#endif //_MINAS_C

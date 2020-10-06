@@ -10,6 +10,7 @@
 // #include <ctype.h>
 
 #include "./base.h"
+#include "./minas.h"
 #include "./kmeans.h"
 
 Cluster* cluStream(Params *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
@@ -207,7 +208,7 @@ Cluster* cluStream(Params *params, Example trainingSet[], unsigned int trainingS
         }
     }
     kMeans(params, clusters, pseudoExamples, params->cluStream_q_maxMicroClusters);
-    printTiming(trainingSetSize);
+    printTiming(cluStream, trainingSetSize);
     return clusters;
 }
 

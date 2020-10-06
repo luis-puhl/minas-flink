@@ -1,0 +1,17 @@
+./bin/classifier
+	k=100
+	dim=22
+	precision=1.000000e-08
+	radiusF=1.000000e-01
+	minExamplesPerCluster=20
+	noveltyF=2.000000e+00
+	useCluStream=0
+	cluStream_q_maxMicroClusters=0
+	cluStream_time_threshold_delta_δ=0.000000
+	remoteRedis=localhost
+	useMPI=0
+	useInlineND=1
+	useReclassification=0
+useInlineNDunknowns = 0
+[./bin/classifier] 2.100000e-05 seconds for classifier(0). At src/modules/classifier.c:208
+[./bin/classifier] 5.531970e-01 seconds for main(1). At src/modules/classifier.c:247
