@@ -182,7 +182,7 @@ Model *training(Params *params) {
             nClasses++;
             classes[l] = class;
         }
-        assertDiffer(nClasses, 254);
+        assert(nClasses != 254);
         classesSize[l]++;
         trainingSetByClass[l] = realloc(trainingSetByClass[l], classesSize[l] * sizeof(Example));
         Example *ex = &trainingSetByClass[l][classesSize[l] -1];
@@ -246,7 +246,7 @@ Match *identify(Params *params, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
     match->label = UNK_LABEL;
     match->distance = nearestClusterVal(params, model->clusters, model->size, example->val, &match->cluster);
-    assertDiffer(match->cluster, NULL);
+    assert(match->cluster != NULL);
     if (match->distance <= match->cluster->radius) {
         match->label = match->cluster->label;
         // // #define _USE_MOVING_CLUSTER
@@ -335,11 +335,11 @@ void minasOnline(Params *params, Model *model) {
     fprintf(stderr, "Taking test stream from stdin\n");
     while (!feof(stdin) && hasEmptyline != 2) {
         for (size_t d = 0; d < params->dim; d++) {
-            assertEquals(scanf("%lf,", &example.val[d]), 1);
+            assert(scanf("%lf,", &example.val[d]));
         }
         // ignore class
         char class;
-        assertEquals(scanf("%c", &class), 1);
+        assert(scanf("%c", &class));
         example.id = id;
         id++;
         scanf("\n%n", &hasEmptyline);
@@ -375,7 +375,7 @@ void minasOnline(Params *params, Model *model) {
                 Cluster *nearest;
                 double distance = nearestClusterVal(params, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
                 // match.distance = nearestClusterVal(params, model->clusters, model->size, unknowns[ex].val, &match.cluster);
-                assertDiffer(nearest, NULL);
+                assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     if (params->useReclassification) {
                         printf("%10u,%s\n", unknowns[ex].id, printableLabel(nearest->label));
@@ -404,7 +404,7 @@ void minasOnline(Params *params, Model *model) {
             unknowns[ex - reclassified] = unknowns[ex];
             Cluster *nearest;
             double distance = nearestClusterVal(params, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
-            assertDiffer(nearest, NULL);
+            assert(nearest != NULL);
             if (distance <= nearest->distanceMax) {
                 printf("%10u,%s\n", unknowns[ex].id, printableLabel(nearest->label));
                 reclassified++;

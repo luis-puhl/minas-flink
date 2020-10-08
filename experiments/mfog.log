@@ -1,5 +1,5 @@
-reading from file minas.conf
-./bin/noveltyDetection
+
+./bin/training
 	k=100
 	dim=22
 	precision=1.000000e-08
@@ -7,24 +7,16 @@ reading from file minas.conf
 	minExamplesPerCluster=20
 	noveltyF=2.000000e+00
 	useCluStream=0
-	cluStream_q_maxMicroClusters=0
-	cluStream_time_threshold_delta_δ=0.000000
+	CluStream_q_maxMicroClusters=0
+	CluStream_time_threshold_delta_δ=0.000000
 	remoteRedis=localhost
 	useMPI=0
 	useInlineND=1
 	useReclassification=0
-setup done
-Reading from stdin
-noveltyDetection: Assert error. At src/base/minas.c:90
-
-	radiusF=1.000000e-01
-	minExamplesPerCluster=20
-	noveltyF=2.000000e+00
-	useCluStream=0
-	cluStream_q_maxMicroClusters=0
-	cluStream_time_threshold_delta_δ=0.000000
-	remoteRedis=localhost
-	useMPI=0
-	useInlineND=1
-	useReclassification=0
-setup done
+Taking training set from stdin
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+Model size =      37804
+[./bin/training] 2.288782e+01 seconds for clustering(72000). At src/base/minas.c:152
+[./bin/training] 2.315558e+01 seconds for training(72000). At src/base/minas.c:241
+[./bin/training] 2.315851e+01 seconds for main(100). At src/modules/training.c:42

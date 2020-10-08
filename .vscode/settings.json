@@ -16,7 +16,8 @@
         "ranges": "c",
         "streambuf": "c",
         "variant": "c",
-        "tuple": "c"
+        "tuple": "c",
+        "string": "c"
     },
     "cSpell.words": [
         "Flink",

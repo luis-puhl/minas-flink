@@ -4,11 +4,14 @@
 #include <stdlib.h>
 #include <err.h>
 
-#define assertEquals(val, exp) \
-    if (val != exp) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
+#define fail(text, args) \
+    errx(EXIT_FAILURE, text". At "__FILE__":%d\n", args, __LINE__)
 
-#define assertDiffer(val, exp) \
-    if (val == exp) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
+#define assert(exp) \
+    if (!(exp)) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
+
+#define assertMsg(exp, text, args) \
+    if (!(exp)) errx(EXIT_FAILURE, "Assert error." text " At "__FILE__":%d\n", args, __LINE__)
 
 typedef struct {
     size_t functionPtr, setSize, calls;
@@ -32,6 +35,7 @@ typedef struct {
     TimingLog *log;
     unsigned int useRedis, useMPI, useInlineND, useReclassification;
     char *remoteRedis;
+    char mpiHostname[256];
 } Params;
 
 // getParam("remoteRedis", "%s", &(params.remoteRedis))

@@ -24,8 +24,10 @@ bin/redis: src/modules/redis/get-model.c
 # -------------------------- Bin Executables -----------------------------------
 bin/minas-mpi: src/main.c src/base/minas.c src/mpi/minas-mpi.c
 	mpicc $^ -o $@ -lm -Wall -g
-bin/mfog-threads: src/modules/mfog-threads.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+bin/mfog-threads: src/modules/mfog-threads.c src/base/minas.c src/modules/modules.c src/base/base.c src/base/kmeans.c src/base/clustream.c
 	gcc -g -Wall -lm -lpthread $^ -o $@
+bin/mfog: src/modules/mfog.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+	mpicc -g -Wall -lm -lpthread $^ -o $@
 
 bin/baseline: src/modules/baseline.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
 	gcc -g -Wall -lm $^ -o $@
@@ -66,6 +68,13 @@ out/mfog-model.csv: bin/training minas.conf datasets/emtpyline datasets/training
 	echo "" > experiments/mfog.log
 	# cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
 	cat datasets/training.csv datasets/emtpyline | env $$(cat minas.conf | xargs) ./bin/training > $@ 2>> experiments/mfog.log
+#
+
+experiments/mfog-threads.log: bin/mfog-threads minas.conf out/mfog-model.csv
+	cat out/mfog-model.csv datasets/emtpyline datasets/test.csv \
+		| env $$(cat minas.conf | xargs) bin/mfog-threads 2>&1 | tee $@
+#
+
 experiments/mfog-serial-sansNd.log: bin/classifier minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
 	cat out/mfog-model-serial.csv datasets/emtpyline datasets/test.csv \
 		| env $$(cat minas.conf | xargs) ./bin/classifier 2> $@ \

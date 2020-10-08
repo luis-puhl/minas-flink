@@ -9,6 +9,8 @@
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
+
+// #define USE_MPI 1
 #ifdef USE_MPI
 #include <mpi.h>
 #endif // USE_MPI
@@ -94,7 +96,7 @@ int getParam(FILE* paramFile, const char* paramName, const char* paramFormat, in
     }
     //
     if (required && !assigned) {
-        errx(EXIT_FAILURE, "Could not find parameter %s in env or input config file.\n", paramName);
+        fail("Could not find parameter %s in env or input config file.\n", paramName);
     }
     return assigned;
 }
@@ -122,8 +124,8 @@ Params* setup(int argc, char const *argv[], char *env[]) {
     getParam(paramsFile, "noveltyF",                            "%le",  (void*) &(params->noveltyF), 1);
     //
     getParam(paramsFile, "useCluStream",                        "%u",   (void*) &(params->useCluStream), 1);
-    getParam(paramsFile, "cluStream_q_maxMicroClusters",        "%u",   (void*) &(params->cluStream_q_maxMicroClusters), 1);
-    getParam(paramsFile, "cluStream_time_threshold_delta_δ",    "%lf",  (void*) &(params->cluStream_time_threshold_delta_δ), 1);
+    getParam(paramsFile, "CluStream_q_maxMicroClusters",        "%u",   (void*) &(params->cluStream_q_maxMicroClusters), 1);
+    getParam(paramsFile, "CluStream_time_threshold_delta_δ",    "%lf",  (void*) &(params->cluStream_time_threshold_delta_δ), 1);
     //
     getParam(paramsFile, "useRedis",                            "%u",   (void*) &(params->useRedis), 1);
     getParam(paramsFile, "useMPI",                              "%u",   (void*) &(params->useMPI), 1);
@@ -143,8 +145,13 @@ Params* setup(int argc, char const *argv[], char *env[]) {
         mpiReturn = MPI_Init(&argc, (char ***)&argv);
         if (mpiReturn != MPI_SUCCESS) {
             MPI_Abort(MPI_COMM_WORLD, mpiReturn);
-            errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
+            fail("MPI Abort %d\n", mpiReturn);
         }
+        MPI_Comm_size(MPI_COMM_WORLD, &params->mpiSize);
+        MPI_Comm_rank(MPI_COMM_WORLD, &params->mpiRank);
+        int namelen;
+        MPI_Get_processor_name(params->mpiHostname, &namelen);
+        fprintf(stderr, "%d-%d@%s\n", params->mpiSize, params->mpiRank, params->mpiHostname);
     }
     #endif // USE_MPI
     //
@@ -156,8 +163,8 @@ Params* setup(int argc, char const *argv[], char *env[]) {
     fprintf(stderr, "\tminExamplesPerCluster" "="               "%u" "\n",      params->minExamplesPerCluster);
     fprintf(stderr, "\tnoveltyF" "="                            "%le" "\n",     params->noveltyF);
     fprintf(stderr, "\tuseCluStream" "="                        "%u" "\n",      params->useCluStream);
-    fprintf(stderr, "\tcluStream_q_maxMicroClusters" "="        "%u" "\n",      params->cluStream_q_maxMicroClusters);
-    fprintf(stderr, "\tcluStream_time_threshold_delta_δ" "="    "%lf" "\n",     params->cluStream_time_threshold_delta_δ);
+    fprintf(stderr, "\tCluStream_q_maxMicroClusters" "="        "%u" "\n",      params->cluStream_q_maxMicroClusters);
+    fprintf(stderr, "\tCluStream_time_threshold_delta_δ" "="    "%lf" "\n",     params->cluStream_time_threshold_delta_δ);
     fprintf(stderr, "\tremoteRedis" "="                         "%s" "\n",      params->remoteRedis);
     fprintf(stderr, "\tuseMPI" "="                              "%u" "\n",      params->useMPI);
     fprintf(stderr, "\tuseInlineND" "="                         "%u" "\n",      params->useInlineND);
@@ -171,9 +178,7 @@ void tearDown(int argc, char const *argv[], char *env[], Params *params) {
     int mpiReturn;
     if (params->useMPI) {
         mpiReturn = MPI_Finalize();
-        if (mpiReturn != MPI_SUCCESS) {
-            errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn);
-        }
+        assertMsg(mpiReturn != MPI_SUCCESS, "MPI Abort %d\n", mpiReturn);
     }
     #endif // USE_MPI
 }

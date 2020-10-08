@@ -11,6 +11,8 @@
 
 #include "../base/base.h"
 #include "../base/minas.h"
+#include "../modules/modules.h"
+#include "../mpi/mfog-mpi.h"
 
 /* Used as argument to thread_start() */
 typedef struct {
@@ -20,7 +22,7 @@ typedef struct {
     Params *params;
 } thread_info;
 
-static void * classifierEntryFunc(void *arg) {
+static void *classifierEntryFunc(void *arg) {
     thread_info *tinfo = arg;
     Model *model = tinfo->model;
     Params *params = tinfo->params;
@@ -31,20 +33,15 @@ static void * classifierEntryFunc(void *arg) {
     Example example;
     example.val = calloc(params->dim, sizeof(double));
     printf("#pointId,label\n");
-    // size_t unknownsMaxSize = params->minExamplesPerCluster * params->k;
-    // size_t noveltyDetectionTrigger = params->minExamplesPerCluster * params->k;
-    // Example *unknowns = calloc(unknownsMaxSize, sizeof(Example));
-    // size_t unknownsSize = 0;
-    // size_t lastNDCheck = 0;
     int hasEmptyline = 0;
     fprintf(stderr, "Taking test stream from stdin\n");
     while (!feof(stdin) && hasEmptyline != 2) {
         for (size_t d = 0; d < params->dim; d++) {
-            assertEquals(scanf("%lf,", &example.val[d]), 1);
+            assert(scanf("%lf,", &example.val[d]) == 1);
         }
         // ignore class
         char class;
-        assertEquals(scanf("%c", &class), 1);
+        assert(scanf("%c", &class) == 1);
         example.id = id;
         id++;
         scanf("\n%n", &hasEmptyline);
@@ -93,7 +90,31 @@ int main(int argc, char const *argv[], char *env[]) {
 
     s = pthread_attr_init(&attr);
     if (s != 0)
-        errx(s, "pthread_attr_init");
+        errx(s, "pthread_attr_init. At "__FILE__":%d\n", __LINE__);
+    assertMsg(params->useInlineND, "Must use useInlineND, got %d.", params->useInlineND);
+
+    Model *model = calloc(1, sizeof(Model));
+    model->size = 0;
+    model->clusters = calloc(params->k, sizeof(Cluster));
+    if (params->mpiRank == MFOG_MAIN_RANK) {
+        fprintf(stderr, "useInlineND\n");
+        int lines = 0;
+        char *line = NULL;
+        size_t len = 0;
+        int read;
+        while (1) {
+            read = getline(&line, &len, stdin);
+            assert(read != -1);
+            // fprintf(stderr, "Retrieved line of length %d / %lu:\n'%s'\n", read, len, line);
+            lines++;
+            if (read == 0 || read == 1 || line[0] == '\n') break;
+            if (line[0] != '#') {
+                appendClusterFromStore(params, line, read, model);
+            }
+        }
+        free(line);
+        fprintf(stderr, "model->size = %u from %d lines.\n", model->size, lines);
+    }
 
     thread_info classifierTinfo, modelCommTinfo, noveltyDetectionTinfo;
     /**
@@ -112,8 +133,7 @@ int main(int argc, char const *argv[], char *env[]) {
     for (size_t i = 0; i < 3; i++) {
         void *res;
         s = pthread_join(tinfo[i].thread_id, &res);
-        if (s != 0)
-            errx(s, "pthread_attr_destroy");
+        assertMsg(s != 0, "pthread_attr_destroy %d", s);
 
         printf("Joined with thread %lu; returned value was %d\n", i, *(int *)res);
         free(res);      /* Free memory allocated by thread */
