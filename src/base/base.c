@@ -11,9 +11,9 @@
 #include <ctype.h>
 
 // #define USE_MPI 1
-#ifdef USE_MPI
+// #ifdef USE_MPI
 #include <mpi.h>
-#endif // USE_MPI
+// #endif // USE_MPI
 
 #include "./base.h"
 
@@ -139,10 +139,11 @@ Params* setup(int argc, char const *argv[], char *env[]) {
     params->log->len = 0;
     params->log->maxLen = 10;
     params->log->listHead = calloc(params->log->maxLen, sizeof(TimingLogEntry));
-    #ifdef USE_MPI
-    int mpiReturn;
+    // #ifdef USE_MPI
     if (params->useMPI) {
-        mpiReturn = MPI_Init(&argc, (char ***)&argv);
+        int mpiReturn, threadsProvided;
+        // mpiReturn = MPI_Init(&argc, (char ***)&argv);
+        mpiReturn = MPI_Init_thread(&argc, (char ***)&argv, MPI_THREAD_MULTIPLE, &threadsProvided);
         if (mpiReturn != MPI_SUCCESS) {
             MPI_Abort(MPI_COMM_WORLD, mpiReturn);
             fail("MPI Abort %d\n", mpiReturn);
@@ -151,9 +152,12 @@ Params* setup(int argc, char const *argv[], char *env[]) {
         MPI_Comm_rank(MPI_COMM_WORLD, &params->mpiRank);
         int namelen;
         MPI_Get_processor_name(params->mpiHostname, &namelen);
-        fprintf(stderr, "%d-%d@%s\n", params->mpiSize, params->mpiRank, params->mpiHostname);
+        // fprintf(stderr, "%d-%d@%s\n", params->mpiRank, params->mpiSize, params->mpiHostname);
+        if (params->mpiRank != 0) {
+            return params;
+        }
     }
-    #endif // USE_MPI
+    // #endif // USE_MPI
     //
     fprintf(stderr, "%s\n", params->executable);
     fprintf(stderr, "\tk" "="                                   "%d" "\n",      params->k);
@@ -174,13 +178,13 @@ Params* setup(int argc, char const *argv[], char *env[]) {
 }
 
 void tearDown(int argc, char const *argv[], char *env[], Params *params) {
-    #ifdef USE_MPI
+    // #ifdef USE_MPI
     int mpiReturn;
     if (params->useMPI) {
         mpiReturn = MPI_Finalize();
         assertMsg(mpiReturn != MPI_SUCCESS, "MPI Abort %d\n", mpiReturn);
     }
-    #endif // USE_MPI
+    // #endif // USE_MPI
 }
 
 #endif // !_BASE_C

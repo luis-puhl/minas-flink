@@ -10,13 +10,13 @@
 	CluStream_q_maxMicroClusters=0
 	CluStream_time_threshold_delta_δ=0.000000
 	remoteRedis=localhost
-	useMPI=0
+	useMPI=1
 	useInlineND=1
 	useReclassification=0
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
 Model size =      37804
-[./bin/training] 2.288782e+01 seconds for clustering(72000). At src/base/minas.c:152
-[./bin/training] 2.315558e+01 seconds for training(72000). At src/base/minas.c:241
-[./bin/training] 2.315851e+01 seconds for main(100). At src/modules/training.c:42
+[./bin/training] 2.549281e+01 seconds for clustering(72000). At src/base/minas.c:152
+[./bin/training] 2.580914e+01 seconds for training(72000). At src/base/minas.c:241
+[./bin/training] 2.584036e+01 seconds for main(100). At src/modules/training.c:42

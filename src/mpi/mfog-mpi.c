@@ -19,9 +19,13 @@
 // #define MPI_RETURN if (mpiReturn != MPI_SUCCESS) { MPI_Abort(MPI_COMM_WORLD, mpiReturn); errx(EXIT_FAILURE, "MPI Abort %d\n", mpiReturn); }
 // #define MFOG_MASTER_RANK 0
 
+/**
+ * Broadcast model from rank 0 to all others.
+ **/
 int tradeModel(Params *params, Model *model) {
     int mpiReturn, bufferSize;
     // block everyone
+    assertMsg(params->useMPI, "Must use MPI, got %d.", params->useMPI);
     MPI_Barrier(MPI_COMM_WORLD);
     if (params->mpiRank == 0) {
         bufferSize = sizeof(Model) + (model->size) * sizeof(Cluster) + params->dim * (model->size) * sizeof(double);
@@ -71,7 +75,7 @@ Example* tradeExample(Params *params, Example *example, char *exampleBuffer, int
         MPI_Pack(example, sizeof(Example), MPI_BYTE, exampleBuffer, exampleBufferSize, &position, MPI_COMM_WORLD);
         MPI_Pack(example->val, params->dim, MPI_DOUBLE, exampleBuffer, exampleBufferSize, &position, MPI_COMM_WORLD);
         MPI_Send(exampleBuffer, position, MPI_PACKED, *dest, 2004, MPI_COMM_WORLD);
-        *dest = ++*dest < params->mpiSize ? *dest : 1;
+        *dest = (*dest + 1) % params->mpiSize;
     } else {
         MPI_Recv(exampleBuffer, exampleBufferSize, MPI_PACKED, MPI_ANY_SOURCE, 2004, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         int position = 0;

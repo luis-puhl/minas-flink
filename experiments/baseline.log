@@ -6,13 +6,12 @@
 	minExamplesPerCluster=20
 	noveltyF=2.000000e+00
 	useCluStream=0
-	cluStream_q_maxMicroClusters=0
-	cluStream_time_threshold_delta_δ=0.000000
+	CluStream_q_maxMicroClusters=0
+	CluStream_time_threshold_delta_δ=0.000000
 	remoteRedis=localhost
 	useMPI=0
 	useInlineND=1
 	useReclassification=0
-setup done
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
@@ -102,14 +101,15 @@ Reclassified 1714
 Final flush 1795
 ND clusters: 19 extensions, 0 novelties
 Reclassified 1552
-[./bin/baseline] 3.114793e+01 seconds for training(155795). At src/base/minas.c:235
-[./bin/baseline] 1.853567e+01 seconds for minasOnline(653457). At src/base/minas.c:410
-[./bin/baseline] 4.348121e+01 seconds for main(1). At src/modules/baseline.c:23
+[./bin/baseline] 3.505973e+01 seconds for clustering(155795). At src/base/minas.c:152
+[./bin/baseline] 3.539277e+01 seconds for training(155795). At src/base/minas.c:241
+[./bin/baseline] 2.083941e+01 seconds for minasOnline(653457). At src/base/minas.c:416
+[./bin/baseline] 4.922672e+01 seconds for main(1). At src/modules/baseline.c:23
 Evaluate
 	title = Baseline
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/baseline.csv
-	plotSavePath = experiments/baseline-hits.png
+	plotSavePath = experiments/baseline.log.png
 
 Count per class
            id
@@ -118,7 +118,7 @@ A      447179
 N      206278
 ### Baseline
 
-saving experiments/baseline-hits.png
+saving experiments/baseline.log.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
@@ -128,14 +128,14 @@ Labels (pred)
 2                   9      10        N      10
 3                 247      45        A     247
 N              417154  164036        N  164036
-Classes            ['A' 'N']
-Initial labels     ['-', 'N']
-Labels (1st item)  [('N', 0), ('-', 19), ('0', 83725), ('2', 225903), ('1', 398283), ('3', 495239)] 6
-Total examples     (653457, 25)
-Total matches      (655009, 4)
-Hits                164935 ( 25.180570%)
-Misses              417244 ( 63.700499%)
-Unknowns             72830 ( 11.118931%)
-Unk. reprocessed      1552 (  2.130990%)
-Total               655009 (100.000000%)
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('0', 83725), ('2', 225903), ('1', 398283), ('3', 495239)] 6
+Total examples    (653457, 25)
+Total matches     (655009, 4)
+Hits               164935 ( 25.180570%)
+Misses             417244 ( 63.700499%)
+Unknowns            72830 ( 11.118931%)
+Unk. reprocessed     1552 (  2.130990%)
+Total              655009 (100.000000%)
 

@@ -1,5 +1,6 @@
 # all: clean experiments/serial-matrix.log experiments/mpi-matrix.log
-all: experiments/reference-java.log experiments/baseline.log experiments/mfog.log
+all: experiments/baseline.log experiments/mfog.log
+	# experiments/reference-java.log
 # cluster@almoco
 # experiments/mpi-test.log
 
@@ -22,20 +23,20 @@ bin/redis: src/modules/redis/get-model.c
 	gcc -g -Wall -lm -lhiredis -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -lglib-2.0 $^ -o $@
 
 # -------------------------- Bin Executables -----------------------------------
+bin/base.o: src/base/base.c src/base/minas.c src/base/kmeans.c src/base/clustream.c
+	gcc -g -Wall -lm $^ -o $@
 bin/minas-mpi: src/main.c src/base/minas.c src/mpi/minas-mpi.c
 	mpicc $^ -o $@ -lm -Wall -g
-bin/mfog-threads: src/modules/mfog-threads.c src/base/minas.c src/modules/modules.c src/base/base.c src/base/kmeans.c src/base/clustream.c
-	gcc -g -Wall -lm -lpthread $^ -o $@
-bin/mfog: src/modules/mfog.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+bin/mfog: src/modules/mfog.c bin/base.o
 	mpicc -g -Wall -lm -lpthread $^ -o $@
 
-bin/baseline: src/modules/baseline.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+bin/baseline: src/modules/baseline.c bin/base.o
 	gcc -g -Wall -lm $^ -o $@
-bin/training: src/modules/training.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c
+bin/training: src/modules/training.c bin/base.o
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
-bin/classifier: src/modules/classifier.c src/mpi/mfog-mpi.c src/modules/modules.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c src/modules/redis/redis-connect.c
+bin/classifier: src/modules/classifier.c src/mpi/mfog-mpi.c src/modules/modules.c bin/base.o src/modules/redis/redis-connect.c
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
-bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c src/base/minas.c src/base/base.c src/base/kmeans.c src/base/clustream.c src/modules/redis/redis-connect.c
+bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c bin/base.o src/modules/redis/redis-connect.c
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
 
 # -------------------------- Experiments ---------------------------------------
@@ -70,9 +71,11 @@ out/mfog-model.csv: bin/training minas.conf datasets/emtpyline datasets/training
 	cat datasets/training.csv datasets/emtpyline | env $$(cat minas.conf | xargs) ./bin/training > $@ 2>> experiments/mfog.log
 #
 
+bin/mfog-threads: src/modules/mfog-threads.c src/base/minas.c src/modules/modules.c src/base/base.c src/base/kmeans.c src/base/clustream.c src/mpi/mfog-mpi.c
+	mpicc -g -Wall -lm -lpthread $^ -o $@
 experiments/mfog-threads.log: bin/mfog-threads minas.conf out/mfog-model.csv
 	cat out/mfog-model.csv datasets/emtpyline datasets/test.csv \
-		| env $$(cat minas.conf | xargs) bin/mfog-threads 2>&1 | tee $@
+		| env $$(cat minas.conf | xargs) mpirun bin/mfog-threads > out/mfog-matches.csv 2>&1 | tee $@
 #
 
 experiments/mfog-serial-sansNd.log: bin/classifier minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv

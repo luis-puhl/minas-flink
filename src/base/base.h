@@ -11,7 +11,7 @@
     if (!(exp)) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
 
 #define assertMsg(exp, text, args) \
-    if (!(exp)) errx(EXIT_FAILURE, "Assert error." text " At "__FILE__":%d\n", args, __LINE__)
+    if (!(exp)) errx(EXIT_FAILURE, "Assert error. " text " At "__FILE__":%d\n", args, __LINE__)
 
 typedef struct {
     size_t functionPtr, setSize, calls;

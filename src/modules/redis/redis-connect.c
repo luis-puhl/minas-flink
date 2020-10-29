@@ -72,7 +72,7 @@ redisContext* makeConnection(Params *params, Model *model) {
         errx(EXIT_FAILURE, "Redis error %d '%s': At "__FILE__":%d\n", 0, "", __LINE__);
     }
     redisSetPushCallback(redisCtx, NULL);
-    fail(redisCtx);
+    rdsFail(redisCtx);
     redisReply *reply;
     void **replyPtr = (void **) &reply;
     //
@@ -81,15 +81,15 @@ redisContext* makeConnection(Params *params, Model *model) {
     redisAppendCommand(redisCtx, "LRANGE " MODEL_STORE_MODEL_LIST " 0 -1");
     // hello
     redisGetReply(redisCtx, replyPtr);
-    fail(redisCtx);
+    rdsFail(redisCtx);
     freeReplyObject(reply);
     // tracking
     redisGetReply(redisCtx, replyPtr);
-    fail(redisCtx);
+    rdsFail(redisCtx);
     freeReplyObject(reply);
     // model
     redisGetReply(redisCtx, replyPtr);
-    fail(redisCtx);
+    rdsFail(redisCtx);
     if (reply->type != REDIS_REPLY_ARRAY) {
         errx(EXIT_FAILURE, "Redis error, Expected ARRAY and didn't get it: At "__FILE__":%d\n", __LINE__);
     }

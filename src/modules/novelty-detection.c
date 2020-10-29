@@ -60,7 +60,7 @@ int main(int argc, char const *argv[], char *env[]) {
                 // break;
                 counter--;
             }
-            fail(redisCtx);
+            rdsFail(redisCtx);
         } else {
             if (next(params, &example) == NULL) {
                 break;
