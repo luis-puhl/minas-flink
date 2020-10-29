@@ -1,0 +1,230 @@
+$ ssh -i secrets/mfog-aws-ec2.pem ec2-user@ec2-18-191-2-174.us-east-2.compute.amazonaws.com
+Last login: Tue Sep 22 22:40:40 2020 from 177.76.228.190
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+29 package(s) needed for security, out of 44 available
+Run "sudo yum update" to apply all updates.
+
+[ec2-user@ip-172-31-29-201 ~]$ history
+    1  sudo yum install git
+    2  sudo yum install python3
+    3  git clone https://github.com/aws-samples/amazon-elasticache-samples/
+    4  sudo pip3 install virtualenv
+    5  cd amazon-elasticache-samples/session-store
+    6  virtualenv venv
+    7  source ./venv/bin/activate
+    8  pip install -r requirements.txt 
+    9  pip3 install -r requirements.txt 
+   10  export FLASK_APP=example-1.py
+   11  export SECRET_KEY=some_secret_stringasdaasdfasdfasd362132321321
+   12  flask run -h 0.0.0.0 -p 5000 --reload
+   13  yum install netcat
+   14  sudo yum install netcat
+   15  sudo yum install nv
+   16  sudo yum install nc
+   17  netcat -l 5000
+   18  nc -l 5000
+   19  ping mfog.wf2giq.ng.0001.use1.cache.amazonaws.com
+   20  yum update
+   21  sudo yum update
+   22  sudo yum upgrade 
+   23  yum install redis
+   24  sudo yum install redis
+   25  sudo amazon-linux-extras install redis4.0
+   26  curl http://127.0.0.1:5000/
+   27  python
+   28  top
+   29  redis-server 
+   30  tgop
+   31  top
+   32  ls
+   33  cd amazon-elasticache-samples/
+   34  source ./venv/bin/activate
+   35  cd session-store/
+   36  source ./venv/bin/activate
+   37  pip3 install -r requirements.txt
+   38  export FLASK_APP=example-1.py
+   39  export SECRET_KEY=some_secret_string
+   40  flask run -h 0.0.0.0 -p 5000 --reload
+   41  python
+   42  history
+   43  ls
+   44  sudo systemctl enable redis.service 
+   45  sudo systemctl start redis.service 
+   46  sudo systemctl status redis.service 
+   47  sudo systemctl start redis.service
+   48  sudo systemctl status redis.service 
+   49  python
+   50  ls /etc/
+   51  vi /etc/redis.conf 
+   52  sudo vi /etc/redis.conf 
+   53  sudo systemctl restart redis.service 
+   54  sudo vi /etc/redis.conf 
+   55  sudo systemctl restart redis.service 
+   56  sudo systemctl status redis.service 
+   57  sudo systemctl start redis.service 
+   58  sudo systemctl status redis.service 
+   59  sudo systemctl stop redis.service 
+   60  sudo systemctl status redis.service 
+   61  sudo vi /etc/redis.conf 
+   62  sudo systemctl start redis.service 
+   63  sudo systemctl status redis.service 
+   64  sudo vi /etc/redis.conf 
+   65  sudo systemctl restart redis.service 
+   66  sudo systemctl status redis.service 
+   67  sudo vi /etc/redis.conf 
+   68  sudo systemctl restart redis.service 
+   69  sudo systemctl status redis.service 
+   70  sudo vi /etc/redis.conf 
+   71  sudo systemctl status redis.service 
+   72  sudo systemctl restart redis.service 
+   73  sudo systemctl status redis.service 
+   74  sudo systemctl start redis.service 
+   75  sudo systemctl status redis.service 
+   76  sudo vi /etc/redis.conf 
+   77  sudo systemctl start redis.service 
+   78  sudo systemctl status redis.service 
+   79  ifconfig 
+   80  exit
+   81  ls
+   82  yum remove redis.x86_64 
+   83  sudo yum remove redis.x86_64 
+   84  wget http://download.redis.io/releases/redis-6.0.8.tar.gz
+   85  tar -xf redis-6.0.8.tar.gz 
+   86  l
+   87  ls
+   88  cd redis-6.0.8/
+   89  make
+   90  sudo yum install gcc
+   91  make
+   92  make distclean
+   93  make distclean > make.log
+   94  less make.log 
+   95  sudo make install
+   96  sudo systemctl status
+   97  cd ..
+   98  ls
+   99  rm redis-6.0.8.tar.gz 
+  100  cd redis-6.0.8/
+  101  sudo make test
+  102  make
+  103  make test
+  104  sudo yum install tlc
+  105  sudo yum install -y tcl
+  106  make test
+  107  ls /etc/
+  108  mkdir /etc/redi
+  109  sudo mkdir /etc/redis
+  110  sudo chown ec2-user:ec2-user /etc/redis
+  111  sudo cp src/redis-server src/redis-cli /usr/local/bin
+  112  sudo cp redis.conf /etc/redis/redis.conf
+  113  sudo vim /etc/redis/redis.conf
+  114  free -h
+  115  vim /usr/lib/systemd/system/redis.service
+  116  sudo systemctl enable redis.service 
+  117  sudo systemctl start redis.service 
+  118  sudo systemctl status redis.service 
+  119  ls /usr/bin/
+  120  ls /usr/bin/r*
+  121  sudo cp src/redis-server src/redis-cli /usr/bin
+  122  sudo systemctl start redis.service 
+  123  sudo systemctl status redis.service 
+  124  sudo cp /etc/redis/redis.conf /etc/
+  125  sudo systemctl start redis.service 
+  126  sudo systemctl status redis.service 
+  127  sudo vim /etc/redis.conf
+  128  sudo systemctl start redis.service 
+  129  sudo systemctl status redis.service 
+  130  sudo systemctl start redis.service 
+  131  sudo systemctl status redis.service 
+  132  sudo systemctl stop redis.service 
+  133  sudo systemctl status redis.service 
+  134  sudo systemctl start redis.service
+  135  sudo systemctl status redis.service
+  136  sudo vim /etc/redis.conf
+  137  sudo systemctl start redis.service
+  138  sudo systemctl status redis.service
+  139  touch /tmp/redis.log
+  140  sudo systemctl start redis.service
+  141  sudo systemctl status redis.service
+  142  cd ~
+  143  ls
+  144  cd redis-6.0.8/
+  145  ls
+  146  cat INSTALL 
+  147  cat README.md 
+  148  less README.md 
+  149  ls
+  150  less redis.conf 
+  151  /usr/bin/redis-server 
+  152  /usr/bin/redis-server /etc/redis.conf
+  153  /usr/bin/redis-server redis.conf 
+  154  sudo /usr/bin/redis-server redis.conf 
+  155  sudo reboot 
+  156  sudo systemctl status redis.service
+  157  sudo systemctl start redis.service
+  158  sudo systemctl status redis.service
+  159  top
+  160  ps aux | grep redis
+  161  redis-cli 
+  162  pwd
+  163  redis-cli --version
+  164  sudo rm -rf /etc/redis/
+  165  sudo vim /etc/redis.conf
+  166  head /tmp/redis.log 
+  167  less /tmp/redis.log 
+  168  sudo vim /etc/redis.conf
+  169  less /tmp/redis.log 
+  170  sudo vim /etc/redis.conf
+  171  sudo systemctl start redis.service
+  172  sudo systemctl status redis.service
+  173  sudo vim /etc/redis.conf
+  174  sudo systemctl stop redis.service
+  175  sudo systemctl start redis.service
+  176  sudo systemctl status redis.service
+  177  sudo reboot 
+  178  ls
+  179  sudo systemctl status redis.service
+  180  less /tmp/redis.log 
+  181  find / -dname=redis.conf
+  182  find / -dname redis.conf
+  183  find / -name redis.conf
+  184  sudo find / -name redis.conf
+  185  mv /home/ec2-user/redis-6.0.8/redis.conf /home/ec2-user/redis-6.0.8/redis.conf.base
+  186  sudo systemctl status redis.service
+  187  /usr/bin/redis-server /etc/redis.conf
+  188  /usr/bin/redis-server /etc/redis.conf --verbose
+  189  /usr/bin/redis-server
+  190  /usr/bin/redis-cli 
+  191  sudo /usr/bin/redis-server --helpredis.conf 
+  192  sudo /usr/bin/redis-server --help redis.conf 
+  193  sudo /usr/bin/redis-server /etc/redis.conf --loglevel verbose
+  194  less /tmp/redis.log 
+  195  sudo vim /etc/redis.conf
+  196  /usr/bin/redis-server /etc/redis.conf --verbose
+  197  less /tmp/redis.log 
+  198  sudo vim /etc/redis.conf
+  199  /usr/bin/redis-server /etc/redis.conf --verbose
+  200  /usr/bin/redis-server /etc/redis.conf
+  201  less /tmp/redis.log 
+  202  sudo reboot 
+  203  less /tmp/redis.log 
+  204  date
+  205  less /tmp/redis.log 
+  206  sudo systemctl status redis.service
+  207  /usr/bin/redis-cli 
+  208  ps aux | grep redis
+  209  sudo systemctl start redis.service
+  210  sudo systemctl status redis.service
+  211  ps aux | grep redis
+  212  less /tmp/redis.log 
+  213  sudo vim /etc/redis.conf
+  214  sudo systemctl start redis.service
+  215  sudo systemctl status redis.service
+  216  /usr/bin/redis-cli 
+  217  exit
+  218  history
