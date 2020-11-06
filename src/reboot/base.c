@@ -18,6 +18,18 @@ char *printableLabel(char label) {
     return ret;
 }
 
+char fromPrintableLabel(char *label) {
+    char ret;
+    if (isalpha(label[0]) || label[0] == '-') {
+        ret = label[0];
+    } else {
+        int l;
+        sscanf(label, "%d", &l);
+        assert(l < 255);
+        ret = l;
+    }
+    return ret;
+}
 
 double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest) {
     double minDist;

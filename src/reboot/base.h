@@ -58,6 +58,7 @@ typedef struct {
 #define UNK_LABEL '-'
 
 char *printableLabel(char label);
+char fromPrintableLabel(char *label);
 double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest);
 Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example trainingSet[], unsigned int trainingSetSize);
