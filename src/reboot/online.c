@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]) {
     kParam=100; dim=22; precision=1.0e-08; radiusF=0.25; minExamplesPerCluster=20; noveltyF=1.4;
     // kParam=100; dim=22; precision=1.0e-08; radiusF=0.10; minExamplesPerCluster=20; noveltyF=2.0;
     //
-    fprintf(stderr, "kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le\n", PARAMS);
+    fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le\n", argv[0], PARAMS);
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
     model->nextLabel = '\0';
@@ -41,37 +41,9 @@ int main(int argc, char const *argv[]) {
     while (!feof(stdin) && hasEmptyline != 2) {
         nread = getline(&lineptr, &n, stdin);
         inputLine++;
-        // fprintf(stderr, "line %ld '%s'.\n", nread, lineptr);
-        // if (inputLine < 10 || (inputLine % 10 == 0 && inputLine < 100) || (inputLine % 100))
-        //     fprintf(stderr, "line #%ld %ld '%.10s' msize %d.\n",
-        //             inputLine, nread, lineptr, model->size);
         int readCur = 0, readTot = 0;
         if (lineptr[0] == 'C') {
-            if (model->size > 0 && model->size % kParam == 0) {
-                model->clusters = realloc(model->clusters, (model->size + kParam) * sizeof(Cluster));
-            }
-            Cluster *cl = &(model->clusters[model->size]);
-            model->size++;
-            char *labelString;
-            // line is on format "Cluster: %10u, %s, %10u, %le, %le, %le" + dim * ", %le"
-            int assigned = sscanf(
-                lineptr, "Cluster: %10u, %m[^,], %10u, %le, %le, %le%n",
-                &cl->id, &labelString, &cl->n_matches,
-                &cl->distanceAvg, &cl->distanceStdDev, &cl->radius,
-                &readCur);
-            assertMsg(assigned == 6, "Got %d assignments.", assigned);
-            readTot += readCur;
-            cl->label = fromPrintableLabel(labelString);
-            if (!isalpha(cl->label) && model->nextLabel <= cl->label) {
-                model->nextLabel = cl->label + 1;
-            }
-            free(labelString);
-            cl->center = calloc(dim, sizeof(double));
-            for (size_t d = 0; d < dim; d++) {
-                // fprintf(stderr, "readTot %d, remaining '%s'.\n", readCur, &lineptr[readTot]);
-                assert(sscanf(&lineptr[readTot], ", %le%n", &cl->center[d], &readCur));
-                readTot += readCur;
-            }
+            addClusterLine(kParam, dim, model, lineptr);
             if (unknowns != NULL && unknownsSize > 0 && model->size >= kParam) {
                 for (size_t i = 0; i < unknownsSize; i++) {
                     Example *ex = &unknowns[i];
@@ -105,6 +77,12 @@ int main(int argc, char const *argv[]) {
         }
         identify(kParam, dim, precision, radiusF, model, &example, &match);
         printf("%10u,%s\n", example.id, printableLabel(match.label));
+        //
+        if (match.label != UNK_LABEL) continue;
+        printf("Unknown: %10u", example.id);
+        for (unsigned int d = 0; d < dim; d++)
+            printf(", %le", example.val[d]);
+        printf("\n");
     }
     free(lineptr);
     free(model);

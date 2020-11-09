@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
     kParam=100; dim=22; precision=1.0e-08; radiusF=0.25; minExamplesPerCluster=20; noveltyF=1.4;
     // kParam=100; dim=22; precision=1.0e-08; radiusF=0.10; minExamplesPerCluster=20; noveltyF=2.0;
     //
-    fprintf(stderr, "kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le\n", PARAMS);
+    fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le\n", argv[0], PARAMS);
     Model *model = training(kParam, dim, precision, radiusF);
     //
     for (size_t k = 0; k < model->size; k++) {

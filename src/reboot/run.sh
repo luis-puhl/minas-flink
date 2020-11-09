@@ -20,5 +20,9 @@ cat datasets/training.csv | ./bin/reboot/offline > out/reboot-offline.csv 2> exp
 gcc -g -Wall -lm -lpthread src/reboot/{online,base}.c -o bin/reboot/online
 cat out/reboot-offline.csv datasets/test.csv | ./bin/reboot/online > out/reboot-online.csv 2>> experiments/reboot.log
 
-python3 src/evaluation/evaluate.py Mfog-Reboot datasets/test.csv out/reboot-online.csv \
+gcc -g -Wall -lm -lpthread src/reboot/{detection,base}.c -o bin/reboot/detection
+cat out/reboot-offline.csv out/reboot-online.csv | ./bin/reboot/detection > out/reboot-detection.csv 2>> experiments/reboot.log
+
+grep -v -e 'Unknown:' out/reboot-online.csv > out/reboot-matches.csv
+python3 src/evaluation/evaluate.py Mfog-Reboot datasets/test.csv out/reboot-matches.csv \
     experiments/reboot.png >> experiments/reboot.log

@@ -232,4 +232,48 @@ Match *identify(int kParam, int dim, double precision, double radiusF, Model *mo
     return match;
 }
 
+int printCluster(int dim, Cluster *cl) {
+    int count = 0;
+    count += printf("Cluster: %10u, %s, %10u, %le, %le, %le",
+                cl->id, printableLabel(cl->label), cl->n_matches,
+                cl->distanceAvg, cl->distanceStdDev, cl->radius);
+    assertNotNull(cl->center);
+    for (unsigned int d = 0; d < dim; d++)
+        count += printf(", %le", cl->center[d]);
+    count += printf("\n");
+    return count;
+}
+
+int addClusterLine(int kParam, int dim, Model *model, char lineptr[]) {
+    int readCur = 0, readTot = 0;
+    if (model->size > 0 && model->size % kParam == 0) {
+        fprintf(stderr, "realloc %d\n", model->size);
+        model->clusters = realloc(model->clusters, (model->size + kParam) * sizeof(Cluster));
+    }
+    Cluster *cl = &(model->clusters[model->size]);
+    model->size++;
+    char *labelString;
+    // line is on format "Cluster: %10u, %s, %10u, %le, %le, %le" + dim * ", %le"
+    int assigned = sscanf(
+        lineptr, "Cluster: %10u, %m[^,], %10u, %le, %le, %le%n",
+        &cl->id, &labelString, &cl->n_matches,
+        &cl->distanceAvg, &cl->distanceStdDev, &cl->radius,
+        &readCur);
+    assertMsg(assigned == 6, "Got %d assignments.", assigned);
+    readTot += readCur;
+    cl->label = fromPrintableLabel(labelString);
+    if (!isalpha(cl->label) && model->nextLabel <= cl->label) {
+        model->nextLabel = cl->label + 1;
+    }
+    free(labelString);
+    cl->center = calloc(dim, sizeof(double));
+    for (size_t d = 0; d < dim; d++) {
+        assert(sscanf(&lineptr[readTot], ", %le%n", &(cl->center[d]), &readCur));
+        // fprintf(stderr, "readTot %d, remaining '%s'.\n", readTot, &lineptr[readTot]);
+        readTot += readCur;
+    }
+    // printCluster(dim, cl);
+    return readTot;
+}
+
 #endif // _BASE_C

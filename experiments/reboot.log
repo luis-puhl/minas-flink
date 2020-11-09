@@ -1,13 +1,18 @@
-kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+./bin/reboot/offline; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+./bin/reboot/online; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
 Taking test stream from stdin
+./bin/reboot/detection; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+Taking test stream from stdin
+Final flush 11732
+ND clusters: 59 extensions, 1 novelties
+Reclassified 11615
 Evaluate
 	title = Mfog-Reboot
 	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot.csv
+	matchesFileName = out/reboot-matches.csv
 	plotSavePath = experiments/reboot.png
 
 Count per class

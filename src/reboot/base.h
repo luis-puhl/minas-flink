@@ -9,6 +9,9 @@
 #define assert(exp) \
     if (!(exp)) errx(EXIT_FAILURE, "Assert error. At "__FILE__":%d\n", __LINE__)
 
+#define assertNotNull(exp) \
+    if ((exp) == NULL) errx(EXIT_FAILURE, "Assert NULL error. At "__FILE__":%d\n", __LINE__)
+
 #define assertMsg(exp, text, args) \
     if (!(exp)) errx(EXIT_FAILURE, "Assert error. " text " At "__FILE__":%d\n", args, __LINE__)
 
@@ -65,5 +68,8 @@ double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example 
 Cluster* clustering(int kParam, int dim, double precision, double radiusF, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 Model *training(int kParam, int dim, double precision, double radiusF);
 Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match);
+
+int addClusterLine(int kParam, int dim, Model *model, char line[]);
+int printCluster(int dim, Cluster *cl);
 
 #endif // _BASE_H
