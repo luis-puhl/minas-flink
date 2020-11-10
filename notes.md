@@ -218,3 +218,19 @@ Abordagem em mfog: captura distribuída em fog -> IDS {nó MPI} -> ND {rank0}
 cat test.csv | partition $(netcat 01) $(netcat 02) $(netcat 03) > matches.csv
 netcat -l 01 <> classifier
 ```
+
+## Cronograma
+
+```md
+Luís Henrique Puhl de Souza (Mestrado em Ciência da Computação)
+- Realizou a integralização de créditos, sendo o prazo máximo em 07/02/2020
+- Apresentou a proficiência linguística em 29/04/2019, sendo o prazo máximo em 07/03/2020
+- Realizou o exame de qualificação em 06/03/2020, sendo o prazo máximo em 07/03/2020
+- Prazo para defesa em 244 dias (07/07/2021)
+```
+
+- Deadline resultados 07/12/2021
+- Deadline artigo 07/01/2021
+- Deadline submissão 07/03/2021
+- Deadline tese 07/05/2021
+- Deadline defesa 07/07/2021
