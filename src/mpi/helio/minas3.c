@@ -45,8 +45,7 @@ classifier(void *arg)
 	int i, num, out_pos=0, in_pos=0;
 	MPI_Status status;
 	
-	for (size_t i = 0; i < 10; i++)
-	{
+	do {
 		// espera amostra vinda do rank 0, com TAG SAMP_TAG
 		// int MPI_Recv(void* buf,int count,MPI_Datatype datatype, int source, int tag,MPI_Comm comm,MPI_Status *status);
 		// MPI_Recv(_rcv_buff, SAMPLES, MPI_PACKED, 0, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
@@ -62,9 +61,7 @@ classifier(void *arg)
 
 			// printf("classifier@%s (%d) analisou %d\n",_proc_name,_rank,num); fflush(stdout);
 
-			MUTEX(Model);
 			// classifica... de forma simulada aqui... 
-
 
 			// se unknown, insere amostra desconhecida no buffer e acorda emissor
 			if(num > THRESHOLD) {   // operacao ficticia aqui...
@@ -81,7 +78,7 @@ classifier(void *arg)
 				sem_post(&_sender_sem);
 			}
 		}
-	}
+	} while(1);
 
 	pthread_exit(NULL);
 }
@@ -94,8 +91,7 @@ u_sender(void *arg)
 	int ind=0;
 	int unknown=0;
 	
-	for (size_t i = 0; i < 10; i++)
-	{
+	do {
 		// espera threshold (semaforo)
 		sem_wait(&_sender_sem);
 
@@ -133,7 +129,7 @@ u_sender(void *arg)
 			ind = 0;
 		}
 
-	}
+	} while(1);
 
 	pthread_exit(NULL); 
 } 
@@ -143,8 +139,7 @@ m_receiver(void *arg)
 {
 	int newgroups;
 
-	for (size_t i = 0; i < 10; i++)
-	{
+	do {
 		// Espera conjunto de novos grupos / modelos: mensagem bloqueante MPI, divulgada em broadcast
 		
 		// Recebe mensagem em broadcast. Emissor eh noh de rank 0
@@ -155,7 +150,7 @@ m_receiver(void *arg)
 		// printf("m_receiver@%s, rank %d, recebeu broadcast\n", _proc_name, _rank); fflush(stdout);
 
 		// desempacota dados
-		MPI_Unpac( ... _model_buff, ...);
+		// MPI_Unpac( ... _model_buff, ...);
 
 		// cria nova lista de modelos
 
@@ -163,7 +158,7 @@ m_receiver(void *arg)
 		// troca lista de modelos 
 		// libera acesso `a nova lista pelo classificador
 
-	}
+	} while(1);
 
 	pthread_exit(NULL);
 }
@@ -174,15 +169,14 @@ sampler(void *arg)
 	int i, ind, num;
 	int dest = 1;
 
-	for (size_t i = 0; i < 10; i++)
-	{
+	do {
 		ind = 0;
 
 		for(i=0; i < SAMPLES; i++ ) {
 
 			// ler informacoes do arquivo do dataset: enviar 1 a 1 ou em blocos?
 			// operação fictícia aqui
-			usleep(50000);
+			usleep(500000);
 			num=rand()%10;
 
 			// int MPI_Pack(const void *inbuf, int incount, MPI_Datatype datatype,
@@ -201,7 +195,9 @@ sampler(void *arg)
 		// dest vai de 1 a _numprocs-1		
 		dest = (dest+1) % _numprocs;
 		if(!dest) dest=1;
-	}
+
+	} while (1);
+
 	pthread_exit(NULL);
 }
 
@@ -212,8 +208,7 @@ detector(void *arg)
 	int result, count, num, ind, out_pos;
 
 	// fica num loop `a espera de unknonws, monta grupos e propaga a todos os classificadores
-	for (size_t i = 0; i < 10; i++)
-	{
+	do {
 		// printf("detector@%s (%d) esperando dados...\n",_proc_name,_rank);
 
 		// rank 0 recebe dos demais (MPI_Comm_size -1)
@@ -260,7 +255,8 @@ detector(void *arg)
 	
 		// propaga lista a todos os nós: nó 0 é emissor, demais nós recebem
 		MPI_Bcast(_model_buff, 1, MPI_INT, 0, MPI_COMM_WORLD);
-	}
+
+	} while (1);
 
 	pthread_exit(NULL);
 } 
