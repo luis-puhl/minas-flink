@@ -247,7 +247,7 @@ int printCluster(int dim, Cluster *cl) {
 int addClusterLine(int kParam, int dim, Model *model, char lineptr[]) {
     int readCur = 0, readTot = 0;
     if (model->size > 0 && model->size % kParam == 0) {
-        fprintf(stderr, "realloc %d\n", model->size);
+        fprintf(stderr, "realloc model %d\n", model->size);
         model->clusters = realloc(model->clusters, (model->size + kParam) * sizeof(Cluster));
     }
     Cluster *cl = &(model->clusters[model->size]);

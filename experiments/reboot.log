@@ -9,33 +9,7 @@ Taking test stream from stdin
 Final flush 11732
 ND clusters: 59 extensions, 1 novelties
 Reclassified 11615
-Evaluate
-	title = Mfog-Reboot
-	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot-matches.csv
-	plotSavePath = experiments/reboot.png
-
-Count per class
-           id
-class        
-A      447179
-N      206278
-### Mfog-Reboot
-
-saving experiments/reboot.png
-Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--                9113    2619        -       0
-N              438066  203659        N  203659
-Classes           ['A' 'N']
-Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19)] 2
-Total examples    (653457, 25)
-Total matches     (653458, 4)
-Hits               203659 ( 31.166349%)
-Misses             438066 ( 67.038126%)
-Unknowns            11732 (  1.795372%)
-Unk. reprocessed        1 (  0.008524%)
-Total              653457 ( 99.999847%)
-
+./bin/reboot/online; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+Taking test stream from stdin
+model complete
+realloc 100
