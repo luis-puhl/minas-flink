@@ -23,6 +23,9 @@ bin/redis: src/modules/redis/get-model.c
 	gcc -g -Wall -lm -lhiredis -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -lglib-2.0 $^ -o $@
 
 # -------------------------- Bin Executables -----------------------------------
+# CC=gcc
+# CFLAGS=-I/usr/local/include -Wl,-rpath -Wl,/usr/local/lib -Wl,--enable-new-dtags -L/usr/local/lib
+# LDFLAGS=-pthread -lmpi -g -Wall -lm
 bin/base.o: src/base/base.c src/base/minas.c src/base/kmeans.c src/base/clustream.c
 	gcc -g -Wall -lm $^ -o $@
 bin/minas-mpi: src/main.c src/base/minas.c src/mpi/minas-mpi.c
