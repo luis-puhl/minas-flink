@@ -2,6 +2,7 @@
 #define _BASE_H 1
 
 #include <err.h>
+#include <string.h>
 
 #define fail(text, args) \
     errx(EXIT_FAILURE, text". At "__FILE__":%d\n", args, __LINE__)
@@ -14,6 +15,13 @@
 
 #define assertMsg(exp, text, args) \
     if (!(exp)) errx(EXIT_FAILURE, "Assert error. " text " At "__FILE__":%d\n", args, __LINE__)
+#define assertErrno(exp, text, args, extra) \
+    if (!(exp)) { \
+        char err_msg[256]; \
+        strerror_r(errno, err_msg, 256); \
+        extra; \
+        errx(EXIT_FAILURE, "Error: %s." text " At "__FILE__":%d\n", err_msg, args, __LINE__); \
+    }
 
 #define PARAMS kParam, dim, precision, radiusF, minExamplesPerCluster, noveltyF
 #define PARAMS_ARG int kParam, int dim, double precision, double radiusF, int minExamplesPerCluster, double noveltyF

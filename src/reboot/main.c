@@ -45,8 +45,8 @@ void minasOnline(PARAMS_ARG, Model *model) {
     Example example;
     example.val = calloc(dim, sizeof(double));
     printf("#pointId,label\n");
-    size_t unknownsMaxSize = minExamplesPerCluster * kParam;
     size_t noveltyDetectionTrigger = minExamplesPerCluster * kParam;
+    size_t unknownsMaxSize = minExamplesPerCluster * kParam;
     Example *unknowns = calloc(unknownsMaxSize, sizeof(Example));
     size_t unknownsSize = 0;
     size_t lastNDCheck = 0;
