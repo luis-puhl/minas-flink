@@ -10,37 +10,6 @@
 
 #include "./base.h"
 
-void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknownsSize) {
-    Cluster *clusters = clustering(kParam, dim, precision, radiusF, unknowns, unknownsSize, model->size);
-    int extensions = 0, novelties = 0;
-    for (size_t k = 0; k < kParam; k++) {
-        if (clusters[k].n_matches < minExamplesPerCluster) continue;
-        //
-        Cluster *nearest = NULL;
-        double minDist = nearestClusterVal(dim, model->clusters, model->size, clusters[k].center, &nearest);
-        assertMsg(nearest != NULL, "Didn't find nearest in model(%d).", model->size);
-        if (minDist <= noveltyF * nearest->distanceStdDev) {
-            clusters[k].label = nearest->label;
-            extensions++;
-        } else {
-            clusters[k].label = model->nextLabel;
-            // inc label
-            do {
-                model->nextLabel = (model->nextLabel + 1) % 255;
-            } while (isalpha(model->nextLabel) || model->nextLabel == '-');
-            // fprintf(stderr, "Novelty %s\n", printableLabel(clusters[k].label));
-            novelties++;
-        }
-        //
-        clusters[k].id = model->size;
-        model->size++;
-        model->clusters = realloc(model->clusters, model->size * sizeof(Cluster));
-        model->clusters[model->size - 1] = clusters[k];
-    }
-    fprintf(stderr, "ND clusters: %d extensions, %d novelties\n", extensions, novelties);
-    free(clusters);
-}
-
 int main(int argc, char const *argv[]) {
     int kParam = 100, dim = 22, minExamplesPerCluster = 20;
     double precision = 1.0e-08, radiusF = 0.10, noveltyF = 2.0;

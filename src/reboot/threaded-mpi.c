@@ -3,10 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
+#include <errno.h>
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
 #include <mpi.h>
+#include <pthread.h>
+#include <unistd.h>
 #include <semaphore.h>
 
 #include "./base.h"
@@ -14,7 +17,7 @@
 #define assertMpi(exp)                        \
     if ((mpiReturn = exp) != MPI_SUCCESS) { \
         MPI_Abort(MPI_COMM_WORLD, mpiReturn); \
-        errx(EXIT_FAILURE, "MPI Abort %d". At "__FILE__":%d\n", mpiReturn, __LINE__); }
+        errx(EXIT_FAILURE, "MPI Abort %d. At "__FILE__":%d\n", mpiReturn, __LINE__); }
 #define MFOG_RANK_MAIN 0
 #define MFOG_TAG_EXAMPLE 2004
 #define MFOG_TAG_UNKNOWN 2005
@@ -36,7 +39,7 @@ struct ThreadArgs_s {
     Model *model;
     pthread_mutex_t modelMutex;
 };
-typedef struct ThreadArgs_s ThreadArgs
+typedef struct ThreadArgs_s ThreadArgs;
 
 void *classifier(void *arg) {
     ThreadArgs *args = arg;
@@ -53,43 +56,43 @@ void *classifier(void *arg) {
     size_t *inputLine = calloc(1, sizeof(size_t));
     //
     int exampleBufferLen, valueBufferLen;
-    MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen);
-    MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
+    int mpiReturn;
+    assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
+    assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
-    int mpiReturn, dest = 1;
     // MPI_Buffer_attach(buffer, bufferSize);
     while (1) {
-        MPI_Recv(exampleBuffer, exampleBufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
-        MPI_Unpack(exampleBuffer, exampleBufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD);
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         // if (example->id < 0) return 0;
-        MPI_Unpack(exampleBuffer, exampleBufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD);
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
-        *inputLine++;
+        (*inputLine)++;
         //
-        pthread_mutex_lock(args->modelMutex);
-        identify(kParam, dim, precision, radiusF, model, &example, &match);
-        pthread_mutex_unlock(args->modelMutex);
+        pthread_mutex_lock(&args->modelMutex);
+        identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
+        pthread_mutex_unlock(&args->modelMutex);
         printf("%10u,%s\n", example.id, printableLabel(match.label));
         //
         if (match.label != UNK_LABEL) continue;
         printf("Unknown: %10u", example.id);
-        for (unsigned int d = 0; d < dim; d++)
+        for (unsigned int d = 0; d < args->dim; d++)
             printf(", %le", example.val[d]);
         printf("\n");
         // the buffer is full when the head pointer is one less than the tail pointer.
-        while (args->unkBuffer->len == args->unkBuffer->size) {
-            sem_wait(args->unkBuffer->_sender_sem);
+        while (args->unkBuffer.len == args->unkBuffer.size) {
+            sem_wait(&args->unkBuffer.senderSem);
         }
-        Example swp = args->unkBuffer->buff[args->unkBuffer->head];
-        args->unkBuffer->buff[args->unkBuffer->head] = example;
+        Example swp = args->unkBuffer.buff[args->unkBuffer.head];
+        args->unkBuffer.buff[args->unkBuffer.head] = example;
         example = swp;
-        args->unkBuffer->head++;
-        args->unkBuffer->head %= args->unkBuffer->size;
-        args->unkBuffer->len++;
+        args->unkBuffer.head++;
+        args->unkBuffer.head %= args->unkBuffer.size;
+        args->unkBuffer.len++;
         valuePtr = example.val;
-        sem_post(args->unkBuffer->_sender_sem);
+        sem_post(&args->unkBuffer.senderSem);
     }
     return inputLine;
 }
@@ -100,29 +103,29 @@ void *u_sender(void *arg) {
     //
     int exampleBufferLen, valueBufferLen;
     MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen);
-    MPI_Pack_size(params->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
+    MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
     int bufferSize = exampleBufferLen + valueBufferLen + MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
     int mpiReturn;
 
     while(1) {
         // espera threshold (semaforo)
-        if (args->unkBuffer->len == 0) {
-            sem_wait(args->_sender_sem);
+        if (args->unkBuffer.len == 0) {
+            sem_wait(&args->unkBuffer.senderSem);
         }
-        Example swp = args->unkBuffer->buff[args->unkBuffer->tail];
-        args->unkBuffer->buff[args->unkBuffer->tail] = example;
+        Example swp = args->unkBuffer.buff[args->unkBuffer.tail];
+        args->unkBuffer.buff[args->unkBuffer.tail] = example;
         example = swp;
-        args->unkBuffer->tail++;
-        args->unkBuffer->tail %= args->unkBuffer->size;
-        if (args->unkBuffer->len == args->unkBuffer->size) {
-            sem_post(args->unkBuffer->_sender_sem);
+        args->unkBuffer.tail++;
+        args->unkBuffer.tail %= args->unkBuffer.size;
+        if (args->unkBuffer.len == args->unkBuffer.size) {
+            sem_post(&args->unkBuffer.senderSem);
         }
-        args->unkBuffer->len--;
+        args->unkBuffer.len--;
 
         int position = 0;
-        assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-        assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
     }
 }
@@ -136,32 +139,30 @@ void *u_sender(void *arg) {
 void *m_receiver(void *arg) {
     ThreadArgs *args = arg;
     Cluster *cl = calloc(1, sizeof(Cluster));
-    cl->center = calloc(dim, sizeof(double));
-    Example example;
-    example.val = calloc(args->dim, sizeof(double));
+    cl->center = calloc(args->dim, sizeof(double));
     int clusterBufferLen, valueBufferLen;
     MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen);
-    MPI_Pack_size(params->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
+    MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
     int bufferSize = clusterBufferLen + valueBufferLen + MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
     Model *model = args->model;
     while (1) {
-        int position = 0;
+        int position = 0, mpiReturn;
         assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(cl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(cl->center, params->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-        assertMsg(position < bufferSize, "Buffer sizing error. Used %d of %d.", (position, bufferSize));
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, cl, sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD));
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, cl->center, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
 
-        pthread_mutex_lock(args->modelMutex);
-        if (model->size > 0 && model->size % kParam == 0) {
+        pthread_mutex_lock(&args->modelMutex);
+        if (model->size > 0 && model->size % args->kParam == 0) {
             fprintf(stderr, "realloc model %d\n", model->size);
-            model->clusters = realloc(model->clusters, (model->size + kParam) * sizeof(Cluster));
+            model->clusters = realloc(model->clusters, (model->size + args->kParam) * sizeof(Cluster));
         }
         model->clusters[model->size] = *cl;
         model->size++;
-        pthread_mutex_unlock(args->modelMutex);
+        pthread_mutex_unlock(&args->modelMutex);
         // new center array, prep for next cluster
-        cl->center = calloc(dim, sizeof(double));
+        cl->center = calloc(args->dim, sizeof(double));
     }
     return model;
 }
@@ -184,12 +185,11 @@ void *sampler(void *arg) {
     char *lineptr = NULL;
     size_t n = 0;
     size_t *inputLine = calloc(1, sizeof(size_t));
-    ssize_t nread;
     //
     int clusterBufferLen, exampleBufferLen, valueBufferLen;
     MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen);
     MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen);
-    MPI_Pack_size(params->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
+    MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
     int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int mpiReturn, dest = 1;
     int *buffer = (int *)malloc(bufferSize);
@@ -197,23 +197,23 @@ void *sampler(void *arg) {
     //
     fprintf(stderr, "Taking test stream from stdin\n");
     while (!feof(stdin)) {
-        nread = getline(&lineptr, &n, stdin);
-        *inputLine++;
+        getline(&lineptr, &n, stdin);
+        (*inputLine)++;
         int readCur = 0, readTot = 0, position = 0;
         if (lineptr[0] == 'C') {
-            addClusterLine(kParam, dim, model, lineptr);
+            addClusterLine(args->kParam, args->dim, model, lineptr);
             Cluster *cl = &(model->clusters[model->size -1]);
             //
             assertMpi(MPI_Pack(cl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMpi(MPI_Pack(cl->center, params->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMsg(position < bufferSize, "Buffer sizing error. Used %d of %d.", (position, bufferSize));
+            assertMpi(MPI_Pack(cl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+            assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
             assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-            if (model->size >= kParam) {
+            if (model->size >= args->kParam) {
                 fprintf(stderr, "model complete\n");
             }
             continue;
         }
-        for (size_t d = 0; d < dim; d++) {
+        for (size_t d = 0; d < args->dim; d++) {
             assert(sscanf(&lineptr[readTot], "%lf,%n", &example.val[d], &readCur));
             readTot += readCur;
         }
@@ -221,8 +221,8 @@ void *sampler(void *arg) {
         example.id = id;
         id++;
         //
-        assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-        assertMpi(MPI_Pack(example->val, params->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         dest = (dest + 1) % args->mpiSize;
         if (dest == MFOG_RANK_MAIN) dest++;
@@ -239,15 +239,16 @@ void *sampler(void *arg) {
  */
 void *detector(void *arg) {
     ThreadArgs *args = arg;
-    int kParam = args.kParam, dim = args.dim, minExamplesPerCluster = args.minExamplesPerCluster;
-    double precision = args.precision, radiusF = args.radiusF, noveltyF = args.noveltyF;
+    int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
+    double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
     Example example;
     example.val = calloc(args->dim, sizeof(double));
     double *valuePtr = example.val;
     //
-    size_t noveltyDetectionTrigger = args.minExamplesPerCluster * args.kParam;
-    size_t unknownsMaxSize = args.minExamplesPerCluster * args.kParam;
+    size_t noveltyDetectionTrigger = args->minExamplesPerCluster * args->kParam;
+    size_t unknownsMaxSize = args->minExamplesPerCluster * args->kParam;
     Example *unknowns = calloc(unknownsMaxSize, sizeof(Example));
+    size_t unknownsSize = 0, lastNDCheck = 0, id = 0;
     //
     // args.model = 
     Model *model = calloc(1, sizeof(model));
@@ -257,18 +258,18 @@ void *detector(void *arg) {
     //
     // determina espaço necessário para empacotamento dos dados no transmissor e recebimento no nó tratador
     int clusterBufferLen, exampleBufferLen, valueBufferLen;
-    MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen);
-    MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen);
-    MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
+    int mpiReturn;
+    assertMpi(MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen));
+    assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
+    assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
-    int mpiReturn, dest = 1;
     while (1) {
-        MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
-        MPI_Unpack(buffer, bufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD);
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         // if (example->id < 0) return 0;
-        MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD);
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
         //
         unknowns[unknownsSize] = example;
@@ -304,8 +305,8 @@ void *detector(void *arg) {
                 printCluster(dim, newCl);
                 position = 0;
                 assertMpi(MPI_Pack(newCl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-                assertMpi(MPI_Pack(newCl->center, params->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-                assertMsg(position < bufferSize, "Buffer sizing error. Used %d of %d.", (position, bufferSize));
+                assertMpi(MPI_Pack(newCl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+                assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
                 assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             }
         }
@@ -313,8 +314,7 @@ void *detector(void *arg) {
 }
 
 int main(int argc, char const *argv[]) {
-    int result, count, i, tag;
-    int provided;
+    // int result, count, i, tag;
     srand(getpid());
 
     ThreadArgs args;
@@ -324,8 +324,11 @@ int main(int argc, char const *argv[]) {
     args.radiusF=0.25;
     args.minExamplesPerCluster=20;
     args.noveltyF=1.4;
+    int kParam = args.kParam, dim = args.dim, minExamplesPerCluster = args.minExamplesPerCluster;
+    double precision = args.precision, radiusF = args.radiusF, noveltyF = args.noveltyF;
     //
-    int result = MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
+    int provided;
+    int result = MPI_Init_thread(&argc, (char***) &argv, MPI_THREAD_MULTIPLE, &provided);
     if (result != MPI_SUCCESS || provided != MPI_THREAD_MULTIPLE) {
         MPI_Abort(MPI_COMM_WORLD, result);
         fail("Erro iniciando programa MPI #%d.\n", result);
@@ -341,35 +344,35 @@ int main(int argc, char const *argv[]) {
             "Hello from %s, rank %d/%d\n",
             argv[0], PARAMS, args.mpiProcessorName, args.mpiRank, args.mpiSize);
     //
-    assertErrno(sem_init(&args._sender_sem, 0, 0) >= 0, "Semaphore init fail%c.", '', /**/);
-    assertErrno(pthread_mutex_init(&mutex, NULL) >= 0, "Mutex init fail%c.", '', /**/);
+    assertErrno(sem_init(&args.unkBuffer.senderSem, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
+    assertErrno(pthread_mutex_init(&args.modelMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
     //
     args.model = calloc(1, sizeof(Model));
-    args.model.size = 0;
-    args.model.nextLabel = '\0';
-    args.model.clusters = calloc(kParam, sizeof(Cluster));
+    args.model->size = 0;
+    args.model->nextLabel = '\0';
+    args.model->clusters = calloc(kParam, sizeof(Cluster));
     //
-    if (args.rank == MFOG_RANK_MAIN) {
+    if (args.mpiRank == MFOG_RANK_MAIN) {
         printf("#pointId,label\n");
 
         pthread_t det_t, samp_t;
         // int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
-        assertErrno(pthread_create(&samp_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '', MPI_Finalize());
-        assertErrno(pthread_create(&det_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '', MPI_Finalize());
+        assertErrno(pthread_create(&samp_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_create(&det_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
-        assertErrno(pthread_join(samp_t, (void **)&result) == 0, "Thread join fail%c.", '', MPI_Finalize());
-        assertErrno(pthread_join(det_t, (void **)&result) == 0, "Thread join fail%c.", '', MPI_Finalize());
+        assertErrno(pthread_join(samp_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_join(det_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     } else {
         pthread_t class_t, send_t, rec_t;
-        assertErrno(pthread_create(&class_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '', MPI_Finalize());
-        assertErrno(pthread_create(&send_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '', MPI_Finalize());
-        assertErrno(pthread_create(&rec_t, NULL, m_receiver, (void *)&args) == 0, "Thread creation fail%c.", '', MPI_Finalize());
+        assertErrno(pthread_create(&class_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_create(&send_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_create(&rec_t, NULL, m_receiver, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
-        assertErrno(pthread_join(class_t, (void **)&result) == 0, "Thread join fail%c.", '', MPI_Finalize());
-        assertErrno(pthread_join(send_t, (void **)&result) == 0, "Thread join fail%c.", '', MPI_Finalize());
-        assertErrno(pthread_join(rec_t, (void **)&result) == 0, "Thread join fail%c.", '', MPI_Finalize());
+        assertErrno(pthread_join(class_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_join(send_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_join(rec_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     }
-    free(model);
-    sem_destroy(&args._sender_sem);
+    free(args.model);
+    sem_destroy(&args.unkBuffer.senderSem);
     return EXIT_SUCCESS;
 }
