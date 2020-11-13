@@ -11,6 +11,7 @@
 #include "./base.h"
 
 int main(int argc, char const *argv[]) {
+    clock_t start = clock();
     int kParam = 100, dim = 22, minExamplesPerCluster = 20;
     double precision = 1.0e-08, radiusF = 0.10, noveltyF = 2.0;
     //
@@ -33,7 +34,7 @@ int main(int argc, char const *argv[]) {
     size_t unknownsSize = 0;
     size_t lastNDCheck = 0;
     int hasEmptyline = 0;
-    fprintf(stderr, "Taking test stream from stdin\n");
+    fprintf(stderr, "Taking unknown stream from stdin\n");
     char *lineptr = NULL;
     size_t n = 0, inputLine = 0;
     ssize_t nread;
@@ -121,5 +122,6 @@ int main(int argc, char const *argv[]) {
     }
     free(model);
     fflush(stdout);
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return EXIT_SUCCESS;
 }

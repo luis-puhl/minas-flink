@@ -41,6 +41,72 @@ bin/classifier: src/modules/classifier.c src/mpi/mfog-mpi.c src/modules/modules.
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
 bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c bin/base.o src/modules/redis/redis-connect.c
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
+#
+# -------------------------- Reboot --------------------------------------------
+bin/reboot/serial: src/reboot/base.c src/reboot/main.c
+	gcc -g -Wall -lm -pthread $^ -o $@
+bin/reboot/eet: src/reboot/eet.c
+	gcc -g -Wall -lm -pthread $^ -o $@
+
+bin/reboot/offline: src/reboot/base.c src/reboot/offline.c
+	gcc -g -Wall -lm -pthread $^ -o $@
+bin/reboot/online: src/reboot/base.c src/reboot/online.c
+	gcc -g -Wall -lm -pthread $^ -o $@
+bin/reboot/detection: src/reboot/base.c src/reboot/detection.c
+	gcc -g -Wall -lm -pthread $^ -o $@
+
+bin/reboot/tmpi: src/reboot/base.c src/reboot/threaded-mpi.c
+	mpicc -g -Wall -lm $^ -o $@
+# -------------------------- Reboot Experiments --------------------------------
+ds = datasets/training.csv datasets/emtpyline datasets/test.csv
+experiments/reboot/serial.log: $(ds) bin/reboot/serial src/evaluation/evaluate.py
+	cat datasets/training.csv datasets/emtpyline datasets/test.csv \
+		| ./bin/reboot/serial > out/reboot/serial.csv 2> $@
+	python3 src/evaluation/evaluate.py Mfog-Reboot-serial \
+		datasets/test.csv out/reboot/serial.csv experiments/reboot/serial.png >> $@
+
+out/reboot/offline.csv: $(ds) bin/reboot/offline
+	cat datasets/training.csv | ./bin/reboot/offline > out/reboot/offline.csv 2> experiments/reboot/offline.log
+
+experiments/reboot/split.log: $(ds) out/reboot/offline.csv bin/reboot/online src/evaluation/evaluate.py
+	cat out/reboot/offline.csv datasets/test.csv | ./bin/reboot/online \
+		> out/reboot/online.csv 2> $@
+	cat out/reboot/offline.csv out/reboot/online.csv | ./bin/reboot/detection \
+		> out/reboot/detection.csv 2>> $@
+	grep -v -e 'Unknown:' out/reboot/online.csv > out/reboot/matches.csv
+	grep -e 'Unknown:' out/reboot/online.csv > out/reboot/unknowns.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot datasets/test.csv out/reboot/matches.csv \
+		experiments/reboot/split.png >> $@
+
+experiments/reboot/eet.log: $(ds) out/reboot/offline.csv bin/reboot/online bin/reboot/detection bin/reboot/eet src/evaluation/evaluate.py
+	echo "" > experiments/reboot/eet.log
+	# mkfifo model.fifo unk.fifo online-unk.fifo
+	#
+	# cat out/reboot/offline.csv | bin/reboot/eet unk.fifo | bin/reboot/detection > model.fifo \
+	# 	2>> experiments/reboot/eet.log &
+	# cat online-unk.fifo | grep 'Unknown:' | tee out/reboot/unknowns.csv > unk.fifo &
+	# cat out/reboot/offline.csv datasets/test.csv | ./bin/reboot/eet model.fifo \
+	# 	| tee out/reboot/onlineInput.csv | ./bin/reboot/online \
+	# 	| tee out/reboot/online-output.csv online-unk.fifo \
+	# 	| grep -v -e 'Unknown:' > out/reboot-output.csv \
+	# 	2>> experiments/reboot/eet.log
+	#
+	# rm model.fifo unk.fifo online-unk.fifo
+	# python3 src/evaluation/evaluate.py Mfog-Reboot-eet datasets/test.csv out/reboot/output.csv \
+	# 	experiments/reboot/eet.png >> experiments/reboot/eet.log
+#
+experiments/reboot/tmi.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi \
+		> out/reboot/tmi.csv 2> experiments/reboot/tmi.log
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv out/reboot/tmi.csv \
+		experiments/reboot/tmi-n2.png >> experiments/reboot/tmi.log
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \
+		> out/reboot/tmi.csv 2>> experiments/reboot/tmi.log
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv out/reboot/tmi.csv \
+		experiments/reboot/tmi-n4.png >> experiments/reboot/tmi.log
+#
+.PHONY: experiments/reboot
+experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
 
 # -------------------------- Experiments ---------------------------------------
 # --------- Experiments: Java reference ---------

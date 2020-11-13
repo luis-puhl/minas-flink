@@ -10,6 +10,7 @@
 #include "./base.h"
 
 int main(int argc, char const *argv[]) {
+    clock_t start = clock();
     int kParam = 100, dim = 22, minExamplesPerCluster = 20;
     double precision = 1.0e-08, radiusF = 0.10, noveltyF = 2.0;
     //
@@ -29,5 +30,6 @@ int main(int argc, char const *argv[]) {
         fprintf(stdout, "\n");
     }
     free(model);
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return EXIT_SUCCESS;
 }

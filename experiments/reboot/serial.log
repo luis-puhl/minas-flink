@@ -23,8 +23,8 @@ Reclassified 921
 Evaluate
 	title = Mfog-Reboot-serial
 	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot-serial.csv
-	plotSavePath = experiments/reboot-serial.png
+	matchesFileName = out/reboot/serial.csv
+	plotSavePath = experiments/reboot/serial.png
 
 Count per class
            id
@@ -33,7 +33,7 @@ A      447179
 N      206278
 ### Mfog-Reboot-serial
 
-saving experiments/reboot-serial.png
+saving experiments/reboot/serial.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 

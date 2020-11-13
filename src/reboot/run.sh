@@ -53,3 +53,4 @@ rm out/reboot-online-model.fifo out/reboot-unknows.fifo
 # $ mpicc --showme-cc
 # gcc -I/usr/local/include -pthread -Wl,-rpath -Wl,/usr/local/lib -Wl,--enable-new-dtags -L/usr/local/lib -lmpi
 mpicc -g -Wall -lm src/reboot/{threaded-mpi,base}.c -o bin/reboot/tmpi
+cat out/reboot-offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi > experiments/reboot-tmi.log 2>&1
