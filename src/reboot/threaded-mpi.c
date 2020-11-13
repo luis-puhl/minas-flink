@@ -147,12 +147,15 @@ void *m_receiver(void *arg) {
     fprintf(stderr, "m_receiver at %d/%d\n", args->mpiRank, args->mpiSize);
     while (1) {
         int position = 0, mpiReturn;
+        // marker("MPI_Bcast");
+        // assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+        // assertMpi(MPI_Unpack(buffer, bufferSize, &position, cl, sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD));
+        // assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        // assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
         marker("MPI_Bcast");
-        assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, cl, sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+        assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
-        assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
 
         printCluster(args->dim, cl);
         assert(cl->id == model->size);
@@ -206,11 +209,15 @@ void *sampler(void *arg) {
             Cluster *cl = &(model->clusters[model->size -1]);
             printCluster(args->dim, cl);
             //
-            assertMpi(MPI_Pack(cl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMpi(MPI_Pack(cl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
+            // assertMpi(MPI_Pack(cl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+            // assertMpi(MPI_Pack(cl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+            // assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
+            // marker("MPI_Bcast");
+            // assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            //
             marker("MPI_Bcast");
-            assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            assertMpi(MPI_Bcast(cl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             if (model->size >= args->kParam) {
                 fprintf(stderr, "model complete\n");
             }
