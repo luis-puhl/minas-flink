@@ -223,6 +223,7 @@ Model *training(int kParam, int dim, double precision, double radiusF) {
 
 Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
+    assert(model->size > 0);
     match->label = UNK_LABEL;
     match->distance = nearestClusterVal(dim, model->clusters, model->size, example->val, &match->cluster);
     assert(match->cluster != NULL);

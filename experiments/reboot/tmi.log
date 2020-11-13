@@ -1,114 +1,34 @@
-
-./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
-./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 1/2
+bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
 Taking test stream from stdin
 sampler at 0/2
+#pointId,label
 m_receiver at 1/2
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
-MPI_Bcast src/reboot/threaded-mpi.c:155
 model complete
-MPI_Bcast src/reboot/threaded-mpi.c:155
-[pokebola:83868] *** An error occurred in MPI_Unpack
-[pokebola:83868] *** reported by process [512753665,1]
-[pokebola:83868] *** on communicator MPI_COMM_WORLD
-[pokebola:83868] *** MPI_ERR_BUFFER: invalid buffer pointer
-[pokebola:83868] *** MPI_ERRORS_ARE_FATAL (processes in this communicator will now abort,
-[pokebola:83868] ***    and potentially your MPI job)
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+MPI_Unpack src/reboot/threaded-mpi.c:65
+Unknown:         19, 5.459172e-02, 4.866667e-01, 9.189655e-01, 1.190476e-02, 1.000000e+00, 1.000000e+00, 7.100000e-01, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00
+MPI_Unpack src/reboot/threaded-mpi.c:65
+[pokebola:100193] *** An error occurred in MPI_Unpack
+[pokebola:100193] *** reported by process [3730505729,1]
+[pokebola:100193] *** on communicator MPI_COMM_WORLD
+[pokebola:100193] *** MPI_ERR_BUFFER: invalid buffer pointer
+[pokebola:100193] *** MPI_ERRORS_ARE_FATAL (processes in this communicator will now abort,
+[pokebola:100193] ***    and potentially your MPI job)
