@@ -157,7 +157,7 @@ void *m_receiver(void *arg) {
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
 
-        printCluster(args->dim, cl);
+        // printCluster(args->dim, cl);
         assert(cl->id == model->size);
         pthread_mutex_lock(&args->modelMutex);
         if (model->size > 0 && model->size % args->kParam == 0) {
@@ -169,6 +169,7 @@ void *m_receiver(void *arg) {
         pthread_mutex_unlock(&args->modelMutex);
         // new center array, prep for next cluster
         cl->center = calloc(args->dim, sizeof(double));
+        valuePtr = cl->center;
     }
     return model;
 }
@@ -207,7 +208,7 @@ void *sampler(void *arg) {
         if (lineptr[0] == 'C') {
             addClusterLine(args->kParam, args->dim, model, lineptr);
             Cluster *cl = &(model->clusters[model->size -1]);
-            printCluster(args->dim, cl);
+            // printCluster(args->dim, cl);
             //
             // assertMpi(MPI_Pack(cl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
             // assertMpi(MPI_Pack(cl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -215,7 +216,7 @@ void *sampler(void *arg) {
             // marker("MPI_Bcast");
             // assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             //
-            marker("MPI_Bcast");
+            // marker("MPI_Bcast");
             assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             assertMpi(MPI_Bcast(cl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             if (model->size >= args->kParam) {
@@ -309,11 +310,13 @@ void *detector(void *arg) {
             for (size_t k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
                 printCluster(dim, newCl);
-                position = 0;
-                assertMpi(MPI_Pack(newCl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-                assertMpi(MPI_Pack(newCl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-                assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
-                assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+                // position = 0;
+                // assertMpi(MPI_Pack(newCl, sizeof(Cluster), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+                // assertMpi(MPI_Pack(newCl->center, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+                // assertMsg(position < bufferSize, "Buffer sizing error, got %d", position);
+                // assertMpi(MPI_Bcast(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+                assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+                assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             }
         }
     }
@@ -359,6 +362,11 @@ int main(int argc, char const *argv[]) {
     args.model->size = 0;
     args.model->nextLabel = '\0';
     args.model->clusters = calloc(kParam, sizeof(Cluster));
+    args.unkBuffer.head = 0;
+    args.unkBuffer.tail = 0;
+    args.unkBuffer.len = 0;
+    args.unkBuffer.size = 20;
+    args.unkBuffer.buff = calloc(args.unkBuffer.size, sizeof(Example));
     //
     if (args.mpiRank == MFOG_RANK_MAIN) {
         printf("#pointId,label\n");
@@ -372,11 +380,11 @@ int main(int argc, char const *argv[]) {
         // assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     } else {
         pthread_t classifier_t, u_sender_t, m_receiver_t;
-        // assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         // assertErrno(pthread_create(&u_sender_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_create(&m_receiver_t, NULL, m_receiver, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
-        // assertErrno(pthread_join(classifier_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_join(classifier_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         // assertErrno(pthread_join(u_sender_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     }
