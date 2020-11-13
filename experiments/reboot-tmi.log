@@ -1,0 +1,25 @@
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
+#pointId,label
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 1/2
+Taking test stream from stdin
+sampler at 0/2
+Cluster:          0, N,        502, 4.553028e-02, 6.584058e-01, 1.646014e-01, 2.888834e-04, 2.026826e-02, 4.161011e-02, 2.091633e-02, 1.000000e+00, 0.000000e+00, 2.669323e-03, 5.165936e-01, 5.267530e-01, 1.992032e-04, 0.000000e+00, 7.968127e-05, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00, 0.000000e+00
+MPI_Bcast src/reboot/threaded-mpi.c:212
+m_receiver at 1/2
+MPI_Bcast src/reboot/threaded-mpi.c:150
+MPI_Bcast src/reboot/threaded-mpi.c:150
+Cluster:          0, 0,          0, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00
+Cluster:          0, 0,          0, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00
+tmpi: Assert error. At src/reboot/threaded-mpi.c:158
+
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[40409,1],1]
+  Exit code:    1
+--------------------------------------------------------------------------

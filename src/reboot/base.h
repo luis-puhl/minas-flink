@@ -22,6 +22,7 @@
         extra; \
         errx(EXIT_FAILURE, "Error: %s." text " At "__FILE__":%d\n", err_msg, args, __LINE__); \
     }
+#define marker(txt) fprintf(stderr, txt" "__FILE__":%d\n", __LINE__);
 
 #define PARAMS kParam, dim, precision, radiusF, minExamplesPerCluster, noveltyF
 #define PARAMS_ARG int kParam, int dim, double precision, double radiusF, int minExamplesPerCluster, double noveltyF
