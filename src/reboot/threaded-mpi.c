@@ -21,6 +21,7 @@
 #define MFOG_RANK_MAIN 0
 #define MFOG_TAG_EXAMPLE 2004
 #define MFOG_TAG_UNKNOWN 2005
+#define MFOG_EOS_MARKER '\127'
 
 typedef struct {
     Example *buff;
@@ -68,7 +69,7 @@ void *classifier(void *arg) {
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
         (*inputLine)++;
-        if (example.id == -1) {
+        if (example.label == MFOG_EOS_MARKER) {
             // forward end of stream marker
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             break;
@@ -160,7 +161,7 @@ void *m_receiver(void *arg) {
     while (1) {
         // marker("MPI_Bcast");
         assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-        if (cl->id == -1) break;
+        if (cl->label == MFOG_EOS_MARKER) break;
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
 
@@ -239,7 +240,7 @@ void *sampler(void *arg) {
         dest = (dest + 1) % args->mpiSize;
         if (dest == MFOG_RANK_MAIN) dest++;
     }
-    example.id = -1;
+    example.label = MFOG_EOS_MARKER;
     int position = 0;
     assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -292,7 +293,7 @@ void *detector(void *arg) {
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
         (*inputLine)++;
-        if (example.id == -1) {
+        if (example.label == MFOG_EOS_MARKER) {
             streams--;
             continue;
         }
@@ -334,7 +335,7 @@ void *detector(void *arg) {
         }
     }
     Cluster cl;
-    cl.id = -1;
+    cl.label = MFOG_EOS_MARKER;
     assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
     marker("detector done");
     return inputLine;
