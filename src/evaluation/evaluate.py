@@ -38,10 +38,14 @@ def getMatchesDf(path):
         isMfog = firstLine.startswith('#pointId,')
     # 
     if isMfog:
-        df = pd.read_csv(filepath_or_buffer=path)
-        df['id'] = df['#pointId'].astype(int)
-        df['og_label'] = df['label']
-        return df
+        try:
+            df = pd.read_csv(filepath_or_buffer=path)
+            df['id'] = df['#pointId'].astype(int)
+            df['og_label'] = df['label']
+            return df
+        except pd.errors.ParserError as err:
+            print((err, path))
+            raise(err)
     # 
     if isOriginalFormat:
         if isOriginalFormatWithHeader:

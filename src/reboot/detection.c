@@ -47,6 +47,7 @@ int main(int argc, char const *argv[]) {
             printCluster(dim, &model->clusters[model->size -1]);
             continue;
         }
+        // id++;
         if (lineptr[0] != 'U') {
             continue;
         }
@@ -58,6 +59,7 @@ int main(int argc, char const *argv[]) {
             assertMsg(sscanf(&lineptr[readTot], ", %le%n", &example.val[d], &readCur), "Didn't understand '%s'.", &lineptr[readTot]);
             readTot += readCur;
         }
+        id = example.id > id ? example.id : id;
         unknowns[unknownsSize] = example;
         unknownsSize++;
         example.val = calloc(dim, sizeof(double));

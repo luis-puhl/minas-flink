@@ -23,12 +23,12 @@
 #define MFOG_TAG_UNKNOWN 2005
 #define MFOG_EOS_MARKER '\127'
 
-typedef struct {
-    Example *buff;
-    int size, head, tail, len;
-    // Semaforo de dados para o emissor
-    sem_t senderSem;
-} CircularExampleBuffer;
+// typedef struct {
+//     Example *buff;
+//     int size, head, tail, len;
+//     // Semaforo de dados para o emissor
+//     sem_t senderSem;
+// } CircularExampleBuffer;
 
 struct ThreadArgs_s {
     int kParam, dim, minExamplesPerCluster;
@@ -36,13 +36,15 @@ struct ThreadArgs_s {
     // mpi stuff
     int mpiRank, mpiSize;
     char *mpiProcessorName;
-    CircularExampleBuffer unkBuffer;
+    // CircularExampleBuffer unkBuffer;
     Model *model;
     pthread_mutex_t modelMutex;
+    sem_t modelReadySemaphore;
 };
 typedef struct ThreadArgs_s ThreadArgs;
 
 void *classifier(void *arg) {
+    clock_t start = clock();
     ThreadArgs *args = arg;
     Example example;
     example.val = calloc(args->dim, sizeof(double));
@@ -72,13 +74,13 @@ void *classifier(void *arg) {
         (*inputLine)++;
         //
         while (model->size < args->kParam) {
-            fprintf(stderr, "model incomplete %d, sleep(1);\n", model->size);
-            sleep(1);
+            fprintf(stderr, "model incomplete %d, wait(modelReadySemaphore);\n", model->size);
+            sem_wait(&args->modelReadySemaphore);
         }
         pthread_mutex_lock(&args->modelMutex);
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
         pthread_mutex_unlock(&args->modelMutex);
-        // 
+        //
         example.label = match.label;
         position = 0;
         assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -91,6 +93,7 @@ void *classifier(void *arg) {
         // for (unsigned int d = 0; d < args->dim; d++)
         //     printf(", %le", example.val[d]);
         // printf("\n");
+        //
         // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
         // assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
         // the buffer is full when the head pointer is one less than the tail pointer.
@@ -106,9 +109,10 @@ void *classifier(void *arg) {
         // valuePtr = example.val;
         // sem_post(&args->unkBuffer.senderSem);
     }
-    marker("classifier done");
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "classifier", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return inputLine;
 }
+/*
 void *u_sender(void *arg) {
     ThreadArgs *args = arg;
     Example example;
@@ -145,6 +149,7 @@ void *u_sender(void *arg) {
     }
     marker("u_sender done");
 }
+*/
 
 /**
  * @brief In rank N != 0, this thread receives model updates.
@@ -153,6 +158,7 @@ void *u_sender(void *arg) {
  * @return void* 
  */
 void *m_receiver(void *arg) {
+    clock_t start = clock();
     ThreadArgs *args = arg;
     Cluster *cl = calloc(1, sizeof(Cluster));
     cl->center = calloc(args->dim, sizeof(double));
@@ -161,7 +167,6 @@ void *m_receiver(void *arg) {
     Model *model = args->model;
     fprintf(stderr, "m_receiver at %d/%d\n", args->mpiRank, args->mpiSize);
     while (1) {
-        // marker("MPI_Bcast");
         assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         if (cl->label == MFOG_EOS_MARKER) break;
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -177,11 +182,18 @@ void *m_receiver(void *arg) {
         model->clusters[model->size] = *cl;
         model->size++;
         pthread_mutex_unlock(&args->modelMutex);
+        if (model->size == args->kParam) {
+            fprintf(stderr, "model complete\n");
+            sem_post(&args->modelReadySemaphore);
+        }
+        // if (model->size > args->kParam) {
+        //     marker("extra cluster");
+        // }
         // new center array, prep for next cluster
         cl->center = calloc(args->dim, sizeof(double));
         valuePtr = cl->center;
     }
-    marker("m_receiver done");
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "m_receiver", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return model;
 }
 
@@ -192,6 +204,7 @@ void *m_receiver(void *arg) {
  * @return void* ptr to int consumed lines
  */
 void *sampler(void *arg) {
+    clock_t start = clock();
     ThreadArgs *args = arg;
     unsigned int id = 0;
     Example example;
@@ -249,7 +262,7 @@ void *sampler(void *arg) {
     for (dest = 1; dest < args->mpiSize; dest++) {
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
     }
-    marker("Sampler done");
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "sampler", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return inputLine;
 }
 
@@ -261,6 +274,7 @@ void *sampler(void *arg) {
  * @return void* ptr to int consumed lines
  */
 void *detector(void *arg) {
+    clock_t start = clock();
     ThreadArgs *args = arg;
     size_t *inputLine = calloc(1, sizeof(size_t));
     int streams = args->mpiSize - 1;
@@ -300,6 +314,7 @@ void *detector(void *arg) {
             continue;
         }
         //
+        id = example.id > id ? example.id : id;
         printf("%10u,%s\n", example.id, printableLabel(example.label));
         if (example.label != UNK_LABEL) continue;
         printf("Unknown: %10u", example.id);
@@ -312,10 +327,12 @@ void *detector(void *arg) {
         example.val = calloc(dim, sizeof(double));
         if (unknownsSize >= unknownsMaxSize) {
             unknownsMaxSize *= 2;
+            // marker("realloc unknowns");
             unknowns = realloc(unknowns, unknownsMaxSize * sizeof(Example));
         }
         //
         if (unknownsSize % noveltyDetectionTrigger == 0 && id - lastNDCheck > noveltyDetectionTrigger) {
+            // marker("noveltyDetection");
             lastNDCheck = id;
             unsigned int prevSize = model->size;
             noveltyDetection(PARAMS, model, unknowns, unknownsSize);
@@ -346,14 +363,12 @@ void *detector(void *arg) {
     Cluster cl;
     cl.label = MFOG_EOS_MARKER;
     assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-    marker("detector done");
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "detector", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return inputLine;
 }
 
 int main(int argc, char const *argv[]) {
-    // int result, count, i, tag;
-    srand(getpid());
-
+    clock_t start = clock();
     ThreadArgs args;
     args.kParam=100;
     args.dim=22;
@@ -365,10 +380,10 @@ int main(int argc, char const *argv[]) {
     double precision = args.precision, radiusF = args.radiusF, noveltyF = args.noveltyF;
     //
     int provided;
-    int result = MPI_Init_thread(&argc, (char***) &argv, MPI_THREAD_MULTIPLE, &provided);
-    if (result != MPI_SUCCESS || provided != MPI_THREAD_MULTIPLE) {
-        MPI_Abort(MPI_COMM_WORLD, result);
-        fail("Erro iniciando programa MPI #%d.\n", result);
+    int mpiReturn = MPI_Init_thread(&argc, (char ***)&argv, MPI_THREAD_MULTIPLE, &provided);
+    if (mpiReturn != MPI_SUCCESS || provided != MPI_THREAD_MULTIPLE) {
+        MPI_Abort(MPI_COMM_WORLD, mpiReturn);
+        fail("Erro iniciando programa MPI #%d.\n", mpiReturn);
     }
     MPI_Comm_rank(MPI_COMM_WORLD, &args.mpiRank);
     MPI_Comm_size(MPI_COMM_WORLD, &args.mpiSize);
@@ -383,19 +398,26 @@ int main(int argc, char const *argv[]) {
             "Hello from %s, rank %d/%d\n",
             argv[0], PARAMS, args.mpiProcessorName, args.mpiRank, args.mpiSize);
     //
-    assertErrno(sem_init(&args.unkBuffer.senderSem, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
+    // assertErrno(sem_init(&args.unkBuffer.senderSem, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
+    assertErrno(sem_init(&args.modelReadySemaphore, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
     assertErrno(pthread_mutex_init(&args.modelMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
     //
     args.model = calloc(1, sizeof(Model));
     args.model->size = 0;
     args.model->nextLabel = '\0';
     args.model->clusters = calloc(kParam, sizeof(Cluster));
-    args.unkBuffer.head = 0;
-    args.unkBuffer.tail = 0;
-    args.unkBuffer.len = 0;
-    args.unkBuffer.size = 20;
-    args.unkBuffer.buff = calloc(args.unkBuffer.size, sizeof(Example));
+    // args.unkBuffer.head = 0;
+    // args.unkBuffer.tail = 0;
+    // args.unkBuffer.len = 0;
+    // args.unkBuffer.size = 20;
+    // int exampleBufferLen, valueBufferLen;
+    // assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
+    // assertMpi(MPI_Pack_size(args.dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
+    // int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
+    // int *buffer = (int *)malloc(bufferSize);
+    // args.unkBuffer.buff = calloc(args.unkBuffer.size, bufferSize);
     //
+    int result;
     if (args.mpiRank == MFOG_RANK_MAIN) {
         printf("#pointId,label\n");
 
@@ -418,6 +440,8 @@ int main(int argc, char const *argv[]) {
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     }
     free(args.model);
-    sem_destroy(&args.unkBuffer.senderSem);
+    // sem_destroy(&args.unkBuffer.senderSem);
+    sem_destroy(&args.modelReadySemaphore);
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return MPI_Finalize();
 }

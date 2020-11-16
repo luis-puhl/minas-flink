@@ -1,19 +1,55 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/4
+Taking test stream from stdin
+sampler at 0/4
 m_receiver at 3/4
 m_receiver at 1/4
 m_receiver at 2/4
-Taking test stream from stdin
-sampler at 0/4
 model complete
-model incomplete 54, sleep(1);
-Sampler done src/reboot/threaded-mpi.c:252
-classifier done src/reboot/threaded-mpi.c:109
-classifier done src/reboot/threaded-mpi.c:109
-classifier done src/reboot/threaded-mpi.c:109
-m_receiver done src/reboot/threaded-mpi.c:184
-detector done src/reboot/threaded-mpi.c:349
-m_receiver done src/reboot/threaded-mpi.c:184
-m_receiver done src/reboot/threaded-mpi.c:184
+model incomplete 43, wait(modelReadySemaphore);
+model incomplete 30, wait(modelReadySemaphore);
+model incomplete 30, wait(modelReadySemaphore);
+model complete
+model complete
+model complete
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+realloc model 100
+realloc model 100
+realloc model 100
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+[sampler] 1.517080e+01 seconds. At src/reboot/threaded-mpi.c:265
+[classifier] 1.077895e+01 seconds. At src/reboot/threaded-mpi.c:112
+[classifier] 1.094314e+01 seconds. At src/reboot/threaded-mpi.c:112
+[classifier] 1.087677e+01 seconds. At src/reboot/threaded-mpi.c:112
+[m_receiver] 1.094468e+01 seconds. At src/reboot/threaded-mpi.c:196
+[m_receiver] 1.078637e+01 seconds. At src/reboot/threaded-mpi.c:196
+[detector] 1.517594e+01 seconds. At src/reboot/threaded-mpi.c:366
+[m_receiver] 1.087673e+01 seconds. At src/reboot/threaded-mpi.c:196
+[./bin/reboot/tmpi] 1.080686e+01 seconds. At src/reboot/threaded-mpi.c:445
+[./bin/reboot/tmpi] 1.519554e+01 seconds. At src/reboot/threaded-mpi.c:445
+[./bin/reboot/tmpi] 1.089495e+01 seconds. At src/reboot/threaded-mpi.c:445
+[./bin/reboot/tmpi] 1.096256e+01 seconds. At src/reboot/threaded-mpi.c:445
 Evaluate
 	title = Mfog-Reboot-tmi-n4
 	examplesFileName = datasets/test.csv
@@ -31,16 +67,17 @@ saving experiments/reboot/tmi-n4.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--                9113    2619        -       0
-N              438066  203659        N  203659
+-               22772    2842        -       0
+3                   3       0        A       3
+N              424404  203436        N  203436
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19)] 2
+Labels (item)     [('N', 0), ('-', 19), ('3', 355119)] 3
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               203659 ( 31.166349%)
-Misses             438066 ( 67.038126%)
-Unknowns            11732 (  1.795372%)
-Unk. reprocessed        1 (  0.008524%)
+Hits               203439 ( 31.132682%)
+Misses             424404 ( 64.947403%)
+Unknowns            25614 (  3.919762%)
+Unk. reprocessed        1 (  0.003904%)
 Total              653457 ( 99.999847%)
 

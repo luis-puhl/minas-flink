@@ -1,12 +1,28 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
 Taking test stream from stdin
-sampler at 0/2
 m_receiver at 1/2
+sampler at 0/2
 model complete
-Sampler done src/reboot/threaded-mpi.c:252
-detector done src/reboot/threaded-mpi.c:349
-classifier done src/reboot/threaded-mpi.c:109
-m_receiver done src/reboot/threaded-mpi.c:184
+model complete
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+realloc model 100
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters: 1 extensions, 0 novelties
+Reclassified 2000
+[sampler] 1.096293e+01 seconds. At src/reboot/threaded-mpi.c:265
+ND clusters: 0 extensions, 1 novelties
+Reclassified 2000
+[detector] 1.145373e+01 seconds. At src/reboot/threaded-mpi.c:366
+[classifier] 1.100745e+01 seconds. At src/reboot/threaded-mpi.c:112
+[./bin/reboot/tmpi] 1.147175e+01 seconds. At src/reboot/threaded-mpi.c:445
+[m_receiver] 1.100986e+01 seconds. At src/reboot/threaded-mpi.c:196
+[./bin/reboot/tmpi] 1.102846e+01 seconds. At src/reboot/threaded-mpi.c:445
 Evaluate
 	title = Mfog-Reboot-tmi-n2
 	examplesFileName = datasets/test.csv
@@ -24,16 +40,16 @@ saving experiments/reboot/tmi-n2.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--                9113    2619        -       0
-N              438066  203659        N  203659
+-                9633    2640        -       0
+N              437546  203638        N  203638
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels (item)     [('N', 0), ('-', 19)] 2
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               203659 ( 31.166349%)
-Misses             438066 ( 67.038126%)
-Unknowns            11732 (  1.795372%)
-Unk. reprocessed        1 (  0.008524%)
+Hits               203638 ( 31.163135%)
+Misses             437546 ( 66.958550%)
+Unknowns            12273 (  1.878162%)
+Unk. reprocessed        1 (  0.008148%)
 Total              653457 ( 99.999847%)
 
