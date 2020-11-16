@@ -47,9 +47,7 @@ void *classifier(void *arg) {
     Example example;
     example.val = calloc(args->dim, sizeof(double));
     double *valuePtr = example.val;
-    //
     Model *model = args->model;
-    //
     Match match;
     size_t *inputLine = calloc(1, sizeof(size_t));
     //
@@ -59,21 +57,19 @@ void *classifier(void *arg) {
     assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
-    MPI_Buffer_attach(buffer, bufferSize);
+    // MPI_Buffer_attach(buffer, bufferSize);
     while (1) {
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
-        // marker("MPI_Unpack");
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
-        // if (example->id < 0) return 0;
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
-        example.val = valuePtr;
-        (*inputLine)++;
         if (example.label == MFOG_EOS_MARKER) {
             // forward end of stream marker
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             break;
         }
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        example.val = valuePtr;
+        (*inputLine)++;
         //
         while (model->size < args->kParam) {
             fprintf(stderr, "model incomplete %d, sleep(1);\n", model->size);
@@ -82,15 +78,21 @@ void *classifier(void *arg) {
         pthread_mutex_lock(&args->modelMutex);
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
         pthread_mutex_unlock(&args->modelMutex);
-        printf("%10u,%s\n", example.id, printableLabel(match.label));
-        //
-        if (match.label != UNK_LABEL) continue;
-        printf("Unknown: %10u", example.id);
-        for (unsigned int d = 0; d < args->dim; d++)
-            printf(", %le", example.val[d]);
-        printf("\n");
-        // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
+        // 
+        example.label = match.label;
+        position = 0;
+        assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        //
+        // printf("%10u,%s\n", example.id, printableLabel(match.label));
+        // if (match.label != UNK_LABEL) continue;
+        // printf("Unknown: %10u", example.id);
+        // for (unsigned int d = 0; d < args->dim; d++)
+        //     printf(", %le", example.val[d]);
+        // printf("\n");
+        // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
+        // assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
         // the buffer is full when the head pointer is one less than the tail pointer.
         // while (args->unkBuffer.len == args->unkBuffer.size) {
         //     sem_wait(&args->unkBuffer.senderSem);
@@ -297,6 +299,13 @@ void *detector(void *arg) {
             streams--;
             continue;
         }
+        //
+        printf("%10u,%s\n", example.id, printableLabel(example.label));
+        if (example.label != UNK_LABEL) continue;
+        printf("Unknown: %10u", example.id);
+        for (unsigned int d = 0; d < args->dim; d++)
+            printf(", %le", example.val[d]);
+        printf("\n");
         //
         unknowns[unknownsSize] = example;
         unknownsSize++;

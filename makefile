@@ -98,20 +98,20 @@ experiments/reboot/eet.log: $(ds) out/reboot/offline.csv bin/reboot/online bin/r
 .PHONY: tmpi
 tmpi: $(ds) out/reboot/offline.csv bin/reboot/tmpi
 	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi
-experiments/reboot/tmi.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
+experiments/reboot/tmi-n2.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
 	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi \
-		> out/reboot/tmi.csv 2> experiments/reboot/tmi.log
-	grep -v -e 'Unknown:' out/reboot/tmi.csv > out/reboot/tmpi-matches.csv
-	grep -e 'Unknown:' out/reboot/tmi.csv > out/reboot/tmpi-unknowns.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv out/reboot/tmpi-matches.csv \
-		experiments/reboot/tmi-n2.png >> experiments/reboot/tmi.log
-experiments/reboot/tmi-4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
+		> out/reboot/tmi-n2.csv 2> $@
+	grep -v -e 'Unknown:' out/reboot/tmi-n2.csv > out/reboot/tmi-n2-matches.csv
+	grep -e 'Unknown:' out/reboot/tmi-n2.csv > out/reboot/tmi-n2-unknowns.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv out/reboot/tmi-n2-matches.csv \
+		experiments/reboot/tmi-n2.png >>$@
+experiments/reboot/tmi-n4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
 	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \
-		> out/reboot/tmi-n4.csv 2>> experiments/reboot/tmi-4.log
+		> out/reboot/tmi-n4.csv 2>> $@
 	grep -v -e 'Unknown:' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-matches.csv
 	grep -e 'Unknown:' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-unknowns.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv out/reboot/tmpi-n4-matches.csv \
-		experiments/reboot/tmi-n4.png >> experiments/reboot/tmi-4.log
+		experiments/reboot/tmi-n4.png >> $@
 #
 .PHONY: experiments/reboot
 experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
