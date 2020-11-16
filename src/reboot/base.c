@@ -304,7 +304,9 @@ void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknow
         model->clusters = realloc(model->clusters, model->size * sizeof(Cluster));
         model->clusters[model->size - 1] = clusters[k];
     }
-    fprintf(stderr, "ND clusters: %d extensions, %d novelties\n", extensions, novelties);
+    unsigned int earliestId = unknowns[0].id;
+    unsigned int latestId = unknowns[unknownsSize -1].id;
+    fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
     free(clusters);
 }
 

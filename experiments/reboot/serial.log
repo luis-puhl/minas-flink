@@ -3,22 +3,22 @@ Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
 Taking test stream from stdin
-ND clusters: 22 extensions, 1 novelties
+ND clusters (19, 82080): 22 extensions, 1 novelties
 Reclassified 1844
-ND clusters: 13 extensions, 3 novelties
+ND clusters (19, 162193): 13 extensions, 3 novelties
 Reclassified 1773
-ND clusters: 6 extensions, 0 novelties
+ND clusters (19, 191029): 6 extensions, 0 novelties
 Reclassified 1754
-ND clusters: 8 extensions, 1 novelties
+ND clusters (19, 226975): 8 extensions, 1 novelties
 Reclassified 1733
-ND clusters: 15 extensions, 0 novelties
+ND clusters (19, 322798): 15 extensions, 0 novelties
 Reclassified 1691
-ND clusters: 22 extensions, 1 novelties
+ND clusters (19, 506909): 22 extensions, 1 novelties
 Reclassified 1743
-ND clusters: 16 extensions, 2 novelties
+ND clusters (19, 592554): 16 extensions, 2 novelties
 Reclassified 1663
 Final flush 1184
-ND clusters: 11 extensions, 2 novelties
+ND clusters (19, 653332): 11 extensions, 2 novelties
 Reclassified 921
 Evaluate
 	title = Mfog-Reboot-serial

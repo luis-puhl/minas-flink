@@ -1,28 +1,28 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
 Taking test stream from stdin
-m_receiver at 1/2
 sampler at 0/2
+m_receiver at 1/2
 model complete
 model complete
-ND clusters: 1 extensions, 0 novelties
+ND clusters (19, 82080): 1 extensions, 0 novelties
 Reclassified 2000
 realloc model 100
-ND clusters: 1 extensions, 0 novelties
+ND clusters (82100, 223874): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters: 1 extensions, 0 novelties
+ND clusters (223895, 324083): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters: 1 extensions, 0 novelties
+ND clusters (324187, 404819): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters: 1 extensions, 0 novelties
+ND clusters (404859, 568947): 1 extensions, 0 novelties
 Reclassified 2000
-[sampler] 1.096293e+01 seconds. At src/reboot/threaded-mpi.c:265
-ND clusters: 0 extensions, 1 novelties
+[sampler] 1.106252e+01 seconds. At src/reboot/threaded-mpi.c:265
+ND clusters (569093, 604102): 1 extensions, 0 novelties
 Reclassified 2000
-[detector] 1.145373e+01 seconds. At src/reboot/threaded-mpi.c:366
-[classifier] 1.100745e+01 seconds. At src/reboot/threaded-mpi.c:112
-[./bin/reboot/tmpi] 1.147175e+01 seconds. At src/reboot/threaded-mpi.c:445
-[m_receiver] 1.100986e+01 seconds. At src/reboot/threaded-mpi.c:196
-[./bin/reboot/tmpi] 1.102846e+01 seconds. At src/reboot/threaded-mpi.c:445
+[detector] 1.145430e+01 seconds. At src/reboot/threaded-mpi.c:366
+[m_receiver] 1.101160e+01 seconds. At src/reboot/threaded-mpi.c:196
+[classifier] 1.101113e+01 seconds. At src/reboot/threaded-mpi.c:112
+[./bin/reboot/tmpi] 1.102945e+01 seconds. At src/reboot/threaded-mpi.c:445
+[./bin/reboot/tmpi] 1.147296e+01 seconds. At src/reboot/threaded-mpi.c:445
 Evaluate
 	title = Mfog-Reboot-tmi-n2
 	examplesFileName = datasets/test.csv
@@ -40,16 +40,16 @@ saving experiments/reboot/tmi-n2.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--                9633    2640        -       0
-N              437546  203638        N  203638
+-               10151    2647        -       0
+N              437028  203631        N  203631
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels (item)     [('N', 0), ('-', 19)] 2
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               203638 ( 31.163135%)
-Misses             437546 ( 66.958550%)
-Unknowns            12273 (  1.878162%)
-Unk. reprocessed        1 (  0.008148%)
+Hits               203631 ( 31.162064%)
+Misses             437028 ( 66.879279%)
+Unknowns            12798 (  1.958504%)
+Unk. reprocessed        1 (  0.007814%)
 Total              653457 ( 99.999847%)
 
