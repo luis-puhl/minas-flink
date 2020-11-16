@@ -62,39 +62,48 @@ void *classifier(void *arg) {
     while (1) {
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
-        marker("MPI_Unpack");
+        // marker("MPI_Unpack");
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         // if (example->id < 0) return 0;
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
         (*inputLine)++;
+        if (example.id == -1) {
+            // forward end of stream marker
+            assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+            break;
+        }
         //
         while (model->size < args->kParam) {
+            fprintf(stderr, "model incomplete %d, sleep(1);\n", model->size);
             sleep(1);
         }
         pthread_mutex_lock(&args->modelMutex);
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
         pthread_mutex_unlock(&args->modelMutex);
-        // printf("%10u,%s\n", example.id, printableLabel(match.label));
+        printf("%10u,%s\n", example.id, printableLabel(match.label));
         //
         if (match.label != UNK_LABEL) continue;
         printf("Unknown: %10u", example.id);
         for (unsigned int d = 0; d < args->dim; d++)
             printf(", %le", example.val[d]);
         printf("\n");
+        // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
+        assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
         // the buffer is full when the head pointer is one less than the tail pointer.
-        while (args->unkBuffer.len == args->unkBuffer.size) {
-            sem_wait(&args->unkBuffer.senderSem);
-        }
-        Example swp = args->unkBuffer.buff[args->unkBuffer.head];
-        args->unkBuffer.buff[args->unkBuffer.head] = example;
-        example = swp;
-        args->unkBuffer.head++;
-        args->unkBuffer.head %= args->unkBuffer.size;
-        args->unkBuffer.len++;
-        valuePtr = example.val;
-        sem_post(&args->unkBuffer.senderSem);
+        // while (args->unkBuffer.len == args->unkBuffer.size) {
+        //     sem_wait(&args->unkBuffer.senderSem);
+        // }
+        // Example swp = args->unkBuffer.buff[args->unkBuffer.head];
+        // args->unkBuffer.buff[args->unkBuffer.head] = example;
+        // example = swp;
+        // args->unkBuffer.head++;
+        // args->unkBuffer.head %= args->unkBuffer.size;
+        // args->unkBuffer.len++;
+        // valuePtr = example.val;
+        // sem_post(&args->unkBuffer.senderSem);
     }
+    marker("classifier done");
     return inputLine;
 }
 void *u_sender(void *arg) {
@@ -112,6 +121,7 @@ void *u_sender(void *arg) {
     while(1) {
         // espera threshold (semaforo)
         if (args->unkBuffer.len == 0) {
+            fprintf(stderr, "U-sender sem_wait(senderSem);\n");
             sem_wait(&args->unkBuffer.senderSem);
         }
         Example swp = args->unkBuffer.buff[args->unkBuffer.tail];
@@ -125,10 +135,12 @@ void *u_sender(void *arg) {
         args->unkBuffer.len--;
 
         int position = 0;
+        fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
         assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
     }
+    marker("u_sender done");
 }
 
 /**
@@ -148,6 +160,7 @@ void *m_receiver(void *arg) {
     while (1) {
         // marker("MPI_Bcast");
         assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+        if (cl->id == -1) break;
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
 
@@ -165,6 +178,7 @@ void *m_receiver(void *arg) {
         cl->center = calloc(args->dim, sizeof(double));
         valuePtr = cl->center;
     }
+    marker("m_receiver done");
     return model;
 }
 
@@ -225,6 +239,14 @@ void *sampler(void *arg) {
         dest = (dest + 1) % args->mpiSize;
         if (dest == MFOG_RANK_MAIN) dest++;
     }
+    example.id = -1;
+    int position = 0;
+    assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+    assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+    for (dest = 1; dest < args->mpiSize; dest++) {
+        assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+    }
+    marker("Sampler done");
     return inputLine;
 }
 
@@ -237,6 +259,9 @@ void *sampler(void *arg) {
  */
 void *detector(void *arg) {
     ThreadArgs *args = arg;
+    size_t *inputLine = calloc(1, sizeof(size_t));
+    int streams = args->mpiSize - 1;
+    (*inputLine) = 0;
     int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
     double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
     Example example;
@@ -258,7 +283,7 @@ void *detector(void *arg) {
     assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
-    while (1) {
+    while (streams > 0) {
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
         // marker("MPI_Unpack");
@@ -266,6 +291,11 @@ void *detector(void *arg) {
         // if (example->id < 0) return 0;
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
+        (*inputLine)++;
+        if (example.id == -1) {
+            streams--;
+            continue;
+        }
         //
         unknowns[unknownsSize] = example;
         unknownsSize++;
@@ -303,6 +333,11 @@ void *detector(void *arg) {
             }
         }
     }
+    Cluster cl;
+    cl.id = -1;
+    assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+    marker("detector done");
+    return inputLine;
 }
 
 int main(int argc, char const *argv[]) {
@@ -354,25 +389,25 @@ int main(int argc, char const *argv[]) {
     if (args.mpiRank == MFOG_RANK_MAIN) {
         printf("#pointId,label\n");
 
-        sampler((void *)&args);
-        // pthread_t detector_t, sampler_t;
-        // int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
-        // assertErrno(pthread_create(&sampler_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
-        // assertErrno(pthread_create(&detector_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        // sampler((void *)&args);
+        pthread_t detector_t, sampler_t;
+        int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
+        assertErrno(pthread_create(&sampler_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_create(&detector_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
-        // assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        // assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     } else {
         pthread_t classifier_t, u_sender_t, m_receiver_t;
         assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
-        assertErrno(pthread_create(&u_sender_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        // assertErrno(pthread_create(&u_sender_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_create(&m_receiver_t, NULL, m_receiver, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
         assertErrno(pthread_join(classifier_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        assertErrno(pthread_join(u_sender_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        // assertErrno(pthread_join(u_sender_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     }
     free(args.model);
     sem_destroy(&args.unkBuffer.senderSem);
-    return EXIT_SUCCESS;
+    return MPI_Finalize();
 }

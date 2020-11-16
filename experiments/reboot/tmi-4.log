@@ -1,0 +1,28 @@
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/4
+m_receiver at 1/4
+m_receiver at 2/4
+m_receiver at 3/4
+Taking test stream from stdin
+sampler at 0/4
+model complete
+model incomplete 31, sleep(1);
+model incomplete 30, sleep(1);
+classifier done src/reboot/threaded-mpi.c:106
+Sampler done src/reboot/threaded-mpi.c:249
+classifier done src/reboot/threaded-mpi.c:106
+classifier done src/reboot/threaded-mpi.c:106
+m_receiver done src/reboot/threaded-mpi.c:181
+m_receiver done src/reboot/threaded-mpi.c:181
+detector done src/reboot/threaded-mpi.c:339
+m_receiver done src/reboot/threaded-mpi.c:181
+Evaluate
+	title = Mfog-Reboot-tmi-n4
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/tmpi-n4-matches.csv
+	plotSavePath = experiments/reboot/tmi-n4.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278

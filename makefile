@@ -95,15 +95,23 @@ experiments/reboot/eet.log: $(ds) out/reboot/offline.csv bin/reboot/online bin/r
 	# python3 src/evaluation/evaluate.py Mfog-Reboot-eet datasets/test.csv out/reboot/output.csv \
 	# 	experiments/reboot/eet.png >> experiments/reboot/eet.log
 #
+.PHONY: tmpi
+tmpi: $(ds) out/reboot/offline.csv bin/reboot/tmpi
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi
 experiments/reboot/tmi.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
 	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi \
 		> out/reboot/tmi.csv 2> experiments/reboot/tmi.log
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv out/reboot/tmi.csv \
+	grep -v -e 'Unknown:' out/reboot/tmi.csv > out/reboot/tmpi-matches.csv
+	grep -e 'Unknown:' out/reboot/tmi.csv > out/reboot/tmpi-unknowns.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv out/reboot/tmpi-matches.csv \
 		experiments/reboot/tmi-n2.png >> experiments/reboot/tmi.log
+experiments/reboot/tmi-4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi
 	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \
-		> out/reboot/tmi.csv 2>> experiments/reboot/tmi.log
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv out/reboot/tmi.csv \
-		experiments/reboot/tmi-n4.png >> experiments/reboot/tmi.log
+		> out/reboot/tmi-n4.csv 2>> experiments/reboot/tmi-4.log
+	grep -v -e 'Unknown:' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-matches.csv
+	grep -e 'Unknown:' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-unknowns.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv out/reboot/tmpi-n4-matches.csv \
+		experiments/reboot/tmi-n4.png >> experiments/reboot/tmi-4.log
 #
 .PHONY: experiments/reboot
 experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
@@ -127,46 +135,46 @@ experiments/reference-java-nf.log.png: experiments/reference-java-nf.log out/min
 #
 
 # --------- Experiments: Baseline ---------
-experiments/baseline.log: bin/baseline src/evaluation/evaluate.py minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
+experiments/baseline.log: bin/baseline src/evaluation/evaluate.py conf/minas.conf datasets/emtpyline datasets/training.csv datasets/test.csv
 	cat datasets/training.csv datasets/emtpyline datasets/test.csv \
-		| env $$(cat minas.conf | xargs) ./bin/baseline \
+		| env $$(cat conf/minas.conf | xargs) ./bin/baseline \
 		> out/baseline.csv 2> $@
 	python3 src/evaluation/evaluate.py Baseline datasets/test.csv out/baseline.csv $@.png >> $@
 	cat $@
 # Experiments: Minas with MPI and Redis
-out/mfog-model.csv: bin/training minas.conf datasets/emtpyline datasets/training.csv
+out/mfog-model.csv: bin/training conf/minas.conf datasets/emtpyline datasets/training.csv
 	echo "" > experiments/mfog.log
-	# cat minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
-	cat datasets/training.csv datasets/emtpyline | env $$(cat minas.conf | xargs) ./bin/training > $@ 2>> experiments/mfog.log
+	# cat conf/minas.conf datasets/emtpyline datasets/training.csv datasets/emtpyline | ./bin/training > $@ 2> experiments/mfog.log
+	cat datasets/training.csv datasets/emtpyline | env $$(cat conf/minas.conf | xargs) ./bin/training > $@ 2>> experiments/mfog.log
 #
 
 bin/mfog-threads: src/modules/mfog-threads.c src/base/minas.c src/modules/modules.c src/base/base.c src/base/kmeans.c src/base/clustream.c src/mpi/mfog-mpi.c
 	mpicc -g -Wall -lm -lpthread $^ -o $@
-experiments/mfog-threads.log: bin/mfog-threads minas.conf out/mfog-model.csv
+experiments/mfog-threads.log: bin/mfog-threads conf/minas.conf out/mfog-model.csv
 	cat out/mfog-model.csv datasets/emtpyline datasets/test.csv \
-		| env $$(cat minas.conf | xargs) mpirun bin/mfog-threads > out/mfog-matches.csv 2>&1 | tee $@
+		| env $$(cat conf/minas.conf | xargs) mpirun bin/mfog-threads > out/mfog-matches.csv 2>&1 | tee $@
 #
 
-experiments/mfog-serial-sansNd.log: bin/classifier minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
+experiments/mfog-serial-sansNd.log: bin/classifier conf/minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
 	cat out/mfog-model-serial.csv datasets/emtpyline datasets/test.csv \
-		| env $$(cat minas.conf | xargs) ./bin/classifier 2> $@ \
+		| env $$(cat conf/minas.conf | xargs) ./bin/classifier 2> $@ \
 		> out/mfog-serial-sansNd.csv
-experiments/mfog-serial.log: bin/training bin/classifier bin/noveltyDetection minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
+experiments/mfog-serial.log: bin/training bin/classifier bin/noveltyDetection conf/minas.conf datasets/emtpyline out/mfog-model-serial.csv datasets/test.csv
 	cat out/mfog-model-serial.csv datasets/emtpyline - datasets/test.csv \
-		| env $$(cat minas.conf | xargs) ./bin/classifier 2> $@ \
+		| env $$(cat conf/minas.conf | xargs) ./bin/classifier 2> $@ \
 		| tee out/mfog-matches.csv \
-		| ./bin/noveltyDetection minas.conf 2>&1 | tee $@
+		| ./bin/noveltyDetection conf/minas.conf 2>&1 | tee $@
 	python3 src/evaluation/evaluate.py Mfog-Serial datasets/test.csv out/mfog-matches.csv experiments/mfog-hits.png >> $@
 	cat $@
-experiments/mfog.log: bin/classifier bin/noveltyDetection minas.conf datasets/emtpyline out/mfog-model.csv
-	./bin/noveltyDetection minas.conf 2>&1 | tee $@ &
+experiments/mfog.log: bin/classifier bin/noveltyDetection conf/minas.conf datasets/emtpyline out/mfog-model.csv
+	./bin/noveltyDetection conf/minas.conf 2>&1 | tee $@ &
 	cat out/mfog-model.csv | python3 src/modules/redis/send-model.py
-	cat minas.conf datasets/emtpyline datasets/test.csv | ./bin/classifier > out/mfog-matches.csv 2>> $@
+	cat conf/minas.conf datasets/emtpyline datasets/test.csv | ./bin/classifier > out/mfog-matches.csv 2>> $@
 	echo "" >> $@
 	python3 src/evaluation/evaluate.py Mfog datasets/test.csv out/mfog-matches.csv experiments/mfog-hits.png >> $@
 	cat $@
-experiments/noveltyDetection.log: bin/noveltyDetection minas.conf datasets/emtpyline
-	cat minas.conf datasets/emtpyline | ./bin/noveltyDetection # 2>&1 | tee $@ &
+experiments/noveltyDetection.log: bin/noveltyDetection conf/minas.conf datasets/emtpyline
+	cat conf/minas.conf datasets/emtpyline | ./bin/noveltyDetection # 2>&1 | tee $@ &
 
 # -------------------------- Remote Pi Cluster Experiments ---------------------
 code@almoco:

@@ -1,34 +1,39 @@
-bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
+m_receiver at 1/2
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
 Taking test stream from stdin
 sampler at 0/2
-#pointId,label
-m_receiver at 1/2
 model complete
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-MPI_Unpack src/reboot/threaded-mpi.c:65
-Unknown:         19, 5.459172e-02, 4.866667e-01, 9.189655e-01, 1.190476e-02, 1.000000e+00, 1.000000e+00, 7.100000e-01, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 0.000000e+00, 1.000000e+00, 0.000000e+00
-MPI_Unpack src/reboot/threaded-mpi.c:65
-[pokebola:100193] *** An error occurred in MPI_Unpack
-[pokebola:100193] *** reported by process [3730505729,1]
-[pokebola:100193] *** on communicator MPI_COMM_WORLD
-[pokebola:100193] *** MPI_ERR_BUFFER: invalid buffer pointer
-[pokebola:100193] *** MPI_ERRORS_ARE_FATAL (processes in this communicator will now abort,
-[pokebola:100193] ***    and potentially your MPI job)
+Sampler done src/reboot/threaded-mpi.c:249
+classifier done src/reboot/threaded-mpi.c:106
+m_receiver done src/reboot/threaded-mpi.c:181
+detector done src/reboot/threaded-mpi.c:339
+Evaluate
+	title = Mfog-Reboot-tmi-n2
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/tmpi-matches.csv
+	plotSavePath = experiments/reboot/tmi-n2.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog-Reboot-tmi-n2
+
+saving experiments/reboot/tmi-n2.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-                9113    2619        -       0
+N              438066  203659        N  203659
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19)] 2
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               203659 ( 31.166349%)
+Misses             438066 ( 67.038126%)
+Unknowns            11732 (  1.795372%)
+Unk. reprocessed        1 (  0.008524%)
+Total              653457 ( 99.999847%)
+
