@@ -1,36 +1,58 @@
-[lanche:23144] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23144] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+time mpirun -hostfile ./conf/hostsfile hostname >experiments/rpi/base-time.log 2>&1
+[lanche:00844] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00844] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
 almoco
 almoco
-almoco
-jantar
-jantar
-jantar
-jantar
 almoco
 lanche
 lanche
 lanche
 lanche
-[lanche:23165] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23165] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23168] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23168] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23169] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23169] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23170] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23170] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23171] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:23171] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+almoco
+jantar
+jantar
+jantar
+jantar
+[lanche:00866] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00866] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00870] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00870] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00871] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00871] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00872] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00872] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00873] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:00873] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+real    1m40.905s
+user    0m0.134s
+sys     0m0.098s
+
+time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>experiments/rpi/base-time.log 2>&1
 Hello world from processor almoco, rank 000 out of 012 processors
 Hello world from processor almoco, rank 001 out of 012 processors
 Hello world from processor almoco, rank 002 out of 012 processors
 Hello world from processor almoco, rank 003 out of 012 processors
-Hello world from processor lanche, rank 009 out of 012 processors
+[./bin/hello-mpi] 1.124320e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.059520e-01 seconds. At src/mpi/hello-mpi.c:40
 Hello world from processor jantar, rank 004 out of 012 processors
-Hello world from processor lanche, rank 010 out of 012 processors
-Hello world from processor jantar, rank 006 out of 012 processors
-Hello world from processor lanche, rank 011 out of 012 processors
-Hello world from processor jantar, rank 007 out of 012 processors
-Hello world from processor lanche, rank 008 out of 012 processors
 Hello world from processor jantar, rank 005 out of 012 processors
+Hello world from processor lanche, rank 008 out of 012 processors
+Hello world from processor jantar, rank 006 out of 012 processors
+Hello world from processor lanche, rank 009 out of 012 processors
+Hello world from processor jantar, rank 007 out of 012 processors
+Hello world from processor lanche, rank 010 out of 012 processors
+Hello world from processor lanche, rank 011 out of 012 processors
+[./bin/hello-mpi] 1.208380e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.476190e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.412830e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.392390e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.478560e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.841190e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.802850e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.806980e-01 seconds. At src/mpi/hello-mpi.c:40
+ring got 11
+[./bin/hello-mpi] 1.805750e-01 seconds. At src/mpi/hello-mpi.c:40
+[./bin/hello-mpi] 1.854380e-01 seconds. At src/mpi/hello-mpi.c:40
+real    1m41.214s
+user    0m0.632s
+sys     0m0.253s

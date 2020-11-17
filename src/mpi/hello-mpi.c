@@ -1,7 +1,9 @@
-#include <mpi.h>
 #include <stdio.h>
+#include <time.h>
+#include <mpi.h>
 
 int main(int argc, char** argv) {
+    clock_t start = clock();
     // Initialize the MPI environment
     MPI_Init(NULL, NULL);
 
@@ -22,6 +24,20 @@ int main(int argc, char** argv) {
     printf("Hello world from processor %.10s, rank %.3d out of %.3d processors\n",
            processor_name, world_rank, world_size);
 
+    // loop the ring
+    int i;
+    MPI_Status st;
+    if (world_rank == 0) {
+        MPI_Send(&world_rank, 1, MPI_INT, world_rank + 1, 200, MPI_COMM_WORLD);
+        MPI_Recv(&i, 1, MPI_INT, world_size - 1, 200, MPI_COMM_WORLD, &st);
+        printf("ring got %d\n", i);
+    } else {
+        MPI_Recv(&i, 1, MPI_INT, world_rank - 1, 200, MPI_COMM_WORLD, &st);
+        i++;
+        MPI_Send(&world_rank, 1, MPI_INT, (world_rank + 1) % world_size, 200, MPI_COMM_WORLD);
+    }
+
+    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     // Finalize the MPI environment.
-    MPI_Finalize();
+    return MPI_Finalize();
 }

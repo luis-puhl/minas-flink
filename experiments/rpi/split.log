@@ -1,7 +1,7 @@
 ./bin/reboot/online; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
 Taking test stream from stdin
 model complete, classified 0
-[./bin/reboot/online] 4.783030e+01 seconds. At src/reboot/online.c:125
+[./bin/reboot/online] 4.849741e+01 seconds. At src/reboot/online.c:125
 ./bin/reboot/detection; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
 Taking unknown stream from stdin
 ND clusters (19, 82080): 22 extensions, 1 novelties
@@ -19,7 +19,7 @@ Reclassified 1694
 Final flush 1160
 ND clusters (19, 652855): 12 extensions, 1 novelties
 Reclassified 890
-[./bin/reboot/detection] 8.350884e+00 seconds. At src/reboot/detection.c:127
+[./bin/reboot/detection] 8.348130e+00 seconds. At src/reboot/detection.c:127
 Evaluate
 	title = Mfog-Reboot
 	examplesFileName = datasets/test.csv

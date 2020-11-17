@@ -1,17 +1,63 @@
-arg MODEL_CSV=datasets/model-clean.csv
-arg EXAMPLES_CSV=datasets/test.csv
-arg TIMING_LOG=experiments/timing.csv
-arg MATCHES_CSV=out/serial.csv
-Processor almoco, Rank 0 out of 1 processors
-MPI 3 1
-MPI arch = armv7l
-MPI host = almoco
-MPI thread_level = MPI_THREAD_SINGLE
-Cluster with only one node. Running serial code.
-src/minas/minas.c,target/minas,Jul 12 2020 22:53:42,1594605223,readModel,8.3.0,3.919000e-03,1,100
-src/minas/minas.c,target/minas,Jul 12 2020 22:53:42,1594605237,readExamples,8.3.0,1.363620e+01,1,653457
-src/minas/minas.c,target/minas,Jul 12 2020 22:53:42,1594605302,MNS_minas_main,8.3.0,6.503737e+01,1,653457
-Reading model from     'datasets/model-clean.csv'
-Reading examples from  'datasets/test.csv'
-Writing matches to     'out/serial.csv'
-Writing timing to      'experiments/timing.csv'
+./bin/reboot/serial; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+Taking training set from stdin
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+Taking test stream from stdin
+ND clusters (19, 82080): 22 extensions, 1 novelties
+Reclassified 1844
+ND clusters (19, 162193): 13 extensions, 3 novelties
+Reclassified 1773
+ND clusters (19, 191029): 6 extensions, 0 novelties
+Reclassified 1754
+ND clusters (19, 226975): 8 extensions, 1 novelties
+Reclassified 1733
+ND clusters (19, 322798): 15 extensions, 0 novelties
+Reclassified 1691
+ND clusters (19, 506909): 22 extensions, 1 novelties
+Reclassified 1743
+ND clusters (19, 592554): 16 extensions, 2 novelties
+Reclassified 1663
+Final flush 1184
+ND clusters (19, 653332): 11 extensions, 2 novelties
+Reclassified 921
+[./bin/reboot/serial] 2.602629e+02 seconds. At src/reboot/main.c:108
+Evaluate
+	title = Mfog-Reboot-serial
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/serial.csv
+	plotSavePath = experiments/reboot/serial.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog-Reboot-serial
+
+saving experiments/reboot/serial.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-               10263    3122        -       0
+0                1172      47        A    1172
+1                 208       0        A     208
+2                 943     126        A     943
+3                   0      56        N      56
+4                 771      15        A     771
+5                   2      30        N      30
+6                1486       0        A    1486
+7                   1       0        A       1
+8                  31       3        A      31
+9                  58       3        A      58
+N              432690  203351        N  203351
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('8', 9618), ('9', 47022), ('2', 163228), ('3', 167099), ('1', 217774), ('4', 282813), ('0', 358231), ('5', 564709), ('6', 592573), ('7', 601457)] 12
+Total examples    (653457, 25)
+Total matches     (654378, 4)
+Hits               208107 ( 31.802261%)
+Misses             432886 ( 66.152285%)
+Unknowns            13385 (  2.045454%)
+Unk. reprocessed      921 (  6.880837%)
+Total              654378 (100.000000%)
+
