@@ -1,10 +1,11 @@
 # all: clean experiments/serial-matrix.log experiments/mpi-matrix.log
-all: experiments/baseline.log experiments/mfog.log
+# all: experiments/baseline.log experiments/mfog.log
+all: bin bin/reboot/tmpi
 	# experiments/reference-java.log
 # cluster@almoco
 # experiments/mpi-test.log
 
-.PHONY: clean
+.PHONY: clean bin
 clean:
 	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
 	@-rm bin/* experiments/*.log 2>/dev/null
@@ -16,7 +17,7 @@ clean-mfog:
 
 # -------------------------- Datasets and lib tests ----------------------------
 bin:
-	@-mkdir bin out experiments 2>/dev/null
+	@-mkdir -p bin/reboot out experiments 2>/dev/null
 datasets/emtpyline:
 	echo "" > datasets/emtpyline
 bin/redis: src/modules/redis/get-model.c
@@ -41,6 +42,9 @@ bin/classifier: src/modules/classifier.c src/mpi/mfog-mpi.c src/modules/modules.
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
 bin/noveltyDetection: src/modules/novelty-detection.c src/modules/modules.c bin/base.o src/modules/redis/redis-connect.c
 	mpicc -g -Wall -lm -lhiredis $^ -o $@
+
+bin/hello-mpi: src/mpi/hello-mpi.c
+	mpicc -g -Wall $^ -o $@
 #
 # -------------------------- Reboot --------------------------------------------
 bin/reboot/serial: src/reboot/base.c src/reboot/main.c
@@ -57,6 +61,9 @@ bin/reboot/detection: src/reboot/base.c src/reboot/detection.c
 
 bin/reboot/tmpi: src/reboot/base.c src/reboot/threaded-mpi.c
 	mpicc -g -Wall -lm $^ -o $@
+.PHONY: bin/reboot
+bin/reboot: bin/reboot/serial bin/reboot/eet bin/reboot/offline bin/reboot/online bin/reboot/detection bin/reboot/tmpi
+
 # -------------------------- Reboot Experiments --------------------------------
 ds = datasets/training.csv datasets/emtpyline datasets/test.csv
 experiments/reboot/serial.log: $(ds) bin/reboot/serial src/evaluation/evaluate.py
@@ -119,6 +126,37 @@ experiments/reboot/tmi-n4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/
 .PHONY: experiments/reboot
 experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
 
+# -------------------------- Remote Pi Cluster Experiments ---------------------
+.PHONY: code@almoco src.sha1 experiments/rpi
+SSH = ssh -i ./secrets/id_rsa -F ./conf/ssh.config
+code@almoco:
+	tar cz src makefile | $(SSH) almoco "cd cloud && tar xmvzf - >/dev/null"
+	$(SSH) almoco "cd cloud && make bin/reboot && scp -r ~/cloud/bin jantar:~/cloud/ && scp -r ~/cloud/bin lanche:~/cloud/"
+experiments/rpi/base-time.log: bin/hello-mpi
+	time mpirun -hostfile ./conf/hostsfile hostname >$@ 2>&1
+	time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>$@ 2>&1
+experiments/rpi/serial.log: experiments/reboot/serial.log
+	mv $^ $@
+experiments/rpi/split.log: experiments/reboot/split.log
+	mv $^ $@
+experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/evaluation/evaluate.py
+	cat out/reboot/offline.csv datasets/test.csv \
+		| time mpirun -hostfile ./conf/hostsfile ./bin/reboot/tmpi \
+		> out/reboot/tmi-rpi-n12.csv 2> $@
+	grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-matches.csv
+	grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
+	grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
+		experiments/reboot/tmi-rpi-n12.png >>$@
+experiments/rpi: experiments/rpi/base-time.log: experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
+experiments@rpi:
+	$(SSH) almoco "make experiments/rpi"
+	# ssh almoco "cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \
+	# 	> out/reboot/tmi-n4.csv 2> $@mpirun --path /home/pi/cloud/ --host almoco:4,jantar:4,lanche:4 hostname"
+	# ssh almoco "cd cloud && mpirun almoco:4 almoco:4"
+	# mkdir -p experiments/rpi
+	# scp almoco:~/cloud/experiments/* experiments/rpi/
+
 # -------------------------- Experiments ---------------------------------------
 # --------- Experiments: Java reference ---------
 experiments/reference-java.log: bin/minas/src-minas.jar datasets/training.csv datasets/test.csv
@@ -178,17 +216,7 @@ experiments/mfog.log: bin/classifier bin/noveltyDetection conf/minas.conf datase
 	cat $@
 experiments/noveltyDetection.log: bin/noveltyDetection conf/minas.conf datasets/emtpyline
 	cat conf/minas.conf datasets/emtpyline | ./bin/noveltyDetection # 2>&1 | tee $@ &
-
-# -------------------------- Remote Pi Cluster Experiments ---------------------
-code@almoco:
-	scp -r src makefile almoco:~/cloud
-	ssh almoco "cd cloud && make"
-	scp almoco:/home/pi/cloud/bin/minas-mpi jantar:/home/pi/cloud/bin/
-	scp almoco:/home/pi/cloud/bin/minas-mpi lanche:/home/pi/cloud/bin/
-cluster@almoco: code@almoco
-	ssh almoco "cd cloud && make experiments/cluster-matrix.log"
-	mkdir -p experiments/rpi
-	scp almoco:~/cloud/experiments/* experiments/rpi/
+#
 
 # diffObjs = experiments/mpi-serial.diff experiments/cluster-serial.diff
 # $(diffObjs): experiments/%-serial.diff: out/%-sorted.csv out/serial-sorted.csv

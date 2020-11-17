@@ -23,12 +23,12 @@
 #define MFOG_TAG_UNKNOWN 2005
 #define MFOG_EOS_MARKER '\127'
 
-// typedef struct {
-//     Example *buff;
-//     int size, head, tail, len;
-//     // Semaforo de dados para o emissor
-//     sem_t senderSem;
-// } CircularExampleBuffer;
+typedef struct {
+    Example *buff;
+    int size, head, tail, len;
+    // Semaforo de dados para o emissor
+    sem_t senderSem;
+} CircularExampleBuffer;
 
 struct ThreadArgs_s {
     int kParam, dim, minExamplesPerCluster;
@@ -36,7 +36,7 @@ struct ThreadArgs_s {
     // mpi stuff
     int mpiRank, mpiSize;
     char *mpiProcessorName;
-    // CircularExampleBuffer unkBuffer;
+    CircularExampleBuffer unkBuffer;
     Model *model;
     pthread_mutex_t modelMutex;
     sem_t modelReadySemaphore;
@@ -87,27 +87,19 @@ void *classifier(void *arg) {
         assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
         //
-        // printf("%10u,%s\n", example.id, printableLabel(match.label));
-        // if (match.label != UNK_LABEL) continue;
-        // printf("Unknown: %10u", example.id);
-        // for (unsigned int d = 0; d < args->dim; d++)
-        //     printf(", %le", example.val[d]);
-        // printf("\n");
-        //
         // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
-        // assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
         // the buffer is full when the head pointer is one less than the tail pointer.
-        // while (args->unkBuffer.len == args->unkBuffer.size) {
-        //     sem_wait(&args->unkBuffer.senderSem);
-        // }
-        // Example swp = args->unkBuffer.buff[args->unkBuffer.head];
-        // args->unkBuffer.buff[args->unkBuffer.head] = example;
-        // example = swp;
-        // args->unkBuffer.head++;
-        // args->unkBuffer.head %= args->unkBuffer.size;
-        // args->unkBuffer.len++;
-        // valuePtr = example.val;
-        // sem_post(&args->unkBuffer.senderSem);
+        while (args->unkBuffer.len == args->unkBuffer.size) {
+            sem_wait(&args->unkBuffer.senderSem);
+        }
+        Example swp = args->unkBuffer.buff[args->unkBuffer.head];
+        args->unkBuffer.buff[args->unkBuffer.head] = example;
+        example = swp;
+        args->unkBuffer.head++;
+        args->unkBuffer.head %= args->unkBuffer.size;
+        args->unkBuffer.len++;
+        valuePtr = example.val;
+        sem_post(&args->unkBuffer.senderSem);
     }
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "classifier", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return inputLine;
