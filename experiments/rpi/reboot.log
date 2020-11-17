@@ -1,0 +1,34 @@
+pi@almoco:~/cloud $ make experiments/rpi
+time mpirun -hostfile ./conf/hostsfile hostname >experiments/rpi/base-time.log 2>&1
+
+real    1m40.936s
+user    0m0.124s
+sys     0m0.124s
+
+// TODO: Add ip resolution to /etc/hosts
+time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>experiments/rpi/base-time.log 2>&1
+
+real    1m41.500s
+user    0m0.407s
+sys     0m0.350s
+cat datasets/training.csv datasets/emtpyline datasets/test.csv \
+        | ./bin/reboot/serial > out/reboot/serial.csv 2> experiments/reboot/serial.log
+python3 src/evaluation/evaluate.py Mfog-Reboot-serial \
+        datasets/test.csv out/reboot/serial.csv experiments/reboot/serial.png >> experiments/reboot/serial.log
+cat out/reboot/offline.csv datasets/test.csv | ./bin/reboot/online \
+        > out/reboot/online.csv 2> experiments/reboot/split.log
+cat out/reboot/offline.csv out/reboot/online.csv | ./bin/reboot/detection \
+        > out/reboot/detection.csv 2>> experiments/reboot/split.log
+grep -E -v '^(Unknown|Cluster):' out/reboot/online.csv > out/reboot/split-matches.csv
+grep -E '^Unknown:' out/reboot/online.csv > out/reboot/split-unknowns.csv
+# grep -E '^Cluster:' out/reboot/online.csv > out/reboot/split-clusters.csv
+python3 src/evaluation/evaluate.py Mfog-Reboot datasets/test.csv out/reboot/split-matches.csv \
+        experiments/reboot/split.png >> experiments/reboot/split.log
+cat out/reboot/offline.csv datasets/test.csv \
+        | mpirun -hostfile ./conf/hostsfile ./bin/reboot/tmpi \
+        > out/reboot/tmi-rpi-n12.csv 2> experiments/rpi/tmi-rpi-n12.log
+grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-matches.csv
+grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
+grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
+python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
+        experiments/reboot/tmi-rpi-n12.png >>experiments/rpi/tmi-rpi-n12.log

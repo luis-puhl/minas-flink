@@ -81,6 +81,8 @@ void *classifier(void *arg) {
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
         pthread_mutex_unlock(&args->modelMutex);
         //
+        // un-buffer stdout
+        //
         example.label = match.label;
         position = 0;
         assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -89,17 +91,17 @@ void *classifier(void *arg) {
         //
         // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example.id, example.label, example.val[0]);
         // the buffer is full when the head pointer is one less than the tail pointer.
-        while (args->unkBuffer.len == args->unkBuffer.size) {
-            sem_wait(&args->unkBuffer.senderSem);
-        }
-        Example swp = args->unkBuffer.buff[args->unkBuffer.head];
-        args->unkBuffer.buff[args->unkBuffer.head] = example;
-        example = swp;
-        args->unkBuffer.head++;
-        args->unkBuffer.head %= args->unkBuffer.size;
-        args->unkBuffer.len++;
-        valuePtr = example.val;
-        sem_post(&args->unkBuffer.senderSem);
+        // while (args->unkBuffer.len == args->unkBuffer.size) {
+        //     sem_wait(&args->unkBuffer.senderSem);
+        // }
+        // Example swp = args->unkBuffer.buff[args->unkBuffer.head];
+        // args->unkBuffer.buff[args->unkBuffer.head] = example;
+        // example = swp;
+        // args->unkBuffer.head++;
+        // args->unkBuffer.head %= args->unkBuffer.size;
+        // args->unkBuffer.len++;
+        // valuePtr = example.val;
+        // sem_post(&args->unkBuffer.senderSem);
     }
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "classifier", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return inputLine;
@@ -318,6 +320,7 @@ void *detector(void *arg) {
         unknownsSize++;
         example.val = calloc(dim, sizeof(double));
         if (unknownsSize >= unknownsMaxSize) {
+            // TODO: garbage collect istead of realloc
             unknownsMaxSize *= 2;
             // marker("realloc unknowns");
             unknowns = realloc(unknowns, unknownsMaxSize * sizeof(Example));
@@ -329,6 +332,13 @@ void *detector(void *arg) {
             unsigned int prevSize = model->size;
             noveltyDetection(PARAMS, model, unknowns, unknownsSize);
             unsigned int nNewClusters = model->size - prevSize;
+            //
+            for (size_t k = prevSize; k < model->size; k++) {
+                Cluster *newCl = &model->clusters[k];
+                printCluster(dim, newCl);
+                assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+                assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            }
             //
             size_t reclassified = 0;
             for (size_t ex = 0; ex < unknownsSize; ex++) {
@@ -343,13 +353,6 @@ void *detector(void *arg) {
             }
             fprintf(stderr, "Reclassified %lu\n", reclassified);
             unknownsSize -= reclassified;
-            //
-            for (size_t k = prevSize; k < model->size; k++) {
-                Cluster *newCl = &model->clusters[k];
-                printCluster(dim, newCl);
-                assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-                assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-            }
         }
     }
     Cluster cl;
@@ -361,6 +364,8 @@ void *detector(void *arg) {
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
+    // cancela a bufferização em stdout
+    setbuf(stdout, NULL);
     ThreadArgs args;
     args.kParam=100;
     args.dim=22;

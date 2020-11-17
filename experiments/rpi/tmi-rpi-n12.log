@@ -1,0 +1,128 @@
+[lanche:23199] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23199] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23203] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23203] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23204] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23204] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23205] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23205] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23206] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:23206] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from almoco, rank 0/12
+m_receiver at 3/12
+m_receiver at 2/12
+Taking test stream from stdin
+sampler at 0/12
+m_receiver at 1/12
+m_receiver at 5/12
+m_receiver at 8/12
+m_receiver at 6/12
+m_receiver at 9/12
+m_receiver at 10/12
+m_receiver at 11/12
+m_receiver at 7/12
+m_receiver at 4/12
+model complete
+model incomplete 66, wait(modelReadySemaphore);
+model complete
+model complete
+model incomplete 95, wait(modelReadySemaphore);
+model complete
+model complete
+model complete
+model complete
+model complete
+model complete
+model complete
+model complete
+model complete
+ND clusters (19, 81588): 1 extensions, 0 novelties
+Reclassified 2000
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+realloc model 100
+ND clusters (82121, 221971): 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters (221970, 320871): 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters (320267, 472162): 0 extensions, 1 novelties
+Reclassified 2000
+ND clusters (472169, 589737): 1 extensions, 0 novelties
+Reclassified 2000
+ND clusters (589466, 639053): 1 extensions, 0 novelties
+Reclassified 2000
+[sampler] 8.403023e+01 seconds. At src/reboot/threaded-mpi.c:257
+[classifier] 7.686685e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.499950e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.595903e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.552007e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.649296e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.448760e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.673310e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 7.584819e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 6.538109e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 6.670583e+01 seconds. At src/reboot/threaded-mpi.c:104
+[classifier] 6.232820e+01 seconds. At src/reboot/threaded-mpi.c:104
+[m_receiver] 6.673311e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 6.683955e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 6.233512e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 6.243666e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 6.554164e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 6.563433e+01 seconds. At src/reboot/threaded-mpi.c:437
+[detector] 8.418529e+01 seconds. At src/reboot/threaded-mpi.c:358
+[./bin/reboot/tmpi] 8.430163e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 7.715773e+01 seconds. At src/reboot/threaded-mpi.c:188
+[m_receiver] 7.581966e+01 seconds. At src/reboot/threaded-mpi.c:188
+[m_receiver] 7.677499e+01 seconds. At src/reboot/threaded-mpi.c:188
+[m_receiver] 7.625925e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 7.637452e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 7.699509e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 7.713750e+01 seconds. At src/reboot/threaded-mpi.c:437
+[./bin/reboot/tmpi] 7.729432e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 7.612029e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 7.625006e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 7.529997e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 7.690983e+01 seconds. At src/reboot/threaded-mpi.c:437
+[./bin/reboot/tmpi] 7.542101e+01 seconds. At src/reboot/threaded-mpi.c:437
+[m_receiver] 7.476627e+01 seconds. At src/reboot/threaded-mpi.c:188
+[./bin/reboot/tmpi] 7.594220e+01 seconds. At src/reboot/threaded-mpi.c:437
+[./bin/reboot/tmpi] 7.491387e+01 seconds. At src/reboot/threaded-mpi.c:437
+Evaluate
+	title = Mfog-Reboot-tmi-rpi-n12
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/tmi-rpi-n12-matches.csv
+	plotSavePath = experiments/reboot/tmi-rpi-n12.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog-Reboot-tmi-rpi-n12
+
+saving experiments/reboot/tmi-rpi-n12.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-                9570    2623        -       0
+0                  74       0        A      74
+N              437535  203655        N  203655
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('0', 489789)] 3
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               203729 ( 31.177061%)
+Misses             437535 ( 66.956866%)
+Unknowns            12193 (  1.865919%)
+Unk. reprocessed        1 (  0.008201%)
+Total              653457 ( 99.999847%)
+

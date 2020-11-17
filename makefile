@@ -1,3 +1,5 @@
+SHELL=/bin/bash
+
 # all: clean experiments/serial-matrix.log experiments/mpi-matrix.log
 # all: experiments/baseline.log experiments/mfog.log
 all: bin bin/reboot/tmpi
@@ -130,27 +132,34 @@ experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log e
 .PHONY: code@almoco src.sha1 experiments/rpi
 SSH = ssh -i ./secrets/id_rsa -F ./conf/ssh.config
 code@almoco:
-	tar cz src makefile | $(SSH) almoco "cd cloud && tar xmvzf - >/dev/null"
+	tar cz src | $(SSH) almoco "cd cloud && tar xmvzf - >/dev/null"
 	$(SSH) almoco "cd cloud && make bin/reboot && scp -r ~/cloud/bin jantar:~/cloud/ && scp -r ~/cloud/bin lanche:~/cloud/"
 experiments/rpi/base-time.log: bin/hello-mpi
 	time mpirun -hostfile ./conf/hostsfile hostname >$@ 2>&1
 	time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>$@ 2>&1
 experiments/rpi/serial.log: experiments/reboot/serial.log
 	mv $^ $@
+	mv experiments/reboot/serial.png experiments/rpi/serial.png 
 experiments/rpi/split.log: experiments/reboot/split.log
 	mv $^ $@
+	mv experiments/reboot/split.png experiments/rpi/split.png
 experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/evaluation/evaluate.py
 	cat out/reboot/offline.csv datasets/test.csv \
-		| time mpirun -hostfile ./conf/hostsfile ./bin/reboot/tmpi \
+		| mpirun -hostfile ./conf/hostsfile ./bin/reboot/tmpi \
 		> out/reboot/tmi-rpi-n12.csv 2> $@
 	grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-matches.csv
 	grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
 	grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
 		experiments/reboot/tmi-rpi-n12.png >>$@
-experiments/rpi: experiments/rpi/base-time.log: experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
-experiments@rpi:
-	$(SSH) almoco "make experiments/rpi"
+experiments/rpi: experiments/rpi/base-time.log experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
+experiments/rpi/reboot.log: code@almoco
+	$(SSH) almoco "cd cloud && make experiments/rpi" > $@ 2>&1
+	$(SSH) almoco "tar czf ~/cloud/out/logs.tgz ~/cloud/experiments/rpi" >> $@ 2>&1
+	scp almoco:~/cloud/out/logs.tgz out/logs.tgz
+	tar xzf out/logs.tgz experiments/
+
+# experiments/rpi
 	# ssh almoco "cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \
 	# 	> out/reboot/tmi-n4.csv 2> $@mpirun --path /home/pi/cloud/ --host almoco:4,jantar:4,lanche:4 hostname"
 	# ssh almoco "cd cloud && mpirun almoco:4 almoco:4"

@@ -55,3 +55,11 @@ são descartados por falta de capacidade no conjunto de desconhecidos.
 Além disso a demora na propagação do modelo pode gerar desconhecidos
 que são tratados na detecção de novidade mesmo que se re-classificados
 antes do passo de clusterização.
+
+## 2020-11-17 18:31
+
+- Stdout un-buffer ou local file;
+- swapping-buffer-pair e threads para MPI_send no classifier;
+- n-threads classifier, 1 processo por nó;
+- Add ip resolution to /etc/hosts;
+- Garbage collect unknowns instead of realloc;
