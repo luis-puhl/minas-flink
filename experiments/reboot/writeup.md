@@ -58,8 +58,10 @@ antes do passo de clusterização.
 
 ## 2020-11-17 18:31
 
-- Stdout un-buffer ou local file;
-- swapping-buffer-pair e threads para MPI_send no classifier;
-- n-threads classifier, 1 processo por nó;
-- Add ip resolution to /etc/hosts;
-- Garbage collect unknowns instead of realloc;
+- [ ] Stdout un-buffer ou local file;
+- [ ] swapping-buffer-pair e threads para MPI_send no classifier;
+- [ ] n-threads classifier, 1 processo por nó;
+- [x] Add ip resolution to /etc/hosts;
+  - Improved base-time (cluster setup) from 1m40s to 1.1s;
+  - In novelty detection increased labels from 1 to 4. time stil 65-75s;
+- [ ] Garbage collect unknowns instead of realloc;
