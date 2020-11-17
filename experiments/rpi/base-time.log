@@ -56,3 +56,9 @@ ring got 11
 real    1m41.214s
 user    0m0.632s
 sys     0m0.253s
+
+echo -e "192.168.0.30\talmoco\n192.168.0.32\tjantar\n192.168.0.31\tlanche\n" | sudo tee -a /etc/hosts; cat /etc/hosts
+time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>experiments/rpi/base-time.log 2>&1
+real    0m1.126s
+user    0m0.517s
+sys     0m0.265s

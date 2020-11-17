@@ -60,3 +60,14 @@ time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>experiments/rpi/base-ti
 real    1m41.214s
 user    0m0.632s
 sys     0m0.253s
+
+time mpirun -hostfile ./conf/hostsfile hostname >experiments/rpi/base-time.log 2>&1
+
+real    0m0.705s
+user    0m0.084s
+sys     0m0.072s
+time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>experiments/rpi/base-time.log 2>&1
+
+real    0m1.126s
+user    0m0.517s
+sys     0m0.265s
