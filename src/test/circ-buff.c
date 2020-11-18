@@ -11,6 +11,8 @@ typedef struct {
 typedef struct {
     Example **buff;
     int size, head, tail, len, activeProducers;
+    // empty when head == tail
+    // full when (head + 1) % size == tail
     pthread_mutex_t mutex;
     pthread_cond_t consumerSignal;
     pthread_cond_t producerSignal;
@@ -18,43 +20,43 @@ typedef struct {
 
 Example *push(Example *ex, CircularExampleBuffer *buff) {
     Example *swp;
-    // pthread_mutex_lock(&buff->mutex);
+    pthread_mutex_lock(&buff->mutex);
     while (buff->len == buff->size) {
         // pthread_cond_signal(&buff->consumerSignal);
         // cond_wait unlocks mutex, blocks thread, resumes on signal, locks mutex
-        // pthread_cond_wait(&buff->producerSignal, &buff->mutex);
+        pthread_cond_wait(&buff->producerSignal, &buff->mutex);
     }
     swp = buff->buff[buff->head];
     buff->buff[buff->head] = ex;
     buff->len++;
     buff->head = (buff->head + 1) % buff->size;
     if (buff->len == 1) {
-        // pthread_cond_signal(&buff->consumerSignal);
+        pthread_cond_signal(&buff->consumerSignal);
     }
-    // pthread_mutex_unlock(&buff->mutex);
+    pthread_mutex_unlock(&buff->mutex);
     return swp;
 }
 Example *pop(Example *ex, CircularExampleBuffer *buff) {
     Example *swp;
-    // pthread_mutex_lock(&buff->mutex);
+    pthread_mutex_lock(&buff->mutex);
     while (buff->len == 0) {
-        printf("[pop] activeProducers %d\n", buff->activeProducers);
+        // printf("[pop] activeProducers %d\n", buff->activeProducers);
         if (!buff->activeProducers) {
-            // pthread_mutex_unlock(&buff->mutex);
+            pthread_mutex_unlock(&buff->mutex);
             return NULL;
         }
         // cond_wait unlocks mutex, blocks thread, resumes on signal, locks mutex
         // pthread_cond_signal(&buff->producerSignal);
-        // pthread_cond_wait(&buff->consumerSignal, &buff->mutex);
+        pthread_cond_wait(&buff->consumerSignal, &buff->mutex);
     }
     swp = buff->buff[buff->tail];
     buff->buff[buff->tail] = ex;
     buff->len--;
     buff->tail = (buff->tail + 1) % buff->size;
     if (buff->len == (buff->size -1)) {
-        // pthread_cond_signal(&buff->producerSignal);
+        pthread_cond_signal(&buff->producerSignal);
     }
-    // pthread_mutex_unlock(&buff->mutex);
+    pthread_mutex_unlock(&buff->mutex);
     return swp;
 }
 
@@ -116,11 +118,8 @@ int main(int argc, char const *argv[]) {
     printf("%s %d %d %d\n", argv[0], nProducers, nConsumers, bufferSize);
     //
     CircularExampleBuffer buff = {
-        .head = 0,
-        .tail = 0,
-        .len = 0,
-        .activeProducers = 0,
-        .size = bufferSize,
+        .head = 0, .tail = 0, .len = 0,
+        .activeProducers = 0, .size = bufferSize,
     };
     buff.buff = calloc(buff.size, sizeof(Example*));
     for (int i = 0; i < buff.size; i++) {
@@ -132,18 +131,14 @@ int main(int argc, char const *argv[]) {
     //
     pthread_t *producer_t = calloc(nProducers, sizeof(pthread_t));
     pthread_t *consumer_t = calloc(nConsumers, sizeof(pthread_t));
-    for (size_t i = 0; i < nProducers; i++) {
+    for (size_t i = 0; i < nProducers; i++)
         pthread_create(&producer_t[i], NULL, producer, (void *)&buff);
-    }
-    for (size_t i = 0; i < nConsumers; i++) {
+    for (size_t i = 0; i < nConsumers; i++)
         pthread_create(&consumer_t[i], NULL, consumer, (void *)&buff);
-    }
-    for (size_t i = 0; i < nProducers; i++) {
+    for (size_t i = 0; i < nProducers; i++)
         pthread_join(producer_t[i], NULL);
-    }
-    for (size_t i = 0; i < nConsumers; i++) {
+    for (size_t i = 0; i < nConsumers; i++)
         pthread_join(consumer_t[i], NULL);
-    }
     //
     pthread_cond_destroy(&buff.consumerSignal);
     pthread_cond_destroy(&buff.producerSignal);
