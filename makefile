@@ -108,22 +108,21 @@ experiments/reboot/eet.log: $(ds) out/reboot/offline.csv bin/reboot/online bin/r
 .PHONY: tmpi
 tmpi: $(ds) out/reboot/offline.csv bin/reboot/tmpi experiments/reboot/tmi-n2.log experiments/reboot/tmi-n4.log
 	# cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi
+out = out/reboot/tmi-n
 experiments/reboot/tmi-n2.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/evaluation/evaluate.py
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi \
-		> out/reboot/tmi-n2.csv 2> $@
-	grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-n2.csv > out/reboot/tmi-n2-matches.csv
-	grep -E '^Unknown:' out/reboot/tmi-n2.csv > out/reboot/tmi-n2-unknowns.csv
-	grep -E '^Cluster:' out/reboot/tmi-n2.csv > out/reboot/tmi-n2-clusters.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv out/reboot/tmi-n2-matches.csv \
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/reboot/tmpi > $(out)2.csv 2> $@
+	-grep -E -v '^(Unknown|Cluster):' $(out)2.csv > $(out)2-matches.csv
+	-grep -E '^Unknown:' $(out)2.csv > $(out)2-unknowns.csv
+	-grep -E '^Cluster:' $(out)2.csv > $(out)2-clusters.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv $(out)2-matches.csv \
 		experiments/reboot/tmi-n2.png >>$@
 experiments/reboot/tmi-n4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/evaluation/evaluate.py
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \
-		> out/reboot/tmi-n4.csv 2> $@
-	grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-matches.csv
-	grep -E '^Unknown:' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-unknowns.csv
-	grep -E '^Cluster:' out/reboot/tmi-n4.csv > out/reboot/tmpi-n4-clusters.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv out/reboot/tmpi-n4-matches.csv \
-		experiments/reboot/tmi-n4.png >> $@
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi > $(out)4.csv 2> $@
+	-grep -E -v '^(Unknown|Cluster):' $(out)4.csv > $(out)4-matches.csv
+	-grep -E '^Unknown:' $(out)4.csv > $(out)4-unknowns.csv
+	-grep -E '^Cluster:' $(out)4.csv > $(out)4-clusters.csv
+	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv $(out)4-matches.csv \
+		experiments/reboot/tmi-n4.png >>$@
 #
 .PHONY: experiments/reboot
 experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
@@ -151,7 +150,7 @@ experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi sr
 	grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
 	grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
-		experiments/reboot/tmi-rpi-n12.png >>$@
+		experiments/rpi/tmi-rpi-n12.png >>$@
 # experiments/rpi: experiments/rpi/base-time.log experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
 experiments/rpi/reboot.log: code@almoco
 	$(SSH) almoco "cd cloud && make experiments/rpi/tmi-rpi-n12.log" > $@ 2>&1

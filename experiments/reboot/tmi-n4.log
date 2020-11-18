@@ -1,45 +1,47 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/4
-m_receiver at 3/4
 Taking test stream from stdin
 sampler at 0/4
-model complete
-model incomplete 0, wait(modelReadySemaphore);
-model incomplete 0, wait(modelReadySemaphore);
-m_receiver at 2/4
-model incomplete 0, wait(modelReadySemaphore);
-model complete
+m_receiver at 3/4
 m_receiver at 1/4
 model complete
+model incomplete 0, wait(modelReadySemaphore);
+model incomplete 78, wait(modelReadySemaphore);
+model incomplete 0, wait(modelReadySemaphore);
 model complete
-ND clusters (19, 82772): 1 extensions, 0 novelties
+model complete
+m_receiver at 2/4
+model complete
+realloc model 100
+ND clusters (69, 82128): 1 extensions, 0 novelties
 Reclassified 2000
 realloc model 100
 realloc model 100
-realloc model 100
-ND clusters (82841, 221970): 1 extensions, 0 novelties
+ND clusters (81848, 223857): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters (221973, 322936): 1 extensions, 0 novelties
+ND clusters (224017, 324062): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters (322957, 488919): 0 extensions, 1 novelties
+ND clusters (324894, 407888): 0 extensions, 1 novelties
 Reclassified 2000
-ND clusters (488012, 595006): 1 extensions, 0 novelties
+ND clusters (407915, 572724): 1 extensions, 0 novelties
 Reclassified 2000
-[sampler] 2.289666e+01 seconds. At src/reboot/threaded-mpi.c:265
-[detector] 2.290053e+01 seconds. At src/reboot/threaded-mpi.c:366
-[./bin/reboot/tmpi] 2.291863e+01 seconds. At src/reboot/threaded-mpi.c:445
-[classifier] 1.979420e+01 seconds. At src/reboot/threaded-mpi.c:112
-[m_receiver] 1.979576e+01 seconds. At src/reboot/threaded-mpi.c:196
-[./bin/reboot/tmpi] 1.981453e+01 seconds. At src/reboot/threaded-mpi.c:445
-[classifier] 1.968414e+01 seconds. At src/reboot/threaded-mpi.c:112
-[m_receiver] 1.968234e+01 seconds. At src/reboot/threaded-mpi.c:196
-[./bin/reboot/tmpi] 1.970142e+01 seconds. At src/reboot/threaded-mpi.c:445
-[classifier] 1.947212e+01 seconds. At src/reboot/threaded-mpi.c:112
-[m_receiver] 1.947302e+01 seconds. At src/reboot/threaded-mpi.c:196
-[./bin/reboot/tmpi] 1.949218e+01 seconds. At src/reboot/threaded-mpi.c:445
+ND clusters (572727, 604708): 1 extensions, 0 novelties
+Reclassified 2000
+[classifier] 1.210641e+01 seconds. At src/reboot/threaded-mpi.c:114
+[sampler] 1.254984e+01 seconds. At src/reboot/threaded-mpi.c:267
+[m_receiver] 1.211258e+01 seconds. At src/reboot/threaded-mpi.c:198
+[./bin/reboot/tmpi] 1.213250e+01 seconds. At src/reboot/threaded-mpi.c:452
+[detector] 1.255928e+01 seconds. At src/reboot/threaded-mpi.c:370
+[./bin/reboot/tmpi] 1.257920e+01 seconds. At src/reboot/threaded-mpi.c:452
+[classifier] 1.230522e+01 seconds. At src/reboot/threaded-mpi.c:114
+[m_receiver] 1.230591e+01 seconds. At src/reboot/threaded-mpi.c:198
+[./bin/reboot/tmpi] 1.232970e+01 seconds. At src/reboot/threaded-mpi.c:452
+[classifier] 1.169433e+01 seconds. At src/reboot/threaded-mpi.c:114
+[m_receiver] 1.169703e+01 seconds. At src/reboot/threaded-mpi.c:198
+[./bin/reboot/tmpi] 1.171790e+01 seconds. At src/reboot/threaded-mpi.c:452
 Evaluate
 	title = Mfog-Reboot-tmi-n4
 	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot/tmpi-n4-matches.csv
+	matchesFileName = out/reboot/tmi-n4-matches.csv
 	plotSavePath = experiments/reboot/tmi-n4.png
 
 Count per class
@@ -47,23 +49,4 @@ Count per class
 class        
 A      447179
 N      206278
-### Mfog-Reboot-tmi-n4
-
-saving experiments/reboot/tmi-n4.png
-Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--                9231    2624        -       0
-0                   4       0        A       4
-N              437944  203654        N  203654
-Classes           ['A' 'N']
-Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19), ('0', 573443)] 3
-Total examples    (653457, 25)
-Total matches     (653458, 4)
-Hits               203658 ( 31.166196%)
-Misses             437944 ( 67.019456%)
-Unknowns            11855 (  1.814195%)
-Unk. reprocessed        1 (  0.008435%)
-Total              653457 ( 99.999847%)
-
+(ParserError('Error tokenizing data. C error: Expected 2 fields in line 391273, saw 3\n'), 'out/reboot/tmi-n4-matches.csv')

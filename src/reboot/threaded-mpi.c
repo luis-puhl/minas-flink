@@ -81,9 +81,17 @@ void *classifier(void *arg) {
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
         pthread_mutex_unlock(&args->modelMutex);
         //
-        // un-buffer stdout
-        //
+        // un-buffer stdout https://stackoverflow.com/a/5310506/1774806
         example.label = match.label;
+        printf("%10u,%s\n", example.id, printableLabel(example.label));
+        fflush(stdout);
+        if (example.label != UNK_LABEL) continue;
+        // printf("Unknown: %10u", example.id);
+        // for (unsigned int d = 0; d < args->dim; d++)
+        //     printf(", %le", example.val[d]);
+        // printf("\n");
+        // fflush(stdout);
+        //
         position = 0;
         assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -309,12 +317,13 @@ void *detector(void *arg) {
         }
         //
         id = example.id > id ? example.id : id;
-        printf("%10u,%s\n", example.id, printableLabel(example.label));
-        if (example.label != UNK_LABEL) continue;
-        printf("Unknown: %10u", example.id);
-        for (unsigned int d = 0; d < args->dim; d++)
-            printf(", %le", example.val[d]);
-        printf("\n");
+        // printf("%10u,%s\n", example.id, printableLabel(example.label));
+        // if (example.label != UNK_LABEL) continue;
+        // printf("Unknown: %10u", example.id);
+        // for (unsigned int d = 0; d < args->dim; d++)
+        //     printf(", %le", example.val[d]);
+        // printf("\n");
+        // fflush(stdout);
         //
         unknowns[unknownsSize] = example;
         unknownsSize++;
@@ -335,7 +344,7 @@ void *detector(void *arg) {
             //
             for (size_t k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
-                printCluster(dim, newCl);
+                // printCluster(dim, newCl);
                 assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             }
@@ -365,7 +374,7 @@ void *detector(void *arg) {
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
     // cancela a bufferização em stdout
-    setbuf(stdout, NULL);
+    // setbuf(stdout, NULL);
     ThreadArgs args;
     args.kParam=100;
     args.dim=22;
@@ -417,6 +426,7 @@ int main(int argc, char const *argv[]) {
     int result;
     if (args.mpiRank == MFOG_RANK_MAIN) {
         printf("#pointId,label\n");
+        fflush(stdout);
 
         // sampler((void *)&args);
         pthread_t detector_t, sampler_t;

@@ -58,10 +58,15 @@ antes do passo de clusterização.
 
 ## 2020-11-17 18:31
 
-- [ ] Stdout un-buffer ou local file;
-- [ ] swapping-buffer-pair e threads para MPI_send no classifier;
-- [ ] n-threads classifier, 1 processo por nó;
+- [x] Stdout un-buffer ou local file;
+  - `The MPI standard does not specify how stdout from different nodes should be
+    collected for printing at the originating process.`
+    https://stackoverflow.com/a/5310506/1774806
+  - local file: vide proximo item;
+- [x] n-threads classifier, 1 processo por nó;
+  - Não vale a pena pois não tem vantagem, a origem (_stream source_) é única e o destino (_stream sink_) também deve ser.
 - [x] Add ip resolution to /etc/hosts;
   - Improved base-time (cluster setup) from 1m40s to 1.1s;
   - In novelty detection increased labels from 1 to 4. time stil 65-75s;
+- [ ] swapping-buffer-pair e threads para MPI_send no classifier;
 - [ ] Garbage collect unknowns instead of realloc;

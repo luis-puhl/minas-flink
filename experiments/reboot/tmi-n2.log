@@ -1,7 +1,7 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
+m_receiver at 1/2
 Taking test stream from stdin
 sampler at 0/2
-m_receiver at 1/2
 model complete
 model complete
 ND clusters (19, 82080): 1 extensions, 0 novelties
@@ -9,24 +9,24 @@ Reclassified 2000
 realloc model 100
 ND clusters (82100, 223874): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters (223895, 324083): 1 extensions, 0 novelties
+ND clusters (223895, 324072): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters (324187, 404819): 1 extensions, 0 novelties
+[sampler] 9.831022e+00 seconds. At src/reboot/threaded-mpi.c:267
+ND clusters (324083, 405287): 1 extensions, 0 novelties
 Reclassified 2000
-ND clusters (404859, 568947): 1 extensions, 0 novelties
+ND clusters (405288, 569913): 1 extensions, 0 novelties
 Reclassified 2000
-[sampler] 1.106252e+01 seconds. At src/reboot/threaded-mpi.c:265
-ND clusters (569093, 604102): 1 extensions, 0 novelties
+ND clusters (569915, 603012): 0 extensions, 1 novelties
 Reclassified 2000
-[detector] 1.145430e+01 seconds. At src/reboot/threaded-mpi.c:366
-[m_receiver] 1.101160e+01 seconds. At src/reboot/threaded-mpi.c:196
-[classifier] 1.101113e+01 seconds. At src/reboot/threaded-mpi.c:112
-[./bin/reboot/tmpi] 1.102945e+01 seconds. At src/reboot/threaded-mpi.c:445
-[./bin/reboot/tmpi] 1.147296e+01 seconds. At src/reboot/threaded-mpi.c:445
+[classifier] 1.614858e+01 seconds. At src/reboot/threaded-mpi.c:114
+[detector] 1.330326e+01 seconds. At src/reboot/threaded-mpi.c:370
+[m_receiver] 1.614563e+01 seconds. At src/reboot/threaded-mpi.c:198
+[./bin/reboot/tmpi] 1.332047e+01 seconds. At src/reboot/threaded-mpi.c:452
+[./bin/reboot/tmpi] 1.616750e+01 seconds. At src/reboot/threaded-mpi.c:452
 Evaluate
 	title = Mfog-Reboot-tmi-n2
 	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot/tmi-n2-matches.csv
+	matchesFileName = out/reboot/tmi-n2.csv-matches.csv
 	plotSavePath = experiments/reboot/tmi-n2.png
 
 Count per class
@@ -40,16 +40,16 @@ saving experiments/reboot/tmi-n2.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--               10151    2647        -       0
-N              437028  203631        N  203631
+-               10271    2659        -       0
+N              436908  203619        N  203619
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels (item)     [('N', 0), ('-', 19)] 2
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               203631 ( 31.162064%)
-Misses             437028 ( 66.879279%)
-Unknowns            12798 (  1.958504%)
-Unk. reprocessed        1 (  0.007814%)
+Hits               203619 ( 31.160228%)
+Misses             436908 ( 66.860915%)
+Unknowns            12930 (  1.978704%)
+Unk. reprocessed        1 (  0.007734%)
 Total              653457 ( 99.999847%)
 

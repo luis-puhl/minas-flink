@@ -242,6 +242,7 @@ int printCluster(int dim, Cluster *cl) {
     for (unsigned int d = 0; d < dim; d++)
         count += printf(", %le", cl->center[d]);
     count += printf("\n");
+    fflush(stdout);
     return count;
 }
 
