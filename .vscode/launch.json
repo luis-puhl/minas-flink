@@ -5,6 +5,40 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Attach Buff",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/bin/cir",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+    {
+        "name": "Circula Buff",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/bin/cir",
+        "args": ["10", "10", "10" ],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ]
+    },
+        {
             "name": "(gdb) Full Stream",
             "type": "cppdbg",
             "request": "launch",
