@@ -24,7 +24,7 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/bin/cir",
-        "args": ["10", "10", "10" ],
+        "args": ["3", "3", "3" ],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
         "environment": [],
