@@ -24,16 +24,16 @@ Example *push(Example *ex, CircularExampleBuffer *buff) {
         if (isBufferFull(buff)) {
             pthread_mutex_unlock(&buff->headMutex);
             pthread_mutex_unlock(&buff->tailMutex);
-        } else {
-            break;
+            continue;
         }
+        pthread_mutex_unlock(&buff->tailMutex);
+        int head = buff->head;
+        buff->head = (buff->head + 1) % buff->size;
+        pthread_mutex_unlock(&buff->headMutex);
+        Example *swp = buff->data[head];
+        buff->data[head] = ex;
+        return swp;
     }
-    pthread_mutex_unlock(&buff->tailMutex);
-    Example *swp = buff->data[buff->head];
-    buff->data[buff->head] = ex;
-    buff->head = (buff->head + 1) % buff->size;
-    pthread_mutex_unlock(&buff->headMutex);
-    return swp;
 }
 Example *pop(Example *ex, CircularExampleBuffer *buff) {
     while (1) {
@@ -42,16 +42,16 @@ Example *pop(Example *ex, CircularExampleBuffer *buff) {
         if (isBufferEmpty(buff)) {
             pthread_mutex_unlock(&buff->headMutex);
             pthread_mutex_unlock(&buff->tailMutex);
-        } else {
-            break;
+            continue;
         }
+        pthread_mutex_unlock(&buff->headMutex);
+        int tail = buff->tail;
+        buff->tail = (buff->tail + 1) % buff->size;
+        pthread_mutex_unlock(&buff->tailMutex);
+        Example *swp = buff->data[tail];
+        buff->data[tail] = ex;
+        return swp;
     }
-    pthread_mutex_unlock(&buff->headMutex);
-    Example *swp = buff->data[buff->tail];
-    buff->data[buff->tail] = ex;
-    buff->tail = (buff->tail + 1) % buff->size;
-    pthread_mutex_unlock(&buff->tailMutex);
-    return swp;
 }
 
 void *producer(void *args) {
