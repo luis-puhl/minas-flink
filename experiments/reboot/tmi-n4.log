@@ -1,52 +1,26 @@
+classifier 1 0x7fef94000b80
+classifier 3 0x7fcb8c000b80
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/4
+classifier 2 0x7f37cc000b80
 Taking test stream from stdin
 sampler at 0/4
-m_receiver at 3/4
-m_receiver at 1/4
-model complete
-model incomplete 0, wait(modelReadySemaphore);
-model incomplete 78, wait(modelReadySemaphore);
-model incomplete 0, wait(modelReadySemaphore);
 model complete
 model complete
-m_receiver at 2/4
 model complete
-realloc model 100
-ND clusters (69, 82128): 1 extensions, 0 novelties
-Reclassified 2000
-realloc model 100
-realloc model 100
-ND clusters (81848, 223857): 1 extensions, 0 novelties
-Reclassified 2000
-ND clusters (224017, 324062): 1 extensions, 0 novelties
-Reclassified 2000
-ND clusters (324894, 407888): 0 extensions, 1 novelties
-Reclassified 2000
-ND clusters (407915, 572724): 1 extensions, 0 novelties
-Reclassified 2000
-ND clusters (572727, 604708): 1 extensions, 0 novelties
-Reclassified 2000
-[classifier] 1.210641e+01 seconds. At src/reboot/threaded-mpi.c:114
-[sampler] 1.254984e+01 seconds. At src/reboot/threaded-mpi.c:267
-[m_receiver] 1.211258e+01 seconds. At src/reboot/threaded-mpi.c:198
-[./bin/reboot/tmpi] 1.213250e+01 seconds. At src/reboot/threaded-mpi.c:452
-[detector] 1.255928e+01 seconds. At src/reboot/threaded-mpi.c:370
-[./bin/reboot/tmpi] 1.257920e+01 seconds. At src/reboot/threaded-mpi.c:452
-[classifier] 1.230522e+01 seconds. At src/reboot/threaded-mpi.c:114
-[m_receiver] 1.230591e+01 seconds. At src/reboot/threaded-mpi.c:198
-[./bin/reboot/tmpi] 1.232970e+01 seconds. At src/reboot/threaded-mpi.c:452
-[classifier] 1.169433e+01 seconds. At src/reboot/threaded-mpi.c:114
-[m_receiver] 1.169703e+01 seconds. At src/reboot/threaded-mpi.c:198
-[./bin/reboot/tmpi] 1.171790e+01 seconds. At src/reboot/threaded-mpi.c:452
-Evaluate
-	title = Mfog-Reboot-tmi-n4
-	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot/tmi-n4-matches.csv
-	plotSavePath = experiments/reboot/tmi-n4.png
-
-Count per class
-           id
-class        
-A      447179
-N      206278
-(ParserError('Error tokenizing data. C error: Expected 2 fields in line 391273, saw 3\n'), 'out/reboot/tmi-n4-matches.csv')
+model complete
+[pokebola:342435] *** Process received signal ***
+[pokebola:342435] Signal: Segmentation fault (11)
+[pokebola:342435] Signal code: Address not mapped (1)
+[pokebola:342435] Failing at address: 0x7fef94000b80
+[pokebola:342435] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7f83d66e00f0]
+[pokebola:342435] [ 1] ./bin/reboot/tmpi(+0x5ecd)[0x55673d0d3ecd]
+[pokebola:342435] [ 2] /usr/lib/libpthread.so.0(+0x93e9)[0x7f83d66d53e9]
+[pokebola:342435] [ 3] /usr/lib/libc.so.6(clone+0x43)[0x7f83d6603293]
+[pokebola:342435] *** End of error message ***
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 0 on node pokebola exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------

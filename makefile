@@ -61,7 +61,7 @@ bin/reboot/online: src/reboot/base.c src/reboot/online.c
 bin/reboot/detection: src/reboot/base.c src/reboot/detection.c
 	gcc -g -Wall -lm -pthread $^ -o $@
 
-bin/reboot/tmpi: src/reboot/base.c src/reboot/threaded-mpi.c
+bin/reboot/tmpi: src/reboot/base.c src/reboot/threaded-mpi.c src/reboot/CircularExampleBuffer.c
 	mpicc -g -Wall -lm $^ -o $@
 .PHONY: bin/reboot
 bin/reboot: bin/reboot/serial bin/reboot/eet bin/reboot/offline bin/reboot/online bin/reboot/detection bin/reboot/tmpi

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-gcc -g -Wall -pthread src/test/circ-buff.c -o bin/cir
+gcc -g -Wall -pthread src/test/circ-buff.c src/reboot/CircularExampleBuffer.c -o bin/cir
+
 ./bin/cir 10 10 10 || exit 1
 for i in 1 2 3; do
     /usr/bin/time bash -c "for i in {1..100}; do ./bin/cir $i $i $i >/dev/null || break; done;";
