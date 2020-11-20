@@ -121,11 +121,12 @@ void *u_sender(void *arg) {
         if (example->label == MFOG_EOS_MARKER) break;
         // fprintf(stderr, "U-sender Example(%u, %c, %le)\n", example->id, example->label, example->val[0]);
         (*inputLine)++;
-        int position = 0;
+        // int position = 0;
         // fprintf(stderr, "sender %d %p\n", args->mpiRank, example->val);
-        assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        // assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         // assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-        assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        // assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
     }
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "u_sender", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(buffer);
@@ -208,21 +209,19 @@ void *sampler(void *arg) {
     //
     int *inFlightHead = calloc(args->mpiSize, sizeof(int));
     int *inFlightTail = calloc(args->mpiSize, sizeof(int));
+    int inFlightSize = args->kParam;
     Example **inFlight = calloc(args->mpiSize, sizeof(Example*));
     for (size_t i = 0; i < args->mpiSize; i++) {
         inFlightHead[i] = 0;
         inFlightTail[i] = 0;
-        inFlight[i] = calloc(args->kParam, sizeof(Example));
-        for (size_t j = 0; j < args->kParam; j++) {
+        inFlight[i] = calloc(inFlightSize, sizeof(Example));
+        for (size_t j = 0; j < inFlightSize; j++) {
             inFlight[i][j].val = calloc(args->dim, sizeof(double));
         }
     }
     //
     fprintf(stderr, "Taking test stream from stdin\n");
     fprintf(stderr, "sampler at %d/%d\n", args->mpiRank, args->mpiSize);
-    double *sw;
-    MPI_Status st;
-    int hasMessage;
     while (!feof(stdin)) {
         getline(&lineptr, &n, stdin);
         (*inputLine)++;
@@ -248,53 +247,51 @@ void *sampler(void *arg) {
         id++;
         //
         do {
+            MPI_Status st;
+            int hasMessage;
             dest = (dest + 1) % args->mpiSize;
             MPI_Iprobe(MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &hasMessage, &st);
             if (hasMessage) {
+                double *sw = example->val;
                 assertMpi(MPI_Recv(example, sizeof(Example), MPI_BYTE, st.MPI_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-                Example* data = inFlight[st.MPI_SOURCE];
+                example->val = sw;
+                //
+                Example *data = inFlight[st.MPI_SOURCE];
                 int tail = inFlightTail[st.MPI_SOURCE];
                 int head = inFlightHead[st.MPI_SOURCE];
-                if (data[tail].id == example->id) {
-                    // easy
-                    sw = example->val;
-                    example->val = data[tail].val;
-                    data[tail].val = sw;
-                    example = CEB_push(example, args->unkBuffer);
-                    inFlightTail[st.MPI_SOURCE] = (inFlightTail[st.MPI_SOURCE] + 1) % args->kParam;
-                } else {
-                    // hard, buffer will need compatcion
-                    int found = 0;
-                    for (size_t i = tail; i != head; i = ((i+1)%args->kParam)) {
-                        if (found && i != tail) {
-                            int prev = (i + args->kParam + 1) % args->kParam;
-                            Example swa;
-                            data[prev] = data[i];
-                            data[prev].val = data[i].val;
-                            sw = example->val;
-                            example->val = data[i].val;
-                        } else if (data[i].id == example->id) {
-                            sw = example->val;
-                            example->val = data[i].val;
-                            data[i].val = sw;
-                            example = CEB_push(example, args->unkBuffer);
-                            found = 1;
+                assert(head != tail);
+                if (data[tail].id != example->id) {
+                    for (size_t i = (tail + 1) % inFlightSize; i != ((head+inFlightSize+1)%inFlightSize); i = ((i+1)%inFlightSize)) {
+                        if (data[i].id == example->id) {
+                            // swap tail and i
+                            Example e = data[i];
+                            data[i] = data[tail];
+                            data[tail] = e;
+                            break;
                         }
                     }
                 }
+                // easy
+                sw = example->val;
+                example->val = data[tail].val;
+                data[tail].val = sw;
+                inFlightTail[st.MPI_SOURCE] = (inFlightTail[st.MPI_SOURCE] + 1) % inFlightSize;
+                example = CEB_push(example, args->unkBuffer);
             }
             // while dest is root or dest has a full buffer
-        } while (dest == MFOG_RANK_MAIN || ((inFlightHead[dest] + 1) % args->kParam) == inFlightTail[dest]);
+        } while (dest == MFOG_RANK_MAIN || ((inFlightHead[dest] + 1) % inFlightSize) == inFlightTail[dest]);
         //
         assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         //
-        inFlight[dest][inFlightHead[dest]].id = example->id;
-        sw = inFlight[dest][inFlightHead[dest]].val;
-        inFlight[dest][inFlightHead[dest]].val = example->val;
+        Example* data = inFlight[dest];
+        int head = head;
+        data[head].id = example->id;
+        double *sw = data[head].val;
+        data[head].val = example->val;
         example->val = sw;
-        inFlightHead[dest] = (inFlightHead[dest] + 1) % args->kParam;
+        inFlightHead[dest] = (head + 1) % inFlightSize;
         //
     }
     example->label = MFOG_EOS_MARKER;
@@ -305,38 +302,6 @@ void *sampler(void *arg) {
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
     }
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "sampler", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
-    return inputLine;
-}
-
-void *collector(void *arg) {
-    clock_t start = clock();
-    ThreadArgs *args = arg;
-    size_t *inputLine = calloc(1, sizeof(size_t));
-    int streams = args->mpiSize - 1;
-    (*inputLine) = 0;
-    Example *example = calloc(1, sizeof(Example));
-    int unprocessedIdx = 0, unprocessedSize = 10000;
-    Example **unprocessed = calloc(unprocessedSize, sizeof(Example *));
-    for (int i = 0; i < unprocessedSize; i++) {
-        unprocessed[i] = calloc(1, sizeof(Example));
-        unprocessed[i]->id = -1;
-        unprocessed[i]->label = '_';
-        unprocessed[i]->val = calloc(args->dim, sizeof(double));
-    }
-    Example *sw;
-    int mpiReturn;
-    while (1) {
-        assertMpi(MPI_Recv(example, sizeof(Example), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-        printf("%10u,%s\n", example->id, printableLabel(example->label));
-        if (example->label == UNK_LABEL) {
-            printf("Unknown: %10u", example->id);
-            for (unsigned int d = 0; d < args->dim; d++)
-                printf(", %le", example->val[d]);
-            printf("\n");
-        }
-        fflush(stdout);
-    }
-    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", "detector", ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return inputLine;
 }
 
@@ -351,8 +316,8 @@ void *detector(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
     size_t *inputLine = calloc(1, sizeof(size_t));
-    int streams = args->mpiSize - 1;
     (*inputLine) = 0;
+    int streams = args->mpiSize - 1;
     int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
     double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
     Example *example = calloc(1, sizeof(Example));
@@ -367,79 +332,18 @@ void *detector(void *arg) {
     size_t unknownsSize = 0, lastNDCheck = 0, id = 0;
     //
     Model *model = args->model;
-    //
-    // determina espaço necessário para empacotamento dos dados no transmissor e recebimento no nó tratador
-    int clusterBufferLen, exampleBufferLen, valueBufferLen;
     int mpiReturn;
-    assertMpi(MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen));
-    assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
-    assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
-    int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
-    int *buffer = (int *)malloc(bufferSize);
     //
-    int unprocessedIdx = 0, unprocessedSize = 10000;
-    Example **unprocessed = calloc(unprocessedSize, sizeof(Example *));
-    for (int i = 0; i < unprocessedSize; i++) {
-        unprocessed[i] = calloc(1, sizeof(Example));
-        unprocessed[i]->id = -1;
-        unprocessed[i]->label = '_';
-        unprocessed[i]->val = calloc(dim, sizeof(double));
-    }
-    Example *sw;
     while (streams > 0) {
-        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-        int position = 0;
+        // assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+        // int position = 0;
         // marker("MPI_Unpack");
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
+        // assertMpi(MPI_Unpack(buffer, bufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         // if (example->id < 0) return 0;
         // assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         // example->val = valuePtr;
-        // find the data value
-        if (unprocessedIdx < 10) {
-            ex = CEB_pop(ex, args->unkBuffer);
-            if (ex->id == example->id) {
-                example->val = ex->val;
-            } else {
-                int i;
-                // look in unprocessed for example
-                for (i = 0; i < unprocessedIdx; i++) {
-                    if (unprocessed[i]->id == example->id) {
-                        // found? swap
-                        sw = unprocessed[i];
-                        unprocessed[i] = ex;
-                        ex = sw;
-                        example->val = ex->val;
-                        break;
-                    }
-                }
-                // not found? add to queue and skip
-                if (i == unprocessedIdx) {
-                    sw = unprocessed[unprocessedIdx];
-                    unprocessed[unprocessedIdx] = ex;
-                    ex = sw;
-                    unprocessedIdx++;
-                    assert(unprocessedIdx < unprocessedSize);
-                    continue;
-                }
-            }
-        } else {
-            // look in unprocessed for example
-            for (int i = 0; i < unprocessedIdx; i++) {
-                if (unprocessed[i]->id == example->id) {
-                    // found? swap
-                    example->val = unprocessed[i]->val;
-                    sw = unprocessed[i];
-                    unprocessed[i] = ex;
-                    ex = sw;
-                    break;
-                }
-            }
-        }
-        (*inputLine)++;
-        if (example->label == MFOG_EOS_MARKER) {
-            streams--;
-            continue;
-        }
+        //
+        example = CEB_pop(example, args->unkBuffer);
         //
         id = example->id > id ? example->id : id;
         printf("%10u,%s\n", example->id, printableLabel(example->label));
