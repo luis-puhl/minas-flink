@@ -63,7 +63,7 @@ void *classifier(void *arg) {
             // marker("Classifier EOS");
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             example->val = valuePtr;
-            example = CEB_push(example, args->unkBuffer);
+            example = CEB_enqueue(args->unkBuffer, example);
             break;
         }
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
@@ -79,7 +79,7 @@ void *classifier(void *arg) {
         pthread_mutex_unlock(&args->modelMutex);
         //
         example->label = match.label;
-        example = CEB_push(example, args->unkBuffer);
+        example = CEB_enqueue(args->unkBuffer, example);
         //
         // position = 0;
         // assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -102,7 +102,7 @@ void *u_sender(void *arg) {
     int mpiReturn;
 
     while(1) {
-        example = CEB_pop(example, args->unkBuffer);
+        example = CEB_dequeue(args->unkBuffer, example);
         if (example->label == MFOG_EOS_MARKER) break;
         (*inputLine)++;
         assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
@@ -181,7 +181,7 @@ int collector(ThreadArgs *args, Example **inFlight, int *inFlightHead, int *inFl
         }
         if (example->label == MFOG_EOS_MARKER) {
             marker("MFOG_EOS_MARKER collector");
-            example = CEB_push(example, args->unkBuffer);
+            example = CEB_enqueue(args->unkBuffer, example);
             return 1;
         }
         // fprintf(stderr, "from %d got ex=%d with buffer size=%d\n", st.MPI_SOURCE, example->id, len);
@@ -204,7 +204,7 @@ int collector(ThreadArgs *args, Example **inFlight, int *inFlightHead, int *inFl
         data[tail].val = calloc(args->dim, sizeof(double));
         inFlightTail[st.MPI_SOURCE] = (inFlightTail[st.MPI_SOURCE] + 1) % inFlightSize;
         inFlightLen[st.MPI_SOURCE]--;
-        example = CEB_push(example, args->unkBuffer);
+        example = CEB_enqueue(args->unkBuffer, example);
     }
     return 0;
 }
@@ -234,22 +234,6 @@ void *sampler(void *arg) {
     int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int mpiReturn, dest = 0;
     int *buffer = (int *)malloc(bufferSize);
-    // MPI_Buffer_attach(buffer, bufferSize);
-    //
-    int *inFlightHead = calloc(args->mpiSize, sizeof(int));
-    int *inFlightTail = calloc(args->mpiSize, sizeof(int));
-    int *inFlightLen = calloc(args->mpiSize, sizeof(int));
-    int inFlightSize = 500;
-    Example **inFlight = calloc(args->mpiSize, sizeof(Example*));
-    for (size_t i = 0; i < args->mpiSize; i++) {
-        inFlightHead[i] = 0;
-        inFlightTail[i] = 0;
-        inFlightLen[i] = 0;
-        inFlight[i] = calloc(inFlightSize, sizeof(Example));
-        for (size_t j = 0; j < inFlightSize; j++) {
-            inFlight[i][j].val = calloc(args->dim, sizeof(double));
-        }
-    }
     //
     fprintf(stderr, "Taking test stream from stdin\n");
     fprintf(stderr, "sampler at %d/%d\n", args->mpiRank, args->mpiSize);
@@ -279,26 +263,18 @@ void *sampler(void *arg) {
         id++;
         //
         int destTries = args->mpiSize;
+        CircularExampleBuffer *fc;
         do {
             dest = (dest + 1) % args->mpiSize;
-            //
-            streams -= collector(args, inFlight, inFlightHead, inFlightTail, inFlightLen, inFlightSize, destTries);
-            destTries--;
+            fc = &args->flightController[dest];
             // while dest is root or dest has a full buffer
-        } while (dest == MFOG_RANK_MAIN || inFlightLen[dest] == (inFlightSize - 1));
+        } while (dest == MFOG_RANK_MAIN || isBufferFull(fc));
         //
         assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         //
-        Example* data = inFlight[dest];
-        int head = inFlightHead[dest];
-        data[head].id = example->id;
-        double *sw = data[head].val;
-        data[head].val = example->val;
-        example->val = sw;
-        inFlightHead[dest] = (head + 1) % inFlightSize;
-        inFlightLen[dest]++;
+        example = CEB_enqueue(fc, example);
         // fprintf(stderr, "Sending to %d ex=%d buffer size=%d\n", dest, example->id, inFlightLen[dest]);
         //
     }
@@ -333,8 +309,8 @@ void *detector(void *arg) {
     int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
     double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
     Example *example = calloc(1, sizeof(Example));
-    // example->val = calloc(args->dim, sizeof(double));
-    // double *valuePtr = example->val;
+    example->val = calloc(args->dim, sizeof(double));
+    double *valuePtr = example->val;
     Example *ex = calloc(1, sizeof(Example));
     ex->val = calloc(args->dim, sizeof(double));
     //
@@ -345,17 +321,21 @@ void *detector(void *arg) {
     //
     Model *model = args->model;
     int mpiReturn;
+    MPI_Status st;
     //
     while (streams > 0) {
-        // assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-        // int position = 0;
-        // marker("MPI_Unpack");
-        // assertMpi(MPI_Unpack(buffer, bufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
-        // if (example->id < 0) return 0;
-        // assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
-        // example->val = valuePtr;
+        valuePtr = example->val;
+        assertMpi(MPI_Recv(example, sizeof(Example), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
+        example->val = valuePtr;
+        CircularExampleBuffer *fc = &args->flightController[st.MPI_SOURCE];
+        example = CEB_extract(fc, example->id);
+        if (example->label == MFOG_EOS_MARKER) {
+            marker("MFOG_EOS_MARKER collector");
+            example = CEB_enqueue(args->unkBuffer, example);
+            return 1;
+        }
         //
-        example = CEB_pop(example, args->unkBuffer);
+        example = CEB_dequeue(args->unkBuffer, example);
         if (example->label == MFOG_EOS_MARKER) break;
         //
         id = example->id > id ? example->id : id;
@@ -470,7 +450,11 @@ int main(int argc, char const *argv[]) {
             argv[0], PARAMS, args.mpiProcessorName, args.mpiRank, args.mpiSize);
         printf("#pointId,label\n");
         fflush(stdout);
-        args.unkBuffer = CEB_create(1000, dim);
+        args.unkBuffer = CEB_init(calloc(1, sizeof(CircularExampleBuffer)), 1000, dim);
+        args.flightController = calloc(args.mpiSize, sizeof(CircularExampleBuffer));
+        for (size_t i = 0; i < args.mpiSize; i++) {
+            CEB_init(&args.flightController[i], 1000, dim);
+        }
 
         pthread_t detector_t, sampler_t;
         int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
@@ -480,7 +464,7 @@ int main(int argc, char const *argv[]) {
         assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
     } else {
-        args.unkBuffer = CEB_create(100, dim);
+        args.unkBuffer = CEB_init(calloc(1, sizeof(CircularExampleBuffer)), 100, dim);
         pthread_t classifier_t, u_sender_t, m_receiver_t;
         assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_create(&u_sender_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());

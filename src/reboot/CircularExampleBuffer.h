@@ -12,10 +12,15 @@ typedef struct {
     sem_t notFullSignal, notEmptySignal;
 } CircularExampleBuffer;
 
-Example *CEB_push(Example *ex, CircularExampleBuffer *buff);
-Example *CEB_pop(Example *ex, CircularExampleBuffer *buff);
+#define isBufferFull(buff) (buff->head + 1) % buff->size == buff->tail
+#define isBufferEmpty(buff) buff->head == buff->tail
 
-CircularExampleBuffer *CEB_create(int kParam, int dim);
+CircularExampleBuffer *CEB_init(CircularExampleBuffer *buff, int kParam, int dim);
 void CEB_destroy(CircularExampleBuffer *buff);
+
+Example *CEB_enqueue(CircularExampleBuffer *buff, Example *ex);
+Example *CEB_dequeue(CircularExampleBuffer *buff, Example *ex);
+
+Example *CEB_extract(CircularExampleBuffer *buff, Example *ex);
 
 #endif // _CEB_H

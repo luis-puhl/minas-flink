@@ -11,48 +11,72 @@
 #include "../reboot/base.h"
 #include "../reboot/CircularExampleBuffer.h"
 
-Example *CEB_push(Example *ex, CircularExampleBuffer *buff) {
+Example *CEB_enqueue(CircularExampleBuffer *buff, Example *ex) {
     while (1) {
         pthread_mutex_lock(&buff->headMutex);
         pthread_mutex_lock(&buff->tailMutex);
-        int isBufferFull = (buff->head + 1) % buff->size == buff->tail;
-        if (isBufferFull) {
+        if (isBufferFull(buff)) {
             pthread_mutex_unlock(&buff->headMutex);
             pthread_mutex_unlock(&buff->tailMutex);
             sem_wait(&buff->notFullSignal);
-            // marker("push @ full buffer");
-            // pthread_mutex_lock(&buff->tailMutex);
-            // pthread_cond_wait(&buff->notFullSignal, &buff->tailMutex);
-            // pthread_mutex_unlock(&buff->tailMutex);
             continue;
         }
         pthread_mutex_unlock(&buff->tailMutex);
         int head = buff->head;
         buff->head = (buff->head + 1) % buff->size;
-        pthread_mutex_unlock(&buff->headMutex);
         sem_post(&buff->notEmptySignal);
         Example *swp = buff->data[head];
         buff->data[head] = ex;
+        pthread_mutex_unlock(&buff->headMutex);
         return swp;
     }
 }
-Example *CEB_pop(Example *ex, CircularExampleBuffer *buff) {
+Example *CEB_dequeue(CircularExampleBuffer *buff, Example *ex) {
     while (1) {
         pthread_mutex_lock(&buff->headMutex);
         pthread_mutex_lock(&buff->tailMutex);
-        int isBufferEmpty = buff->head == buff->tail;
-        if (isBufferEmpty) {
+        if (isBufferEmpty(buff)) {
             pthread_mutex_unlock(&buff->headMutex);
             pthread_mutex_unlock(&buff->tailMutex);
-            // marker("pop @ empty buffer");
             sem_wait(&buff->notEmptySignal);
-            // pthread_mutex_lock(&buff->headMutex);
-            // pthread_cond_wait(&buff->notEmptySignal, &buff->headMutex);
-            // pthread_mutex_unlock(&buff->headMutex);
             continue;
         }
         pthread_mutex_unlock(&buff->headMutex);
         int tail = buff->tail;
+        buff->tail = (buff->tail + 1) % buff->size;
+        sem_post(&buff->notFullSignal);
+        Example *swp = buff->data[tail];
+        buff->data[tail] = ex;
+        pthread_mutex_unlock(&buff->tailMutex);
+        return swp;
+    }
+}
+Example *CEB_extract(CircularExampleBuffer *buff, Example *ex) {
+    while (1) {
+        pthread_mutex_lock(&buff->headMutex);
+        pthread_mutex_lock(&buff->tailMutex);
+        if (isBufferEmpty(buff)) {
+            pthread_mutex_unlock(&buff->headMutex);
+            pthread_mutex_unlock(&buff->tailMutex);
+            sem_wait(&buff->notEmptySignal);
+            continue;
+        }
+        pthread_mutex_unlock(&buff->headMutex);
+        // if (len == 0)
+        int tail = buff->tail;
+        int head = buff->head;
+        //     fprintf(stderr, "buff shouldn't be empty but got i=%d sending me ex=%d with buffer size=%d\n", st.MPI_SOURCE, example->id, len);
+        if (buff->data[tail]->id != ex->id) {
+            for (size_t i = (tail + 1) % buff->size; i != ((head+buff->size+1)%buff->size); i = ((i+1)%buff->size)) {
+                if (buff->data[i]->id == ex->id) {
+                    // swap tail and i
+                    Example *e = buff->data[i];
+                    buff->data[i] = buff->data[tail];
+                    buff->data[tail] = e;
+                    break;
+                }
+            }
+        }
         buff->tail = (buff->tail + 1) % buff->size;
         pthread_mutex_unlock(&buff->tailMutex);
         sem_post(&buff->notFullSignal);
@@ -62,8 +86,7 @@ Example *CEB_pop(Example *ex, CircularExampleBuffer *buff) {
     }
 }
 
-CircularExampleBuffer *CEB_create(int bufferSize, int dim) {
-    CircularExampleBuffer *buff = calloc(1, sizeof(CircularExampleBuffer));
+CircularExampleBuffer *CEB_init(CircularExampleBuffer *buff, int bufferSize, int dim) {
     buff->head = 0;
     buff->tail = 0;
     buff->size = bufferSize;

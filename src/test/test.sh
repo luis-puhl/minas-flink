@@ -3,10 +3,20 @@
 gcc -g -Wall -pthread src/test/circ-buff.c src/reboot/CircularExampleBuffer.c -o bin/cir
 
 ./bin/cir 10 10 10 || exit 1
+for i in {1..5}; do
+    for j in {1..5}; do
+        for k in {1..5}; do
+            echo "./bin/cir $i $j $k";
+            ./bin/cir $i $j $k >/dev/null || exit 1;
+        done;
+    done;
+done;
+
 for i in 1 2 3; do
-    /usr/bin/time bash -c "for i in {1..100}; do ./bin/cir $i $i $i >/dev/null || break; done;";
+    /usr/bin/time bash -c "for i in {1..100}; do ./bin/cir $i $i $i >/dev/null || exit 1; done;";
     echo
- done;
+done;
+
 
 # 1 mutex
 #   5.15s user 15.35s system 619% cpu 3.310 total
