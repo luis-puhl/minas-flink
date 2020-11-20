@@ -5,6 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Attach bin/reboot/tmpi",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/bin/reboot/tmpi",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "Attach Buff",
             "type": "cppdbg",
             "request": "attach",
@@ -39,15 +54,15 @@
         ]
     },
         {
-            "name": "(gdb) Full Stream",
+            "name": "tmpi",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/mfog-mpi/bin/baseline",
+            "program": "/usr/bin/mpirun",
             "args": [
-                "datasets/full-stream.txt"
+                "-n", "4", "/home/puhl/project/minas-flink/bin/reboot/tmpi", "out/reboot/online.input"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/mfog-mpi",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

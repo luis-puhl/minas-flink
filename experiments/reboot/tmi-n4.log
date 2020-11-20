@@ -1,26 +1,89 @@
-classifier 1 0x7fef94000b80
-classifier 3 0x7fcb8c000b80
-./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/4
-classifier 2 0x7f37cc000b80
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4
+[classifier 2]
+[u_sender 3]
+[m_receiver 3]
+[u_sender 2]
+[u_sender 1]
+[classifier 1]
+[m_receiver 1]
+[m_receiver 2]
+[classifier 3]
+[sampler 0]
 Taking test stream from stdin
 sampler at 0/4
+[detector 0]
 model complete
 model complete
+model incomplete 3, wait(modelReadySemaphore);
+model incomplete 96, wait(modelReadySemaphore);
 model complete
 model complete
-[pokebola:342435] *** Process received signal ***
-[pokebola:342435] Signal: Segmentation fault (11)
-[pokebola:342435] Signal code: Address not mapped (1)
-[pokebola:342435] Failing at address: 0x7fef94000b80
-[pokebola:342435] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7f83d66e00f0]
-[pokebola:342435] [ 1] ./bin/reboot/tmpi(+0x5ecd)[0x55673d0d3ecd]
-[pokebola:342435] [ 2] /usr/lib/libpthread.so.0(+0x93e9)[0x7f83d66d53e9]
-[pokebola:342435] [ 3] /usr/lib/libc.so.6(clone+0x43)[0x7f83d6603293]
-[pokebola:342435] *** End of error message ***
+realloc unknowns to 4000 src/reboot/threaded-mpi.c:378
+ND clusters (19, 88625): 25 extensions, 2 novelties
+realloc model 100
+realloc model 100
+ND consumed 1858, reclassified 0, discarted 0
+realloc model 100
+realloc unknowns to 8000 src/reboot/threaded-mpi.c:378
+realloc unknowns to 16000 src/reboot/threaded-mpi.c:378
+realloc unknowns to 32000 src/reboot/threaded-mpi.c:378
+realloc unknowns to 64000 src/reboot/threaded-mpi.c:378
+[classifier 1] 3.190785e+01 seconds. At src/reboot/threaded-mpi.c:90
+[classifier 3] 3.213170e+01 seconds. At src/reboot/threaded-mpi.c:90
+MFOG_EOS_MARKER collector src/reboot/threaded-mpi.c:184
+MFOG_EOS_MARKER collector src/reboot/threaded-mpi.c:184
+buff shouldn't be empty but got i=3 sending me ex=653157 with buffer size=0
+[detector 0] 3.156583e+01 seconds. At src/reboot/threaded-mpi.c:428
+[m_receiver 1] 3.191108e+01 seconds. At src/reboot/threaded-mpi.c:160
+[m_receiver 3] 3.213379e+01 seconds. At src/reboot/threaded-mpi.c:160
+[u_sender 1] 3.191123e+01 seconds. At src/reboot/threaded-mpi.c:111
+[./bin/reboot/tmpi] 3.192884e+01 seconds. At src/reboot/threaded-mpi.c:494
+free(): double free detected in tcache 2
+[pokebola:73703] *** Process received signal ***
+[pokebola:73703] Signal: Aborted (6)
+[pokebola:73703] Signal code:  (-6)
+[pokebola:73703] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7f642c6500f0]
+[pokebola:73703] [ 1] /usr/lib/libc.so.6(gsignal+0x145)[0x7f642c4b0615]
+[pokebola:73703] [ 2] /usr/lib/libc.so.6(abort+0x116)[0x7f642c499862]
+[pokebola:73703] [ 3] /usr/lib/libc.so.6(+0x7f5e8)[0x7f642c4f25e8]
+[pokebola:73703] [ 4] /usr/lib/libc.so.6(+0x8727a)[0x7f642c4fa27a]
+[pokebola:73703] [ 5] /usr/lib/libc.so.6(+0x88d4c)[0x7f642c4fbd4c]
+[pokebola:73703] [ 6] ./bin/reboot/tmpi(+0x761f)[0x55980074461f]
+[pokebola:73703] [ 7] ./bin/reboot/tmpi(+0x7021)[0x559800744021]
+[pokebola:73703] [ 8] /usr/lib/libc.so.6(__libc_start_main+0xf2)[0x7f642c49b152]
+[pokebola:73703] [ 9] ./bin/reboot/tmpi(+0x233e)[0x55980073f33e]
+[pokebola:73703] *** End of error message ***
+[m_receiver 2] 3.227045e+01 seconds. At src/reboot/threaded-mpi.c:160
+MFOG_EOS_MARKER collector src/reboot/threaded-mpi.c:184
+[sampler 0] 3.157218e+01 seconds. At src/reboot/threaded-mpi.c:316
+[classifier 2] 3.227094e+01 seconds. At src/reboot/threaded-mpi.c:90
+[u_sender 2] 3.227090e+01 seconds. At src/reboot/threaded-mpi.c:111
+[./bin/reboot/tmpi] 3.228982e+01 seconds. At src/reboot/threaded-mpi.c:494
+free(): double free detected in tcache 2
+[pokebola:73704] *** Process received signal ***
+[pokebola:73704] Signal: Aborted (6)
+[pokebola:73704] Signal code:  (-6)
+[./bin/reboot/tmpi] 3.159004e+01 seconds. At src/reboot/threaded-mpi.c:494
+double free or corruption (out)
+[pokebola:73702] *** Process received signal ***
+[pokebola:73702] Signal: Aborted (6)
+[pokebola:73702] Signal code:  (-6)
+[pokebola:73704] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7f7364e3b0f0]
+[pokebola:73704] [ 1] /usr/lib/libc.so.6(gsignal+0x145)[0x7f7364c9b615]
+[pokebola:73704] [ 2] /usr/lib/libc.so.6(abort+0x116)[0x7f7364c84862]
+[pokebola:73704] [ 3] /usr/lib/libc.so.6(+0x7f5e8)[0x7f7364cdd5e8]
+[pokebola:73704] [ 4] /usr/lib/libc.so.6(+0x8727a)[0x7f7364ce527a]
+[pokebola:73704] [ 5] /usr/lib/libc.so.6(+0x88d4c)[0x7f7364ce6d4c]
+[pokebola:73704] [ 6] ./bin/reboot/tmpi(+0x761f)[0x56062312e61f]
+[pokebola:73704] [ 7] ./bin/reboot/tmpi(+0x7021)[0x56062312e021]
+[pokebola:73704] [ 8] /usr/lib/libc.so.6(__libc_start_main+0xf2)[0x7f7364c86152]
+[pokebola:73704] [ 9] ./bin/reboot/tmpi(+0x233e)[0x56062312933e]
+[pokebola:73704] *** End of error message ***
 --------------------------------------------------------------------------
 Primary job  terminated normally, but 1 process returned
 a non-zero exit code. Per user-direction, the job has been aborted.
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-mpirun noticed that process rank 0 with PID 0 on node pokebola exited on signal 11 (Segmentation fault).
+mpirun noticed that process rank 2 with PID 0 on node pokebola exited on signal 6 (Aborted).
 --------------------------------------------------------------------------

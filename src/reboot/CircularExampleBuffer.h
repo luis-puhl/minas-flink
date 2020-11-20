@@ -1,6 +1,7 @@
 #ifndef _CEB_H
 #define _CEB_H 1
 #include <pthread.h>
+#include <semaphore.h>
 
 #include "../reboot/base.h"
 
@@ -8,7 +9,7 @@ typedef struct {
     Example **data;
     int size, head, tail;
     pthread_mutex_t headMutex, tailMutex;
-    pthread_cond_t notFullSignal, notEmptySignal;
+    sem_t notFullSignal, notEmptySignal;
 } CircularExampleBuffer;
 
 Example *CEB_push(Example *ex, CircularExampleBuffer *buff);

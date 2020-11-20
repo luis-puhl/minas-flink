@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <errno.h>
+#include <semaphore.h>
 
 #include "../reboot/base.h"
 #include "../reboot/CircularExampleBuffer.h"
@@ -18,6 +19,7 @@ Example *CEB_push(Example *ex, CircularExampleBuffer *buff) {
         if (isBufferFull) {
             pthread_mutex_unlock(&buff->headMutex);
             pthread_mutex_unlock(&buff->tailMutex);
+            sem_wait(&buff->notFullSignal);
             // marker("push @ full buffer");
             // pthread_mutex_lock(&buff->tailMutex);
             // pthread_cond_wait(&buff->notFullSignal, &buff->tailMutex);
@@ -25,10 +27,10 @@ Example *CEB_push(Example *ex, CircularExampleBuffer *buff) {
             continue;
         }
         pthread_mutex_unlock(&buff->tailMutex);
-        pthread_cond_signal(&buff->notEmptySignal);
         int head = buff->head;
         buff->head = (buff->head + 1) % buff->size;
         pthread_mutex_unlock(&buff->headMutex);
+        sem_post(&buff->notEmptySignal);
         Example *swp = buff->data[head];
         buff->data[head] = ex;
         return swp;
@@ -43,16 +45,17 @@ Example *CEB_pop(Example *ex, CircularExampleBuffer *buff) {
             pthread_mutex_unlock(&buff->headMutex);
             pthread_mutex_unlock(&buff->tailMutex);
             // marker("pop @ empty buffer");
+            sem_wait(&buff->notEmptySignal);
             // pthread_mutex_lock(&buff->headMutex);
             // pthread_cond_wait(&buff->notEmptySignal, &buff->headMutex);
             // pthread_mutex_unlock(&buff->headMutex);
             continue;
         }
         pthread_mutex_unlock(&buff->headMutex);
-        pthread_cond_signal(&buff->notFullSignal);
         int tail = buff->tail;
         buff->tail = (buff->tail + 1) % buff->size;
         pthread_mutex_unlock(&buff->tailMutex);
+        sem_post(&buff->notFullSignal);
         Example *swp = buff->data[tail];
         buff->data[tail] = ex;
         return swp;
@@ -73,16 +76,16 @@ CircularExampleBuffer *CEB_create(int bufferSize, int dim) {
     }
     assertErrno(pthread_mutex_init(&buff->headMutex, NULL) == 0, "Mutex init fail%c.", '.', /**/);
     assertErrno(pthread_mutex_init(&buff->tailMutex, NULL) == 0, "Mutex init fail%c.", '.', /**/);
-    assertErrno(pthread_cond_init(&buff->notFullSignal, NULL) == 0, "Condition signal init fail%c.", '.', /**/);
-    assertErrno(pthread_cond_init(&buff->notEmptySignal, NULL) == 0, "Condition signal init fail%c.", '.', /**/);
+    assertErrno(sem_init(&buff->notFullSignal, 0, 0) == 0, "Condition signal init fail%c.", '.', /**/);
+    assertErrno(sem_init(&buff->notEmptySignal, 0, 0) == 0, "Condition signal init fail%c.", '.', /**/);
     return buff;
 }
 
 void CEB_destroy(CircularExampleBuffer *buff) {
     pthread_mutex_destroy(&buff->headMutex);
     pthread_mutex_destroy(&buff->tailMutex);
-    pthread_cond_destroy(&buff->notFullSignal);
-    pthread_cond_destroy(&buff->notEmptySignal);
+    sem_destroy(&buff->notFullSignal);
+    sem_destroy(&buff->notEmptySignal);
     for (int i = 0; i < buff->size; i++) {
         free(buff->data[i]->val);
         free(buff->data[i]);
