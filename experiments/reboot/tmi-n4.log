@@ -1,96 +1,99 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 	Hello from pokebola, rank 0/4
-[classifier 1]
-[m_receiver 1]
-[classifier 2]
-[m_receiver 2]
-[u_sender 3]
-[classifier 3]
-[m_receiver 3]
 [sampler 0]
-[detector 0]
-[u_sender 2]
+[u_sender 3]
 Taking test stream from stdin
 sampler at 0/4
-model incomplete 41, wait(modelReadySemaphore);
+[detector 0]
+[classifier 1]
+[classifier 3]
+[m_receiver 1]
+[m_receiver 2]
+model complete
+[classifier 2]
+model incomplete 0, wait(modelReadySemaphore);
+[m_receiver 3]
+model incomplete 0, wait(modelReadySemaphore);
 [u_sender 1]
 model complete
+[u_sender 2]
 model complete
-model incomplete 41, wait(modelReadySemaphore);
 model complete
-model complete
-realloc unknowns to 4000 src/reboot/threaded-mpi.c:377
-ND clusters (19, 81518): 28 extensions, 1 novelties
-realloc model 100
-realloc model 100
-realloc model 100
+[detector 4] realloc unknowns to 4000 src/reboot/threaded-mpi.c:303
+ND clusters (19, 81755): 22 extensions, 1 novelties
+[m_receiver 3] realloc model 100
+[m_receiver 1] realloc model 100
 ND consumed 1844, reclassified 0, discarted 0
-realloc unknowns to 8000 src/reboot/threaded-mpi.c:377
-realloc unknowns to 16000 src/reboot/threaded-mpi.c:377
-realloc unknowns to 32000 src/reboot/threaded-mpi.c:377
-realloc unknowns to 64000 src/reboot/threaded-mpi.c:377
-realloc unknowns to 128000 src/reboot/threaded-mpi.c:377
-MFOG_EOS_MARKER collector src/reboot/threaded-mpi.c:183
-[classifier 1] 1.935355e+01 seconds. At src/reboot/threaded-mpi.c:89
-[u_sender 1] 1.935031e+01 seconds. At src/reboot/threaded-mpi.c:110
-[classifier 3] 1.924820e+01 seconds. At src/reboot/threaded-mpi.c:89
-[u_sender 3] 1.925159e+01 seconds. At src/reboot/threaded-mpi.c:110
-MFOG_EOS_MARKER collector src/reboot/threaded-mpi.c:183
-[m_receiver 1] 1.936142e+01 seconds. At src/reboot/threaded-mpi.c:159
-[./bin/reboot/tmpi] 1.938208e+01 seconds. At src/reboot/threaded-mpi.c:493
-free(): double free detected in tcache 2
-[pokebola:81082] *** Process received signal ***
-[pokebola:81082] Signal: Aborted (6)
-[pokebola:81082] Signal code:  (-6)
-[detector 0] 2.046726e+01 seconds. At src/reboot/threaded-mpi.c:427
-[m_receiver 3] 1.925609e+01 seconds. At src/reboot/threaded-mpi.c:159
-[./bin/reboot/tmpi] 1.927604e+01 seconds. At src/reboot/threaded-mpi.c:493
-free(): double free detected in tcache 2
-[pokebola:81084] *** Process received signal ***
-[pokebola:81084] Signal: Aborted (6)
-[pokebola:81084] Signal code:  (-6)
-[pokebola:81082] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7f1233d5b0f0]
-[pokebola:81082] [ 1] /usr/lib/libc.so.6(gsignal+0x145)[0x7f1233bbb615]
-[pokebola:81082] [ 2] /usr/lib/libc.so.6(abort+0x116)[0x7f1233ba4862]
-[pokebola:81082] [ 3] /usr/lib/libc.so.6(+0x7f5e8)[0x7f1233bfd5e8]
-[pokebola:81082] [ 4] /usr/lib/libc.so.6(+0x8727a)[0x7f1233c0527a]
-[pokebola:81082] [ 5] /usr/lib/libc.so.6(+0x88d4c)[0x7f1233c06d4c]
-[pokebola:81082] [ 6] ./bin/reboot/tmpi(+0x763a)[0x561f3c76163a]
-[pokebola:81082] [ 7] ./bin/reboot/tmpi(+0x704b)[0x561f3c76104b]
-[pokebola:81082] [ 8] /usr/lib/libc.so.6(__libc_start_main+0xf2)[0x7f1233ba6152]
-[pokebola:81082] [ 9] ./bin/reboot/tmpi(+0x233e)[0x561f3c75c33e]
-[pokebola:81082] *** End of error message ***
-[pokebola:81084] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7fde1b2e30f0]
-[pokebola:81084] [ 1] /usr/lib/libc.so.6(gsignal+0x145)[0x7fde1b143615]
-[pokebola:81084] [ 2] /usr/lib/libc.so.6(abort+0x116)[0x7fde1b12c862]
-[pokebola:81084] [ 3] /usr/lib/libc.so.6(+0x7f5e8)[0x7fde1b1855e8]
-[pokebola:81084] [ 4] /usr/lib/libc.so.6(+0x8727a)[0x7fde1b18d27a]
-[pokebola:81084] [ 5] /usr/lib/libc.so.6(+0x88d4c)[0x7fde1b18ed4c]
-[pokebola:81084] [ 6] ./bin/reboot/tmpi(+0x763a)[0x55f9fd33263a]
-[pokebola:81084] [ 7] ./bin/reboot/tmpi(+0x704b)[0x55f9fd33204b]
-[pokebola:81084] [ 8] /usr/lib/libc.so.6(__libc_start_main+0xf2)[0x7fde1b12e152]
-[pokebola:81084] [ 9] ./bin/reboot/tmpi(+0x233e)[0x55f9fd32d33e]
-[pokebola:81084] *** End of error message ***
-[m_receiver 2] 1.935651e+01 seconds. At src/reboot/threaded-mpi.c:159
-[classifier 2] 1.935674e+01 seconds. At src/reboot/threaded-mpi.c:89
-[u_sender 2] 1.935660e+01 seconds. At src/reboot/threaded-mpi.c:110
-MFOG_EOS_MARKER collector src/reboot/threaded-mpi.c:183
-[sampler 0] 2.046926e+01 seconds. At src/reboot/threaded-mpi.c:315
-[./bin/reboot/tmpi] 2.048994e+01 seconds. At src/reboot/threaded-mpi.c:493
-double free or corruption (out)
-[pokebola:81081] *** Process received signal ***
-[pokebola:81081] Signal: Aborted (6)
-[pokebola:81081] Signal code:  (-6)
-[./bin/reboot/tmpi] 1.937605e+01 seconds. At src/reboot/threaded-mpi.c:493
-free(): double free detected in tcache 2
-[pokebola:81083] *** Process received signal ***
-[pokebola:81083] Signal: Aborted (6)
-[pokebola:81083] Signal code:  (-6)
-malloc_consolidate(): invalid chunk size
---------------------------------------------------------------------------
-Primary job  terminated normally, but 1 process returned
-a non-zero exit code. Per user-direction, the job has been aborted.
---------------------------------------------------------------------------
---------------------------------------------------------------------------
-mpirun noticed that process rank 1 with PID 0 on node pokebola exited on signal 6 (Aborted).
---------------------------------------------------------------------------
+ND time(nd=4.613090e-01, bcast=6.821000e-03, compress=1.300700e-02, tot=4.811520e-01)
+[m_receiver 2] realloc model 100
+ND clusters (19, 163455): 14 extensions, 3 novelties
+ND consumed 1814, reclassified 7, discarted 95
+ND time(nd=5.045040e-01, bcast=1.000000e-04, compress=1.086200e-02, tot=5.154820e-01)
+ND clusters (82323, 200035): 6 extensions, 0 novelties
+ND consumed 1847, reclassified 43, discarted 65
+ND time(nd=2.220210e-01, bcast=1.600000e-05, compress=6.083000e-03, tot=2.281380e-01)
+ND clusters (166236, 281310): 18 extensions, 0 novelties
+ND consumed 1773, reclassified 52, discarted 36
+ND time(nd=3.842540e-01, bcast=9.200000e-05, compress=1.291600e-02, tot=3.972880e-01)
+ND clusters (200291, 354613): 11 extensions, 0 novelties
+ND consumed 1785, reclassified 48, discarted 104
+ND time(nd=4.610750e-01, bcast=2.600000e-05, compress=3.655100e-02, tot=4.976690e-01)
+ND clusters (282386, 490469): 17 extensions, 1 novelties
+ND consumed 1795, reclassified 81, discarted 42
+ND time(nd=3.425190e-01, bcast=4.800000e-05, compress=2.018700e-02, tot=3.627770e-01)
+ND clusters (357215, 595268): 20 extensions, 0 novelties
+[m_receiver 1] realloc model 200
+[m_receiver 3] realloc model 200
+ND consumed 1763, reclassified 51, discarted 64
+ND time(nd=3.618580e-01, bcast=3.486000e-03, compress=1.118000e-02, tot=3.765430e-01)
+[m_receiver 2] realloc model 200
+[sampler 0] 3.771173e+01 seconds. At src/reboot/threaded-mpi.c:235
+[classifier 2] 4.011472e+01 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 2] 4.014469e+01 seconds. At src/reboot/threaded-mpi.c:106
+[classifier 3] 4.007306e+01 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 3] 4.007653e+01 seconds. At src/reboot/threaded-mpi.c:106
+[m_receiver 2] 4.015988e+01 seconds. At src/reboot/threaded-mpi.c:155
+[detector 0] 3.772272e+01 seconds. At src/reboot/threaded-mpi.c:362
+[u_sender 1] 4.006538e+01 seconds. At src/reboot/threaded-mpi.c:106
+[m_receiver 1] 4.006916e+01 seconds. At src/reboot/threaded-mpi.c:155
+[m_receiver 3] 4.008037e+01 seconds. At src/reboot/threaded-mpi.c:155
+[./bin/reboot/tmpi] 4.010690e+01 seconds. At src/reboot/threaded-mpi.c:435
+[./bin/reboot/tmpi] 4.018226e+01 seconds. At src/reboot/threaded-mpi.c:435
+[classifier 1] 4.006705e+01 seconds. At src/reboot/threaded-mpi.c:82
+[./bin/reboot/tmpi] 4.009288e+01 seconds. At src/reboot/threaded-mpi.c:435
+[./bin/reboot/tmpi] 3.774833e+01 seconds. At src/reboot/threaded-mpi.c:435
+Evaluate
+	title = Mfog-Reboot-tmi-n4
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/tmi-n4-matches.csv
+	plotSavePath = experiments/reboot/tmi-n4.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog-Reboot-tmi-n4
+
+saving experiments/reboot/tmi-n4.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-               11513    3071        -       0
+0                 113      40        A     113
+1                 198       0        A     198
+2                   0      43        N      43
+3                1235      78        A    1235
+4                   0       8        N       8
+N              434120  203038        N  203038
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('3', 166440), ('2', 167099), ('1', 221931), ('0', 420636), ('4', 506566)] 7
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               204635 ( 31.315708%)
+Misses             434238 ( 66.452320%)
+Unknowns            14584 (  2.231819%)
+Unk. reprocessed        1 (  0.006857%)
+Total              653457 ( 99.999847%)
+

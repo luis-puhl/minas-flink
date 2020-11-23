@@ -8,8 +8,8 @@
 typedef struct {
     Example **data;
     int size, head, tail;
-    pthread_mutex_t headMutex, tailMutex;
-    sem_t notFullSignal, notEmptySignal;
+    pthread_mutex_t mutex;
+    sem_t fullSignal, emptySignal;
 } CircularExampleBuffer;
 
 #define isBufferFull(buff) (buff->head + 1) % buff->size == buff->tail
