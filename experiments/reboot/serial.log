@@ -20,6 +20,7 @@ Reclassified 1663
 Final flush 1184
 ND clusters (19, 653332): 11 extensions, 2 novelties
 Reclassified 921
+[./bin/reboot/serial] 3.515391e+01 seconds. At src/reboot/main.c:108
 Evaluate
 	title = Mfog-Reboot-serial
 	examplesFileName = datasets/test.csv
