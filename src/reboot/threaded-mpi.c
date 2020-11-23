@@ -315,7 +315,7 @@ void *detector(void *arg) {
             //
             for (size_t k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
-                // printCluster(dim, newCl);
+                printCluster(dim, newCl);
                 assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             }

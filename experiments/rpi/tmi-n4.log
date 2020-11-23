@@ -1,0 +1,94 @@
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from almoco, rank 0/4
+[u_sender 2]
+[u_sender 1]
+[m_receiver 1]
+[classifier 3]
+[m_receiver 2]
+[sampler 0]
+Taking test stream from stdin
+sampler at 0/4
+[classifier 1]
+[classifier 2]
+[m_receiver 3]
+[u_sender 3]
+[detector 0]
+model complete
+model complete
+model complete
+model complete
+[detector 4] realloc unknowns to 4000 src/reboot/threaded-mpi.c:303
+ND clusters (19, 82080): 22 extensions, 1 novelties
+[m_receiver 1] realloc model 100
+[m_receiver 2] realloc model 100
+[m_receiver 3] realloc model 100
+ND consumed 1844, reclassified 0, discarted 0
+ND time(nd=2.171801e+00, bcast=6.360000e-04, compress=6.060800e-02, tot=2.233089e+00)
+ND clusters (19, 162410): 14 extensions, 3 novelties
+ND consumed 1775, reclassified 8, discarted 121
+ND time(nd=3.625161e+00, bcast=2.020000e-04, compress=9.488300e-02, tot=3.720292e+00)
+ND clusters (82080, 199060): 9 extensions, 0 novelties
+ND consumed 1842, reclassified 57, discarted 73
+ND time(nd=4.118902e+00, bcast=8.900000e-05, compress=3.371300e-02, tot=4.159809e+00)
+ND clusters (166236, 261320): 12 extensions, 1 novelties
+ND consumed 1843, reclassified 30, discarted 24
+ND time(nd=3.763396e+00, bcast=2.130000e-04, compress=8.147800e-02, tot=3.845132e+00)
+ND clusters (199195, 396092): 19 extensions, 1 novelties
+ND consumed 1803, reclassified 41, discarted 73
+ND time(nd=4.102587e+00, bcast=6.230000e-04, compress=8.158800e-02, tot=4.184847e+00)
+ND clusters (264255, 570186): 15 extensions, 2 novelties
+ND consumed 1708, reclassified 69, discarted 62
+ND time(nd=2.851101e+00, bcast=8.292100e-02, compress=1.612800e-01, tot=3.095344e+00)
+[sampler 0] 1.058370e+02 seconds. At src/reboot/threaded-mpi.c:235
+[classifier 3] 1.050122e+02 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 3] 1.050085e+02 seconds. At src/reboot/threaded-mpi.c:106
+[classifier 1] 1.056628e+02 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 1] 1.056644e+02 seconds. At src/reboot/threaded-mpi.c:106
+[classifier 2] 1.043272e+02 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 2] 1.043314e+02 seconds. At src/reboot/threaded-mpi.c:106
+[m_receiver 1] 1.056804e+02 seconds. At src/reboot/threaded-mpi.c:155
+[./bin/reboot/tmpi] 1.057683e+02 seconds. At src/reboot/threaded-mpi.c:435
+[m_receiver 2] 1.043436e+02 seconds. At src/reboot/threaded-mpi.c:155
+[./bin/reboot/tmpi] 1.044318e+02 seconds. At src/reboot/threaded-mpi.c:435
+[detector 0] 1.058324e+02 seconds. At src/reboot/threaded-mpi.c:362
+[./bin/reboot/tmpi] 1.059334e+02 seconds. At src/reboot/threaded-mpi.c:435
+[m_receiver 3] 1.050232e+02 seconds. At src/reboot/threaded-mpi.c:155
+[./bin/reboot/tmpi] 1.051156e+02 seconds. At src/reboot/threaded-mpi.c:435
+Evaluate
+	title = Mfog-Reboot-tmi-n4
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/tmi-n4-matches.csv
+	plotSavePath = experiments/reboot/tmi-n4.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog-Reboot-tmi-n4
+
+saving experiments/reboot/tmi-n4.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-               10046    2967        -       0
+0                 127      40        A     127
+1                 191       0        A     191
+2                 936      99        A     936
+3                   0      54        N      54
+4                2705     157        A    2705
+5                   2       0        A       2
+6                   0       2        N       2
+7                   1       0        A       1
+N              433171  202959        N  202959
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('3', 167099), ('2', 167557), ('1', 221931), ('4', 265117), ('0', 420636), ('5', 500791), ('6', 596928), ('7', 609174)] 10
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               206977 ( 31.674109%)
+Misses             433467 ( 66.334332%)
+Unknowns            13013 (  1.991406%)
+Unk. reprocessed        1 (  0.007685%)
+Total              653457 ( 99.999847%)
+
