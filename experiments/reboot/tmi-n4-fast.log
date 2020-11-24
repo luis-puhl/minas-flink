@@ -1,0 +1,36 @@
+./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4, outputMode 0
+[classifier 3]
+[classifier 3]
+[sampler 0]
+Taking test stream from stdin
+sampler at 0/4
+[detector 0]
+[m_receiver 3]
+[classifier 2]
+[m_receiver 2]
+[classifier 1]
+[classifier 2]
+[classifier 1]
+[m_receiver 1]
+model complete
+model complete
+model incomplete 56, wait(modelReadySemaphore);
+model incomplete 56, wait(modelReadySemaphore);
+model incomplete 56, wait(modelReadySemaphore);
+model incomplete 56, wait(modelReadySemaphore);
+model complete
+model complete
+tmpi: Assert error. Out of order Exception. At src/reboot/threaded-mpi.c:279
+
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[50136,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------

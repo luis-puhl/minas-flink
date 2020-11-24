@@ -36,7 +36,7 @@ void minasOnline(PARAMS_ARG, Model *model) {
         identify(kParam, dim, precision, radiusF, model, &example, &match);
         printf("%10u,%s\n", example.id, printableLabel(match.label));
         //
-        if (match.label != UNK_LABEL) continue;
+        if (match.label != MINAS_UNK_LABEL) continue;
         unknowns[unknownsSize] = example;
         unknowns[unknownsSize].val = calloc(dim, sizeof(double));
         for (size_t d = 0; d < dim; d++) {

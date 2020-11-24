@@ -5,4 +5,5 @@ cat out/reboot/offline.csv datasets/test.csv \
 grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-matches.csv
 grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
 grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
-make: *** [makefile:149: experiments/rpi/tmi-rpi-n12.log] Error 1
+python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
+	experiments/rpi/tmi-rpi-n12.png >>experiments/rpi/tmi-rpi-n12.log

@@ -35,7 +35,7 @@ typedef struct t_example {
 
 typedef struct {
     unsigned int id, n_matches;
-    char label;
+    char label, isIntrest;
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
     // double *valAverage, *valStdDev;
@@ -67,7 +67,7 @@ typedef struct {
     char *labelStr;
 } Match;
 
-#define UNK_LABEL '-'
+#define MINAS_UNK_LABEL '-'
 
 char *printableLabel(char label);
 char fromPrintableLabel(char *label);

@@ -123,6 +123,12 @@ experiments/reboot/tmi-n4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/
 	-grep -E '^Cluster:' $(out)4.csv > $(out)4-clusters.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv $(out)4-matches.csv \
 		experiments/reboot/tmi-n4.png >>$@
+experiments/reboot/tmi-n4-fast.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/evaluation/evaluate.py
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi 0 > $(out)4-fastest.csv 2> $@
+	echo '' >> $@
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi 1 > $(out)4-fast.csv 2>> $@
+	echo '' >> $@
+	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi 2 > $(out)4.csv 2>> $@
 #
 .PHONY: experiments/reboot
 experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
@@ -154,9 +160,7 @@ experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi sr
 # experiments/rpi: experiments/rpi/base-time.log experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
 experiments/rpi/reboot.log: code@almoco
 	$(SSH) almoco "cd cloud && make experiments/rpi/tmi-rpi-n12.log" > $@ 2>&1
-	$(SSH) almoco "tar czf ~/cloud/out/logs.tgz ~/cloud/experiments/rpi" >> $@ 2>&1
-	scp almoco:~/cloud/out/logs.tgz out/logs.tgz
-	tar xzf out/logs.tgz experiments/
+	$(SSH) almoco "tar cz ~/cloud/experiments/{rpi/tmi-rpi-n12.{log,png},reboot/tmi-n4.{log,png}}" | tar xmzf - experiments/rpi
 
 # experiments/rpi
 	# ssh almoco "cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi \

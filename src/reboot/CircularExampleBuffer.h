@@ -12,8 +12,9 @@ typedef struct {
     sem_t fullSignal, emptySignal;
 } CircularExampleBuffer;
 
-#define isBufferFull(buff) (buff->head + 1) % buff->size == buff->tail
-#define isBufferEmpty(buff) buff->head == buff->tail
+#define isBufferFull(buff) ((buff->head + 1) % buff->size == buff->tail)
+#define isBufferEmpty(buff) (buff->head == buff->tail)
+#define bufferLength(buff) (buff->head > buff->tail ? buff->head - buff->tail : buff->head + buff->size - buff->tail)
 
 CircularExampleBuffer *CEB_init(CircularExampleBuffer *buff, int kParam, int dim);
 void CEB_destroy(CircularExampleBuffer *buff);
