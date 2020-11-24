@@ -144,3 +144,13 @@ Unknowns            16875 (  2.582415%)
 | Time    | 260.3630  | 105.3122  | _0.510325_  | 87.17293  | _0.422451_  |
 | Speedup |           | 2.472296657  |          | 2.986741412 |   |
 | Time*core | 260.36  | 421.2488    |           | 1046.07516 |   |
+
+## 2020-11-24 15:23
+
+- Focar nos requisitos da proposta: casos de interesse.
+- **Gráfico de speedup completo.**
+- Medir latência por item?
+- Uma análise de sistema de detecção de novidade em fluxo de dados;
+- Flags:
+  - De qualidade de classificação => stream completo;
+  - De quantiade/velocidade => **apenas contadores no final, métrica 'focal' do trabalho;**
