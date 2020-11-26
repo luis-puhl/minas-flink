@@ -30,7 +30,7 @@ typedef struct {
     // mpi stuff
     int mpiRank, mpiSize;
     char *mpiProcessorName;
-    CircularExampleBuffer *unkBuffer, *flightController;
+    CircularExampleBuffer *flightController;
     Model *model;
     pthread_mutex_t modelMutex;
     sem_t modelReadySemaphore;
@@ -60,9 +60,7 @@ void *classifier(void *arg) {
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         example->val = valuePtr;
         if (example->label == MFOG_EOS_MARKER) {
-            // fprintf(stderr, "[classifier %d] MFOG_EOS_MARKER\n", args->mpiRank);
-            // assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
-            example = CEB_enqueue(args->unkBuffer, example);
+            assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             break;
         }
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
@@ -77,34 +75,11 @@ void *classifier(void *arg) {
         pthread_mutex_unlock(&args->modelMutex);
         //
         example->label = match.label;
-        example = CEB_enqueue(args->unkBuffer, example);
+        assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
     }
     fprintf(stderr, "[classifier %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(buffer);
-    // free(example->val);
-    free(example);
-    return inputLine;
-}
-void *u_sender(void *arg) {
-    clock_t start = clock();
-    ThreadArgs *args = arg;
-    fprintf(stderr, "[u_sender %d]\n", args->mpiRank);
-    size_t *inputLine = calloc(1, sizeof(size_t));
-    Example *example = calloc(1, sizeof(Example));
-    example->val = calloc(args->dim, sizeof(double));
-    int mpiReturn;
-
-    while(1) {
-        example = CEB_dequeue(args->unkBuffer, example);
-        (*inputLine)++;
-        assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
-        if (example->label == MFOG_EOS_MARKER) {
-            // fprintf(stderr, "[u_sender %d] MFOG_EOS_MARKER\n", args->mpiRank);
-            break;
-        }
-    }
-    fprintf(stderr, "[u_sender %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
-    free(example->val); // don't free, last example (MFOG_EOS_MARKER) does not have a valid value
+    free(example->val);
     free(example);
     return inputLine;
 }
@@ -405,7 +380,6 @@ int main(int argc, char const *argv[]) {
             argv[0], PARAMS, args.mpiProcessorName, args.mpiRank, args.mpiSize);
         printf("#pointId,label\n");
         fflush(stdout);
-        // args.unkBuffer = CEB_init(calloc(1, sizeof(CircularExampleBuffer)), 1000, dim);
         args.flightController = calloc(args.mpiSize, sizeof(CircularExampleBuffer));
         for (size_t i = 0; i < args.mpiSize; i++) {
             CEB_init(&args.flightController[i], 1000, dim);
@@ -421,16 +395,12 @@ int main(int argc, char const *argv[]) {
         //
         CEB_destroy(args.flightController);
     } else {
-        args.unkBuffer = CEB_init(calloc(1, sizeof(CircularExampleBuffer)), 100, dim);
-        pthread_t classifier_t, u_sender_t, m_receiver_t;
+        pthread_t classifier_t, m_receiver_t;
         assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
-        assertErrno(pthread_create(&u_sender_t, NULL, u_sender, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_create(&m_receiver_t, NULL, m_receiver, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
         assertErrno(pthread_join(classifier_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        assertErrno(pthread_join(u_sender_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        CEB_destroy(args.unkBuffer);
     }
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(args.model);
