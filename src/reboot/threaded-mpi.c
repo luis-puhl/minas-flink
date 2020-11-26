@@ -162,13 +162,10 @@ void *sampler(void *arg) {
     while (!feof(stdin)) {
         getline(&lineptr, &n, stdin);
         (*inputLine)++;
-        int readCur = 0, readTot = 0, position = 0;
         if (lineptr[0] == 'C') {
             addClusterLine(args->kParam, args->dim, model, lineptr);
             Cluster *cl = &(model->clusters[model->size -1]);
             cl->n_matches = 0;
-            // printCluster(args->dim, cl);
-            // marker("MPI_Bcast");
             assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             assertMpi(MPI_Bcast(cl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             if (model->size >= args->kParam) {
@@ -176,6 +173,7 @@ void *sampler(void *arg) {
             }
             continue;
         }
+        int readCur = 0, readTot = 0, position = 0;
         for (size_t d = 0; d < args->dim; d++) {
             assert(sscanf(&lineptr[readTot], "%lf,%n", &example->val[d], &readCur));
             readTot += readCur;
@@ -195,17 +193,13 @@ void *sampler(void *arg) {
         assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         //
-        // fprintf(stderr, "[sampler] push %d, %d\n", dest, example->id);
         example = CEB_enqueue(fc, example);
-        // fprintf(stderr, "Sending to %d ex=%d buffer size=%d\n", dest, example->id, inFlightLen[dest]);
-        //
     }
     example->label = MFOG_EOS_MARKER;
     int position = 0;
     assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     for (dest = 1; dest < args->mpiSize; dest++) {
-        // fprintf(stderr, "[sampler %d] MFOG_EOS_MARKER to %d\n", args->mpiRank, dest);
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
     }
     fprintf(stderr, "[sampler %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
@@ -401,8 +395,8 @@ int main(int argc, char const *argv[]) {
         free(args.flightController);
         //
         char *labels = calloc(args.model->size, sizeof(char));
-        int *matchesGlob = calloc(args.model->size, sizeof(int));
-        int mpiReturn, nLabels;
+        unsigned long int *matchesGlob = calloc(args.model->size, sizeof(int)), globTotMatches = 0;
+        int mpiReturn, nLabels = 0;
         char stats[16 * args.model->size + 37], label[20];
         for (size_t i = 0; i < args.model->size; i++) {
             Cluster *cl = &(args.model->clusters[i]);
@@ -414,7 +408,7 @@ int main(int argc, char const *argv[]) {
         }
         Cluster *remoteCl = calloc(1, sizeof(Cluster)), *swp;
         for (int src = 0; src < args.mpiSize; src++) {
-            int *matches = calloc(args.model->size, sizeof(int));
+            unsigned long int *matches = calloc(args.model->size, sizeof(int)), totMatches = 0;
             if (src == MFOG_RANK_MAIN) {
                 swp = remoteCl;
             }
@@ -430,7 +424,9 @@ int main(int argc, char const *argv[]) {
                 for (; labels[j] != remoteCl->label && labels[j] != '\0'; j++);
                 if (labels[j] == '\0') nLabels++;
                 labels[j] = remoteCl->label;
+                totMatches += remoteCl->n_matches;
                 matches[j] += remoteCl->n_matches;
+                globTotMatches += remoteCl->n_matches;
                 matchesGlob[j] += remoteCl->n_matches;
                 // 
                 Cluster *cl = &(args.model->clusters[i]);
@@ -440,10 +436,10 @@ int main(int argc, char const *argv[]) {
             if (src == MFOG_RANK_MAIN) {
                 remoteCl = swp;
             }
-            int statsIdx = sprintf(stats, "[classifier %3d] Model Statistics: ", src);
+            int statsIdx = sprintf(stats, "[classifier %3d] Statistics: %10lu items, ", src, totMatches);
             for (size_t j = 0; labels[j] != '\0'; j++) {
                 printableLabelReuse(labels[j], label);
-                statsIdx += sprintf(&stats[statsIdx], " '%.4s': %6d", label, matches[j]);
+                statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matches[j]);
             }
             statsIdx += sprintf(&stats[statsIdx], "\n");
             fprintf(stderr, "%s", stats);
@@ -451,10 +447,10 @@ int main(int argc, char const *argv[]) {
         }
         free(remoteCl);
         //
-        int statsIdx = sprintf(stats, "[root aggregate] Model Statistics: ");
+        int statsIdx = sprintf(stats, "[root aggregate] Statistics: %10lu items, ", globTotMatches);
         for (size_t j = 0; labels[j] != '\0'; j++) {
             printableLabelReuse(labels[j], label);
-            statsIdx += sprintf(&stats[statsIdx], " '%.4s': %6d", label, matchesGlob[j]);
+            statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matchesGlob[j]);
         }
         statsIdx += sprintf(&stats[statsIdx], "\n");
         fprintf(stderr, "%s", stats);
