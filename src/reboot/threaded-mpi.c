@@ -166,6 +166,7 @@ void *sampler(void *arg) {
             addClusterLine(args->kParam, args->dim, model, lineptr);
             Cluster *cl = &(model->clusters[model->size -1]);
             cl->n_matches = 0;
+            cl->n_misses = 0;
             assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             assertMpi(MPI_Bcast(cl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             if (model->size >= args->kParam) {
@@ -287,6 +288,7 @@ void *detector(void *arg) {
             for (size_t k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
                 newCl->n_matches = 0;
+                newCl->n_misses = 0;
                 printCluster(dim, newCl);
                 assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -394,68 +396,21 @@ int main(int argc, char const *argv[]) {
         }
         free(args.flightController);
         //
-        char *labels = calloc(args.model->size, sizeof(char));
-        unsigned long int *matchesGlob = calloc(args.model->size, sizeof(int)), globTotMatches = 0;
-        int mpiReturn, nLabels = 0;
-        char stats[16 * args.model->size + 37], label[20];
-        for (size_t i = 0; i < args.model->size; i++) {
-            Cluster *cl = &(args.model->clusters[i]);
-            size_t j = 0;
-            for (; labels[j] != cl->label && labels[j] != '\0'; j++);
-            if (labels[j] == '\0') nLabels++;
-            labels[j] = cl->label;
-            matchesGlob[j] += cl->n_matches;
-        }
-        Cluster *remoteCl = calloc(1, sizeof(Cluster)), *swp;
-        for (int src = 0; src < args.mpiSize; src++) {
-            unsigned long int *matches = calloc(args.model->size, sizeof(int)), totMatches = 0;
-            if (src == MFOG_RANK_MAIN) {
-                swp = remoteCl;
-            }
+        char *stats = calloc(args.model->size * 20, sizeof(char));
+        fprintf(stderr, "[classifier %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
+        Cluster remoteCl;
+        #define MFOG_TAG_CLUSTER_STATS 3000
+        for (int src = 1; src < args.mpiSize; src++) {
             for (size_t i = 0; i < args.model->size; i++) {
-                #define MFOG_TAG_CLUSTER_STATS 3000
-                if (src == MFOG_RANK_MAIN) {
-                    remoteCl = &(args.model->clusters[i]);
-                } else {
-                    assertMpi(MPI_Recv(remoteCl, sizeof(Cluster), MPI_BYTE, src, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-                }
-                //
-                size_t j = 0;
-                for (; labels[j] != remoteCl->label && labels[j] != '\0'; j++);
-                if (labels[j] == '\0') nLabels++;
-                labels[j] = remoteCl->label;
-                totMatches += remoteCl->n_matches;
-                matches[j] += remoteCl->n_matches;
-                globTotMatches += remoteCl->n_matches;
-                matchesGlob[j] += remoteCl->n_matches;
-                // 
-                Cluster *cl = &(args.model->clusters[i]);
-                assert(remoteCl->id == i && cl->id == i);
-                cl->n_matches += remoteCl->n_matches;
+                assertMpi(MPI_Recv(&remoteCl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+                Cluster *cl = &(args.model->clusters[remoteCl.id]);
+                assert(cl != NULL && remoteCl.id == cl->id);
+                cl->n_matches += remoteCl.n_matches;
+                cl->n_misses += remoteCl.n_misses;
             }
-            if (src == MFOG_RANK_MAIN) {
-                remoteCl = swp;
-            }
-            int statsIdx = sprintf(stats, "[classifier %3d] Statistics: %10lu items, ", src, totMatches);
-            for (size_t j = 0; labels[j] != '\0'; j++) {
-                printableLabelReuse(labels[j], label);
-                statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matches[j]);
-            }
-            statsIdx += sprintf(&stats[statsIdx], "\n");
-            fprintf(stderr, "%s", stats);
-            free(matches);
         }
-        free(remoteCl);
-        //
-        int statsIdx = sprintf(stats, "[root aggregate] Statistics: %10lu items, ", globTotMatches);
-        for (size_t j = 0; labels[j] != '\0'; j++) {
-            printableLabelReuse(labels[j], label);
-            statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matchesGlob[j]);
-        }
-        statsIdx += sprintf(&stats[statsIdx], "\n");
-        fprintf(stderr, "%s", stats);
-        free(matchesGlob);
-        free(labels);
+        fprintf(stderr, "[root aggregate] Statistics: %s\n", labelMatchStatistics(args.model, stats));
+        free(stats);
     } else {
         pthread_t classifier_t, m_receiver_t;
         assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
@@ -464,11 +419,14 @@ int main(int argc, char const *argv[]) {
         assertErrno(pthread_join(classifier_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         //
-        int mpiReturn;//, nLabels;
+        int mpiReturn;
         for (size_t i = 0; i < args.model->size; i++) {
             Cluster *cl = &(args.model->clusters[i]);
             assertMpi(MPI_Send(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD));
         }
+        char *stats = calloc(args.model->size * 20, sizeof(char));
+        fprintf(stderr, "[classifier %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
+        free(stats);
     }
     fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(args.model);

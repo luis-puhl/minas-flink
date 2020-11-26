@@ -34,7 +34,7 @@ typedef struct t_example {
 } Example;
 
 typedef struct {
-    unsigned int id, n_matches;
+    unsigned int id, n_matches, n_misses;
     char label;
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
@@ -82,5 +82,6 @@ void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknow
 
 int addClusterLine(int kParam, int dim, Model *model, char line[]);
 int printCluster(int dim, Cluster *cl);
+char *labelMatchStatistics(Model *model, char *stats);
 
 #endif // _BASE_H
