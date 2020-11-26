@@ -8,14 +8,20 @@
 
 #include "./base.h"
 
-char *printableLabel(char label) {
-    char *ret = calloc(20, sizeof(char));
+char *printableLabelReuse(char label, char *ret) {
     if (isalpha(label) || label == '-') {
         ret[0] = label;
+        ret[1] = '\0';
     } else {
         sprintf(ret, "%d", label);
     }
     return ret;
+}
+/**
+ * DON'T FORGET TO FREE
+ */
+char *printableLabel(char label) {
+    return printableLabelReuse(label, calloc(20, sizeof(char)));
 }
 
 char fromPrintableLabel(char *label) {

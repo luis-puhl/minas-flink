@@ -100,7 +100,7 @@ CircularExampleBuffer *CEB_init(CircularExampleBuffer *buff, int bufferSize, int
     return buff;
 }
 
-void CEB_destroy(CircularExampleBuffer *buff) {
+CircularExampleBuffer *CEB_destroy(CircularExampleBuffer *buff) {
     pthread_mutex_destroy(&buff->mutex);
     sem_destroy(&buff->emptySignal);
     sem_destroy(&buff->fullSignal);
@@ -109,7 +109,7 @@ void CEB_destroy(CircularExampleBuffer *buff) {
         free(buff->data[i]);
     }
     free(buff->data);
-    free(buff);
+    return buff;
 }
 
 #endif // _CEB_C

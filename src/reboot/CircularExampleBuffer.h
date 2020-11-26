@@ -16,7 +16,7 @@ typedef struct {
 #define isBufferEmpty(buff) buff->head == buff->tail
 
 CircularExampleBuffer *CEB_init(CircularExampleBuffer *buff, int kParam, int dim);
-void CEB_destroy(CircularExampleBuffer *buff);
+CircularExampleBuffer *CEB_destroy(CircularExampleBuffer *buff);
 
 Example *CEB_enqueue(CircularExampleBuffer *buff, Example *ex);
 Example *CEB_dequeue(CircularExampleBuffer *buff, Example *ex);

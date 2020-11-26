@@ -166,6 +166,7 @@ void *sampler(void *arg) {
         if (lineptr[0] == 'C') {
             addClusterLine(args->kParam, args->dim, model, lineptr);
             Cluster *cl = &(model->clusters[model->size -1]);
+            cl->n_matches = 0;
             // printCluster(args->dim, cl);
             // marker("MPI_Bcast");
             assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -242,6 +243,7 @@ void *detector(void *arg) {
     int mpiReturn;
     MPI_Status st;
     //
+    char label[20];
     while (streams > 0) {
         valuePtr = example->val;
         assertMpi(MPI_Recv(example, sizeof(Example), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
@@ -260,7 +262,7 @@ void *detector(void *arg) {
         assertMsg(example->id == copy.id, "Out of order Exception%c", '.');
         //
         id = example->id > id ? example->id : id;
-        printf("%10u,%s\n", example->id, printableLabel(example->label));
+        printf("%10u,%s\n", example->id, printableLabelReuse(example->label, label));
         fflush(stdout);
         if (example->label != MINAS_UNK_LABEL) continue;
         printf("Unknown: %10u", example->id);
@@ -290,6 +292,7 @@ void *detector(void *arg) {
             //
             for (size_t k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
+                newCl->n_matches = 0;
                 printCluster(dim, newCl);
                 assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -386,14 +389,77 @@ int main(int argc, char const *argv[]) {
         }
 
         pthread_t detector_t, sampler_t;
-        int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
         assertErrno(pthread_create(&sampler_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_create(&detector_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
         assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         //
-        CEB_destroy(args.flightController);
+        for (size_t i = 0; i < args.mpiSize; i++) {
+            CEB_destroy(&args.flightController[i]);
+        }
+        free(args.flightController);
+        //
+        char *labels = calloc(args.model->size, sizeof(char));
+        int *matchesGlob = calloc(args.model->size, sizeof(int));
+        int mpiReturn, nLabels;
+        char stats[16 * args.model->size + 37], label[20];
+        for (size_t i = 0; i < args.model->size; i++) {
+            Cluster *cl = &(args.model->clusters[i]);
+            size_t j = 0;
+            for (; labels[j] != cl->label && labels[j] != '\0'; j++);
+            if (labels[j] == '\0') nLabels++;
+            labels[j] = cl->label;
+            matchesGlob[j] += cl->n_matches;
+        }
+        Cluster *remoteCl = calloc(1, sizeof(Cluster)), *swp;
+        for (int src = 0; src < args.mpiSize; src++) {
+            int *matches = calloc(args.model->size, sizeof(int));
+            if (src == MFOG_RANK_MAIN) {
+                swp = remoteCl;
+            }
+            for (size_t i = 0; i < args.model->size; i++) {
+                #define MFOG_TAG_CLUSTER_STATS 3000
+                if (src == MFOG_RANK_MAIN) {
+                    remoteCl = &(args.model->clusters[i]);
+                } else {
+                    assertMpi(MPI_Recv(remoteCl, sizeof(Cluster), MPI_BYTE, src, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+                }
+                //
+                size_t j = 0;
+                for (; labels[j] != remoteCl->label && labels[j] != '\0'; j++);
+                if (labels[j] == '\0') nLabels++;
+                labels[j] = remoteCl->label;
+                matches[j] += remoteCl->n_matches;
+                matchesGlob[j] += remoteCl->n_matches;
+                // 
+                Cluster *cl = &(args.model->clusters[i]);
+                assert(remoteCl->id == i && cl->id == i);
+                cl->n_matches += remoteCl->n_matches;
+            }
+            if (src == MFOG_RANK_MAIN) {
+                remoteCl = swp;
+            }
+            int statsIdx = sprintf(stats, "[classifier %3d] Model Statistics: ", src);
+            for (size_t j = 0; labels[j] != '\0'; j++) {
+                printableLabelReuse(labels[j], label);
+                statsIdx += sprintf(&stats[statsIdx], " '%.4s': %6d", label, matches[j]);
+            }
+            statsIdx += sprintf(&stats[statsIdx], "\n");
+            fprintf(stderr, "%s", stats);
+            free(matches);
+        }
+        free(remoteCl);
+        //
+        int statsIdx = sprintf(stats, "[root aggregate] Model Statistics: ");
+        for (size_t j = 0; labels[j] != '\0'; j++) {
+            printableLabelReuse(labels[j], label);
+            statsIdx += sprintf(&stats[statsIdx], " '%.4s': %6d", label, matchesGlob[j]);
+        }
+        statsIdx += sprintf(&stats[statsIdx], "\n");
+        fprintf(stderr, "%s", stats);
+        free(matchesGlob);
+        free(labels);
     } else {
         pthread_t classifier_t, m_receiver_t;
         assertErrno(pthread_create(&classifier_t, NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
@@ -401,8 +467,14 @@ int main(int argc, char const *argv[]) {
         //
         assertErrno(pthread_join(classifier_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
+        //
+        int mpiReturn;//, nLabels;
+        for (size_t i = 0; i < args.model->size; i++) {
+            Cluster *cl = &(args.model->clusters[i]);
+            assertMpi(MPI_Send(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD));
+        }
     }
-    fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(args.model);
     sem_destroy(&args.modelReadySemaphore);
     return MPI_Finalize();

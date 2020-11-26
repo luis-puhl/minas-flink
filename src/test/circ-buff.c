@@ -86,6 +86,6 @@ int main(int argc, char const *argv[]) {
     for (size_t i = 0; i < nConsumers; i++)
         pthread_join(consumer_t[i], NULL);
     //
-    CEB_destroy(buff);
+    free(CEB_destroy(buff));
     return 0;
 }

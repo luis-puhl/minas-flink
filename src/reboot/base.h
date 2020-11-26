@@ -70,6 +70,7 @@ typedef struct {
 #define MINAS_UNK_LABEL '-'
 
 char *printableLabel(char label);
+char *printableLabelReuse(char label, char *ret);
 char fromPrintableLabel(char *label);
 double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest);
 Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
