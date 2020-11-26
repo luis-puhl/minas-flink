@@ -1,67 +1,67 @@
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 	Hello from pokebola, rank 0/4
-[sampler 0]
 [u_sender 3]
+[classifier 3]
+[u_sender 1]
+[u_sender 2]
+[classifier 2]
+[sampler 0]
 Taking test stream from stdin
 sampler at 0/4
+[m_receiver 2]
 [detector 0]
 [classifier 1]
-[classifier 3]
+model complete
+model complete
+model incomplete 0, wait(modelReadySemaphore);
+model incomplete 0, wait(modelReadySemaphore);
 [m_receiver 1]
-[m_receiver 2]
-model complete
-[classifier 2]
-model incomplete 0, wait(modelReadySemaphore);
 [m_receiver 3]
-model incomplete 0, wait(modelReadySemaphore);
-[u_sender 1]
-model complete
-[u_sender 2]
 model complete
 model complete
 [detector 4] realloc unknowns to 4000 src/reboot/threaded-mpi.c:303
-ND clusters (19, 81755): 22 extensions, 1 novelties
-[m_receiver 3] realloc model 100
-[m_receiver 1] realloc model 100
-ND consumed 1844, reclassified 0, discarted 0
-ND time(nd=4.613090e-01, bcast=6.821000e-03, compress=1.300700e-02, tot=4.811520e-01)
+ND clusters (19, 82123): 22 extensions, 1 novelties
 [m_receiver 2] realloc model 100
-ND clusters (19, 163455): 14 extensions, 3 novelties
-ND consumed 1814, reclassified 7, discarted 95
-ND time(nd=5.045040e-01, bcast=1.000000e-04, compress=1.086200e-02, tot=5.154820e-01)
-ND clusters (82323, 200035): 6 extensions, 0 novelties
-ND consumed 1847, reclassified 43, discarted 65
-ND time(nd=2.220210e-01, bcast=1.600000e-05, compress=6.083000e-03, tot=2.281380e-01)
-ND clusters (166236, 281310): 18 extensions, 0 novelties
-ND consumed 1773, reclassified 52, discarted 36
-ND time(nd=3.842540e-01, bcast=9.200000e-05, compress=1.291600e-02, tot=3.972880e-01)
-ND clusters (200291, 354613): 11 extensions, 0 novelties
-ND consumed 1785, reclassified 48, discarted 104
-ND time(nd=4.610750e-01, bcast=2.600000e-05, compress=3.655100e-02, tot=4.976690e-01)
-ND clusters (282386, 490469): 17 extensions, 1 novelties
-ND consumed 1795, reclassified 81, discarted 42
-ND time(nd=3.425190e-01, bcast=4.800000e-05, compress=2.018700e-02, tot=3.627770e-01)
-ND clusters (357215, 595268): 20 extensions, 0 novelties
+[m_receiver 1] realloc model 100
+[m_receiver 3] realloc model 100
+ND consumed 1843, reclassified 0, discarted 0
+ND time(nd=4.364380e-01, bcast=3.894000e-03, compress=9.492000e-03, tot=4.498460e-01)
+ND clusters (19, 163365): 13 extensions, 3 novelties
+ND consumed 1772, reclassified 7, discarted 123
+ND time(nd=4.574180e-01, bcast=3.899000e-03, compress=1.341200e-02, tot=4.747480e-01)
+ND clusters (82323, 199366): 7 extensions, 0 novelties
+ND consumed 1813, reclassified 43, discarted 98
+ND time(nd=2.779680e-01, bcast=1.900000e-04, compress=1.115200e-02, tot=2.893360e-01)
+ND clusters (166236, 286937): 17 extensions, 1 novelties
+ND consumed 1790, reclassified 60, discarted 33
+ND time(nd=8.173910e-01, bcast=2.369000e-03, compress=4.858000e-03, tot=8.246270e-01)
+ND clusters (199462, 395866): 14 extensions, 2 novelties
+ND consumed 1839, reclassified 50, discarted 68
+ND time(nd=4.166510e-01, bcast=3.640000e-04, compress=7.760000e-03, tot=4.247890e-01)
+ND clusters (289102, 567808): 20 extensions, 3 novelties
+[m_receiver 2] realloc model 200
+ND consumed 1800, reclassified 27, discarted 31
+ND time(nd=3.797000e-01, bcast=4.158000e-03, compress=1.614200e-02, tot=4.000160e-01)
 [m_receiver 1] realloc model 200
 [m_receiver 3] realloc model 200
-ND consumed 1763, reclassified 51, discarted 64
-ND time(nd=3.618580e-01, bcast=3.486000e-03, compress=1.118000e-02, tot=3.765430e-01)
-[m_receiver 2] realloc model 200
-[sampler 0] 3.771173e+01 seconds. At src/reboot/threaded-mpi.c:235
-[classifier 2] 4.011472e+01 seconds. At src/reboot/threaded-mpi.c:82
-[u_sender 2] 4.014469e+01 seconds. At src/reboot/threaded-mpi.c:106
-[classifier 3] 4.007306e+01 seconds. At src/reboot/threaded-mpi.c:82
-[u_sender 3] 4.007653e+01 seconds. At src/reboot/threaded-mpi.c:106
-[m_receiver 2] 4.015988e+01 seconds. At src/reboot/threaded-mpi.c:155
-[detector 0] 3.772272e+01 seconds. At src/reboot/threaded-mpi.c:362
-[u_sender 1] 4.006538e+01 seconds. At src/reboot/threaded-mpi.c:106
-[m_receiver 1] 4.006916e+01 seconds. At src/reboot/threaded-mpi.c:155
-[m_receiver 3] 4.008037e+01 seconds. At src/reboot/threaded-mpi.c:155
-[./bin/reboot/tmpi] 4.010690e+01 seconds. At src/reboot/threaded-mpi.c:435
-[./bin/reboot/tmpi] 4.018226e+01 seconds. At src/reboot/threaded-mpi.c:435
-[classifier 1] 4.006705e+01 seconds. At src/reboot/threaded-mpi.c:82
-[./bin/reboot/tmpi] 4.009288e+01 seconds. At src/reboot/threaded-mpi.c:435
-[./bin/reboot/tmpi] 3.774833e+01 seconds. At src/reboot/threaded-mpi.c:435
+ND clusters (399696, 583747): 7 extensions, 0 novelties
+ND consumed 1788, reclassified 45, discarted 133
+ND time(nd=3.514340e-01, bcast=4.200000e-04, compress=8.633000e-03, tot=3.605040e-01)
+[classifier 3] 2.180680e+01 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 3] 2.180689e+01 seconds. At src/reboot/threaded-mpi.c:106
+[sampler 0] 2.101582e+01 seconds. At src/reboot/threaded-mpi.c:235
+[classifier 1] 2.151184e+01 seconds. At src/reboot/threaded-mpi.c:82
+[classifier 2] 2.157924e+01 seconds. At src/reboot/threaded-mpi.c:82
+[u_sender 2] 2.157930e+01 seconds. At src/reboot/threaded-mpi.c:106
+[u_sender 1] 2.151527e+01 seconds. At src/reboot/threaded-mpi.c:106
+[detector 0] 2.102041e+01 seconds. At src/reboot/threaded-mpi.c:362
+[m_receiver 2] 2.158285e+01 seconds. At src/reboot/threaded-mpi.c:155
+[m_receiver 1] 2.151373e+01 seconds. At src/reboot/threaded-mpi.c:155
+[m_receiver 3] 2.180967e+01 seconds. At src/reboot/threaded-mpi.c:155
+[./bin/reboot/tmpi] 2.154142e+01 seconds. At src/reboot/threaded-mpi.c:435
+[./bin/reboot/tmpi] 2.160581e+01 seconds. At src/reboot/threaded-mpi.c:435
+[./bin/reboot/tmpi] 2.183694e+01 seconds. At src/reboot/threaded-mpi.c:435
+[./bin/reboot/tmpi] 2.104834e+01 seconds. At src/reboot/threaded-mpi.c:435
 Evaluate
 	title = Mfog-Reboot-tmi-n4
 	examplesFileName = datasets/test.csv
@@ -79,21 +79,26 @@ saving experiments/reboot/tmi-n4.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--               11513    3071        -       0
-0                 113      40        A     113
-1                 198       0        A     198
-2                   0      43        N      43
-3                1235      78        A    1235
-4                   0       8        N       8
-N              434120  203038        N  203038
+-               11683    3143        -       0
+0                 125      40        A     125
+1                 235       1        A     235
+2                   0      48        N      48
+3                 779      22        A     779
+4                 301      48        A     301
+5                 112       1        A     112
+6                  16       0        A      16
+7                   0       2        N       2
+8                   5      13        N      13
+9                   7       0        A       7
+N              433916  202960        N  202960
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19), ('3', 166440), ('2', 167099), ('1', 221931), ('0', 420636), ('4', 506566)] 7
+Labels (item)     [('N', 0), ('-', 19), ('3', 165083), ('2', 167099), ('1', 217774), ('4', 291262), ('5', 397776), ('6', 408474), ('0', 420636), ('9', 576663), ('8', 580413), ('7', 596928)] 12
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               204635 ( 31.315708%)
-Misses             434238 ( 66.452320%)
-Unknowns            14584 (  2.231819%)
-Unk. reprocessed        1 (  0.006857%)
+Hits               204598 ( 31.310046%)
+Misses             434033 ( 66.420948%)
+Unknowns            14826 (  2.268853%)
+Unk. reprocessed        1 (  0.006745%)
 Total              653457 ( 99.999847%)
 

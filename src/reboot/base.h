@@ -67,7 +67,7 @@ typedef struct {
     char *labelStr;
 } Match;
 
-#define UNK_LABEL '-'
+#define MINAS_UNK_LABEL '-'
 
 char *printableLabel(char label);
 char fromPrintableLabel(char *label);

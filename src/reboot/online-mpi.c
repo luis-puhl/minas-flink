@@ -119,7 +119,7 @@ int main(int argc, char const *argv[]) {
         identify(kParam, dim, precision, radiusF, model, &example, &match);
         printf("%10u,%s\n", example.id, printableLabel(match.label));
         //
-        if (match.label != UNK_LABEL) continue;
+        if (match.label != MINAS_UNK_LABEL) continue;
         printf("Unknown: %10u", example.id);
         for (unsigned int d = 0; d < dim; d++)
             printf(", %le", example.val[d]);

@@ -287,7 +287,7 @@ void *detector(void *arg) {
         id = example->id > id ? example->id : id;
         printf("%10u,%s\n", example->id, printableLabel(example->label));
         fflush(stdout);
-        if (example->label != UNK_LABEL) continue;
+        if (example->label != MINAS_UNK_LABEL) continue;
         printf("Unknown: %10u", example->id);
         for (unsigned int d = 0; d < args->dim; d++)
             printf(", %le", example->val[d]);
