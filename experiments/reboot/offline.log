@@ -2,4 +2,4 @@
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/reboot/offline] 2.312511e+01 seconds. At src/reboot/offline.c:33
+[./bin/reboot/offline] 2.641501e+01 seconds. At src/reboot/offline.c:33

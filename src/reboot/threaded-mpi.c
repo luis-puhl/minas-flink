@@ -24,17 +24,31 @@
 #define MFOG_TAG_UNKNOWN 2005
 #define MFOG_EOS_MARKER '\127'
 
+#define EMPTY_KEY 0
+#define SAMPLER_KEY -1
+#define DETECTOR_KEY -2
+
+typedef struct {
+    size_t size, free;
+    Example *values;
+    int *keys, *inFlight;
+    pthread_mutex_t mutex;
+    sem_t fullSignal, emptySignal;
+} BigBadBuff;
+
 typedef struct {
     int kParam, dim, minExamplesPerCluster;
     double precision, radiusF, noveltyF;
     // mpi stuff
     int mpiRank, mpiSize;
     char *mpiProcessorName;
-    CircularExampleBuffer *flightController;
     Model *model;
-    pthread_mutex_t modelMutex;
+    pthread_mutex_t modelMutex, bigBadBuffMutex;
     sem_t modelReadySemaphore;
+    //
+    BigBadBuff bigBadBuff;
 } ThreadArgs;
+
 
 void *classifier(void *arg) {
     clock_t start = clock();
@@ -54,16 +68,20 @@ void *classifier(void *arg) {
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
     // MPI_Buffer_attach(buffer, bufferSize);
+    clock_t ioTime = 0, cpuTime = 0;
     while (1) {
+        clock_t l0 = clock();
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         example->val = valuePtr;
         if (example->label == MFOG_EOS_MARKER) {
-            assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+            match.label = example->label;
+            assertMpi(MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             break;
         }
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        clock_t l2 = clock();
         (*inputLine)++;
         //
         while (model->size < args->kParam) {
@@ -73,10 +91,16 @@ void *classifier(void *arg) {
         pthread_mutex_lock(&args->modelMutex);
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, example, &match);
         pthread_mutex_unlock(&args->modelMutex);
+        clock_t l3 = clock();
         //
         example->label = match.label;
-        assertMpi(MPI_Send(example, sizeof(Example), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        assertMpi(MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        clock_t l4 = clock();
+        ioTime += (l2 - l0) + (l4- l3);
+        cpuTime += (l3 - l2);
+        // if ((ioTime + cpuTime) > 1000000) break;
     }
+    fprintf(stderr, "[classifier %d] ioTime %le, cpuTime %le seconds.\n", args->mpiRank, ((double)ioTime) / 1000000.0, ((double)cpuTime) / 1000000.0);
     fprintf(stderr, "[classifier %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(buffer);
     free(example->val);
@@ -142,8 +166,7 @@ void *sampler(void *arg) {
     ThreadArgs *args = arg;
     fprintf(stderr, "[sampler %d]\n", args->mpiRank);
     unsigned int id = 0;
-    Example *example = calloc(1, sizeof(Example));
-    example->val = calloc(args->dim, sizeof(double));
+    Example *example;
     Model *model = args->model;
     char *lineptr = NULL;
     size_t n = 0;
@@ -159,7 +182,9 @@ void *sampler(void *arg) {
     //
     fprintf(stderr, "Taking test stream from stdin\n");
     fprintf(stderr, "sampler at %d/%d\n", args->mpiRank, args->mpiSize);
+    clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     while (!feof(stdin)) {
+        clock_t t0 = clock();
         getline(&lineptr, &n, stdin);
         (*inputLine)++;
         if (lineptr[0] == 'C') {
@@ -174,6 +199,56 @@ void *sampler(void *arg) {
             }
             continue;
         }
+        // find space in buff
+        clock_t t2 = clock();
+        pthread_mutex_lock(&args->bigBadBuff.mutex);
+        while (args->bigBadBuff.free == 0) {
+            pthread_mutex_unlock(&args->bigBadBuff.mutex);
+            sem_post(&args->bigBadBuff.fullSignal);
+            // if ((ioTime + cpuTime + lockTime) > 1000000 && (ioTime + cpuTime + lockTime) < 1500000)
+            // marker("[sampler] buff is full wait(emptySignal)");
+            sem_wait(&args->bigBadBuff.emptySignal);
+            //
+            pthread_mutex_lock(&args->bigBadBuff.mutex);
+        }
+        size_t index = 0;
+        for (; index < args->bigBadBuff.size; index++) {
+            if (args->bigBadBuff.keys[index] == EMPTY_KEY) break;
+        }
+        assert(index != args->bigBadBuff.size);
+        args->bigBadBuff.free--;
+        example = &args->bigBadBuff.values[index];
+        // args->bigBadBuff.keys[index] = SAMPLER_KEY;
+        int prevDest = dest;
+        do {
+            dest = (dest + 1) % args->mpiSize;
+            if (dest == MFOG_RANK_MAIN)
+                dest = (dest + 1) % args->mpiSize;
+            // while dest is root or dest has a full buffer
+            if (prevDest == dest) {
+                pthread_mutex_unlock(&args->bigBadBuff.mutex);
+                sem_post(&args->bigBadBuff.fullSignal);
+                marker("[sampler] all dests are full wait(emptySignal)");
+                sem_wait(&args->bigBadBuff.emptySignal);
+                //
+                pthread_mutex_lock(&args->bigBadBuff.mutex);
+            }
+            // if (args->bigBadBuff.inFlight[dest]  > 0 && args->bigBadBuff.inFlight[dest] % args->kParam == 0) {
+            //     fprintf(stderr, "[sampler] dest %d is %d\n", dest, args->bigBadBuff.inFlight[dest]);
+            // }
+            if (args->bigBadBuff.inFlight[dest] >= (args->bigBadBuff.size / args->mpiSize)) {
+                // fprintf(stderr, "[sampler] dest %d is full\n", dest);
+                continue;
+            } else {
+                break;
+            }
+        } while (dest == MFOG_RANK_MAIN);
+        args->bigBadBuff.keys[index] = dest;
+        args->bigBadBuff.inFlight[dest]++;
+        pthread_mutex_unlock(&args->bigBadBuff.mutex);
+        sem_post(&args->bigBadBuff.fullSignal);
+        clock_t t3 = clock();
+        // read example
         int readCur = 0, readTot = 0, position = 0;
         for (size_t d = 0; d < args->dim; d++) {
             assert(sscanf(&lineptr[readTot], "%lf,%n", &example->val[d], &readCur));
@@ -182,20 +257,19 @@ void *sampler(void *arg) {
         // ignore class
         example->id = id;
         id++;
-        //
-        CircularExampleBuffer *fc;
-        do {
-            dest = (dest + 1) % args->mpiSize;
-            fc = &args->flightController[dest];
-            // while dest is root or dest has a full buffer
-        } while (dest == MFOG_RANK_MAIN || isBufferFull(fc));
+        clock_t t4 = clock();
         //
         assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
-        //
-        example = CEB_enqueue(fc, example);
+        clock_t t5 = clock();
+        // fprintf(stderr, "[sampler] send %d to %d"" "__FILE__":%d\n", example->id, dest, __LINE__);
+        ioTime += (t2 - t0) + (t5 - t4);
+        cpuTime += (t4 - t3);
+        lockTime += (t3 - t2);
+        if ((ioTime + cpuTime + lockTime) > 20 * 1000000) break;
     }
+    fprintf(stderr, "[sampler] ioTime %le, cpuTime %le, lockTime %le\n", ((double)ioTime) / 1000000.0, ((double)cpuTime) / 1000000.0, ((double)lockTime) / 1000000.0);
     example->label = MFOG_EOS_MARKER;
     int position = 0;
     assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -221,17 +295,14 @@ void *detector(void *arg) {
     size_t *inputLine = calloc(1, sizeof(size_t));
     (*inputLine) = 0;
     int streams = args->mpiSize - 1;
-    int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
-    double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
-    Example *example = calloc(1, sizeof(Example));
-    example->val = calloc(args->dim, sizeof(double));
-    double *valuePtr = example->val;
-    Example *ex = calloc(1, sizeof(Example));
-    ex->val = calloc(args->dim, sizeof(double));
+    Example *example;
+    Match remoteMatch;
     //
     size_t noveltyDetectionTrigger = args->minExamplesPerCluster * args->kParam;
-    size_t unknownsMaxSize = args->minExamplesPerCluster * args->kParam;
-    Example *unknowns = calloc(unknownsMaxSize, sizeof(Example));
+    Example *unknowns = calloc(noveltyDetectionTrigger * 2, sizeof(Example));
+    for (size_t i = 0; i < noveltyDetectionTrigger * 2; i++) {
+        unknowns[i].val = calloc(args->dim, sizeof(double));
+    }
     size_t unknownsSize = 0, lastNDCheck = 0, id = 0;
     //
     Model *model = args->model;
@@ -239,97 +310,127 @@ void *detector(void *arg) {
     MPI_Status st;
     //
     char label[20];
+    clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     while (streams > 0) {
-        valuePtr = example->val;
-        assertMpi(MPI_Recv(example, sizeof(Example), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
-        example->val = valuePtr;
-        if (example->label == MFOG_EOS_MARKER) {
-            // fprintf(stderr, "[detector %d] MFOG_EOS_MARKER %d\n", args->mpiRank, st.MPI_SOURCE);
+        clock_t t0 = clock();
+        assertMpi(MPI_Recv(&remoteMatch, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
+        // fprintf(stderr, "[detector] got %d from %d"" "__FILE__":%d\n", remoteMatch.pointId, st.MPI_SOURCE, __LINE__);
+        if (remoteMatch.label == MFOG_EOS_MARKER) {
             streams--;
             continue;
         }
-        CircularExampleBuffer *fc = &args->flightController[st.MPI_SOURCE];
-        Example copy = *example;
-        // example = CEB_extract(fc, example);
-        // fprintf(stderr, "[detector] pop %d, %d\n", st.MPI_SOURCE, example->id);
-        example = CEB_dequeue(fc, example);
-        example->label = copy.label;
-        assertMsg(example->id == copy.id, "Out of order Exception%c", '.');
+        // find ex in buff
+        clock_t t1 = clock();
+        pthread_mutex_lock(&args->bigBadBuff.mutex);
+        while (args->bigBadBuff.free == args->bigBadBuff.size) {
+            pthread_mutex_unlock(&args->bigBadBuff.mutex);
+            sem_post(&args->bigBadBuff.emptySignal);
+            // marker("[detector] wait(fullSignal)");
+            sem_wait(&args->bigBadBuff.fullSignal);
+            //
+            pthread_mutex_lock(&args->bigBadBuff.mutex);
+        }
+        size_t index = 0;
+        for (; index < args->bigBadBuff.size; index++) {
+            if (args->bigBadBuff.keys[index] == st.MPI_SOURCE && args->bigBadBuff.values[index].id == remoteMatch.pointId) break;
+        }
+        assert(index != args->bigBadBuff.size);
+        example = &args->bigBadBuff.values[index];
+        args->bigBadBuff.inFlight[st.MPI_SOURCE]--;
+        args->bigBadBuff.keys[index] = DETECTOR_KEY;
+        pthread_mutex_unlock(&args->bigBadBuff.mutex);
+        clock_t t2 = clock();
         //
-        id = example->id > id ? example->id : id;
+        example->label = remoteMatch.label;
         printf("%10u,%s\n", example->id, printableLabelReuse(example->label, label));
         fflush(stdout);
-        if (example->label != MINAS_UNK_LABEL) continue;
-        printf("Unknown: %10u", example->id);
-        for (unsigned int d = 0; d < args->dim; d++)
-            printf(", %le", example->val[d]);
-        printf("\n");
-        fflush(stdout);
-        //
-        unknowns[unknownsSize] = *example;
-        unknownsSize++;
-        example->val = calloc(dim, sizeof(double));
-        if (unknownsSize >= unknownsMaxSize) {
-            // TODO: garbage collect istead of realloc
-            unknownsMaxSize *= 2;
-            fprintf(stderr, "[detector %d] realloc unknowns to %lu "__FILE__":%d\n", args->mpiSize, unknownsMaxSize, __LINE__);
-            unknowns = realloc(unknowns, unknownsMaxSize * sizeof(Example));
-        }
-        //
-        if (unknownsSize >= noveltyDetectionTrigger && id - lastNDCheck > noveltyDetectionTrigger) {
-            clock_t ndStart = clock();
-            // marker("noveltyDetection");
-            unsigned int prevSize = model->size;
-            noveltyDetection(PARAMS, model, unknowns, unknownsSize);
-            unsigned int nNewClusters = model->size - prevSize;
-            clock_t ndEnd = clock();
-            double ndTime = (ndEnd - ndStart) / 1000000.0;
+        id = example->id > id ? example->id : id;
+        if (example->label == MINAS_UNK_LABEL) {
+            printf("Unknown: %10u", example->id);
+            for (unsigned int d = 0; d < args->dim; d++)
+                printf(", %le", example->val[d]);
+            printf("\n");
+            fflush(stdout);
             //
-            for (size_t k = prevSize; k < model->size; k++) {
-                Cluster *newCl = &model->clusters[k];
-                newCl->n_matches = 0;
-                newCl->n_misses = 0;
-                printCluster(dim, newCl);
-                assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-                assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-            }
-            clock_t bcastEnd = clock();
-            double bcastTime = (bcastEnd - ndEnd) / 1000000.0;
+            double *sw = unknowns[unknownsSize].val;
+            unknowns[unknownsSize] = *example;
+            example->val = sw;
+            unknownsSize++;
+            // if (unknownsSize % args->kParam == 0)
+            //     fprintf(stderr, "unknownsSize %lu / %lu\n", unknownsSize, noveltyDetectionTrigger);
+            assert(unknownsSize < noveltyDetectionTrigger * 2);
             //
-            size_t discarted = 0, consumed = 0, reclassified = 0;
-            for (size_t ex = 0; ex < unknownsSize; ex++) {
-                // compress
-                unknowns[ex - (discarted + consumed + reclassified)] = unknowns[ex];
-                Cluster *nearest;
-                double distance = nearestClusterVal(dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
-                assert(nearest != NULL);
-                if (distance <= nearest->distanceMax) {
-                    consumed++;
-                    free(unknowns[ex].val);
-                    continue;
+            if (unknownsSize >= noveltyDetectionTrigger && id - lastNDCheck > noveltyDetectionTrigger) {
+                clock_t ndStart = clock();
+                // marker("noveltyDetection");
+                unsigned int prevSize = model->size;
+                noveltyDetection(args->kParam, args->dim, args->precision, args->radiusF, args->minExamplesPerCluster, args->noveltyF,
+                    model, unknowns, unknownsSize);
+                unsigned int nNewClusters = model->size - prevSize;
+                clock_t ndEnd = clock();
+                double ndTime = (ndEnd - ndStart) / 1000000.0;
+                //
+                for (size_t k = prevSize; k < model->size; k++) {
+                    Cluster *newCl = &model->clusters[k];
+                    newCl->n_matches = 0;
+                    newCl->n_misses = 0;
+                    printCluster(args->dim, newCl);
+                    assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+                    assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 }
-                distance = nearestClusterVal(dim, model->clusters, model->size - nNewClusters, unknowns[ex].val, &nearest);
-                assert(nearest != NULL);
-                if (distance <= nearest->distanceMax) {
-                    reclassified++;
-                    free(unknowns[ex].val);
-                    continue;
+                clock_t bcastEnd = clock();
+                double bcastTime = (bcastEnd - ndEnd) / 1000000.0;
+                //
+                size_t discarted = 0, consumed = 0, reclassified = 0;
+                for (size_t ex = 0; ex < unknownsSize; ex++) {
+                    // compress
+                    unknowns[ex - (discarted + consumed + reclassified)] = unknowns[ex];
+                    Cluster *nearest;
+                    double distance = nearestClusterVal(args->dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
+                    assert(nearest != NULL);
+                    if (distance <= nearest->distanceMax) {
+                        consumed++;
+                        // free(unknowns[ex].val);
+                        continue;
+                    }
+                    distance = nearestClusterVal(args->dim, model->clusters, model->size - nNewClusters, unknowns[ex].val, &nearest);
+                    assert(nearest != NULL);
+                    if (distance <= nearest->distanceMax) {
+                        reclassified++;
+                        // free(unknowns[ex].val);
+                        continue;
+                    }
+                    if (unknowns[ex].id < lastNDCheck) {
+                        discarted++;
+                        // free(unknowns[ex].val);
+                        continue;
+                    }
                 }
-                if (unknowns[ex].id < lastNDCheck) {
-                    discarted++;
-                    free(unknowns[ex].val);
-                    continue;
-                }
+                clock_t compressionEnd = clock();
+                double compressTime = (compressionEnd - bcastEnd) / 1000000.0;
+                fprintf(stderr, "ND consumed %lu, reclassified %lu, discarted %lu\n", consumed, reclassified, discarted);
+                unknownsSize -= (discarted + consumed + reclassified);
+                lastNDCheck = id;
+                double ndTotTime = (clock() - ndStart) / 1000000.0;
+                fprintf(stderr, "ND time(nd=%le, bcast=%le, compress=%le, tot=%le)\n", ndTime, bcastTime, compressTime, ndTotTime);
             }
-            clock_t compressionEnd = clock();
-            double compressTime = (compressionEnd - bcastEnd) / 1000000.0;
-            fprintf(stderr, "ND consumed %lu, reclassified %lu, discarted %lu\n", consumed, reclassified, discarted);
-            unknownsSize -= (discarted + consumed + reclassified);
-            lastNDCheck = id;
-            double ndTotTime = (clock() - ndStart) / 1000000.0;
-            fprintf(stderr, "ND time(nd=%le, bcast=%le, compress=%le, tot=%le)\n", ndTime, bcastTime, compressTime, ndTotTime);
         }
+        clock_t t3 = clock();
+        pthread_mutex_lock(&args->bigBadBuff.mutex);
+        args->bigBadBuff.keys[index] = EMPTY_KEY;
+        // if (args->bigBadBuff.free == 0) {
+        //     fprintf(stderr, "[detector] buff was full\n");
+        // }
+        args->bigBadBuff.free++;
+        pthread_mutex_unlock(&args->bigBadBuff.mutex);
+        sem_post(&args->bigBadBuff.emptySignal);
+        clock_t t4 = clock();
+        ioTime += (t1 - t0);
+        cpuTime += (t3 - t2);
+        lockTime += (t2 - t1) + (t4 - t3);
+        // if ((ioTime + cpuTime + lockTime) > 1000000) break;
     }
+    fprintf(stderr, "[detector] ioTime %le, cpuTime %le, lockTime %le\n", ((double)ioTime) / 1000000.0, ((double)cpuTime) / 1000000.0, ((double)lockTime) / 1000000.0);
     Cluster cl;
     cl.label = MFOG_EOS_MARKER;
     assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -379,10 +480,21 @@ int main(int argc, char const *argv[]) {
             argv[0], PARAMS, args.mpiProcessorName, args.mpiRank, args.mpiSize);
         printf("#pointId,label\n");
         fflush(stdout);
-        args.flightController = calloc(args.mpiSize, sizeof(CircularExampleBuffer));
-        for (size_t i = 0; i < args.mpiSize; i++) {
-            CEB_init(&args.flightController[i], 1000, dim);
+        args.bigBadBuff.size = args.kParam * args.minExamplesPerCluster * args.mpiSize * 2;
+        args.bigBadBuff.free = args.bigBadBuff.size;
+        args.bigBadBuff.values = calloc(args.bigBadBuff.size, sizeof(Example));
+        for (size_t i = 0; i < args.bigBadBuff.size; i++) {
+            args.bigBadBuff.values[i].val = calloc(args.dim, sizeof(double));
         }
+        args.bigBadBuff.keys = calloc(args.bigBadBuff.size, sizeof(int));
+        args.bigBadBuff.inFlight = calloc(args.mpiSize, sizeof(int));
+        for (size_t i = 0; i < args.mpiSize; i++) {
+            args.bigBadBuff.inFlight[i] = 0;
+        }
+        
+        assertErrno(pthread_mutex_init(&args.bigBadBuff.mutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
+        assertErrno(sem_init(&args.bigBadBuff.emptySignal, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
+        assertErrno(sem_init(&args.bigBadBuff.fullSignal, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
 
         pthread_t detector_t, sampler_t;
         assertErrno(pthread_create(&sampler_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
@@ -390,13 +502,18 @@ int main(int argc, char const *argv[]) {
         //
         assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        //
-        for (size_t i = 0; i < args.mpiSize; i++) {
-            CEB_destroy(&args.flightController[i]);
+
+        assertErrno(sem_destroy(&args.bigBadBuff.emptySignal) >= 0, "Semaphore destroy fail%c.", '.', /**/);
+        assertErrno(sem_destroy(&args.bigBadBuff.fullSignal) >= 0, "Semaphore destroy fail%c.", '.', /**/);
+        assertErrno(pthread_mutex_destroy(&args.bigBadBuff.mutex) >= 0, "Mutex destroy fail%c.", '.', /**/);
+        for (size_t i = 0; i < args.bigBadBuff.size; i++) {
+            free(args.bigBadBuff.values[i].val);
         }
-        free(args.flightController);
+        free(args.bigBadBuff.values);
+        free(args.bigBadBuff.keys);
+        free(args.bigBadBuff.inFlight);
         //
-        char *stats = calloc(args.model->size * 20, sizeof(char));
+        char *stats = calloc(args.model->size * 30, sizeof(char));
         fprintf(stderr, "[classifier %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
         Cluster remoteCl;
         #define MFOG_TAG_CLUSTER_STATS 3000
@@ -424,12 +541,14 @@ int main(int argc, char const *argv[]) {
             Cluster *cl = &(args.model->clusters[i]);
             assertMpi(MPI_Send(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD));
         }
-        char *stats = calloc(args.model->size * 20, sizeof(char));
+        char *stats = calloc(args.model->size * 30, sizeof(char));
         fprintf(stderr, "[classifier %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
         free(stats);
     }
     fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    free(args.model->clusters);
     free(args.model);
-    sem_destroy(&args.modelReadySemaphore);
+    assertErrno(sem_destroy(&args.modelReadySemaphore) >= 0, "Semaphore destroy fail%c.", '.', /**/);
+    assertErrno(pthread_mutex_destroy(&args.modelMutex) >= 0, "Mutex destroy fail%c.", '.', /**/);
     return MPI_Finalize();
 }
