@@ -75,3 +75,49 @@ Mudanças nas decisões são resultados válidos e devem ser publicados.
 Comparação serial (baseline) paralelo apenas.
 
 Estudo da distribuição do dataset em cada um dos nós da borda.
+
+## Meeting 2020-12-01
+
+- Falha na implementação de Load Balancing, Network saving, etc.
+  - Usar apenas Round Robin (Load balancing p/ trabalhos futuros);
+  - Enviar Exemplo completo sampler->clasifier->detector;
+- Roteiro de Experimentos:
+  - Objetivos:
+    - Teste de desempenho com foco em escabilidade forte (dataset tamanho fixo);
+    - Avaliar impacto na qualidade de detecção (comparar sequencial vs paralelo);
+  - Métricas:
+    - Tempo total de execução, speedup, eficiência;
+    - Taxa de acertos, taxa de desconhecidos;
+  - Parâmetros e níveis:
+    - Nó raiz: 1 nó, 1 thread `sampler`, 1 thread `detector`;
+    - Nó folha: $1..N$ nós, 1 thread m_update, $1..2$ threads classifier;
+  - Método:
+    - [ ] Teste de escalabilidade (`mpirun -n [2..12]`);
+    - [ ] Teste de qualidade (`evaluate.py`);
+
+### Single Node
+
+| Cores | Workers | Classifer_t / Worker  | Tempo | speedup | Eficiencia  | Hit | Unk |
+| ----  | ------  | --------------------  | ----- | ---     | -----       | --- | --- |
+| base  | 0       |                       |       |         |             |     |     |
+| 1     | 1       | 1                     |       |         |             |     |     |
+| 2     | 2       | 1                     |       |         |             |     |     |
+| 3     | 3       | 1                     |       |         |             |     |     |
+| 4     | 4       | 1                     |       |         |             |     |     |
+
+### Single Node, Multi Thread
+
+| Cores | Workers | Classifer_t / Worker  | Tempo | speedup | Eficiencia  | Hit | Unk |
+| ----  | ------  | --------------------  | ----- | ---     | -----       | --- | --- |
+| 4     | 4       | 1                     |       |         |             |     |     |
+| 4     | 4       | 2                     |       |         |             |     |     |
+| 4     | 4       | 3                     |       |         |             |     |     |
+| 4     | 4       | 4                     |       |         |             |     |     |
+
+### Multi Node, Multi Thread
+
+| Nodes | Workers | Classifer_t / Worker  | Tempo | speedup | Eficiencia  | Hit | Unk |
+| ----  | ------  | --------------------  | ----- | ---     | -----       | --- | --- |
+| 1     | 4       | x                     |       |         |             |     |     |
+| 2     | 8       | x                     |       |         |             |     |     |
+| 3     | 12      | x                     |       |         |             |     |     |
