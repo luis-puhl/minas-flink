@@ -1,79 +1,68 @@
+[classifier 3]
+[classifier 2]
+[m_receiver 2]
+[m_receiver 3]
 ./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 	Hello from pokebola, rank 0/4
-[m_receiver 1]
-[classifier 2]
-[classifier 3]
-[m_receiver 3]
-[sampler 0]
-Taking test stream from stdin
-sampler at 0/4
 [classifier 1]
-[m_receiver 2]
+[m_receiver 1]
+[sampler    0]
+[detector   0]
+Taking test stream from stdin, sampler at 0/4
 model complete
 model complete
-model incomplete 19, wait(modelReadySemaphore);
-model incomplete 8, wait(modelReadySemaphore);
-[detector 0]
-model complete
-model complete
-ND clusters (19, 82123): 22 extensions, 1 novelties
-[m_receiver 1] realloc model 100
-[m_receiver 2] realloc model 100
-[m_receiver 3] realloc model 100
-ND consumed 1843, reclassified 0, discarted 0
-ND time(nd=3.286030e-01, bcast=6.016000e-03, compress=9.842000e-03, tot=3.444820e-01)
-ND clusters (19, 163501): 24 extensions, 8 novelties
-ND consumed 1763, reclassified 26, discarted 54
-ND time(nd=4.543410e-01, bcast=1.891000e-03, compress=1.727200e-02, tot=4.736020e-01)
-ND clusters (83620, 179270): 13 extensions, 2 novelties
-ND consumed 1907, reclassified 36, discarted 34
-ND time(nd=3.682550e-01, bcast=4.779000e-03, compress=6.797000e-03, tot=3.798450e-01)
-ND clusters (166236, 188323): 16 extensions, 0 novelties
-ND consumed 1848, reclassified 83, discarted 13
-ND time(nd=4.105240e-01, bcast=4.580000e-04, compress=1.049900e-02, tot=4.215090e-01)
-ND clusters (183159, 201200): 20 extensions, 0 novelties
-ND consumed 1820, reclassified 70, discarted 55
-ND time(nd=4.114300e-01, bcast=1.324000e-03, compress=1.553200e-02, tot=4.283210e-01)
-[m_receiver 2] realloc model 200
-[m_receiver 1] realloc model 200
-[m_receiver 3] realloc model 200
-ND clusters (192987, 211892): 15 extensions, 0 novelties
-ND consumed 1844, reclassified 63, discarted 58
-ND time(nd=2.655440e-01, bcast=7.730000e-04, compress=3.652000e-03, tot=2.699850e-01)
-[sampler] ioTime 6.171983e+00, cpuTime 4.452915e+00, lockTime 9.381426e+00
-[sampler 0] 2.040900e+01 seconds. At src/reboot/threaded-mpi.c:280
-ND clusters (204478, 253841): 18 extensions, 0 novelties
-ND consumed 1876, reclassified 47, discarted 4
-ND time(nd=3.057070e-01, bcast=4.960000e-04, compress=5.138000e-03, tot=3.113600e-01)
-[classifier 2] ioTime 1.838565e+01, cpuTime 2.070782e+00 seconds.
-[classifier 2] 2.057548e+01 seconds. At src/reboot/threaded-mpi.c:104
-[classifier 3] ioTime 1.855710e+01, cpuTime 2.030095e+00 seconds.
-[classifier 3] 2.073280e+01 seconds. At src/reboot/threaded-mpi.c:104
-[classifier 1] ioTime 1.879604e+01, cpuTime 2.127366e+00 seconds.
-[classifier 1] 2.106761e+01 seconds. At src/reboot/threaded-mpi.c:104
-[detector] ioTime 5.515290e+00, cpuTime 5.686409e+00, lockTime 9.807606e+00
-[detector 0] 2.139228e+01 seconds. At src/reboot/threaded-mpi.c:437
-[m_receiver 3] 2.077997e+01 seconds. At src/reboot/threaded-mpi.c:154
-[m_receiver 2] 2.069788e+01 seconds. At src/reboot/threaded-mpi.c:154
-[m_receiver 1] 2.107499e+01 seconds. At src/reboot/threaded-mpi.c:154
-free(): double free detected in tcache 2
-[pokebola:321482] *** Process received signal ***
-[pokebola:321482] Signal: Aborted (6)
-[pokebola:321482] Signal code:  (-6)
-[pokebola:321482] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7fc9d7b3b0f0]
-[pokebola:321482] [ 1] /usr/lib/libc.so.6(gsignal+0x145)[0x7fc9d799b615]
-[pokebola:321482] [ 2] /usr/lib/libc.so.6(abort+0x116)[0x7fc9d7984862]
-[pokebola:321482] [ 3] /usr/lib/libc.so.6(+0x7f5e8)[0x7fc9d79dd5e8]
-[pokebola:321482] [ 4] /usr/lib/libc.so.6(+0x8727a)[0x7fc9d79e527a]
-[pokebola:321482] [ 5] /usr/lib/libc.so.6(+0x88d4c)[0x7fc9d79e6d4c]
-[pokebola:321482] [ 6] ./bin/reboot/tmpi(+0x7315)[0x55d437d3a315]
-[pokebola:321482] [ 7] /usr/lib/libc.so.6(__libc_start_main+0xf2)[0x7fc9d7986152]
-[pokebola:321482] [ 8] ./bin/reboot/tmpi(+0x232e)[0x55d437d3532e]
-[pokebola:321482] *** End of error message ***
---------------------------------------------------------------------------
-Primary job  terminated normally, but 1 process returned
-a non-zero exit code. Per user-direction, the job has been aborted.
---------------------------------------------------------------------------
---------------------------------------------------------------------------
-mpirun noticed that process rank 0 with PID 0 on node pokebola exited on signal 6 (Aborted).
---------------------------------------------------------------------------
+ND clusters (19, 82124): 22 extensions, 1 novelties
+ND consumed 1846, reclassified 0, discarted 0
+ND time(nd=1.073671e+00, bcast=3.087000e-03, compress=2.468400e-02, tot=1.101477e+00)
+[sampler    0] (ioTime 1.084268e+01), (cpuTime 5.377051e+00), (lockTime 3.782089e+00), (total 2.056085e+01). At src/reboot/threaded-mpi.c:282
+[classifier 2] (ioTime 1.916982e+01), (cpuTime 1.901608e+00), (lockTime 1.644210e-01), (total 2.139534e+01). At src/reboot/threaded-mpi.c:111
+[m_receiver 2] (ioTime 1.129074e+01), (cpuTime 4.930000e-04), (lockTime 3.370000e-04), (total 2.139754e+01). At src/reboot/threaded-mpi.c:170
+[classifier   2] Statistics:      50799 items,       1242 misses,  'N':      50799
+
+[./bin/reboot/tmpi 2] 2.145145e+01 seconds. At src/reboot/threaded-mpi.c:542
+[classifier 1] (ioTime 1.879180e+01), (cpuTime 1.838510e+00), (lockTime 1.894960e-01), (total 2.097007e+01). At src/reboot/threaded-mpi.c:111
+[m_receiver 1] (ioTime 1.127571e+01), (cpuTime 4.380000e-04), (lockTime 3.310000e-04), (total 2.097096e+01). At src/reboot/threaded-mpi.c:170
+[classifier 3] (ioTime 1.874310e+01), (cpuTime 1.749766e+00), (lockTime 1.820410e-01), (total 2.084157e+01). At src/reboot/threaded-mpi.c:111
+[m_receiver 3] (ioTime 1.107506e+01), (cpuTime 3.960000e-04), (lockTime 2.680000e-04), (total 2.084228e+01). At src/reboot/threaded-mpi.c:170
+[classifier   3] Statistics:      50765 items,       1207 misses,  'N':      50765
+
+[./bin/reboot/tmpi 3] 2.089865e+01 seconds. At src/reboot/threaded-mpi.c:542
+[detector   0] (ioTime 1.028636e+01), (cpuTime 5.310158e+00), (lockTime 4.322015e+00), (total 2.056196e+01). At src/reboot/threaded-mpi.c:442
+[classifier   0] Statistics:          0 items,          0 misses,  'N':          0
+
+[classifier   1] Statistics:      51198 items,       1172 misses,  'N':      51198
+
+[./bin/reboot/tmpi 1] 2.102625e+01 seconds. At src/reboot/threaded-mpi.c:542
+[root aggregate] Statistics:     152762 items,       3621 misses,  'N':     152762
+
+[./bin/reboot/tmpi 0] 2.062067e+01 seconds. At src/reboot/threaded-mpi.c:542
+Evaluate
+	title = Mfog-Reboot-tmi-n4
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/reboot/tmi-n4-matches.csv
+	plotSavePath = experiments/reboot/tmi-n4.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog-Reboot-tmi-n4
+
+saving experiments/reboot/tmi-n4.png
+Confusion Matrix
+Classes (act)       A      N assigned   hits
+Labels (pred)                               
+-                2856    765        -      0
+N              107874  44888        N  44888
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19)] 2
+Total examples    (653457, 25)
+Total matches     (156383, 4)
+Hits                44888 (  6.869312%)
+Misses             604948 ( 92.576558%)
+Unknowns             3621 (  0.554130%)
+Unk. reprocessed  -497074 (-13727.533830%)
+Total              653457 (100.000000%)
+

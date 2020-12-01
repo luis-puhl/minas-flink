@@ -61,7 +61,7 @@ bin/reboot/online: src/reboot/base.c src/reboot/online.c
 bin/reboot/detection: src/reboot/base.c src/reboot/detection.c
 	gcc -g -Wall -lm -pthread $^ -o $@
 
-bin/reboot/tmpi: src/reboot/base.c src/reboot/threaded-mpi.c src/reboot/CircularExampleBuffer.c
+bin/reboot/tmpi: src/reboot/base.c src/reboot/threaded-mpi.c
 	mpicc -g -Wall -lm $^ -o $@
 .PHONY: bin/reboot
 bin/reboot: bin/reboot/serial bin/reboot/eet bin/reboot/offline bin/reboot/online bin/reboot/detection bin/reboot/tmpi
@@ -115,14 +115,14 @@ experiments/reboot/tmi-n2.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/
 	-grep -E '^Unknown:' $(out)2.csv > $(out)2-unknowns.csv
 	-grep -E '^Cluster:' $(out)2.csv > $(out)2-clusters.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv $(out)2-matches.csv \
-		experiments/reboot/tmi-n2.png >>$@
+		experiments/reboot/tmi-n2.png >> $@
 experiments/reboot/tmi-n4.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi src/evaluation/evaluate.py
 	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/reboot/tmpi > $(out)4.csv 2> $@
 	-grep -E -v '^(Unknown|Cluster):' $(out)4.csv > $(out)4-matches.csv
 	-grep -E '^Unknown:' $(out)4.csv > $(out)4-unknowns.csv
 	-grep -E '^Cluster:' $(out)4.csv > $(out)4-clusters.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv $(out)4-matches.csv \
-		experiments/reboot/tmi-n4.png >>$@
+		experiments/reboot/tmi-n4.png >> $@
 #
 .PHONY: experiments/reboot
 experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
@@ -135,7 +135,7 @@ code@almoco:
 	$(SSH) almoco "cd cloud && make bin/reboot && scp -r ~/cloud/bin jantar:~/cloud/ && scp -r ~/cloud/bin lanche:~/cloud/"
 experiments/rpi/base-time.log: bin/hello-mpi
 	time mpirun -hostfile ./conf/hostsfile hostname >$@ 2>&1
-	time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>$@ 2>&1
+	time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >> $@ 2>&1
 experiments/rpi/serial.log: experiments/reboot/serial.log
 	mv $^ $@
 	mv experiments/reboot/serial.png experiments/rpi/serial.png 
@@ -150,7 +150,7 @@ experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/reboot/tmpi sr
 	-grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
 	-grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
 	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
-		experiments/rpi/tmi-rpi-n12.png >>$@
+		experiments/rpi/tmi-rpi-n12.png >> $@
 # experiments/rpi: experiments/rpi/base-time.log experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
 experiments/rpi/reboot.log: code@almoco
 	$(SSH) almoco "cd cloud && make experiments/rpi/tmi-rpi-n12.log" > $@ 2>&1

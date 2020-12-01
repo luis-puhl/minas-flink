@@ -13,7 +13,6 @@
 #include <semaphore.h>
 
 #include "./base.h"
-#include "./CircularExampleBuffer.h"
 
 #define assertMpi(exp)                        \
     if ((mpiReturn = exp) != MPI_SUCCESS) { \
@@ -29,24 +28,25 @@
 #define DETECTOR_KEY -2
 
 typedef struct {
-    size_t size, free;
-    Example *values;
-    int *keys, *inFlight;
-    pthread_mutex_t mutex;
-    sem_t fullSignal, emptySignal;
-} BigBadBuff;
+    pthread_mutex_t modelMutex;
+    sem_t modelReadySemaphore;
+} LeafState;
 
 typedef struct {
+    Example *examples;
+    char *slots;
+    size_t size;
+    pthread_mutex_t slotsMutex;
+    sem_t slotFreeSemaphore;
+} RootState;
+
+typedef struct {
+    int mpiRank, mpiSize;
     int kParam, dim, minExamplesPerCluster;
     double precision, radiusF, noveltyF;
-    // mpi stuff
-    int mpiRank, mpiSize;
-    char *mpiProcessorName;
     Model *model;
-    pthread_mutex_t modelMutex, bigBadBuffMutex;
-    sem_t modelReadySemaphore;
-    //
-    BigBadBuff bigBadBuff;
+    RootState rootState;
+    LeafState leafState;
 } ThreadArgs;
 
 
@@ -67,8 +67,7 @@ void *classifier(void *arg) {
     assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
-    // MPI_Buffer_attach(buffer, bufferSize);
-    clock_t ioTime = 0, cpuTime = 0;
+    clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     while (1) {
         clock_t l0 = clock();
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
@@ -81,30 +80,35 @@ void *classifier(void *arg) {
             break;
         }
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
-        clock_t l2 = clock();
+        clock_t l1 = clock();
+        ioTime += (l1 - l0);
         (*inputLine)++;
         //
         while (model->size < args->kParam) {
-            fprintf(stderr, "model incomplete %d, wait(modelReadySemaphore);\n", model->size);
-            sem_wait(&args->modelReadySemaphore);
+            // fprintf(stderr, "model incomplete %d, wait(modelReadySemaphore);\n", model->size);
+            sem_wait(&args->leafState.modelReadySemaphore);
         }
-        pthread_mutex_lock(&args->modelMutex);
+        pthread_mutex_lock(&args->leafState.modelMutex);
+        clock_t l2 = clock();
+        lockTime += l2 - l1;
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, example, &match);
-        pthread_mutex_unlock(&args->modelMutex);
         clock_t l3 = clock();
+        cpuTime += (l3 - l2);
+        pthread_mutex_unlock(&args->leafState.modelMutex);
         //
         example->label = match.label;
         assertMpi(MPI_Send(&match, sizeof(Match), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
-        clock_t l4 = clock();
-        ioTime += (l2 - l0) + (l4- l3);
-        cpuTime += (l3 - l2);
-        // if ((ioTime + cpuTime) > 1000000) break;
+        ioTime += (clock() - l3);
     }
-    fprintf(stderr, "[classifier %d] ioTime %le, cpuTime %le seconds.\n", args->mpiRank, ((double)ioTime) / 1000000.0, ((double)cpuTime) / 1000000.0);
-    fprintf(stderr, "[classifier %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     free(buffer);
     free(example->val);
     free(example);
+    double ioTime_d = ((double)ioTime) / 1000000.0;
+    double cpuTime_d = ((double)cpuTime) / 1000000.0;
+    double lockTime_d = ((double)lockTime) / 1000000.0;
+    double totalTime_d = ((double)clock() - start) / 1000000.0;
+    fprintf(stderr, "[classifier %3d] (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n",
+            args->mpiRank, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
     return inputLine;
 }
 
@@ -123,8 +127,9 @@ void *m_receiver(void *arg) {
     double *valuePtr = cl->center;
     int mpiReturn;
     Model *model = args->model;
-    // fprintf(stderr, "m_receiver at %d/%d\n", args->mpiRank, args->mpiSize);
+    clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     while (1) {
+        clock_t t0 = clock();
         assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         if (cl->label == MFOG_EOS_MARKER) {
             // fprintf(stderr, "[m_receiver %d] MFOG_EOS_MARKER\n", args->mpiRank);
@@ -132,26 +137,37 @@ void *m_receiver(void *arg) {
         }
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
+        clock_t t1 = clock();
+        ioTime += t1 - t0;
 
         // printCluster(args->dim, cl);
         assert(cl->id == model->size);
-        pthread_mutex_lock(&args->modelMutex);
+        pthread_mutex_lock(&args->leafState.modelMutex);
+        clock_t t2 = clock();
+        lockTime += t2 - t1;
         if (model->size > 0 && model->size % args->kParam == 0) {
-            fprintf(stderr, "[m_receiver %d] realloc model %d\n", args->mpiRank, model->size);
+            // fprintf(stderr, "[m_receiver %d] realloc model %d\n", args->mpiRank, model->size);
             model->clusters = realloc(model->clusters, (model->size + args->kParam) * sizeof(Cluster));
         }
         model->clusters[model->size] = *cl;
         model->size++;
-        pthread_mutex_unlock(&args->modelMutex);
+        pthread_mutex_unlock(&args->leafState.modelMutex);
         if (model->size == args->kParam) {
-            fprintf(stderr, "model complete\n");
-            sem_post(&args->modelReadySemaphore);
+            // fprintf(stderr, "model complete\n");
+            sem_post(&args->leafState.modelReadySemaphore);
         }
         // new center array, prep for next cluster
         cl->center = calloc(args->dim, sizeof(double));
         valuePtr = cl->center;
+        clock_t t3 = clock();
+        cpuTime += t3 - t2;
     }
-    fprintf(stderr, "[m_receiver %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    double ioTime_d = ((double)ioTime) / 1000000.0;
+    double cpuTime_d = ((double)cpuTime) / 1000000.0;
+    double lockTime_d = ((double)lockTime) / 1000000.0;
+    double totalTime_d = ((double)clock() - start) / 1000000.0;
+    fprintf(stderr, "[m_receiver %3d] (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n",
+            args->mpiRank, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
     return model;
 }
 
@@ -164,7 +180,7 @@ void *m_receiver(void *arg) {
 void *sampler(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
-    fprintf(stderr, "[sampler %d]\n", args->mpiRank);
+    fprintf(stderr, "[sampler    %d]\n", args->mpiRank);
     unsigned int id = 0;
     Example *example;
     Model *model = args->model;
@@ -172,23 +188,28 @@ void *sampler(void *arg) {
     size_t n = 0;
     size_t *inputLine = calloc(1, sizeof(size_t));
     //
-    int clusterBufferLen, exampleBufferLen, valueBufferLen;
-    MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen);
+    int exampleBufferLen, valueBufferLen;
     MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen);
     MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
-    int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
+    int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int mpiReturn, dest = 0;
-    int *buffer = (int *)malloc(bufferSize);
+    int *buffer = calloc(bufferSize, sizeof(int));
+    // int *destinations = calloc(args->mpiSize, sizeof(int));
     //
-    fprintf(stderr, "Taking test stream from stdin\n");
-    fprintf(stderr, "sampler at %d/%d\n", args->mpiRank, args->mpiSize);
+    fprintf(stderr, "Taking test stream from stdin, sampler at %d/%d\n", args->mpiRank, args->mpiSize);
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     while (!feof(stdin)) {
         clock_t t0 = clock();
         getline(&lineptr, &n, stdin);
         (*inputLine)++;
         if (lineptr[0] == 'C') {
+            pthread_mutex_lock(&args->leafState.modelMutex);
             addClusterLine(args->kParam, args->dim, model, lineptr);
+            pthread_mutex_unlock(&args->leafState.modelMutex);
+            if (model->size == args->kParam) {
+                fprintf(stderr, "model complete\n");
+                sem_post(&args->leafState.modelReadySemaphore);
+            }
             Cluster *cl = &(model->clusters[model->size -1]);
             cl->n_matches = 0;
             cl->n_misses = 0;
@@ -201,52 +222,29 @@ void *sampler(void *arg) {
         }
         // find space in buff
         clock_t t2 = clock();
-        pthread_mutex_lock(&args->bigBadBuff.mutex);
-        while (args->bigBadBuff.free == 0) {
-            pthread_mutex_unlock(&args->bigBadBuff.mutex);
-            sem_post(&args->bigBadBuff.fullSignal);
-            // if ((ioTime + cpuTime + lockTime) > 1000000 && (ioTime + cpuTime + lockTime) < 1500000)
-            // marker("[sampler] buff is full wait(emptySignal)");
-            sem_wait(&args->bigBadBuff.emptySignal);
-            //
-            pthread_mutex_lock(&args->bigBadBuff.mutex);
-        }
-        size_t index = 0;
-        for (; index < args->bigBadBuff.size; index++) {
-            if (args->bigBadBuff.keys[index] == EMPTY_KEY) break;
-        }
-        assert(index != args->bigBadBuff.size);
-        args->bigBadBuff.free--;
-        example = &args->bigBadBuff.values[index];
-        // args->bigBadBuff.keys[index] = SAMPLER_KEY;
-        int prevDest = dest;
-        do {
-            dest = (dest + 1) % args->mpiSize;
-            if (dest == MFOG_RANK_MAIN)
+        int foundSlot = -1;
+        while (1) {
+            do {
                 dest = (dest + 1) % args->mpiSize;
-            // while dest is root or dest has a full buffer
-            if (prevDest == dest) {
-                pthread_mutex_unlock(&args->bigBadBuff.mutex);
-                sem_post(&args->bigBadBuff.fullSignal);
-                marker("[sampler] all dests are full wait(emptySignal)");
-                sem_wait(&args->bigBadBuff.emptySignal);
-                //
-                pthread_mutex_lock(&args->bigBadBuff.mutex);
+            } while (dest == MFOG_RANK_MAIN);
+            pthread_mutex_lock(&args->rootState.slotsMutex);
+            for (size_t i = 0; i < args->rootState.size; i++) {
+                char slot = args->rootState.slots[i];
+                if (slot == 0 || (slot > args->mpiSize && slot % args->mpiSize == dest)) {
+                    foundSlot = i;
+                    break;
+                }
             }
-            // if (args->bigBadBuff.inFlight[dest]  > 0 && args->bigBadBuff.inFlight[dest] % args->kParam == 0) {
-            //     fprintf(stderr, "[sampler] dest %d is %d\n", dest, args->bigBadBuff.inFlight[dest]);
-            // }
-            if (args->bigBadBuff.inFlight[dest] >= (args->bigBadBuff.size / args->mpiSize)) {
-                // fprintf(stderr, "[sampler] dest %d is full\n", dest);
+            if (foundSlot == -1) {
+                pthread_mutex_unlock(&args->rootState.slotsMutex);
+                sem_wait(&args->rootState.slotFreeSemaphore);
                 continue;
-            } else {
-                break;
             }
-        } while (dest == MFOG_RANK_MAIN);
-        args->bigBadBuff.keys[index] = dest;
-        args->bigBadBuff.inFlight[dest]++;
-        pthread_mutex_unlock(&args->bigBadBuff.mutex);
-        sem_post(&args->bigBadBuff.fullSignal);
+            break;
+        }
+        args->rootState.slots[foundSlot] = dest;
+        example = &args->rootState.examples[foundSlot];
+        pthread_mutex_unlock(&args->rootState.slotsMutex);
         clock_t t3 = clock();
         // read example
         int readCur = 0, readTot = 0, position = 0;
@@ -269,7 +267,6 @@ void *sampler(void *arg) {
         lockTime += (t3 - t2);
         if ((ioTime + cpuTime + lockTime) > 20 * 1000000) break;
     }
-    fprintf(stderr, "[sampler] ioTime %le, cpuTime %le, lockTime %le\n", ((double)ioTime) / 1000000.0, ((double)cpuTime) / 1000000.0, ((double)lockTime) / 1000000.0);
     example->label = MFOG_EOS_MARKER;
     int position = 0;
     assertMpi(MPI_Pack(example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -277,7 +274,12 @@ void *sampler(void *arg) {
     for (dest = 1; dest < args->mpiSize; dest++) {
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
     }
-    fprintf(stderr, "[sampler %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    double ioTime_d = ((double)ioTime) / 1000000.0;
+    double cpuTime_d = ((double)cpuTime) / 1000000.0;
+    double lockTime_d = ((double)lockTime) / 1000000.0;
+    double totalTime_d = ((double)clock() - start) / 1000000.0;
+    fprintf(stderr, "[sampler    %3d] (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n",
+            args->mpiRank, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
     return inputLine;
 }
 
@@ -291,7 +293,7 @@ void *sampler(void *arg) {
 void *detector(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
-    fprintf(stderr, "[detector %d]\n", args->mpiRank);
+    fprintf(stderr, "[detector   %d]\n", args->mpiRank);
     size_t *inputLine = calloc(1, sizeof(size_t));
     (*inputLine) = 0;
     int streams = args->mpiSize - 1;
@@ -311,6 +313,8 @@ void *detector(void *arg) {
     //
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
+    printf("#pointId,label\n");
+    fflush(stdout);
     while (streams > 0) {
         clock_t t0 = clock();
         assertMpi(MPI_Recv(&remoteMatch, sizeof(Match), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
@@ -321,24 +325,25 @@ void *detector(void *arg) {
         }
         // find ex in buff
         clock_t t1 = clock();
-        pthread_mutex_lock(&args->bigBadBuff.mutex);
-        while (args->bigBadBuff.free == args->bigBadBuff.size) {
-            pthread_mutex_unlock(&args->bigBadBuff.mutex);
-            sem_post(&args->bigBadBuff.emptySignal);
-            // marker("[detector] wait(fullSignal)");
-            sem_wait(&args->bigBadBuff.fullSignal);
-            //
-            pthread_mutex_lock(&args->bigBadBuff.mutex);
+        int foundSlot = -1, dest = st.MPI_SOURCE;
+        while (1) {
+            pthread_mutex_lock(&args->rootState.slotsMutex);
+            for (size_t i = 0; i < args->rootState.size; i++) {
+                char slot = args->rootState.slots[i];
+                if (slot == dest && args->rootState.examples[i].id == remoteMatch.pointId) {
+                    foundSlot = i;
+                    break;
+                }
+            }
+            if (foundSlot == -1) {
+                pthread_mutex_unlock(&args->rootState.slotsMutex);
+                sem_wait(&args->rootState.slotFreeSemaphore);
+                continue;
+            }
+            break;
         }
-        size_t index = 0;
-        for (; index < args->bigBadBuff.size; index++) {
-            if (args->bigBadBuff.keys[index] == st.MPI_SOURCE && args->bigBadBuff.values[index].id == remoteMatch.pointId) break;
-        }
-        assert(index != args->bigBadBuff.size);
-        example = &args->bigBadBuff.values[index];
-        args->bigBadBuff.inFlight[st.MPI_SOURCE]--;
-        args->bigBadBuff.keys[index] = DETECTOR_KEY;
-        pthread_mutex_unlock(&args->bigBadBuff.mutex);
+        example = &args->rootState.examples[foundSlot];
+        pthread_mutex_unlock(&args->rootState.slotsMutex);
         clock_t t2 = clock();
         //
         example->label = remoteMatch.label;
@@ -416,25 +421,25 @@ void *detector(void *arg) {
             }
         }
         clock_t t3 = clock();
-        pthread_mutex_lock(&args->bigBadBuff.mutex);
-        args->bigBadBuff.keys[index] = EMPTY_KEY;
-        // if (args->bigBadBuff.free == 0) {
-        //     fprintf(stderr, "[detector] buff was full\n");
-        // }
-        args->bigBadBuff.free++;
-        pthread_mutex_unlock(&args->bigBadBuff.mutex);
-        sem_post(&args->bigBadBuff.emptySignal);
+        pthread_mutex_lock(&args->rootState.slotsMutex);
+        args->rootState.slots[foundSlot] += args->mpiSize;
+        pthread_mutex_unlock(&args->rootState.slotsMutex);
+        sem_post(&args->rootState.slotFreeSemaphore);
         clock_t t4 = clock();
         ioTime += (t1 - t0);
         cpuTime += (t3 - t2);
         lockTime += (t2 - t1) + (t4 - t3);
         // if ((ioTime + cpuTime + lockTime) > 1000000) break;
     }
-    fprintf(stderr, "[detector] ioTime %le, cpuTime %le, lockTime %le\n", ((double)ioTime) / 1000000.0, ((double)cpuTime) / 1000000.0, ((double)lockTime) / 1000000.0);
     Cluster cl;
     cl.label = MFOG_EOS_MARKER;
     assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-    fprintf(stderr, "[detector %d] %le seconds. At %s:%d\n", args->mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    double ioTime_d = ((double)ioTime) / 1000000.0;
+    double cpuTime_d = ((double)cpuTime) / 1000000.0;
+    double lockTime_d = ((double)lockTime) / 1000000.0;
+    double totalTime_d = ((double)clock() - start) / 1000000.0;
+    fprintf(stderr, "[detector   %3d] (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n",
+            args->mpiRank, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
     return inputLine;
 }
 
@@ -461,11 +466,11 @@ int main(int argc, char const *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &args.mpiSize);
     assertMsg(args.mpiSize > 1, "This is a multi-process program, got only %d process.", args.mpiSize);
     int namelen;
-    args.mpiProcessorName = calloc(MPI_MAX_PROCESSOR_NAME + 1, sizeof(char));
-    MPI_Get_processor_name(args.mpiProcessorName, &namelen);
+    char *mpiProcessorName = calloc(MPI_MAX_PROCESSOR_NAME + 1, sizeof(char));
+    MPI_Get_processor_name(mpiProcessorName, &namelen);
     //
-    assertErrno(sem_init(&args.modelReadySemaphore, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
-    assertErrno(pthread_mutex_init(&args.modelMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
+    assertErrno(sem_init(&args.leafState.modelReadySemaphore, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
+    assertErrno(pthread_mutex_init(&args.leafState.modelMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
     //
     args.model = calloc(1, sizeof(Model));
     args.model->size = 0;
@@ -477,24 +482,17 @@ int main(int argc, char const *argv[]) {
         fprintf(stderr,
             "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le;\n"
             "\tHello from %s, rank %d/%d\n",
-            argv[0], PARAMS, args.mpiProcessorName, args.mpiRank, args.mpiSize);
-        printf("#pointId,label\n");
-        fflush(stdout);
-        args.bigBadBuff.size = args.kParam * args.minExamplesPerCluster * args.mpiSize * 2;
-        args.bigBadBuff.free = args.bigBadBuff.size;
-        args.bigBadBuff.values = calloc(args.bigBadBuff.size, sizeof(Example));
-        for (size_t i = 0; i < args.bigBadBuff.size; i++) {
-            args.bigBadBuff.values[i].val = calloc(args.dim, sizeof(double));
+            argv[0], PARAMS, mpiProcessorName, args.mpiRank, args.mpiSize);
+        //
+        args.rootState.size = args.kParam *args.minExamplesPerCluster *args.mpiSize;
+        args.rootState.examples = calloc(args.rootState.size, sizeof(Example));
+        args.rootState.slots = calloc(args.rootState.size, sizeof(char));
+        double *allValues = calloc(args.rootState.size * args.dim, sizeof(double));
+        for (size_t i = 0; i < args.rootState.size; i++) {
+            args.rootState.examples[i].val = &allValues[i * args.dim];
         }
-        args.bigBadBuff.keys = calloc(args.bigBadBuff.size, sizeof(int));
-        args.bigBadBuff.inFlight = calloc(args.mpiSize, sizeof(int));
-        for (size_t i = 0; i < args.mpiSize; i++) {
-            args.bigBadBuff.inFlight[i] = 0;
-        }
-        
-        assertErrno(pthread_mutex_init(&args.bigBadBuff.mutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
-        assertErrno(sem_init(&args.bigBadBuff.emptySignal, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
-        assertErrno(sem_init(&args.bigBadBuff.fullSignal, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
+        assertErrno(sem_init(&args.rootState.slotFreeSemaphore, 0, 0) >= 0, "Semaphore init fail%c.", '.', MPI_Finalize());
+        assertErrno(pthread_mutex_init(&args.rootState.slotsMutex, NULL) >= 0, "Mutex init fail%c.", '.', MPI_Finalize());
 
         pthread_t detector_t, sampler_t;
         assertErrno(pthread_create(&sampler_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
@@ -503,15 +501,11 @@ int main(int argc, char const *argv[]) {
         assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
 
-        assertErrno(sem_destroy(&args.bigBadBuff.emptySignal) >= 0, "Semaphore destroy fail%c.", '.', /**/);
-        assertErrno(sem_destroy(&args.bigBadBuff.fullSignal) >= 0, "Semaphore destroy fail%c.", '.', /**/);
-        assertErrno(pthread_mutex_destroy(&args.bigBadBuff.mutex) >= 0, "Mutex destroy fail%c.", '.', /**/);
-        for (size_t i = 0; i < args.bigBadBuff.size; i++) {
-            free(args.bigBadBuff.values[i].val);
-        }
-        free(args.bigBadBuff.values);
-        free(args.bigBadBuff.keys);
-        free(args.bigBadBuff.inFlight);
+        assertErrno(sem_destroy(&args.rootState.slotFreeSemaphore) >= 0, "Semaphore destroy fail%c.", '.', /**/);
+        assertErrno(pthread_mutex_destroy(&args.rootState.slotsMutex) >= 0, "Mutex destroy fail%c.", '.', /**/);
+        free(allValues);
+        free(args.rootState.examples);
+        free(args.rootState.slots);
         //
         char *stats = calloc(args.model->size * 30, sizeof(char));
         fprintf(stderr, "[classifier %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
@@ -546,9 +540,9 @@ int main(int argc, char const *argv[]) {
         free(stats);
     }
     fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
-    free(args.model->clusters);
-    free(args.model);
-    assertErrno(sem_destroy(&args.modelReadySemaphore) >= 0, "Semaphore destroy fail%c.", '.', /**/);
-    assertErrno(pthread_mutex_destroy(&args.modelMutex) >= 0, "Mutex destroy fail%c.", '.', /**/);
+    // free(args.model->clusters);
+    // free(args.model);
+    assertErrno(sem_destroy(&args.leafState.modelReadySemaphore) >= 0, "Semaphore destroy fail%c.", '.', /**/);
+    assertErrno(pthread_mutex_destroy(&args.leafState.modelMutex) >= 0, "Mutex destroy fail%c.", '.', /**/);
     return MPI_Finalize();
 }
