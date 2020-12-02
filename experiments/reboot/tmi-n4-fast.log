@@ -1,36 +1,209 @@
-./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
-	Hello from pokebola, rank 0/4, outputMode 0
-[classifier 3]
-[classifier 3]
-[sampler 0]
-Taking test stream from stdin
-sampler at 0/4
-[detector 0]
-[m_receiver 3]
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4, outputMode 0, nClassifiers 1
 [classifier 2]
+[sampler 0]
+Taking test stream from stdin, sampler at 0/4
+[classifier 3]
 [m_receiver 2]
 [classifier 1]
+[detector 0]
+[m_receiver 1]
+[m_receiver 3]
+model complete
+model incomplete 62, wait(modelReadySemaphore);
+model incomplete 96, wait(modelReadySemaphore);
+ND clusters (19, 82129): 22 extensions, 1 novelties
+ND consumed 1845, reclassified 0, garbageCollected 0
+ND clusters (19, 165025): 27 extensions, 5 novelties
+ND consumed 1772, reclassified 29, garbageCollected 50
+ND clusters (84593, 200439): 26 extensions, 1 novelties
+ND consumed 1810, reclassified 102, garbageCollected 10
+ND clusters (166556, 225478): 23 extensions, 2 novelties
+ND consumed 1830, reclassified 68, garbageCollected 6
+ND clusters (200446, 265192): 28 extensions, 0 novelties
+ND consumed 1817, reclassified 98, garbageCollected 9
+ND clusters (228389, 283995): 26 extensions, 2 novelties
+ND consumed 1909, reclassified 35, garbageCollected 0
+ND clusters (265594, 296138): 29 extensions, 0 novelties
+ND consumed 1835, reclassified 131, garbageCollected 15
+ND clusters (286900, 314678): 24 extensions, 0 novelties
+ND consumed 1904, reclassified 52, garbageCollected 18
+ND clusters (299843, 302215): 26 extensions, 0 novelties
+ND consumed 1887, reclassified 61, garbageCollected 11
+ND clusters (318305, 362945): 18 extensions, 0 novelties
+ND consumed 1906, reclassified 41, garbageCollected 20
+ND clusters (340055, 317947): 18 extensions, 0 novelties
+ND consumed 1939, reclassified 39, garbageCollected 16
+ND clusters (363029, 331684): 36 extensions, 0 novelties
+ND consumed 1830, reclassified 89, garbageCollected 49
+ND clusters (382715, 368158): 29 extensions, 1 novelties
+ND consumed 1810, reclassified 112, garbageCollected 67
+ND clusters (409619, 378726): 26 extensions, 1 novelties
+ND consumed 1845, reclassified 115, garbageCollected 15
+ND clusters (491246, 405919): 34 extensions, 0 novelties
+ND consumed 1866, reclassified 76, garbageCollected 42
+[sampler   0] (ioTime 5.138915e+00), (cpuTime 9.616593e+00), (lockTime 0.000000e+00), (total 1.573520e+01). At src/threaded-mpi.c:247
+[classifier   3] (ioTime 5.647184e+00), (cpuTime 7.287988e+00), (lockTime 3.144840e-01), (total 1.357785e+01). At src/threaded-mpi.c:112
+ND clusters (532058, 487183): 31 extensions, 0 novelties
+ND consumed 1665, reclassified 188, garbageCollected 63
+[classifier   1] (ioTime 7.629854e+00), (cpuTime 8.258477e+00), (lockTime 3.171030e-01), (total 1.650943e+01). At src/threaded-mpi.c:112
+[m_receiver   3] (ioTime 1.412592e+01), (cpuTime 2.434000e-03), (lockTime 1.646300e-02), (total 1.596581e+01). At src/threaded-mpi.c:164
+[classifier   2] (ioTime 7.565379e+00), (cpuTime 8.366571e+00), (lockTime 2.857610e-01), (total 1.649200e+01). At src/threaded-mpi.c:112
+[m_receiver   2] (ioTime 1.289766e+01), (cpuTime 2.369000e-03), (lockTime 2.803000e-03), (total 1.649482e+01). At src/threaded-mpi.c:164
+[detector   0] (ioTime 1.866783e+01), (cpuTime 8.759124e+00), (lockTime 1.215660e-01), (total 1.819377e+01). At src/threaded-mpi.c:414
+[m_receiver   1] (ioTime 1.299870e+01), (cpuTime 3.496000e-03), (lockTime 4.087000e-03), (total 1.657221e+01). At src/threaded-mpi.c:164
+[classifier   0] Statistics:     100971 items,          0 misses,  'N':      87978 '1':        192 '2':        104 '3':         24 '4':        832 '5':         52 '6':       4617 '7':       6098 '8':         91 '9':        162 '10':        346 '11':        345 '12':         25
+
+[root aggregate] Statistics:    1022795 items,      34547 misses,  'N':     913836 '1':       1023 '2':       1381 '3':        128 '4':       4576 '5':        285 '6':      40608 '7':      53291 '8':        500 '9':        652 '10':       2082 '11':       3907 '12':        106
+
+[./bin/tmpi 0] 1.821103e+01 seconds. At src/threaded-mpi.c:504
+[classifier   3] Statistics:     305121 items,      13669 misses,  'N':     272829 '1':        262 '2':        433 '3':         33 '4':       1250 '5':         79 '6':      11661 '7':      16591 '8':        131 '9':        165 '10':        557 '11':        999 '12':         26
+
+[classifier   2] Statistics:     308152 items,      10638 misses,  'N':     276337 '1':        285 '2':        429 '3':         36 '4':       1234 '5':         79 '6':      12089 '7':      15341 '8':        139 '9':        163 '10':        602 '11':       1287 '12':         26
+
+[./bin/tmpi 2] 1.651186e+01 seconds. At src/threaded-mpi.c:504
+[classifier   1] Statistics:     308551 items,      10240 misses,  'N':     276692 '1':        284 '2':        415 '3':         35 '4':       1260 '5':         75 '6':      12241 '7':      15261 '8':        139 '9':        162 '10':        577 '11':       1276 '12':         29
+
+[./bin/tmpi 1] 1.659003e+01 seconds. At src/threaded-mpi.c:504
+[./bin/tmpi 3] 1.598298e+01 seconds. At src/threaded-mpi.c:504
+
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4, outputMode 1, nClassifiers 1
+[sampler 0]
+[detector 0]
+Taking test stream from stdin, sampler at 0/4
 [classifier 2]
+[m_receiver 3]
 [classifier 1]
 [m_receiver 1]
 model complete
-model complete
-model incomplete 56, wait(modelReadySemaphore);
-model incomplete 56, wait(modelReadySemaphore);
-model incomplete 56, wait(modelReadySemaphore);
-model incomplete 56, wait(modelReadySemaphore);
-model complete
-model complete
-tmpi: Assert error. Out of order Exception. At src/reboot/threaded-mpi.c:279
+model incomplete 0, wait(modelReadySemaphore);
+[classifier 3]
+[m_receiver 2]
+ND clusters (69, 82100): 22 extensions, 1 novelties
+ND consumed 1845, reclassified 0, garbageCollected 0
+ND clusters (19, 164793): 32 extensions, 4 novelties
+ND consumed 1807, reclassified 16, garbageCollected 52
+ND clusters (83620, 185517): 20 extensions, 0 novelties
+ND consumed 1906, reclassified 52, garbageCollected 1
+ND clusters (167885, 201200): 27 extensions, 2 novelties
+ND consumed 1937, reclassified 43, garbageCollected 3
+ND clusters (193463, 255291): 23 extensions, 5 novelties
+ND consumed 1836, reclassified 83, garbageCollected 6
+ND clusters (212271, 263134): 16 extensions, 2 novelties
+ND consumed 1946, reclassified 39, garbageCollected 0
+ND clusters (256215, 271973): 15 extensions, 0 novelties
+ND consumed 1954, reclassified 30, garbageCollected 11
+ND clusters (278313, 281650): 21 extensions, 0 novelties
+ND consumed 1914, reclassified 64, garbageCollected 11
+ND clusters (281511, 289057): 30 extensions, 0 novelties
+ND consumed 1882, reclassified 97, garbageCollected 10
+ND clusters (286523, 337070): 30 extensions, 0 novelties
+ND consumed 1807, reclassified 119, garbageCollected 25
+ND clusters (305336, 339451): 29 extensions, 0 novelties
+ND consumed 1685, reclassified 169, garbageCollected 112
+ND clusters (337124, 370881): 32 extensions, 0 novelties
+ND consumed 1809, reclassified 137, garbageCollected 44
+ND clusters (365633, 408571): 36 extensions, 0 novelties
+ND consumed 1728, reclassified 183, garbageCollected 26
+ND clusters (403286, 507735): 32 extensions, 2 novelties
+ND consumed 1730, reclassified 182, garbageCollected 35
+ND clusters (494795, 593264): 26 extensions, 0 novelties
+ND consumed 1872, reclassified 77, garbageCollected 33
+[sampler   0] (ioTime 5.926476e+00), (cpuTime 1.016333e+01), (lockTime 0.000000e+00), (total 1.707784e+01). At src/threaded-mpi.c:247
+ND clusters (566174, 632552): 35 extensions, 0 novelties
+ND consumed 1722, reclassified 185, garbageCollected 48
+[classifier   3] (ioTime 6.469292e+00), (cpuTime 8.108214e+00), (lockTime 3.150200e-01), (total 1.519778e+01). At src/threaded-mpi.c:112
+ND clusters (593306, 599029): 27 extensions, 1 novelties
+ND consumed 1721, reclassified 220, garbageCollected 55
+[classifier   1] (ioTime 7.114166e+00), (cpuTime 8.613538e+00), (lockTime 3.995030e-01), (total 1.649146e+01). At src/threaded-mpi.c:112
+[classifier   2] (ioTime 7.355661e+00), (cpuTime 8.421860e+00), (lockTime 3.970430e-01), (total 1.647432e+01). At src/threaded-mpi.c:112
+[m_receiver   2] (ioTime 1.524414e+01), (cpuTime 2.205000e-03), (lockTime 2.523700e-02), (total 1.647463e+01). At src/threaded-mpi.c:164
+[detector   0] (ioTime 1.429842e+01), (cpuTime 7.893525e+00), (lockTime 1.247410e-01), (total 1.859015e+01). At src/threaded-mpi.c:414
+[m_receiver   1] (ioTime 1.613778e+01), (cpuTime 2.499000e-03), (lockTime 2.672900e-02), (total 1.694324e+01). At src/threaded-mpi.c:164
+[m_receiver   3] (ioTime 1.595706e+01), (cpuTime 2.447000e-03), (lockTime 2.651500e-02), (total 1.660273e+01). At src/threaded-mpi.c:164
+[classifier   0] Statistics:     102313 items,          0 misses,  'N':      86464 '1':        221 '2':        101 '3':        264 '4':         97 '5':        489 '6':       2627 '7':       7496 '8':        472 '9':       1368 '10':         20 '11':         29 '12':         77 '13':        467 '14':       1991 '15':         96 '16':         34
 
---------------------------------------------------------------------------
-Primary job  terminated normally, but 1 process returned
-a non-zero exit code. Per user-direction, the job has been aborted.
---------------------------------------------------------------------------
---------------------------------------------------------------------------
-mpirun detected that one or more processes exited with non-zero status, thus causing
-the job to be terminated. The first process to do so was:
+[classifier   2] Statistics:     309159 items,      10973 misses,  'N':     264296 '1':        282 '2':        146 '3':        890 '4':        134 '5':        894 '6':       4074 '7':      28098 '8':       1330 '9':       3247 '10':         24 '11':         63 '12':         82 '13':        583 '14':       4885 '15':         96 '16':         35
 
-  Process name: [[50136,1],0]
-  Exit code:    1
---------------------------------------------------------------------------
+[./bin/tmpi 2] 1.649480e+01 seconds. At src/threaded-mpi.c:504
+[classifier   1] Statistics:     309190 items,      10943 misses,  'N':     266187 '1':        290 '2':        140 '3':        769 '4':        133 '5':        824 '6':       3969 '7':      26967 '8':       1156 '9':       3127 '10':         31 '11':         68 '12':         77 '13':        554 '14':       4766 '15':         97 '16':         35
+
+[./bin/tmpi 1] 1.696058e+01 seconds. At src/threaded-mpi.c:504
+[root aggregate] Statistics:    1028388 items,      34322 misses,  'N':     883235 '1':       1070 '2':        516 '3':       2713 '4':        493 '5':       2964 '6':      14576 '7':      90122 '8':       3858 '9':      10922 '10':        100 '11':        225 '12':        317 '13':       2136 '14':      14618 '15':        385 '16':        138
+
+[./bin/tmpi 0] 1.860791e+01 seconds. At src/threaded-mpi.c:504
+[classifier   3] Statistics:     307726 items,      12406 misses,  'N':     266288 '1':        277 '2':        129 '3':        790 '4':        129 '5':        757 '6':       3906 '7':      27561 '8':        900 '9':       3180 '10':         25 '11':         65 '12':         81 '13':        532 '14':       2976 '15':         96 '16':         34
+
+[./bin/tmpi 3] 1.662017e+01 seconds. At src/threaded-mpi.c:504
+
+[classifier 2]
+[m_receiver 2]
+[classifier 3]
+[m_receiver 3]
+[classifier 1]
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4, outputMode 2, nClassifiers 1
+[sampler 0]
+[detector 0]
+Taking test stream from stdin, sampler at 0/4
+model complete
+model incomplete 0, wait(modelReadySemaphore);
+model incomplete 0, wait(modelReadySemaphore);
+[m_receiver 1]
+ND clusters (69, 82100): 22 extensions, 1 novelties
+ND consumed 1843, reclassified 0, garbageCollected 0
+ND clusters (19, 163630): 29 extensions, 6 novelties
+ND consumed 1819, reclassified 9, garbageCollected 39
+ND clusters (83321, 178695): 14 extensions, 1 novelties
+ND consumed 1948, reclassified 33, garbageCollected 1
+ND clusters (166236, 202451): 31 extensions, 2 novelties
+ND consumed 1933, reclassified 44, garbageCollected 3
+ND clusters (178906, 267607): 27 extensions, 1 novelties
+ND consumed 1584, reclassified 255, garbageCollected 6
+ND clusters (205305, 288632): 26 extensions, 1 novelties
+ND consumed 1817, reclassified 146, garbageCollected 16
+ND clusters (277370, 268098): 25 extensions, 0 novelties
+ND consumed 1914, reclassified 58, garbageCollected 17
+ND clusters (288836, 308774): 20 extensions, 0 novelties
+ND consumed 1868, reclassified 95, garbageCollected 19
+ND clusters (299576, 277002): 18 extensions, 0 novelties
+ND consumed 1937, reclassified 52, garbageCollected 2
+ND clusters (309041, 284259): 22 extensions, 0 novelties
+ND consumed 1880, reclassified 45, garbageCollected 30
+ND clusters (322205, 326542): 30 extensions, 0 novelties
+ND consumed 1907, reclassified 62, garbageCollected 12
+ND clusters (341957, 400871): 23 extensions, 0 novelties
+ND consumed 1833, reclassified 84, garbageCollected 36
+ND clusters (370031, 369307): 28 extensions, 0 novelties
+ND consumed 1922, reclassified 56, garbageCollected 14
+ND clusters (401348, 403093): 29 extensions, 0 novelties
+ND consumed 1725, reclassified 117, garbageCollected 118
+ND clusters (440024, 409812): 33 extensions, 1 novelties
+ND consumed 1759, reclassified 141, garbageCollected 32
+[sampler   0] (ioTime 9.580632e+00), (cpuTime 1.035677e+01), (lockTime 0.000000e+00), (total 2.095688e+01). At src/threaded-mpi.c:247
+[classifier   3] (ioTime 8.787154e+00), (cpuTime 7.947294e+00), (lockTime 3.857320e-01), (total 1.740010e+01). At src/threaded-mpi.c:112
+ND clusters (496169, 537955): 34 extensions, 3 novelties
+ND consumed 1759, reclassified 119, garbageCollected 57
+[detector 4] garbageCollect unknowns to 4000 src/threaded-mpi.c:342
+[classifier   2] (ioTime 1.058603e+01), (cpuTime 8.934951e+00), (lockTime 4.191050e-01), (total 2.029367e+01). At src/threaded-mpi.c:112
+[detector 4] garbageCollect unknowns to 4000 src/threaded-mpi.c:342
+[classifier   1] (ioTime 1.107907e+01), (cpuTime 9.275019e+00), (lockTime 3.588720e-01), (total 2.105390e+01). At src/threaded-mpi.c:112
+[m_receiver   1] (ioTime 1.717055e+01), (cpuTime 2.914000e-03), (lockTime 6.897400e-02), (total 2.105017e+01). At src/threaded-mpi.c:164
+[detector   0] (ioTime 8.530143e+00), (cpuTime 1.096134e+01), (lockTime 1.324050e-01), (total 2.435378e+01). At src/threaded-mpi.c:414
+[classifier   0] Statistics:     100912 items,          0 misses,  'N':      79980 '1':        261 '2':        374 '3':         22 '4':        158 '5':         30 '6':        734 '7':       3783 '8':        449 '9':         60 '10':      13054 '11':       1843 '12':         80 '13':         39 '14':         22 '15':         23
+
+[m_receiver   2] (ioTime 1.777913e+01), (cpuTime 2.212000e-03), (lockTime 5.096600e-02), (total 2.104061e+01). At src/threaded-mpi.c:164
+[m_receiver   3] (ioTime 1.800540e+01), (cpuTime 1.347900e-02), (lockTime 7.609200e-02), (total 2.001703e+01). At src/threaded-mpi.c:164
+[root aggregate] Statistics:    1016595 items,      40511 misses,  'N':     846023 '1':       1372 '2':       2576 '3':        110 '4':       1148 '5':        151 '6':       4043 '7':      40984 '8':       2286 '9':        240 '10':     104862 '11':      12095 '12':        321 '13':        156 '14':        105 '15':        123
+
+[./bin/tmpi 0] 2.437257e+01 seconds. At src/threaded-mpi.c:504
+[classifier   3] Statistics:     305233 items,      13498 misses,  'N':     259468 '1':        352 '2':        699 '3':         31 '4':        330 '5':         38 '6':       1105 '7':      12329 '8':        612 '9':         60 '10':      27035 '11':       3009 '12':         81 '13':         39 '14':         22 '15':         23
+
+[classifier   1] Statistics:     305836 items,      12896 misses,  'N':     252204 '1':        384 '2':        757 '3':         29 '4':        333 '5':         44 '6':       1117 '7':      12490 '8':        613 '9':         60 '10':      33768 '11':       3847 '12':         80 '13':         39 '14':         32 '15':         39
+
+[./bin/tmpi 1] 2.107350e+01 seconds. At src/threaded-mpi.c:504
+[classifier   2] Statistics:     304614 items,      14117 misses,  'N':     254371 '1':        375 '2':        746 '3':         28 '4':        327 '5':         39 '6':       1087 '7':      12382 '8':        612 '9':         60 '10':      31005 '11':       3396 '12':         80 '13':         39 '14':         29 '15':         38
+
+[./bin/tmpi 3] 2.003407e+01 seconds. At src/threaded-mpi.c:504
+[./bin/tmpi 2] 2.105830e+01 seconds. At src/threaded-mpi.c:504

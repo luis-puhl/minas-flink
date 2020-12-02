@@ -1,61 +1,73 @@
-[m_receiver 2]
-[classifier 2]
-[m_receiver 1]
-[classifier 1]
-./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
-	Hello from pokebola, rank 0/4, outputMode 2
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4, outputMode 2, nClassifiers 1
 [sampler 0]
-Taking test stream from stdin
-sampler at 0/4
-[classifier 3]
-[m_receiver 3]
 [detector 0]
+Taking test stream from stdin, sampler at 0/4
+[classifier 2]
+[m_receiver 2]
+[m_receiver 3]
+[classifier 1]
+[m_receiver 1]
+[classifier 3]
 model complete
-model incomplete 0, wait(modelReadySemaphore);
-model incomplete 76, wait(modelReadySemaphore);
-model complete
-model incomplete 4, wait(modelReadySemaphore);
-model complete
-model complete
-ND clusters (19, 82122): 22 extensions, 1 novelties
-[m_receiver 1] realloc model 100
-[m_receiver 3] realloc model 100
-[m_receiver 2] realloc model 100
-ND consumed 1845, reclassified 0, discarted 0
-ND time(nd=2.797550e-01, bcast=4.392000e-03, compress=8.322000e-03, tot=2.924810e-01)
-ND clusters (19, 162535): 15 extensions, 3 novelties
-ND consumed 1785, reclassified 1, discarted 122
-ND time(nd=5.078520e-01, bcast=3.703000e-03, compress=7.942000e-03, tot=5.195130e-01)
-ND clusters (85053, 199118): 8 extensions, 0 novelties
-ND consumed 1857, reclassified 46, discarted 69
-ND time(nd=2.171180e-01, bcast=2.030000e-04, compress=7.497000e-03, tot=2.248290e-01)
-ND clusters (164179, 294908): 22 extensions, 0 novelties
-ND consumed 1799, reclassified 55, discarted 23
-ND time(nd=3.907770e-01, bcast=5.550000e-04, compress=1.417200e-02, tot=4.055210e-01)
-ND clusters (200291, 390209): 13 extensions, 1 novelties
-ND consumed 1758, reclassified 106, discarted 79
-ND time(nd=3.444300e-01, bcast=4.791000e-03, compress=9.333000e-03, tot=3.585750e-01)
-ND clusters (294908, 553165): 26 extensions, 1 novelties
-[m_receiver 1] realloc model 200
-[m_receiver 2] realloc model 200
-[m_receiver 3] realloc model 200
-ND consumed 1806, reclassified 44, discarted 29
-ND time(nd=5.991000e-01, bcast=1.085200e-02, compress=1.529700e-02, tot=6.252700e-01)
-ND clusters (392489, 602700): 10 extensions, 0 novelties
-ND consumed 1776, reclassified 51, discarted 110
-ND time(nd=2.506490e-01, bcast=2.240000e-04, compress=1.167700e-02, tot=2.625630e-01)
-[sampler 0] 1.954325e+01 seconds. At src/reboot/threaded-mpi.c:251
-[classifier 2] 1.498874e+01 seconds. At src/reboot/threaded-mpi.c:97
-[classifier 1] 1.499113e+01 seconds. At src/reboot/threaded-mpi.c:97
-[classifier 3] 1.489012e+01 seconds. At src/reboot/threaded-mpi.c:97
-[m_receiver 3] 1.489053e+01 seconds. At src/reboot/threaded-mpi.c:170
-[m_receiver 1] 1.499507e+01 seconds. At src/reboot/threaded-mpi.c:170
-[m_receiver 2] 1.499588e+01 seconds. At src/reboot/threaded-mpi.c:170
-[detector 0] 1.955344e+01 seconds. At src/reboot/threaded-mpi.c:387
-[./bin/reboot/tmpi 2] 1.501642e+01 seconds. At src/reboot/threaded-mpi.c:456
-[./bin/reboot/tmpi 0] 1.957306e+01 seconds. At src/reboot/threaded-mpi.c:456
-[./bin/reboot/tmpi 3] 1.491187e+01 seconds. At src/reboot/threaded-mpi.c:456
-[./bin/reboot/tmpi 1] 1.501440e+01 seconds. At src/reboot/threaded-mpi.c:456
+model incomplete 97, wait(modelReadySemaphore);
+model incomplete 82, wait(modelReadySemaphore);
+ND clusters (19, 81755): 22 extensions, 1 novelties
+ND consumed 1845, reclassified 0, garbageCollected 0
+ND clusters (19, 162440): 24 extensions, 7 novelties
+ND consumed 1741, reclassified 52, garbageCollected 42
+ND clusters (82837, 174400): 13 extensions, 2 novelties
+ND consumed 1948, reclassified 15, garbageCollected 1
+ND clusters (162836, 199622): 22 extensions, 0 novelties
+ND consumed 1860, reclassified 70, garbageCollected 13
+ND clusters (179969, 256466): 27 extensions, 2 novelties
+ND consumed 1776, reclassified 96, garbageCollected 18
+ND clusters (200084, 279260): 24 extensions, 0 novelties
+ND consumed 1879, reclassified 89, garbageCollected 11
+ND clusters (261706, 289577): 22 extensions, 0 novelties
+ND consumed 1935, reclassified 43, garbageCollected 6
+ND clusters (279293, 289105): 20 extensions, 0 novelties
+ND consumed 1939, reclassified 46, garbageCollected 7
+ND clusters (291158, 313001): 24 extensions, 0 novelties
+ND consumed 1879, reclassified 83, garbageCollected 24
+ND clusters (305522, 331691): 25 extensions, 0 novelties
+ND consumed 1829, reclassified 94, garbageCollected 33
+ND clusters (313619, 358352): 23 extensions, 1 novelties
+ND consumed 1810, reclassified 103, garbageCollected 46
+ND clusters (331691, 334479): 24 extensions, 1 novelties
+ND consumed 1888, reclassified 67, garbageCollected 42
+ND clusters (363413, 420812): 30 extensions, 0 novelties
+ND consumed 1838, reclassified 104, garbageCollected 15
+ND clusters (379364, 406435): 32 extensions, 0 novelties
+ND consumed 1775, reclassified 133, garbageCollected 64
+ND clusters (420857, 420912): 23 extensions, 0 novelties
+ND consumed 1784, reclassified 145, garbageCollected 32
+[sampler   0] (ioTime 1.074358e+01), (cpuTime 1.152126e+01), (lockTime 0.000000e+00), (total 2.328637e+01). At src/threaded-mpi.c:247
+ND clusters (499865, 631256): 27 extensions, 1 novelties
+ND consumed 1792, reclassified 107, garbageCollected 35
+[classifier   3] (ioTime 1.063067e+01), (cpuTime 7.713070e+00), (lockTime 4.050550e-01), (total 1.909875e+01). At src/threaded-mpi.c:112
+ND clusters (558332, 591811): 43 extensions, 0 novelties
+ND consumed 1745, reclassified 150, garbageCollected 100
+[classifier   2] (ioTime 1.225605e+01), (cpuTime 8.771907e+00), (lockTime 3.638920e-01), (total 2.175868e+01). At src/threaded-mpi.c:112
+[classifier   1] (ioTime 1.256154e+01), (cpuTime 8.804393e+00), (lockTime 3.702810e-01), (total 2.210720e+01). At src/threaded-mpi.c:112
+[m_receiver   2] (ioTime 2.034879e+01), (cpuTime 2.296000e-03), (lockTime 1.478900e-02), (total 2.199550e+01). At src/threaded-mpi.c:164
+[m_receiver   1] (ioTime 2.021855e+01), (cpuTime 2.763000e-03), (lockTime 1.690200e-02), (total 2.210894e+01). At src/threaded-mpi.c:164
+[detector   0] (ioTime 9.586380e+00), (cpuTime 1.154149e+01), (lockTime 1.275650e-01), (total 2.640805e+01). At src/threaded-mpi.c:414
+[classifier   1] Statistics:     310047 items,      10395 misses,  'N':     287980 '1':        489 '2':        515 '3':         20 '4':       2835 '5':         34 '6':         23 '7':        173 '8':      14567 '9':         74 '10':        788 '11':         68 '12':        298 '13':        628 '14':       1258
+
+[./bin/tmpi 1] 2.212949e+01 seconds. At src/threaded-mpi.c:504
+[m_receiver   3] (ioTime 2.057997e+01), (cpuTime 2.618000e-03), (lockTime 6.430900e-02), (total 2.169313e+01). At src/threaded-mpi.c:164
+[classifier   3] Statistics:     306574 items,      13867 misses,  'N':     286364 '1':        464 '2':        526 '3':         20 '4':       2705 '5':         31 '6':         26 '7':        163 '8':      13850 '9':         74 '10':        737 '11':         61 '12':        219 '13':        329 '14':        888
+
+[./bin/tmpi 3] 2.171297e+01 seconds. At src/threaded-mpi.c:504
+[classifier   2] Statistics:     309877 items,      10564 misses,  'N':     288277 '1':        482 '2':        512 '3':         20 '4':       2832 '5':         36 '6':         24 '7':        175 '8':      14223 '9':         74 '10':        783 '11':         65 '12':        244 '13':        581 '14':       1236
+
+[./bin/tmpi 2] 2.201452e+01 seconds. At src/threaded-mpi.c:504
+[classifier   0] Statistics:     102622 items,          0 misses,  'N':      92525 '1':        360 '2':        301 '3':         20 '4':       1687 '5':         22 '6':         20 '7':        134 '8':       5916 '9':         74 '10':        512 '11':         61 '12':        212 '13':        134 '14':        528
+
+[root aggregate] Statistics:    1029120 items,      34826 misses,  'N':     955146 '1':       1795 '2':       1854 '3':         80 '4':      10059 '5':        123 '6':         93 '7':        645 '8':      48556 '9':        296 '10':       2820 '11':        255 '12':        973 '13':       1672 '14':       3910
+
+[./bin/tmpi 0] 2.642888e+01 seconds. At src/threaded-mpi.c:504
 Evaluate
 	title = Mfog-Reboot-tmi-n4
 	examplesFileName = datasets/test.csv
@@ -73,22 +85,29 @@ saving experiments/reboot/tmi-n4.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--               11375    3060        -       0
-0                 113      40        A     113
-1                 211       1        A     211
-2                 928      99        A     928
-3                   0      47        N      47
-4                  23       0        A      23
-5                   0       4        N       4
-N              434529  203027        N  203027
+-               30572    4254        -       0
+0                2269      43        A    2269
+1                 201       1        A     201
+10                769       3        A     769
+11                 10       1        A      10
+12                  3       0        A       3
+13               1136       0        A    1136
+14                140       0        A     140
+2                 594      56        A     594
+4                3234      77        A    3234
+5                  35       0        A      35
+6                  13       0        A      13
+7                   0     109        N     109
+8               24323     569        A   24323
+N              383880  201165        N  201165
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19), ('2', 165784), ('3', 167099), ('1', 217774), ('4', 394344), ('0', 420636), ('5', 577522)] 8
+Labels (item)     [('N', 0), ('-', 19), ('5', 162837), ('4', 163290), ('7', 167099), ('2', 167557), ('8', 169029), ('6', 184285), ('1', 217774), ('10', 252291), ('0', 265560), ('11', 268372), ('12', 331599), ('13', 338193), ('14', 542140)] 15
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               204353 ( 31.272553%)
-Misses             434669 ( 66.518277%)
-Unknowns            14435 (  2.209017%)
-Unk. reprocessed        1 (  0.006928%)
+Hits               234001 ( 35.809647%)
+Misses             384630 ( 58.860707%)
+Unknowns            34826 (  5.329493%)
+Unk. reprocessed        1 (  0.002871%)
 Total              653457 ( 99.999847%)
 

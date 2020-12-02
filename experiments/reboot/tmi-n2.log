@@ -1,32 +1,60 @@
-./bin/reboot/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;	Hello from pokebola, rank 0/2
-m_receiver at 1/2
-Taking test stream from stdin
-sampler at 0/2
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/2, outputMode 2, nClassifiers 1
+[classifier 1]
+[sampler 0]
+[detector 0]
+Taking test stream from stdin, sampler at 0/2
 model complete
-model complete
-ND clusters (19, 82080): 1 extensions, 0 novelties
-Reclassified 2000
-realloc model 100
-ND clusters (82100, 223874): 1 extensions, 0 novelties
-Reclassified 2000
-ND clusters (223895, 324072): 1 extensions, 0 novelties
-Reclassified 2000
-[sampler] 9.831022e+00 seconds. At src/reboot/threaded-mpi.c:267
-ND clusters (324083, 405287): 1 extensions, 0 novelties
-Reclassified 2000
-ND clusters (405288, 569913): 1 extensions, 0 novelties
-Reclassified 2000
-ND clusters (569915, 603012): 0 extensions, 1 novelties
-Reclassified 2000
-[classifier] 1.614858e+01 seconds. At src/reboot/threaded-mpi.c:114
-[detector] 1.330326e+01 seconds. At src/reboot/threaded-mpi.c:370
-[m_receiver] 1.614563e+01 seconds. At src/reboot/threaded-mpi.c:198
-[./bin/reboot/tmpi] 1.332047e+01 seconds. At src/reboot/threaded-mpi.c:452
-[./bin/reboot/tmpi] 1.616750e+01 seconds. At src/reboot/threaded-mpi.c:452
+model incomplete 0, wait(modelReadySemaphore);
+[m_receiver 1]
+ND clusters (19, 82080): 22 extensions, 1 novelties
+ND consumed 1844, reclassified 0, garbageCollected 0
+ND clusters (19, 162193): 18 extensions, 5 novelties
+ND consumed 1735, reclassified 57, garbageCollected 53
+ND clusters (82080, 173595): 12 extensions, 1 novelties
+ND consumed 1941, reclassified 42, garbageCollected 1
+ND clusters (162869, 213059): 24 extensions, 3 novelties
+ND consumed 1897, reclassified 57, garbageCollected 2
+ND clusters (174374, 273934): 26 extensions, 1 novelties
+ND consumed 1746, reclassified 146, garbageCollected 6
+ND clusters (213123, 285533): 18 extensions, 0 novelties
+ND consumed 1950, reclassified 41, garbageCollected 1
+ND clusters (277168, 298035): 21 extensions, 1 novelties
+ND consumed 1846, reclassified 117, garbageCollected 0
+ND clusters (286123, 304161): 10 extensions, 1 novelties
+ND consumed 1948, reclassified 39, garbageCollected 0
+ND clusters (298179, 321537): 23 extensions, 0 novelties
+ND consumed 1901, reclassified 76, garbageCollected 0
+[sampler   0] (ioTime 6.437653e+00), (cpuTime 1.128825e+01), (lockTime 0.000000e+00), (total 1.874569e+01). At src/threaded-mpi.c:247
+ND clusters (304608, 344778): 26 extensions, 1 novelties
+ND consumed 1869, reclassified 111, garbageCollected 0
+ND clusters (323099, 369467): 19 extensions, 0 novelties
+ND consumed 1806, reclassified 144, garbageCollected 0
+ND clusters (345406, 381759): 14 extensions, 0 novelties
+ND consumed 1963, reclassified 31, garbageCollected 0
+ND clusters (370950, 407018): 33 extensions, 1 novelties
+ND consumed 1857, reclassified 96, garbageCollected 0
+ND clusters (381935, 511020): 31 extensions, 1 novelties
+ND consumed 1699, reclassified 144, garbageCollected 6
+ND clusters (407126, 579972): 27 extensions, 2 novelties
+ND consumed 1687, reclassified 159, garbageCollected 14
+ND clusters (511024, 612458): 22 extensions, 1 novelties
+ND consumed 1885, reclassified 53, garbageCollected 2
+[detector   0] (ioTime 1.624992e+01), (cpuTime 1.333163e+01), (lockTime 1.057150e-01), (total 3.325756e+01). At src/threaded-mpi.c:414
+[classifier   1] (ioTime 1.560036e+01), (cpuTime 2.176333e+01), (lockTime 1.010964e+00), (total 3.942787e+01). At src/threaded-mpi.c:112
+[m_receiver   1] (ioTime 3.698356e+01), (cpuTime 1.750100e-02), (lockTime 1.842000e-03), (total 3.942432e+01). At src/threaded-mpi.c:164
+[classifier   0] Statistics:     101155 items,          0 misses,  'N':      80701 '1':        337 '2':        330 '3':         62 '4':         76 '5':        131 '6':       3913 '7':        601 '8':         53 '9':        103 '10':       7792 '11':        118 '12':       5762 '13':         47 '14':         75 '15':        196 '16':         29 '17':        767 '18':         62
+
+[root aggregate] Statistics:     823455 items,      32313 misses,  'N':     693953 '1':        967 '2':       1308 '3':        188 '4':        264 '5':       1029 '6':      34799 '7':       2604 '8':        261 '9':        206 '10':      51672 '11':        279 '12':      33317 '13':         94 '14':        150 '15':        406 '16':         58 '17':       1776 '18':        124
+
+[./bin/tmpi 0] 3.327369e+01 seconds. At src/threaded-mpi.c:504
+[classifier   1] Statistics:     722300 items,      32313 misses,  'N':     613252 '1':        630 '2':        978 '3':        126 '4':        188 '5':        898 '6':      30886 '7':       2003 '8':        208 '9':        103 '10':      43880 '11':        161 '12':      27555 '13':         47 '14':         75 '15':        210 '16':         29 '17':       1009 '18':         62
+
+[./bin/tmpi 1] 3.944395e+01 seconds. At src/threaded-mpi.c:504
 Evaluate
 	title = Mfog-Reboot-tmi-n2
 	examplesFileName = datasets/test.csv
-	matchesFileName = out/reboot/tmi-n2.csv-matches.csv
+	matchesFileName = out/reboot/tmi-n2-matches.csv
 	plotSavePath = experiments/reboot/tmi-n2.png
 
 Count per class
@@ -40,16 +68,30 @@ saving experiments/reboot/tmi-n2.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
--               10271    2659        -       0
-N              436908  203619        N  203619
+-               27984    4329        -       0
+0                 110      40        A     110
+1                 147       0        A     147
+10              35700     388        A   35700
+11                 39       0        A      39
+12              21601     192        A   21601
+15                 14       0        A      14
+17                242       0        A     242
+2                 648       0        A     648
+3                  64       0        A      64
+4                   0     112        N     112
+5                 701      66        A     701
+6               26341     632        A   26341
+7                1333      69        A    1333
+8                 137      18        A     137
+N              332118  200432        N  200432
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19)] 2
+Labels (item)     [('N', 0), ('-', 19), ('2', 162553), ('3', 162837), ('5', 163261), ('4', 167099), ('6', 173631), ('8', 216200), ('1', 223093), ('7', 253639), ('10', 276849), ('12', 304181), ('0', 420636), ('11', 520449), ('15', 579903), ('17', 613444)] 16
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               203619 ( 31.160228%)
-Misses             436908 ( 66.860915%)
-Unknowns            12930 (  1.978704%)
-Unk. reprocessed        1 (  0.007734%)
+Hits               287621 ( 44.015224%)
+Misses             333523 ( 51.039700%)
+Unknowns            32313 (  4.944924%)
+Unk. reprocessed        1 (  0.003095%)
 Total              653457 ( 99.999847%)
 

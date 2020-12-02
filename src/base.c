@@ -8,14 +8,20 @@
 
 #include "./base.h"
 
-char *printableLabel(char label) {
-    char *ret = calloc(20, sizeof(char));
+char *printableLabelReuse(char label, char *ret) {
     if (isalpha(label) || label == '-') {
         ret[0] = label;
+        ret[1] = '\0';
     } else {
         sprintf(ret, "%d", label);
     }
     return ret;
+}
+/**
+ * DON'T FORGET TO FREE
+ */
+char *printableLabel(char label) {
+    return printableLabelReuse(label, calloc(20, sizeof(char)));
 }
 
 char fromPrintableLabel(char *label) {
@@ -224,12 +230,17 @@ Model *training(int kParam, int dim, double precision, double radiusF) {
 Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
     assert(model->size > 0);
+    match->pointId = example->id;
     match->label = MINAS_UNK_LABEL;
     match->distance = nearestClusterVal(dim, model->clusters, model->size, example->val, &match->cluster);
     assert(match->cluster != NULL);
     if (match->distance <= match->cluster->radius) {
+        match->isMatch = 1;
         match->label = match->cluster->label;
         match->cluster->n_matches++;
+    } else {
+        match->isMatch = 0;
+        match->cluster->n_misses++;
     }
     return match;
 }
@@ -310,6 +321,34 @@ void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknow
     unsigned int latestId = unknowns[unknownsSize -1].id;
     fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
     free(clusters);
+}
+
+char *labelMatchStatistics(Model *model, char *stats) {
+    int nLabels = 0;
+    char *labels = calloc(model->size, sizeof(char));
+    unsigned long int *matches = calloc(model->size, sizeof(unsigned long int));
+    unsigned long int nMatches = 0, nMisses = 0;
+    for (size_t i = 0; i < model->size; i++) {
+        Cluster *cl = &(model->clusters[i]);
+        //
+        size_t j = 0;
+        for (; labels[j] != cl->label && labels[j] != '\0' && j < nLabels; j++);
+        if (labels[j] == '\0') nLabels++;
+        labels[j] = cl->label;
+        nMatches += cl->n_matches;
+        matches[j] += cl->n_matches;
+        nMisses += cl->n_misses;
+    }
+    int statsIdx = sprintf(stats, "%10lu items, %10lu misses, ", nMatches, nMisses);
+    char label[20];
+    for (size_t j = 0; labels[j] != '\0'; j++) {
+        printableLabelReuse(labels[j], label);
+        statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matches[j]);
+    }
+    statsIdx += sprintf(&stats[statsIdx], "\n");
+    free(labels);
+    free(matches);
+    return stats;
 }
 
 #endif // _BASE_C

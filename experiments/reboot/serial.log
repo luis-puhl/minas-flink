@@ -1,4 +1,4 @@
-./bin/reboot/serial; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+./bin/serial; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
@@ -20,7 +20,7 @@ Reclassified 1663
 Final flush 1184
 ND clusters (19, 653332): 11 extensions, 2 novelties
 Reclassified 921
-[./bin/reboot/serial] 3.515391e+01 seconds. At src/reboot/main.c:108
+[./bin/serial] 3.312183e+01 seconds. At src/main.c:108
 Evaluate
 	title = Mfog-Reboot-serial
 	examplesFileName = datasets/test.csv

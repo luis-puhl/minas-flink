@@ -78,6 +78,12 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 
 ## Meeting 2020-12-01
 
+- Deadline resultados 07/12/2021
+- Deadline artigo 07/01/2021
+- Deadline submissão 07/03/2021
+- Deadline tese 07/05/2021
+- Deadline defesa 07/07/2021
+
 - Falha na implementação de Load Balancing, Network saving, etc.
   - Usar apenas Round Robin (Load balancing p/ trabalhos futuros);
   - Enviar Exemplo completo sampler->clasifier->detector;

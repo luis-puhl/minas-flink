@@ -34,7 +34,7 @@ typedef struct t_example {
 } Example;
 
 typedef struct {
-    unsigned int id, n_matches;
+    unsigned int id, n_matches, n_misses;
     char label, isIntrest;
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
@@ -60,7 +60,7 @@ typedef struct {
     int pointId, clusterId;
     // char clusterLabel, clusterCatergoy;
     // double clusterRadius;
-    char label;
+    char label, isMatch;
     double distance; // , secondDistance;
     Cluster *cluster;
     // Example *example;
@@ -70,6 +70,7 @@ typedef struct {
 #define MINAS_UNK_LABEL '-'
 
 char *printableLabel(char label);
+char *printableLabelReuse(char label, char *ret);
 char fromPrintableLabel(char *label);
 double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest);
 Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
@@ -81,5 +82,6 @@ void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknow
 
 int addClusterLine(int kParam, int dim, Model *model, char line[]);
 int printCluster(int dim, Cluster *cl);
+char *labelMatchStatistics(Model *model, char *stats);
 
 #endif // _BASE_H
