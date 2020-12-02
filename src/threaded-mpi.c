@@ -311,6 +311,8 @@ void *detector(void *arg) {
             printf("%10u,%s\n", example.id, printableLabelReuse(example.label, label));
             fflush(stdout);
         }
+        clock_t t3 = clock();
+        ioTime += t3 - t2;
         if (example.label != MINAS_UNK_LABEL)
             continue;
         if (args->outputMode >= MFOG_OUTPUT_ALL) {
@@ -320,6 +322,8 @@ void *detector(void *arg) {
             printf("\n");
             fflush(stdout);
         }
+        clock_t t4 = clock();
+        ioTime += t4 - t3;
         //
         double *sw = unknowns[unknownsSize].val;
         unknowns[unknownsSize] = example;
@@ -339,6 +343,8 @@ void *detector(void *arg) {
                 }
             }
             unknownsSize -= garbageCollected;
+            clock_t t5 = clock();
+            cpuTime += t5 - t4;
             fprintf(stderr, "[detector %d] garbageCollect unknowns to %lu "__FILE__":%d\n", args->mpiSize, garbageCollected, __LINE__);
         }
         assert(unknownsSize < unknownsMaxSize);
@@ -350,7 +356,8 @@ void *detector(void *arg) {
             unsigned int prevSize = model->size;
             noveltyDetection(PARAMS, model, unknowns, unknownsSize);
             unsigned int nNewClusters = model->size - prevSize;
-            // clock_t ndEnd = clock();
+            clock_t t3 = clock();
+            cpuTime += t3 - t2;
             // double ndTime = (ndEnd - ndStart) / 1000000.0;
             //
             for (size_t k = prevSize; k < model->size; k++) {
@@ -361,6 +368,8 @@ void *detector(void *arg) {
                 assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 assertMpi(MPI_Bcast(newCl->center, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             }
+            clock_t t4 = clock();
+            ioTime += t4 - t3;
             // clock_t bcastEnd = clock();
             // double bcastTime = (bcastEnd - ndEnd) / 1000000.0;
             //
@@ -388,17 +397,14 @@ void *detector(void *arg) {
             }
             // clock_t compressionEnd = clock();
             // double compressTime = (compressionEnd - bcastEnd) / 1000000.0;
+            clock_t t5 = clock();
+            cpuTime += t5 - t4;
             unknownsSize -= (garbageCollected + consumed + reclassified);
             fprintf(stderr, "ND consumed %lu, reclassified %lu, garbageCollected %lu\n", consumed, reclassified, garbageCollected);
             lastNDCheck = id;
             // double ndTotTime = (clock() - ndStart) / 1000000.0;
             // fprintf(stderr, "ND time(nd=%le, bcast=%le, compress=%le, tot=%le)\n", ndTime, bcastTime, compressTime, ndTotTime);
         }
-        clock_t t3 = clock();
-        clock_t t4 = clock();
-        ioTime += (t1 - t0);
-        cpuTime += (t3 - t2);
-        lockTime += (t2 - t1) + (t4 - t3);
         // if ((ioTime + cpuTime + lockTime) > 1000000) break;
     }
     Cluster cl;
