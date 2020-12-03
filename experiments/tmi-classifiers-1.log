@@ -1,0 +1,122 @@
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/4, outputMode 2, nClassifiers 1
+[sampler 0]
+Taking test stream from stdin, sampler at 0/4
+[detector 0]
+[classifier 1]
+[m_receiver 1]
+[classifier 2]
+[m_receiver 2]
+model complete
+model incomplete 93, wait(modelReadySemaphore);
+model incomplete 19, wait(modelReadySemaphore);
+[classifier 3]
+model incomplete 0, wait(modelReadySemaphore);
+[m_receiver 3]
+ND clusters (19, 82100): 22 extensions, 1 novelties
+ND consumed 1845, reclassified 0, garbageCollected 0
+ND clusters (19, 162111): 23 extensions, 10 novelties
+ND consumed 1761, reclassified 35, garbageCollected 54
+ND clusters (82323, 174881): 14 extensions, 4 novelties
+ND consumed 1930, reclassified 33, garbageCollected 5
+ND clusters (162122, 207182): 26 extensions, 2 novelties
+ND consumed 1945, reclassified 31, garbageCollected 1
+ND clusters (178904, 270713): 28 extensions, 0 novelties
+ND consumed 1737, reclassified 144, garbageCollected 11
+ND clusters (213316, 314064): 38 extensions, 1 novelties
+ND consumed 1829, reclassified 110, garbageCollected 5
+ND clusters (272458, 342006): 27 extensions, 0 novelties
+ND consumed 1805, reclassified 74, garbageCollected 2
+ND clusters (314874, 354548): 22 extensions, 0 novelties
+ND consumed 1826, reclassified 113, garbageCollected 9
+ND clusters (348691, 361145): 12 extensions, 0 novelties
+ND consumed 1962, reclassified 33, garbageCollected 2
+ND clusters (363412, 371617): 21 extensions, 0 novelties
+ND consumed 1949, reclassified 47, garbageCollected 1
+ND clusters (366931, 370497): 20 extensions, 0 novelties
+ND consumed 1922, reclassified 64, garbageCollected 6
+ND clusters (373526, 398845): 31 extensions, 1 novelties
+ND consumed 1965, reclassified 29, garbageCollected 0
+ND clusters (383518, 482321): 34 extensions, 0 novelties
+ND consumed 1802, reclassified 163, garbageCollected 8
+ND clusters (409802, 505366): 27 extensions, 2 novelties
+ND consumed 1827, reclassified 111, garbageCollected 18
+[sampler   0] (ioTime 1.031191e+01), (cpuTime 1.408945e+01), (lockTime 0.000000e+00), (total 2.573908e+01). At src/threaded-mpi.c:251
+ND clusters (487718, 532858): 27 extensions, 1 novelties
+ND consumed 1771, reclassified 152, garbageCollected 45
+ND clusters (529970, 587932): 33 extensions, 0 novelties
+ND consumed 1703, reclassified 169, garbageCollected 54
+[classifier   3] (ioTime 9.772459e+00), (cpuTime 1.118797e+01), (lockTime 5.290060e-01), (total 2.196058e+01). At src/threaded-mpi.c:112
+ND clusters (581624, 647334): 31 extensions, 0 novelties
+ND consumed 1769, reclassified 145, garbageCollected 83
+[classifier   1] (ioTime 1.064624e+01), (cpuTime 1.210027e+01), (lockTime 5.599400e-01), (total 2.381498e+01). At src/threaded-mpi.c:112
+[classifier   2] (ioTime 1.044027e+01), (cpuTime 1.182125e+01), (lockTime 4.819640e-01), (total 2.326189e+01). At src/threaded-mpi.c:112
+[m_receiver   1] (ioTime 2.356332e+01), (cpuTime 2.796000e-03), (lockTime 2.211200e-02), (total 2.385656e+01). At src/threaded-mpi.c:164
+[m_receiver   3] (ioTime 2.296715e+01), (cpuTime 3.353000e-03), (lockTime 3.818000e-02), (total 2.318196e+01). At src/threaded-mpi.c:164
+[detector   0] (ioTime 1.861964e+01), (cpuTime 9.357312e+00), (lockTime 0.000000e+00), (total 2.918486e+01). At src/threaded-mpi.c:420
+[classifier   0] Statistics:     102642 items,          0 misses,  'N':      79861 '1':        272 '2':      12269 '3':         47 '4':        145 '5':         81 '6':        117 '7':        129 '8':         75 '9':         21 '10':         72 '11':       2066 '12':       4320 '13':        554 '14':        568 '15':        723 '16':         95 '17':        175 '18':         63 '19':        183 '20':        306 '21':        204
+
+[m_receiver   2] (ioTime 2.293928e+01), (cpuTime 2.381000e-03), (lockTime 1.828000e-02), (total 2.326104e+01). At src/threaded-mpi.c:164
+[classifier   2] Statistics:     309164 items,      11297 misses,  'N':     266443 '1':        394 '2':      20357 '3':        169 '4':        492 '5':         87 '6':        130 '7':        185 '8':         86 '9':         21 '10':         92 '11':       5662 '12':       8606 '13':       1118 '14':       1622 '15':       1209 '16':         95 '17':        182 '18':         64 '19':        804 '20':        470 '21':        394
+
+[./bin/tmpi 2] 2.328904e+01 seconds. At src/threaded-mpi.c:509
+[classifier   1] Statistics:     310345 items,      10117 misses,  'N':     265177 '1':        396 '2':      22293 '3':        179 '4':        469 '5':         89 '6':        135 '7':        204 '8':         89 '9':         23 '10':         88 '11':       5691 '12':       8866 '13':       1169 '14':       1759 '15':       1164 '16':         95 '17':        183 '18':         64 '19':        866 '20':        435 '21':        440
+
+[./bin/tmpi 1] 2.387824e+01 seconds. At src/threaded-mpi.c:509
+[classifier   3] Statistics:     308553 items,      11908 misses,  'N':     266533 '1':        376 '2':      20772 '3':        176 '4':        496 '5':         92 '6':        131 '7':        193 '8':         83 '9':         23 '10':         90 '11':       5630 '12':       8239 '13':       1123 '14':       1644 '15':       1136 '16':         95 '17':        181 '18':         63 '19':        493 '20':        346 '21':        340
+
+[root aggregate] Statistics:    1030704 items,      33322 misses,  'N':     878014 '1':       1438 '2':      75691 '3':        571 '4':       1602 '5':        349 '6':        513 '7':        711 '8':        333 '9':         88 '10':        342 '11':      19049 '12':      30031 '13':       3964 '14':       5593 '15':       4232 '16':        380 '17':        721 '18':        254 '19':       2346 '20':       1557 '21':       1378
+
+[./bin/tmpi 0] 2.920720e+01 seconds. At src/threaded-mpi.c:509
+[./bin/tmpi 3] 2.320754e+01 seconds. At src/threaded-mpi.c:509
+90.55user 16.10system 0:18.66elapsed 571%CPU (0avgtext+0avgdata 61828maxresident)k
+0inputs+38440outputs (127major+44888minor)pagefaults 0swaps
+Evaluate
+	title = Mfog Classifer Threads 1
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/tmi-classifiers-1-1matches.csv
+	plotSavePath = experiments/tmi-classifiers-1.log.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog Classifer Threads 1
+
+saving experiments/tmi-classifiers-1.log.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-               27486    5836        -       0
+0                1435      42        A    1435
+1                 202       0        A     202
+10                 54       0        A      54
+11              10781       4        A   10781
+12              11833     918        A   11833
+13               1747       1        A    1747
+14               3320       1        A    3320
+15               1223     117        A    1223
+17                  8       0        A       8
+18                  2       0        A       2
+19               1556       0        A    1556
+2               26156     459        A   26156
+3                 383       0        A     383
+4                 925      97        A     925
+5                  25       0        A      25
+6                  45       0        A      45
+7                 195       0        A     195
+8                   0      33        N      33
+9                   4       0        A       4
+N              359799  198770        N  198770
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('10', 162193), ('2', 162196), ('4', 163228), ('3', 165083), ('5', 166805), ('8', 167099), ('7', 168854), ('11', 172740), ('13', 172782), ('12', 172941), ('14', 174768), ('9', 175262), ('6', 177610), ('1', 223093), ('15', 253639), ('17', 349323), ('0', 394332), ('18', 394455), ('19', 515758)] 21
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               258697 ( 39.588925%)
+Misses             361438 ( 55.311589%)
+Unknowns            33322 (  5.099333%)
+Unk. reprocessed        1 (  0.003001%)
+Total              653457 ( 99.999847%)
+

@@ -1,5 +1,5 @@
 ./bin/ond; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
-	outputMode 2, nClassifiers 0
+	outputMode 2, nClassifiers 1
 ND clusters (19, 82080): 22 extensions, 1 novelties
 ND consumed 1844, reclassified 0, garbageCollected 0
 ND clusters (19, 162193): 18 extensions, 5 novelties
@@ -36,10 +36,12 @@ ND clusters (581654, 609763): 17 extensions, 2 novelties
 ND consumed 1848, reclassified 116, garbageCollected 0
 [classifier] Statistics:     721411 items,      34872 misses,  'N':     642740 '1':        521 '2':      31238 '3':         75 '4':        214 '5':       1138 '6':      10169 '7':      15730 '8':       1345 '9':       4063 '10':       1925 '11':         86 '12':         82 '13':        229 '14':        831 '15':         34 '16':        116 '17':         35 '18':       2522 '19':         83 '20':         44 '21':       7555 '22':        278 '23':         24 '24':         68 '25':        266
 
-[./bin/ond] (ioTime 4.210344e+00), (cpuTime 1.324683e+01), (lockTime 0.000000e+00), (total 1.787764e+01), (rest -1.745715e+07). At src/online-nd.c:191
+[./bin/ond] (ioTime 4.233826e+00), (cpuTime 1.315192e+01), (lockTime 0.000000e+00), (total 1.779734e+01), (rest -1.738573e+07). At src/online-nd.c:192
 
+14.14user 3.65system 0:17.91elapsed 99%CPU (0avgtext+0avgdata 4256maxresident)k
+0inputs+39352outputs (0major+770minor)pagefaults 0swaps
 Evaluate
-	title = Online-NoveltyDetect-Serial
+	title = Serial Online-ND
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/ond-1matches.csv
 	plotSavePath = experiments/online-nd.log.png
@@ -49,7 +51,7 @@ Count per class
 class        
 A      447179
 N      206278
-### Online-NoveltyDetect-Serial
+### Serial Online-ND
 
 saving experiments/online-nd.log.png
 Confusion Matrix

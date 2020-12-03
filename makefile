@@ -1,97 +1,90 @@
 SHELL=/bin/bash
 
-all: bin bin/tmpi
-
-# -------------------------- Datasets and lib tests ----------------------------
-bin:
-	@-mkdir -p bin out experiments 2>/dev/null
-datasets/emtpyline:
-	echo "" > datasets/emtpyline
+.PHONY: all clean
+all: experiments/online-nd.log experiments/tmi-n experiments/tmi-supressed.log experiments/tmi-classifiers
+clean:
+	-rm bin/offline bin/ond bin/tmpi 
+	-rm out/*.csv
+	-rm experiments/*.{log,png}
 
 # -------------------------- Bin Executables -----------------------------------
-# CC=gcc
-# CFLAGS=-I/usr/local/include -Wl,-rpath -Wl,/usr/local/lib -Wl,--enable-new-dtags -L/usr/local/lib
-# LDFLAGS=-pthread -lmpi -g -Wall -lm
-bin/serial: src/base.c src/main.c
-	gcc -g -Wall -lm -pthread $^ -o $@
-
 bin/offline: src/base.c src/offline.c
 	gcc -g -Wall -lm -pthread $^ -o $@
-bin/online: src/base.c src/online.c
-	gcc -g -Wall -lm -pthread $^ -o $@
-bin/detection: src/base.c src/detection.c
-	gcc -g -Wall -lm -pthread $^ -o $@
-
+bin/ond: src/base.c src/online-nd.c
+	gcc -g -Wall -lm $^ -o $@
 bin/tmpi: src/base.c src/threaded-mpi.c
 	mpicc -g -Wall -lm $^ -o $@
-.PHONY: bin/reboot
-bin/reboot: bin/serial bin/offline bin/online bin/detection bin/tmpi
 
-# -------------------------- Reboot Experiments --------------------------------
+.PHONY: bin
+bin: bin/offline bin/ond bin/tmpi
+
+# --------------------------------- Experiments --------------------------------
+TIME := /usr/bin/time \
+	/usr/bin/time --output=experiments/timing.log --append \
+	--format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n"
+out/offline-model.csv experiments/offline-model.log: datasets/training.csv bin/offline
+	cat datasets/training.csv | $(TIME) ./bin/offline > out/offline-model.csv 2> experiments/offline-model.log
+
+experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond
+	cat out/offline-model.csv datasets/test.csv | $(TIME) ./bin/ond > out/ond-0full.csv 2> $@
+	-grep -E -v '^(Unknown|Cluster):' out/ond-0full.csv > out/ond-1matches.csv
+	python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv $@.png >> $@
+
 ds = datasets/training.csv datasets/emtpyline datasets/test.csv
-experiments/reboot/serial.log: $(ds) bin/serial src/evaluation/evaluate.py
-	cat datasets/training.csv datasets/emtpyline datasets/test.csv \
-		| ./bin/serial > out/reboot/serial.csv 2> $@
-	python3 src/evaluation/evaluate.py Mfog-Reboot-serial \
-		datasets/test.csv out/reboot/serial.csv experiments/reboot/serial.png >> $@
-
-out/reboot/offline.csv: $(ds) bin/offline
-	cat datasets/training.csv | ./bin/offline > out/reboot/offline.csv 2> experiments/reboot/offline.log
-
-experiments/reboot/split.log: $(ds) out/reboot/offline.csv bin/online bin/detection src/evaluation/evaluate.py
-	cat out/reboot/offline.csv datasets/test.csv | ./bin/online \
-		> out/reboot/online.csv 2> $@
-	cat out/reboot/offline.csv out/reboot/online.csv | ./bin/detection \
-		> out/reboot/detection.csv 2>> $@
-	grep -E -v '^(Unknown|Cluster):' out/reboot/online.csv > out/reboot/split-matches.csv
-	grep -E '^Unknown:' out/reboot/online.csv > out/reboot/split-unknowns.csv
-	# grep -E '^Cluster:' out/reboot/online.csv > out/reboot/split-clusters.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot datasets/test.csv out/reboot/split-matches.csv \
-		experiments/reboot/split.png >> $@
-
-.PHONY: tmpi
-tmpi: $(ds) out/reboot/offline.csv bin/tmpi experiments/reboot/tmi-n2.log experiments/reboot/tmi-n4.log
-	# cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/tmpi
-out = out/reboot/tmi-n
-experiments/reboot/tmi-n2.log: $(ds) out/reboot/offline.csv bin/tmpi src/evaluation/evaluate.py
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 2 ./bin/tmpi > $(out)2.csv 2> $@
-	-grep -E -v '^(Unknown|Cluster):' $(out)2.csv > $(out)2-matches.csv
-	-grep -E '^Unknown:' $(out)2.csv > $(out)2-unknowns.csv
-	-grep -E '^Cluster:' $(out)2.csv > $(out)2-clusters.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n2 datasets/test.csv $(out)2-matches.csv \
-		experiments/reboot/tmi-n2.png >>$@
-experiments/reboot/tmi-n4.log: $(ds) out/reboot/offline.csv bin/tmpi src/evaluation/evaluate.py
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/tmpi > $(out)4.csv 2> $@
-	-grep -E -v '^(Unknown|Cluster):' $(out)4.csv > $(out)4-matches.csv
-	-grep -E '^Unknown:' $(out)4.csv > $(out)4-unknowns.csv
-	-grep -E '^Cluster:' $(out)4.csv > $(out)4-clusters.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-n4 datasets/test.csv $(out)4-matches.csv \
-		experiments/reboot/tmi-n4.png >>$@
-experiments/reboot/tmi-n4-fast.log: $(ds) out/reboot/offline.csv bin/tmpi src/evaluation/evaluate.py
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/tmpi 0 > $(out)4-fastest.csv 2> $@
-	echo '' >> $@
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/tmpi 1 > $(out)4-fast.csv 2>> $@
-	echo '' >> $@
-	cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/tmpi 2 > $(out)4.csv 2>> $@
+n = $(subst experiments/tmi-n,,$(subst .log,,$@))
+out = $(subst experiments/,out/,$(subst .log,,$@))
+tmpi_nodes := $(foreach wrd,2 3 4,experiments/tmi-n$(wrd).log)
+experiments/tmi-n: $(tmpi_nodes)
+.PHONY: experiments/tmi-n
+$(tmpi_nodes): experiments/tmi-n%.log: datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
+	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n $(n) ./bin/tmpi > $(out)-0full.csv 2> $@
+	-grep -E -v '^(Unknown|Cluster):' $(out)-0full.csv > $(out)-1matches.csv
+	# -grep -E '^Unknown:'              $(out)-0full.csv > $(out)-2unknowns.csv
+	# -grep -E '^Cluster:'              $(out)-0full.csv > $(out)-3clusters.csv
+	echo "" >> $@
+	python3 src/evaluation/evaluate.py "Mfog tmi n$(n)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
 #
-.PHONY: experiments/reboot
-experiments/reboot: experiments/reboot/serial.log experiments/reboot/split.log experiments/reboot/eet.log experiments/reboot/tmi.log
+experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
+	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 0 > $(out)4-fastest.csv 2> $@
+	echo '' >> $@
+	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 1 > $(out)4-fast.csv 2>> $@
+	echo '' >> $@
+	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 2 > $(out)4.csv 2>> $@
+#
+classifiers = $(subst experiments/tmi-classifiers-,,$(subst .log,,$@))
+.PHONY: experiments/tmi-classifiers
+experiments/tmi-classifiers: $(foreach wrd,1 2 3 4,experiments/tmi-classifiers-$(wrd).log)
+$(foreach wrd,1 2 3 4,experiments/tmi-classifiers-$(wrd).log): experiments/tmi-classifiers-%.log: out/offline-model.csv datasets/test.csv bin/tmpi
+	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 2 $(classifiers) > $(out).csv 2> $@
+	-grep -E -v '^(Unknown|Cluster):' $(out).csv > $(out)-1matches.csv
+	python3 src/evaluation/evaluate.py "Mfog Classifer Threads $(classifiers)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
 
 # -------------------------- Remote Pi Cluster Experiments ---------------------
-.PHONY: code@almoco src.sha1 experiments/rpi
 SSH = ssh -i ./secrets/id_rsa -F ./conf/ssh.config
-code@almoco:
-	tar cz src makefile | $(SSH) almoco "cd cloud && tar xmvzf - >/dev/null"
-	$(SSH) almoco "cd cloud && make bin/reboot && scp -r ~/cloud/bin jantar:~/cloud/ && scp -r ~/cloud/bin lanche:~/cloud/"
-experiments/rpi/base-time.log: bin/hello-mpi
-	time mpirun -hostfile ./conf/hostsfile hostname >$@ 2>&1
-	time mpirun -hostfile ./conf/hostsfile ./bin/hello-mpi >>$@ 2>&1
-experiments/rpi/serial.log: experiments/reboot/serial.log
-	mv $^ $@
-	mv experiments/reboot/serial.png experiments/rpi/serial.png 
-experiments/rpi/split.log: experiments/reboot/split.log
-	mv $^ $@
-	mv experiments/reboot/split.png experiments/rpi/split.png
+SCP = scp -i ./secrets/id_rsa -F ./conf/ssh.config
+.PHONY: experiments/rpi send
+send:
+	$(SSH) almoco "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin; fi"
+	$(SSH) jantar "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin; fi"
+	$(SSH) lanche "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin; fi"
+	tar cz datasets | $(SSH) almoco "cd mfog && tar xmvzf - >/dev/null"
+experiments/rpi:
+	if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
+	tar cz conf src makefile | $(SSH) almoco "cd mfog && tar xmvzf - >/dev/null"
+	$(SSH) almoco "cd mfog && make bin" > experiments/rpi-make-bin.log 2>&1
+	$(SCP) almoco:~/mfog/bin/* jantar:~/mfog/bin/
+	$(SCP) almoco:~/mfog/bin/* lanche:~/mfog/bin/
+	$(SSH) almoco "cd mfog && make @pi_experiments" >> experiments/rpi-make-bin.log 2>&1
+	$(SSH) almoco "tar cz ~/mfog/experiments/rpi/*" | tar xmzf - --directory experiments/rpi
+.PHONY: @pi_experiments mv@py
+@pi_experiments:
+	if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
+	if [ ! -d experiments/out	 ]; then mkdir -p experiments/out; fi
+	$(TIME) mpirun -hostfile ./conf/hostsfile hostname > experiments/rpi/base-time.log 2>&1
+	make experiments/online-nd.log@pi experiments/tmi-n@pi
+@pi_experiments/online-nd.log @pi_experiments/tmi-n: @pi_experiments/%: $(subst @pi_,,$@)
+	cd experiments && find . -maxdepth 1 -type f -exec mv "{}" rpi +
+
 experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/tmpi src/evaluation/evaluate.py
 	cat out/reboot/offline.csv datasets/test.csv \
 		| mpirun -hostfile ./conf/hostsfile ./bin/tmpi \
@@ -106,7 +99,6 @@ experiments/rpi/reboot.log: code@almoco
 	$(SSH) almoco "cd cloud && make experiments/rpi/tmi-rpi-n12.log" > $@ 2>&1
 	$(SSH) almoco "tar cz ~/cloud/experiments/{rpi/tmi-rpi-n12.{log,png},reboot/tmi-n4.{log,png}}" | tar xmzf - experiments/rpi
 
-# experiments/rpi
 	# ssh almoco "cat out/reboot/offline.csv datasets/test.csv | mpirun -n 4 ./bin/tmpi \
 	# 	> out/reboot/tmi-n4.csv 2> $@mpirun --path /home/pi/cloud/ --host almoco:4,jantar:4,lanche:4 hostname"
 	# ssh almoco "cd cloud && mpirun almoco:4 almoco:4"
