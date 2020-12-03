@@ -193,6 +193,10 @@ void *sampler(void *arg) {
     //
     fprintf(stderr, "Taking test stream from stdin, sampler at %d/%d\n", args->mpiRank, args->mpiSize);
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
+    if (args->outputMode >= MFOG_OUTPUT_MINIMAL) {
+        printf("#pointId,label\n");
+        fflush(stdout);
+    }
     while (!feof(stdin)) {
         clock_t t0 = clock();
         getline(&lineptr, &n, stdin);
@@ -283,10 +287,6 @@ void *detector(void *arg) {
     int *buffer = calloc(bufferSize, sizeof(int));
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
-    if (args->outputMode >= MFOG_OUTPUT_MINIMAL) {
-        printf("#pointId,label\n");
-        fflush(stdout);
-    }
     while (streams > 0) {
         clock_t t0 = clock();
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
@@ -423,7 +423,6 @@ void *detector(void *arg) {
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
-    // assertMsg(argc == 2, "Expected '%s <output level>'", argv[0]);
     ThreadArgs args = {
         .kParam=100, .dim=22, .precision=1.0e-08,
         .radiusF=0.25, .minExamplesPerCluster=20, .noveltyF=1.4,

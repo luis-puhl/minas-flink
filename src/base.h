@@ -45,7 +45,7 @@ typedef struct {
     // double time_mu_μ, time_sigma_σ;
     // assumed last m arrivals in each micro-cluster to be __m = n__
     // so, the m/(2 · n)-th percentile is the 50th percentile
-    // therefore z-indez is 0.0 and time_relevance_stamp is the mean distance;
+    // therefore z-index is 0.0 and time_relevance_stamp is the mean distance;
     // double time_relevance_stamp_50;
     // unsigned int *ids, idSize; // used only to reconstruct clusters from snapshot
 } Cluster;
