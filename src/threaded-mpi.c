@@ -31,7 +31,7 @@ typedef struct {
     int kParam, dim, minExamplesPerCluster;
     double precision, radiusF, noveltyF;
     Model *model;
-    char outputMode, nClassifiers;
+    char outputMode, nClassifiers, EOS;
     // mpi stuff
     int mpiRank, mpiSize;
     char *mpiProcessorName;
@@ -41,13 +41,13 @@ typedef struct {
     sem_t modelReadySemaphore;
 } ThreadArgs;
 
-#define printTiming(who)                                                                                  \
-    double ioTime_d = ((double)ioTime) / 1000000.0;                                                       \
-    double cpuTime_d = ((double)cpuTime) / 1000000.0;                                                     \
-    double lockTime_d = ((double)lockTime) / 1000000.0;                                                   \
-    double totalTime_d = ((double)clock() - start) / 1000000.0;                                           \
-    fprintf(stderr, "[" who " %3d] (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n", \
-            args->mpiRank, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
+#define printTiming(who)                                                                                              \
+    double ioTime_d = ((double)ioTime) / 1000000.0;                                                                   \
+    double cpuTime_d = ((double)cpuTime) / 1000000.0;                                                                 \
+    double lockTime_d = ((double)lockTime) / 1000000.0;                                                               \
+    double totalTime_d = ((double)clock() - start) / 1000000.0;                                                       \
+    fprintf(stderr, "[" who " %3d] (items %lu) (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n", \
+            args->mpiRank, items, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
 
 void *classifier(void *arg) {
     clock_t start = clock();
@@ -57,7 +57,7 @@ void *classifier(void *arg) {
     double *valuePtr = example->val;
     fprintf(stderr, "[classifier %d]\n", args->mpiRank);
     Model *model = args->model;
-    unsigned long int *inputLine = calloc(1, sizeof(unsigned long int));
+    unsigned long int items = 0;
     //
     int exampleBufferLen, valueBufferLen;
     int mpiReturn;
@@ -66,7 +66,7 @@ void *classifier(void *arg) {
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
-    while (1) {
+    while (!args->EOS) {
         clock_t l0 = clock();
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
@@ -79,7 +79,7 @@ void *classifier(void *arg) {
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         clock_t l1 = clock();
         ioTime += (l1 - l0);
-        (*inputLine)++;
+        items++;
         //
         while (model->size < args->kParam) {
             fprintf(stderr, "model incomplete %d, wait(modelReadySemaphore);\n", model->size);
@@ -110,7 +110,7 @@ void *classifier(void *arg) {
     free(example->val);
     free(example);
     printTiming("classifier");
-    return inputLine;
+    return NULL;
 }
 
 /**
@@ -129,16 +129,19 @@ void *m_receiver(void *arg) {
     int mpiReturn;
     Model *model = args->model;
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
+    unsigned long int items = 0;
     while (1) {
         clock_t t0 = clock();
         assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         if (cl->label == MFOG_EOS_MARKER) {
+            args->EOS = 1;
             // fprintf(stderr, "[m_receiver %d] MFOG_EOS_MARKER\n", args->mpiRank);
             break;
         }
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
         assert(cl->id == model->size);
+        items++;
         clock_t t1 = clock();
         ioTime += t1 - t0;
         pthread_mutex_lock(&args->modelMutex);
@@ -162,7 +165,7 @@ void *m_receiver(void *arg) {
         cpuTime += t3 - t2;
     }
     printTiming("m_receiver");
-    return model;
+    return NULL;
 }
 
 /**
@@ -180,7 +183,7 @@ void *sampler(void *arg) {
     example->val = calloc(args->dim, sizeof(double));
     Model *model = args->model;
     char *lineptr = NULL;
-    size_t *inputLine = calloc(1, sizeof(size_t));
+    unsigned long int items = 0;
     //
     int clusterBufferLen, exampleBufferLen, valueBufferLen;
     MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen);
@@ -202,7 +205,7 @@ void *sampler(void *arg) {
         getline(&lineptr, &n, stdin);
         clock_t t1 = clock();
         ioTime += t1 - t0;
-        (*inputLine)++;
+        items++;
         int readCur = 0, readTot = 0, position = 0;
         if (lineptr[0] == 'C') {
             addClusterLine(args->kParam, args->dim, model, lineptr);
@@ -246,10 +249,17 @@ void *sampler(void *arg) {
     assertMpi(MPI_Pack(example->val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     for (dest = 1; dest < args->mpiSize; dest++) {
         // fprintf(stderr, "[sampler %d] MFOG_EOS_MARKER to %d\n", args->mpiRank, dest);
-        assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+        for (size_t i = 0; i < args->nClassifiers; i++) {
+            assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+        }
     }
+    assertMpi(MPI_Send(buffer, position, MPI_PACKED, 0, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+    Cluster cl;
+    cl.label = MFOG_EOS_MARKER;
+    assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+    //
     printTiming("sampler");
-    return inputLine;
+    return NULL;
 }
 
 /**
@@ -263,8 +273,7 @@ void *detector(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
     fprintf(stderr, "[detector %d]\n", args->mpiRank);
-    unsigned long int *inputLine = calloc(1, sizeof(unsigned long int));
-    (*inputLine) = 0;
+    unsigned long int items = 0;
     int streams = args->nClassifiers * (args->mpiSize - 1);
     int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
     double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
@@ -300,6 +309,7 @@ void *detector(void *arg) {
         if (example.id > id) {
             id = example.id;
         }
+        items++;
         if (example.label == MFOG_EOS_MARKER) {
             streams--;
             continue;
@@ -418,7 +428,7 @@ void *detector(void *arg) {
     // }
     // free(unknowns);
     printTiming("detector");
-    return inputLine;
+    return NULL;
 }
 
 int main(int argc, char const *argv[]) {
@@ -429,6 +439,7 @@ int main(int argc, char const *argv[]) {
         .outputMode = argc >= 2 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
         .nClassifiers = argc >= 3 ? atoi(argv[2]) : 1,
         .flightControllerBufferSize = 1000,
+        .EOS = 0,
     };
     //
     // if (argc == 2) stdin = fopen(argv[1], "r");

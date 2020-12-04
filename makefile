@@ -22,7 +22,7 @@ bin: bin/offline bin/ond bin/tmpi
 TIME := /usr/bin/time \
 	/usr/bin/time --output=experiments/timing.log --append \
 	--format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n"
-out/offline-model.csv experiments/offline-model.log: datasets/training.csv bin/offline
+out/offline-model.csv: datasets/training.csv bin/offline
 	cat datasets/training.csv | $(TIME) ./bin/offline > out/offline-model.csv 2> experiments/offline-model.log
 
 experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond
