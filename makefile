@@ -64,9 +64,9 @@ SSH = ssh -i ./secrets/id_rsa -F ./conf/ssh.config
 SCP = scp -i ./secrets/id_rsa -F ./conf/ssh.config
 .PHONY: experiments/rpi send
 send:
-	$(SSH) almoco "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin; fi"
-	$(SSH) jantar "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin; fi"
-	$(SSH) lanche "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin; fi"
+	$(SSH) almoco "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin mfog/out; fi"
+	$(SSH) jantar "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin mfog/out; fi"
+	$(SSH) lanche "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin mfog/out; fi"
 	tar cz datasets | $(SSH) almoco "cd mfog && tar xmvzf - >/dev/null"
 experiments/rpi:
 	if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
@@ -76,14 +76,16 @@ experiments/rpi:
 	$(SCP) almoco:~/mfog/bin/* lanche:~/mfog/bin/
 	$(SSH) almoco "cd mfog && make @pi_experiments" >> experiments/rpi-make-bin.log 2>&1
 	$(SSH) almoco "tar cz ~/mfog/experiments/rpi/*" | tar xmzf - --directory experiments/rpi
-.PHONY: @pi_experiments mv@py
-@pi_experiments:
+.PHONY: @pi_setup @pi_experiments mv@py
+@pi_setup:
 	if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
-	if [ ! -d experiments/out	 ]; then mkdir -p experiments/out; fi
+	if [ ! -d out ]; then mkdir -p out; fi
 	$(TIME) mpirun -hostfile ./conf/hostsfile hostname > experiments/rpi/base-time.log 2>&1
-	make experiments/online-nd.log@pi experiments/tmi-n@pi
+@pi_experiments: @pi_setup @pi_experiments/online-nd.log @pi_experiments/tmi-n
+	cd experiments && find . -maxdepth 1 -type f -exec mv -t rpi {} \+
 @pi_experiments/online-nd.log @pi_experiments/tmi-n: @pi_experiments/%: $(subst @pi_,,$@)
-	cd experiments && find . -maxdepth 1 -type f -exec mv "{}" rpi +
+	echo $@ => $(subst @pi_,,$@)
+	make $(subst @pi_,,$@)
 
 experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/tmpi src/evaluation/evaluate.py
 	cat out/reboot/offline.csv datasets/test.csv \
@@ -108,14 +110,14 @@ experiments/rpi/reboot.log: code@almoco
 # -------------------------- Experiments ---------------------------------------
 # --------- Experiments: Java reference ---------
 experiments/reference-java.log: bin/minas/src-minas.jar datasets/training.csv datasets/test.csv
-	java -classpath 'bin/minas/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
+	$(TIME) java -classpath 'bin/minas/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
 		datasets/training.csv datasets/test.csv out/minas-og/ \
 		kmeans kmeans \
 		2.0 1 10000 100 true | tee -a $@
 experiments/reference-java.log.png: experiments/reference-java.log out/minas-og/2020-08-25T12-18-16.272/results
 	python3 src/evaluation/evaluate.py Reference-Java datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results $@ >> experiments/reference-java.log
 experiments/reference-java-nf.log: bin/minas/src-minas-mfogFormat.jar datasets/training.csv datasets/test.csv
-	java -ea -classpath 'bin/minas/src-minas-mfogFormat.jar:' br.ufu.noveltydetection.minas.MinasOg \
+	$(TIME) java -ea -classpath 'bin/minas/src-minas-mfogFormat.jar:' br.ufu.noveltydetection.minas.MinasOg \
 		datasets/training.csv datasets/test.csv out/minas-nf/ \
 		kmeans kmeans \
 		2.0 lit 10000 100 false false > $@

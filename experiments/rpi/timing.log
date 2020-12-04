@@ -1,0 +1,25 @@
+./bin/offline
+	193.00 user	0.03 system	3:13.08 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16328 maxresident)k
+	0 inputs+96 outputs	(0 major+3771 minor)pagefaults	0 swaps
+
+mpirun -n 2 ./bin/tmpi
+	470.27 user	52.30 system	4:06.89 elapsed
+	211% CPU	(0 avgtext+0 avgdata	316848 maxresident)k
+	8 inputs+56456 outputs	(7 major+82974 minor)pagefaults	0 swaps
+
+mpirun -n 3 ./bin/tmpi
+	335.15 user	55.39 system	1:44.85 elapsed
+	372% CPU	(0 avgtext+0 avgdata	135820 maxresident)k
+	0 inputs+52824 outputs	(7 major+69832 minor)pagefaults	0 swaps
+
+mpirun -n 4 ./bin/tmpi
+	478.35 user	58.98 system	2:21.42 elapsed
+	379% CPU	(0 avgtext+0 avgdata	70624 maxresident)k
+	0 inputs+64672 outputs	(7 major+30920 minor)pagefaults	0 swaps
+
+./bin/ond
+	100.21 user	11.06 system	1:51.64 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3700 maxresident)k
+	0 inputs+39416 outputs	(0 major+635 minor)pagefaults	0 swaps
+

@@ -1,0 +1,6 @@
+gcc -g -Wall -lm -pthread src/base.c src/offline.c -o bin/offline
+gcc -g -Wall -lm src/base.c src/online-nd.c -o bin/ond
+mpicc -g -Wall -lm src/base.c src/threaded-mpi.c -o bin/tmpi
+cd experiments && find . -maxdepth 1 -type f -exec mv -t "{}" rpi +
+find: missing argument to `-exec'
+make: *** [makefile:86: @pi_experiments/online-nd.log] Error 1

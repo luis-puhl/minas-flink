@@ -1,0 +1,16 @@
+[lanche:04615] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:04615] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+jantar
+lanche
+almoco
+almoco
+almoco
+jantar
+lanche
+jantar
+lanche
+almoco
+jantar
+lanche
+0.12user 0.05system 0:00.74elapsed 24%CPU (0avgtext+0avgdata 7624maxresident)k
+0inputs+64outputs (5major+2217minor)pagefaults 0swaps

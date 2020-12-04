@@ -41,7 +41,7 @@ int main(int argc, char const *argv[]) {
     args.noveltyDetectionTrigger = args.minExamplesPerCluster * args.kParam;
     args.unknownsMaxSize = args.noveltyDetectionTrigger * 2;
     args.unknowns = calloc(args.unknownsMaxSize + 1, sizeof(Example));
-    for (size_t i = 0; i < args.unknownsMaxSize + 1; i++) {
+    for (unsigned long int i = 0; i < args.unknownsMaxSize + 1; i++) {
         args.unknowns[i].val = calloc(args.dim, sizeof(double));
     }
     fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le;\n"
@@ -79,7 +79,7 @@ int main(int argc, char const *argv[]) {
             ioTime += t3 - t2;
             continue;
         }
-        for (size_t d = 0; d < args.dim; d++) {
+        for (unsigned long int d = 0; d < args.dim; d++) {
             assert(sscanf(&lineptr[readTot], "%lf,%n", &example.val[d], &readCur));
             readTot += readCur;
         }
@@ -118,8 +118,8 @@ int main(int argc, char const *argv[]) {
         example.val = sw;
         args.unknownsSize++;
         if (args.unknownsSize >= args.unknownsMaxSize) {
-            size_t garbageCollected = 0;
-            for (size_t ex = 0; ex < args.unknownsSize; ex++) {
+            unsigned long int garbageCollected = 0;
+            for (unsigned long int ex = 0; ex < args.unknownsSize; ex++) {
                 // compress
                 args.unknowns[ex - garbageCollected] = args.unknowns[ex];
                 if (args.unknowns[ex].id < args.lastNDCheck) {
@@ -141,7 +141,7 @@ int main(int argc, char const *argv[]) {
             clock_t t3 = clock();
             cpuTime += t3 - t2;
             //
-            for (size_t k = prevSize; k < args.model->size; k++) {
+            for (unsigned long int k = prevSize; k < args.model->size; k++) {
                 Cluster *newCl = &args.model->clusters[k];
                 newCl->isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
                 if (args.outputMode >= MFOG_OUTPUT_ALL)
@@ -150,8 +150,8 @@ int main(int argc, char const *argv[]) {
             clock_t t4 = clock();
             ioTime += t4 - t3;
             //
-            size_t garbageCollected = 0, consumed = 0, reclassified = 0;
-            for (size_t ex = 0; ex < args.unknownsSize; ex++) {
+            unsigned long int garbageCollected = 0, consumed = 0, reclassified = 0;
+            for (unsigned long int ex = 0; ex < args.unknownsSize; ex++) {
                 // compress
                 args.unknowns[ex - (garbageCollected + consumed + reclassified)] = args.unknowns[ex];
                 Cluster *nearest;

@@ -57,7 +57,7 @@ void *classifier(void *arg) {
     double *valuePtr = example->val;
     fprintf(stderr, "[classifier %d]\n", args->mpiRank);
     Model *model = args->model;
-    size_t *inputLine = calloc(1, sizeof(size_t));
+    unsigned long int *inputLine = calloc(1, sizeof(unsigned long int));
     //
     int exampleBufferLen, valueBufferLen;
     int mpiReturn;
@@ -180,7 +180,6 @@ void *sampler(void *arg) {
     example->val = calloc(args->dim, sizeof(double));
     Model *model = args->model;
     char *lineptr = NULL;
-    size_t n = 0;
     size_t *inputLine = calloc(1, sizeof(size_t));
     //
     int clusterBufferLen, exampleBufferLen, valueBufferLen;
@@ -197,6 +196,7 @@ void *sampler(void *arg) {
         printf("#pointId,label\n");
         fflush(stdout);
     }
+    size_t n = 0;
     while (!feof(stdin)) {
         clock_t t0 = clock();
         getline(&lineptr, &n, stdin);
@@ -221,7 +221,7 @@ void *sampler(void *arg) {
             ioTime += t3 - t2;
             continue;
         }
-        for (size_t d = 0; d < args->dim; d++) {
+        for (unsigned long int d = 0; d < args->dim; d++) {
             assert(sscanf(&lineptr[readTot], "%lf,%n", &example->val[d], &readCur));
             readTot += readCur;
         }
@@ -263,7 +263,7 @@ void *detector(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
     fprintf(stderr, "[detector %d]\n", args->mpiRank);
-    size_t *inputLine = calloc(1, sizeof(size_t));
+    unsigned long int *inputLine = calloc(1, sizeof(unsigned long int));
     (*inputLine) = 0;
     int streams = args->nClassifiers * (args->mpiSize - 1);
     int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
@@ -272,13 +272,13 @@ void *detector(void *arg) {
     example.val = calloc(args->dim, sizeof(double));
     double *valuePtr = example.val;
     //
-    size_t noveltyDetectionTrigger = args->minExamplesPerCluster * args->kParam;
-    size_t unknownsMaxSize = noveltyDetectionTrigger * 2;
+    unsigned long int noveltyDetectionTrigger = args->minExamplesPerCluster * args->kParam;
+    unsigned long int unknownsMaxSize = noveltyDetectionTrigger * 2;
     Example *unknowns = calloc(unknownsMaxSize + 1, sizeof(Example));
-    for (size_t i = 0; i < unknownsMaxSize + 1; i++) {
+    for (unsigned long int i = 0; i < unknownsMaxSize + 1; i++) {
         unknowns[i].val = calloc(args->dim, sizeof(double));
     }
-    size_t unknownsSize = 0, lastNDCheck = 0, id = 0;
+    unsigned long int unknownsSize = 0, lastNDCheck = 0, id = 0;
     //
     int mpiReturn, exampleBufferLen, valueBufferLen, position;
     assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
@@ -333,8 +333,8 @@ void *detector(void *arg) {
             // TODO: garbage collect istead of realloc
             // unknownsMaxSize *= 2;
             // unknowns = realloc(unknowns, unknownsMaxSize * sizeof(Example));
-            size_t garbageCollected = 0;
-            for (size_t ex = 0; ex < unknownsSize; ex++) {
+            unsigned long int garbageCollected = 0;
+            for (unsigned long int ex = 0; ex < unknownsSize; ex++) {
                 // compress
                 unknowns[ex - garbageCollected] = unknowns[ex];
                 if (unknowns[ex].id < lastNDCheck) {
@@ -360,7 +360,7 @@ void *detector(void *arg) {
             cpuTime += t3 - t2;
             // double ndTime = (ndEnd - ndStart) / 1000000.0;
             //
-            for (size_t k = prevSize; k < model->size; k++) {
+            for (unsigned long int k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
                 newCl->isIntrest = args->outputMode >= MFOG_OUTPUT_MINIMAL;
                 if (args->outputMode >= MFOG_OUTPUT_ALL)
@@ -373,8 +373,8 @@ void *detector(void *arg) {
             // clock_t bcastEnd = clock();
             // double bcastTime = (bcastEnd - ndEnd) / 1000000.0;
             //
-            size_t garbageCollected = 0, consumed = 0, reclassified = 0;
-            for (size_t ex = 0; ex < unknownsSize; ex++) {
+            unsigned long int garbageCollected = 0, consumed = 0, reclassified = 0;
+            for (unsigned long int ex = 0; ex < unknownsSize; ex++) {
                 // compress
                 unknowns[ex - (garbageCollected + consumed + reclassified)] = unknowns[ex];
                 Cluster *nearest;
@@ -413,7 +413,7 @@ void *detector(void *arg) {
     //
     // free(example.val);
     // free(buffer);
-    // for (size_t i = 0; i < unknownsMaxSize; i++) {
+    // for (unsigned long int i = 0; i < unknownsMaxSize; i++) {
     //     free(unknowns[i].val);
     // }
     // free(unknowns);
@@ -462,12 +462,10 @@ int main(int argc, char const *argv[]) {
                 args.kParam, args.dim, args.precision, args.radiusF, args.minExamplesPerCluster, args.noveltyF,
                 args.mpiProcessorName, args.mpiRank, args.mpiSize, args.outputMode, args.nClassifiers);
 
-        pthread_t detector_t, sampler_t;
-        // assertErrno(pthread_create(&sampler_t, NULL, sampler, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
+        pthread_t detector_t;
         assertErrno(pthread_create(&detector_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
         sampler(&args);
-        // assertErrno(pthread_join(sampler_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         //
         char *stats = calloc(args.model->size * 30, sizeof(char));
@@ -475,7 +473,7 @@ int main(int argc, char const *argv[]) {
         Cluster remoteCl;
         #define MFOG_TAG_CLUSTER_STATS 3000
         for (int src = 1; src < args.mpiSize; src++) {
-            for (size_t i = 0; i < args.model->size; i++) {
+            for (unsigned long int i = 0; i < args.model->size; i++) {
                 assertMpi(MPI_Recv(&remoteCl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
                 Cluster *cl = &(args.model->clusters[remoteCl.id]);
                 assert(cl != NULL && remoteCl.id == cl->id);
@@ -487,18 +485,18 @@ int main(int argc, char const *argv[]) {
         free(stats);
     } else {
         pthread_t classifier_t[args.nClassifiers], m_receiver_t;
-        for (size_t i = 0; i < args.nClassifiers; i++) {
+        for (unsigned long int i = 0; i < args.nClassifiers; i++) {
             assertErrno(pthread_create(&classifier_t[i], NULL, classifier, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         }
         assertErrno(pthread_create(&m_receiver_t, NULL, m_receiver, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //
-        for (size_t i = 0; i < args.nClassifiers; i++) {
+        for (unsigned long int i = 0; i < args.nClassifiers; i++) {
             assertErrno(pthread_join(classifier_t[i], (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         }
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         //
         int mpiReturn;
-        for (size_t i = 0; i < args.model->size; i++) {
+        for (unsigned long int i = 0; i < args.model->size; i++) {
             Cluster *cl = &(args.model->clusters[i]);
             assertMpi(MPI_Send(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD));
         }

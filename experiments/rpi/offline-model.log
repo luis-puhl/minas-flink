@@ -1,0 +1,7 @@
+./bin/offline; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00
+Taking training set from stdin
+Training 72000 examples with 1 classes (N)
+Training 72000 examples from class N
+[./bin/offline] 1.930417e+02 seconds. At src/offline.c:33
+193.01user 0.03system 3:13.09elapsed 99%CPU (0avgtext+0avgdata 16328maxresident)k
+0inputs+104outputs (0major+3858minor)pagefaults 0swaps
