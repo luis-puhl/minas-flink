@@ -103,13 +103,12 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 
 ### Single Node
 
-| Cores | Workers | Classifer_t / Worker  | Tempo | speedup | Eficiencia  | Hit | Unk |
-| ----  | ------  | --------------------  | ----- | ---     | -----       | --- | --- |
-| base  | 0       |                       |       |         |             |     |     |
-| 1     | 1       | 1                     |       |         |             |     |     |
-| 2     | 2       | 1                     |       |         |             |     |     |
-| 3     | 3       | 1                     |       |         |             |     |     |
-| 4     | 4       | 1                     |       |         |             |     |     |
+| Cores | Workers | Classifer_t / Worker  | Tempo   | speedup | Eficiencia  | Hit     | Unk   |
+| ----  | ------  | --------------------  | -----   | ---     | -----       | ---     | ---   |
+| base  | 0       |                       | 1:51.64 | -       | -           | 38.83%  | 5.34% |
+| 2     | 1       | 1                     | 4:06.89 | 45.22%  | 45.21%      | 35.59%  | 5.43% |
+| 3     | 2       | 1                     | 1:44.85 | 106.48% | 53.23%      | 35.47%  | 4.62% |
+| 4     | 3       | 1                     | 2:21.42 | 78.94%  | 26.31%      | 35.01%  | 7.42% |
 
 ### Single Node, Multi Thread
 
