@@ -8,7 +8,7 @@
             "name": "Attach bin/reboot/tmpi",
             "type": "cppdbg",
             "request": "attach",
-            "program": "${workspaceFolder}/bin/reboot/tmpi",
+            "program": "${workspaceFolder}/bin/tmpi",
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "setupCommands": [

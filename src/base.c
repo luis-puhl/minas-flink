@@ -317,9 +317,9 @@ void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknow
         model->clusters = realloc(model->clusters, model->size * sizeof(Cluster));
         model->clusters[model->size - 1] = clusters[k];
     }
-    unsigned int earliestId = unknowns[0].id;
-    unsigned int latestId = unknowns[unknownsSize -1].id;
-    fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
+    // unsigned int earliestId = unknowns[0].id;
+    // unsigned int latestId = unknowns[unknownsSize -1].id;
+    // fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
     free(clusters);
 }
 
@@ -345,7 +345,6 @@ char *labelMatchStatistics(Model *model, char *stats) {
         printableLabelReuse(labels[j], label);
         statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matches[j]);
     }
-    statsIdx += sprintf(&stats[statsIdx], "\n");
     free(labels);
     free(matches);
     return stats;

@@ -1,16 +1,32 @@
-[lanche:04615] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:04615] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-jantar
-lanche
-almoco
-almoco
-almoco
-jantar
-lanche
-jantar
-lanche
-almoco
-jantar
-lanche
-0.12user 0.05system 0:00.74elapsed 24%CPU (0avgtext+0avgdata 7624maxresident)k
-0inputs+64outputs (5major+2217minor)pagefaults 0swaps
+[lanche:02615] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:02615] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+Command exited with non-zero status 1
+0.04user 0.03system 0:08.85elapsed 0%CPU (0avgtext+0avgdata 13020maxresident)k
+13984inputs+16outputs (179major+1995minor)pagefaults 0swaps
+------------------------------------------------------------
+A process or daemon was unable to complete a TCP connection
+to another process:
+  Local host:    lanche
+  Remote host:   pokebola
+This is usually caused by a firewall on the remote host. Please
+check that any firewall (e.g., iptables) has been disabled and
+try again.
+------------------------------------------------------------
+------------------------------------------------------------
+A process or daemon was unable to complete a TCP connection
+to another process:
+  Local host:    almoco
+  Remote host:   pokebola
+This is usually caused by a firewall on the remote host. Please
+check that any firewall (e.g., iptables) has been disabled and
+try again.
+------------------------------------------------------------
+------------------------------------------------------------
+A process or daemon was unable to complete a TCP connection
+to another process:
+  Local host:    jantar
+  Remote host:   pokebola
+This is usually caused by a firewall on the remote host. Please
+check that any firewall (e.g., iptables) has been disabled and
+try again.
+------------------------------------------------------------

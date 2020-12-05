@@ -19,16 +19,15 @@ bin/tmpi: src/base.c src/threaded-mpi.c
 bin: bin/offline bin/ond bin/tmpi
 
 # --------------------------------- Experiments --------------------------------
-TIME := /usr/bin/time \
-	/usr/bin/time --output=experiments/timing.log --append \
-	--format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n"
+export TIME_FORMAT="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n"
+TIME := /usr/bin/time --format="$$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$$TIME_FORMAT"
 out/offline-model.csv: datasets/training.csv bin/offline
 	cat datasets/training.csv | $(TIME) ./bin/offline > out/offline-model.csv 2> experiments/offline-model.log
 
 experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond
 	cat out/offline-model.csv datasets/test.csv | $(TIME) ./bin/ond > out/ond-0full.csv 2> $@
 	-grep -E -v '^(Unknown|Cluster):' out/ond-0full.csv > out/ond-1matches.csv
-	python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv $@.png >> $@
+	-python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv $@.png >> $@
 
 ds = datasets/training.csv datasets/emtpyline datasets/test.csv
 n = $(subst experiments/tmi-n,,$(subst .log,,$@))
@@ -42,7 +41,7 @@ $(tmpi_nodes): experiments/tmi-n%.log: datasets/test.csv out/offline-model.csv b
 	# -grep -E '^Unknown:'              $(out)-0full.csv > $(out)-2unknowns.csv
 	# -grep -E '^Cluster:'              $(out)-0full.csv > $(out)-3clusters.csv
 	echo "" >> $@
-	python3 src/evaluation/evaluate.py "Mfog tmi n$(n)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
+	-python3 src/evaluation/evaluate.py "Mfog tmi n$(n)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
 #
 experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 0 > $(out)4-fastest.csv 2> $@
@@ -57,7 +56,7 @@ experiments/tmi-classifiers: $(foreach wrd,1 2 3 4,experiments/tmi-classifiers-$
 $(foreach wrd,1 2 3 4,experiments/tmi-classifiers-$(wrd).log): experiments/tmi-classifiers-%.log: out/offline-model.csv datasets/test.csv bin/tmpi
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 2 $(classifiers) > $(out).csv 2> $@
 	-grep -E -v '^(Unknown|Cluster):' $(out).csv > $(out)-1matches.csv
-	python3 src/evaluation/evaluate.py "Mfog Classifer Threads $(classifiers)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
+	-python3 src/evaluation/evaluate.py "Mfog Classifer Threads $(classifiers)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
 
 # -------------------------- Remote Pi Cluster Experiments ---------------------
 SSH = ssh -i ./secrets/id_rsa -F ./conf/ssh.config
@@ -94,7 +93,7 @@ experiments/rpi/tmi-rpi-n12.log: $(ds) out/reboot/offline.csv bin/tmpi src/evalu
 	-grep -E -v '^(Unknown|Cluster):' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-matches.csv
 	-grep -E '^Unknown:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-unknowns.csv
 	-grep -E '^Cluster:' out/reboot/tmi-rpi-n12.csv > out/reboot/tmi-rpi-n12-clusters.csv
-	python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
+	-python3 src/evaluation/evaluate.py Mfog-Reboot-tmi-rpi-n12 datasets/test.csv out/reboot/tmi-rpi-n12-matches.csv \
 		experiments/rpi/tmi-rpi-n12.png >>$@
 # experiments/rpi: experiments/rpi/base-time.log experiments/rpi/serial.log experiments/rpi/split.log experiments/rpi/tmi-rpi-n12.log
 experiments/rpi/reboot.log: code@almoco

@@ -1,0 +1,46 @@
+[classifier 2]
+[classifier 1]
+[m_receiver 2]
+[classifier 2]
+[classifier 1]
+[m_receiver 1]
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from pokebola, rank 0/3, outputMode 1, nClassifiers 2
+[sampler 0]
+[detector 0]
+Taking test stream from stdin, sampler at 0/3
+model complete
+ND consumed   1844, reclassified      0, garbageCollected      0
+ND consumed   1747, reclassified     31, garbageCollected     56
+ND consumed   1955, reclassified     20, garbageCollected      0
+ND consumed   1828, reclassified     72, garbageCollected      0
+ND consumed   1821, reclassified    109, garbageCollected      4
+ND consumed   1921, reclassified     60, garbageCollected      4
+ND consumed   1930, reclassified     54, garbageCollected      0
+ND consumed   1920, reclassified     66, garbageCollected      1
+ND consumed   1900, reclassified     50, garbageCollected      7
+ND consumed   1908, reclassified     42, garbageCollected      2
+ND consumed   1917, reclassified     68, garbageCollected      0
+ND consumed   1947, reclassified     44, garbageCollected      1
+ND consumed   1873, reclassified    100, garbageCollected      1
+[sampler] args->inFlight 544310
+[sampler   0] (items   653558) (ioTime 4.828641e+00), (cpuTime 9.752681e+00), (lockTime 0.000000e+00), (total 1.554312e+01). At src/threaded-mpi.c:262
+[detector] args->inFlight   544300 (100 %)
+ND consumed   1759, reclassified    165, garbageCollected      5
+ND consumed   1850, reclassified     93, garbageCollected      8
+ND consumed   1753, reclassified    205, garbageCollected      6
+ND consumed   1876, reclassified     95, garbageCollected      0
+[classifier   2] MFOG_EOS_MARKER
+[classifier   2] (items   164125) (ioTime 1.081567e+01), (cpuTime 5.640456e+00), (lockTime 3.539899e+00), (total 2.047606e+01). At src/threaded-mpi.c:107
+[classifier   2] MFOG_EOS_MARKER
+[classifier   2] (items   162604) (ioTime 1.102610e+01), (cpuTime 5.662012e+00), (lockTime 3.302939e+00), (total 2.047615e+01). At src/threaded-mpi.c:107
+[classifier   1] MFOG_EOS_MARKER
+[classifier   1] (items   164410) (ioTime 1.063437e+01), (cpuTime 5.705994e+00), (lockTime 3.624590e+00), (total 2.041332e+01). At src/threaded-mpi.c:107
+[classifier   1] MFOG_EOS_MARKER
+[classifier   1] (items   162319) (ioTime 1.084641e+01), (cpuTime 5.661668e+00), (lockTime 3.584117e+00), (total 2.041342e+01). At src/threaded-mpi.c:107
+Command exited with non-zero status 1
+mpirun -n 3 ./bin/tmpi 1 2
+	0.46 user	1.54 system	1:23.62 elapsed
+	2% CPU	(0 avgtext+0 avgdata	21300 maxresident)k
+	0 inputs+3544 outputs	(7 major+4266 minor)pagefaults	0 swaps
+

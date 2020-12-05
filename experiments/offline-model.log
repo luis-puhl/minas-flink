@@ -2,6 +2,6 @@
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/offline] 2.274664e+01 seconds. At src/offline.c:33
-22.73user 0.00system 0:22.78elapsed 99%CPU (0avgtext+0avgdata 17800maxresident)k
-8inputs+104outputs (0major+4133minor)pagefaults 0swaps
+[./bin/offline] 2.488144e+01 seconds. At src/offline.c:33
+24.85user 0.02system 0:24.97elapsed 99%CPU (0avgtext+0avgdata 17936maxresident)k
+0inputs+104outputs (0major+4136minor)pagefaults 0swaps
