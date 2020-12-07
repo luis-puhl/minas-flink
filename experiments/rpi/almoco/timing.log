@@ -1,0 +1,71 @@
+"./bin/offline
+	193.93 user	0.02 system	3:14.08 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16208 maxresident)k
+	0 inputs+96 outputs	(0 major+3769 minor)pagefaults	0 swaps
+"
+"mpirun -n 2 ./bin/tmpi
+	192.16 user	30.96 system	1:51.03 elapsed
+	200% CPU	(0 avgtext+0 avgdata	323716 maxresident)k
+	0 inputs+39328 outputs	(7 major+84526 minor)pagefaults	0 swaps
+"
+"mpirun -n 3 ./bin/tmpi
+	180.80 user	34.23 system	0:56.91 elapsed
+	377% CPU	(0 avgtext+0 avgdata	148292 maxresident)k
+	0 inputs+39120 outputs	(7 major+76575 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi
+	439.18 user	43.57 system	2:11.86 elapsed
+	366% CPU	(0 avgtext+0 avgdata	37008 maxresident)k
+	0 inputs+48648 outputs	(7 major+26540 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 0
+	566.05 user	15.74 system	2:26.07 elapsed
+	398% CPU	(0 avgtext+0 avgdata	15776 maxresident)k
+	0 inputs+16488 outputs	(7 major+9035 minor)pagefaults	0 swaps
+"
+Command exited with non-zero status 1
+"mpirun -n 4 ./bin/tmpi 1
+	391.57 user	15.79 system	2:52.52 elapsed
+	236% CPU	(0 avgtext+0 avgdata	16112 maxresident)k
+	0 inputs+20024 outputs	(7 major+8222 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	192.90 user	0.04 system	3:12.99 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16364 maxresident)k
+	0 inputs+96 outputs	(0 major+3771 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 0
+	474.37 user	17.83 system	2:03.67 elapsed
+	397% CPU	(0 avgtext+0 avgdata	15708 maxresident)k
+	0 inputs+16480 outputs	(7 major+9334 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 1
+	578.80 user	23.76 system	2:31.62 elapsed
+	397% CPU	(0 avgtext+0 avgdata	41708 maxresident)k
+	0 inputs+19960 outputs	(7 major+17103 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 2
+	475.73 user	52.35 system	2:16.88 elapsed
+	385% CPU	(0 avgtext+0 avgdata	28044 maxresident)k
+	0 inputs+49008 outputs	(7 major+23289 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	192.00 user	0.02 system	3:12.22 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16208 maxresident)k
+	0 inputs+96 outputs	(0 major+3769 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 0
+	567.15 user	15.43 system	2:26.25 elapsed
+	398% CPU	(0 avgtext+0 avgdata	15808 maxresident)k
+	0 inputs+16496 outputs	(7 major+9671 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 1
+	547.84 user	23.64 system	2:23.86 elapsed
+	397% CPU	(0 avgtext+0 avgdata	29868 maxresident)k
+	0 inputs+19344 outputs	(7 major+13427 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 2
+	441.62 user	43.31 system	2:10.44 elapsed
+	371% CPU	(0 avgtext+0 avgdata	61032 maxresident)k
+	0 inputs+47592 outputs	(7 major+36710 minor)pagefaults	0 swaps
+"

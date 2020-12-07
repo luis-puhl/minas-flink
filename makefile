@@ -44,11 +44,15 @@ $(tmpi_nodes): experiments/tmi-n%.log: datasets/test.csv out/offline-model.csv b
 	-python3 src/evaluation/evaluate.py "Mfog tmi n$(n)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
 #
 experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
-	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 0 > $(out)4-fastest.csv 2> $@
-	echo '' >> $@
+	echo '------ Fastest (no output) ------' > $@
+	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 0 > $(out)4-fastest.csv 2>> $@
+	echo '------ Fast (only unk and novelty output) ------' >> $@
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 1 > $(out)4-fast.csv 2>> $@
-	echo '' >> $@
+	-python3 src/evaluation/evaluate.py 'Output Only Unk and Novelty' datasets/test.csv $(out)4-fast.csv $@-fast.png >> $@
+	echo '------ Full (all labels) ------' >> $@
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 2 > $(out)4.csv 2>> $@
+	-grep -E -v '^(Unknown|Cluster):' $(out)4.csv > $(out)4-matches.csv
+	-python3 src/evaluation/evaluate.py 'Full Output' datasets/test.csv $(out)4-matches.csv $@.png >> $@
 #
 classifiers = $(subst experiments/tmi-classifiers-,,$(subst .log,,$@))
 .PHONY: experiments/tmi-classifiers

@@ -36,10 +36,10 @@ ND clusters (581654, 609763): 17 extensions, 2 novelties
 ND consumed 1848, reclassified 116, garbageCollected 0
 [classifier] Statistics:     721411 items,      34872 misses,  'N':     642740 '1':        521 '2':      31238 '3':         75 '4':        214 '5':       1138 '6':      10169 '7':      15730 '8':       1345 '9':       4063 '10':       1925 '11':         86 '12':         82 '13':        229 '14':        831 '15':         34 '16':        116 '17':         35 '18':       2522 '19':         83 '20':         44 '21':       7555 '22':        278 '23':         24 '24':         68 '25':        266
 
-[./bin/ond] (ioTime 1.317175e+01), (cpuTime 9.660489e+01), (lockTime 0.000000e+00), (total 1.112772e+02), (rest -1.097765e+08). At src/online-nd.c:192
+[./bin/ond] (ioTime 1.318287e+01), (cpuTime 9.670530e+01), (lockTime 0.000000e+00), (total 1.113920e+02), (rest -1.098881e+08). At src/online-nd.c:192
 
-100.22user 11.06system 1:51.65elapsed 99%CPU (0avgtext+0avgdata 3700maxresident)k
-0inputs+39424outputs (0major+723minor)pagefaults 0swaps
+99.83user 11.56system 1:51.65elapsed 99%CPU (0avgtext+0avgdata 3700maxresident)k
+0inputs+39424outputs (0major+721minor)pagefaults 0swaps
 Evaluate
 	title = Serial Online-ND
 	examplesFileName = datasets/test.csv

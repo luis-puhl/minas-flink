@@ -1,0 +1,54 @@
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from jantar, rank 0/2, outputMode 2, nClassifiers 1
+[sampler 0]
+[m_receiver 1]
+Taking test stream from stdin, sampler at 0/2
+[classifier 1]
+[detector 0]
+model complete
+ND consumed   1844, reclassified      0, garbageCollected      0
+ND consumed   1715, reclassified     46, garbageCollected     59
+ND consumed   1928, reclassified     33, garbageCollected      6
+ND consumed   1857, reclassified     78, garbageCollected      1
+ND consumed   1726, reclassified    138, garbageCollected      8
+ND consumed   1899, reclassified     40, garbageCollected      3
+ND consumed   1868, reclassified     78, garbageCollected      0
+ND consumed   1968, reclassified     17, garbageCollected      0
+[sampler] args->inFlight 347048
+[sampler   0] (items   653558) (ioTime 3.609286e+01), (cpuTime 4.761597e+01), (lockTime 0.000000e+00), (total 8.780839e+01). At src/threaded-mpi.c:262
+ND consumed   1968, reclassified     22, garbageCollected      0
+[detector] args->inFlight   347040 (100 %)
+ND consumed   1908, reclassified     77, garbageCollected      0
+ND consumed   1905, reclassified     42, garbageCollected      0
+[detector] args->inFlight   312336 ( 90 %)
+ND consumed   1884, reclassified     77, garbageCollected      0
+[detector] args->inFlight   277632 ( 80 %)
+ND consumed   1872, reclassified     91, garbageCollected      0
+[detector] args->inFlight   242928 ( 70 %)
+[detector] args->inFlight   208224 ( 60 %)
+[detector] args->inFlight   173520 ( 50 %)
+ND consumed   1773, reclassified    144, garbageCollected      3
+[detector] args->inFlight   138816 ( 40 %)
+[detector] args->inFlight   104112 ( 30 %)
+ND consumed   1804, reclassified    113, garbageCollected      5
+[detector] args->inFlight    69408 ( 20 %)
+ND consumed   1771, reclassified    170, garbageCollected      3
+ND consumed   1924, reclassified     64, garbageCollected      0
+[detector] args->inFlight    34704 ( 10 %)
+ND consumed   1807, reclassified    107, garbageCollected      2
+[detector] args->inFlight 0
+[classifier   1] MFOG_EOS_MARKER
+[classifier   1] (items   653458) (ioTime 8.264653e+01), (cpuTime 1.690810e+02), (lockTime 4.736332e+00), (total 2.607549e+02). At src/threaded-mpi.c:107
+[detector   0] (items   653458) (ioTime 2.188562e+02), (cpuTime 3.873211e+01), (lockTime 0.000000e+00), (total 2.607201e+02). At src/threaded-mpi.c:429
+[m_receiver   1] (items      548) (ioTime 2.505586e+02), (cpuTime 6.381000e-03), (lockTime 1.038812e+00), (total 2.607607e+02). At src/threaded-mpi.c:162
+[classifier   0] Statistics:     104810 items,          0 misses,  'N':      96955 '1':        331 '2':         98 '3':        191 '4':         20 '5':        316 '6':       4356 '7':         87 '8':        439 '9':         20 '10':         23 '11':        104 '12':        190 '13':        141 '14':        588 '15':        222 '16':         29 '17':         87 '18':        511 '19':         55 '20':         27
+[node   1] Statistics:     722826 items,      35442 misses,  'N':     682376 '1':        588 '2':        290 '3':        733 '4':         52 '5':       1145 '6':      30119 '7':       2637 '8':       1405 '9':         21 '10':         23 '11':        111 '12':        297 '13':        212 '14':        843 '15':        594 '16':         39 '17':        283 '18':        948 '19':         55 '20':         35
+[./bin/tmpi 1] 2.608864e+02 seconds. At src/threaded-mpi.c:518
+[root   ] Statistics:     827636 items,      35442 misses,  'N':     779331 '1':        919 '2':        388 '3':        924 '4':         72 '5':       1461 '6':      34475 '7':       2724 '8':       1844 '9':         41 '10':         46 '11':        215 '12':        487 '13':        353 '14':       1431 '15':        816 '16':         68 '17':        370 '18':       1459 '19':        110 '20':         62
+[./bin/tmpi 0] 2.608575e+02 seconds. At src/threaded-mpi.c:518
+"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" mpirun -n 2 ./bin/tmpi
+	501.87 user	52.94 system	4:22.06 elapsed
+	211% CPU	(0 avgtext+0 avgdata	318436 maxresident)k
+	12696 inputs+56480 outputs	(91 major+83582 minor)pagefaults	0 swaps
+"
+

@@ -70,6 +70,7 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
     assert pd.Series(['id', 'label']).isin(maDf.columns).all()
     #
     merged = pd.merge(exDf[['id', 'class']], maDf[['id', 'label']], on='id', how='left')
+    merged['label'] = merged['label'].fillna('N')
     # assert merged.columns.all(['id', 'class', 'label'])
     cf = pd.crosstab(merged['class'], merged['label'],
                      rownames=['Classes (act)'], colnames=['Labels (pred)']).transpose()

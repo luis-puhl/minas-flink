@@ -1,0 +1,82 @@
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	Hello from almoco, rank 0/3, outputMode 2, nClassifiers 1
+[sampler 0]
+[m_receiver 1]
+Taking test stream from stdin, sampler at 0/3
+[classifier 1]
+[m_receiver 2]
+[classifier 2]
+[detector 0]
+model complete
+ND consumed   1844, reclassified      0, garbageCollected      0
+ND consumed   1714, reclassified     57, garbageCollected     58
+ND consumed   1955, reclassified     21, garbageCollected      5
+ND consumed   1906, reclassified     45, garbageCollected      0
+ND consumed   1707, reclassified    162, garbageCollected     12
+ND consumed   1920, reclassified     44, garbageCollected      3
+ND consumed   1932, reclassified     42, garbageCollected      5
+ND consumed   1816, reclassified    155, garbageCollected      3
+ND consumed   1892, reclassified     59, garbageCollected      5
+ND consumed   1901, reclassified     81, garbageCollected      0
+[sampler] args->inFlight 311893
+[sampler   0] (items   653558) (ioTime 1.999248e+01), (cpuTime 4.397131e+01), (lockTime 0.000000e+00), (total 6.894093e+01). At src/threaded-mpi.c:262
+ND consumed   1931, reclassified     49, garbageCollected      0
+[detector] args->inFlight 311893
+[detector     0] (items   341565) (ioTime 3.839450e+01), (cpuTime 2.983145e+01), (lockTime 0.000000e+00), (total 7.042669e+01). At src/threaded-mpi.c:429
+[classifier   0] Statistics:      92267 items,          0 misses,  'N':      87967 '1':        215 '2':         49 '3':         32 '4':        127 '5':         22 '6':         60 '7':       3260 '8':        115 '9':        124 '10':         20 '11':         66 '12':         56 '13':        154
+[m_receiver   1] (items      372) (ioTime 6.518746e+01), (cpuTime 6.759000e-03), (lockTime 8.556000e-03), (total 6.522998e+01). At src/threaded-mpi.c:162
+[classifier   1] (items   170608) (ioTime 4.348699e+01), (cpuTime 1.964612e+01), (lockTime 1.084473e+00), (total 6.523024e+01). At src/threaded-mpi.c:107
+[root    ] Statistics:     597178 items,      21361 misses,  'N':     566950 '1':        710 '2':        194 '3':        107 '4':        577 '5':         87 '6':        184 '7':      26026 '8':        969 '9':        435 '10':         62 '11':        235 '12':        173 '13':        469
+[m_receiver   2] (items      372) (ioTime 6.432995e+01), (cpuTime 6.646000e-03), (lockTime 5.953000e-03), (total 6.436963e+01). At src/threaded-mpi.c:162
+[classifier   2] (items   171130) (ioTime 4.198790e+01), (cpuTime 2.011521e+01), (lockTime 1.312928e+00), (total 6.437024e+01). At src/threaded-mpi.c:107
+[node   2] Statistics:     252586 items,      10811 misses,  'N':     239715 '1':        250 '2':         69 '3':         38 '4':        228 '5':         28 '6':         62 '7':      11283 '8':        420 '9':        159 '10':         20 '11':         98 '12':         57 '13':        159
+[node   1] Statistics:     252325 items,      10550 misses,  'N':     239268 '1':        245 '2':         76 '3':         37 '4':        222 '5':         37 '6':         62 '7':      11483 '8':        434 '9':        152 '10':         22 '11':         71 '12':         60 '13':        156
+[./bin/tmpi 0] 7.083043e+01 seconds. At src/threaded-mpi.c:520
+"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" mpirun -n 3 ./bin/tmpi
+	180.81 user	34.23 system	0:56.92 elapsed
+	377% CPU	(0 avgtext+0 avgdata	148292 maxresident)k
+	0 inputs+39128 outputs	(7 major+76661 minor)pagefaults	0 swaps
+"
+
+Evaluate
+	title = Mfog tmi n3
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/tmi-n3-1matches.csv
+	plotSavePath = experiments/tmi-n3.log.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Mfog tmi n3
+
+saving experiments/tmi-n3.log.png
+Confusion Matrix
+Classes (act)       A      N assigned   hits
+Labels (pred)                               
+-               20046   1298        -      0
+0                  44      0        A     44
+1                  65      0        A     65
+10                  1      1        A      1
+12                  5      0        A      5
+2                  47      0        A     47
+3                   0     11        N     11
+4                 193      3        A    193
+5                  20      0        A     20
+6                   1      3        N      3
+7               16222      4        A  16222
+8                 624      0        A    624
+9                  60      3        A     60
+N              241489  61425        N  61425
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('1', 161736), ('4', 161932), ('5', 166288), ('3', 167099), ('7', 172476), ('6', 191028), ('8', 202861), ('9', 205781), ('2', 217774), ('0', 260315), ('10', 294634), ('12', 320426)] 14
+Total examples    (653457, 25)
+Total matches     (341565, 4)
+Hits                78720 ( 12.046699%)
+Misses             553393 ( 84.686980%)
+Unknowns            21344 (  3.266321%)
+Unk. reprocessed  -311892 (-1461.263118%)
+Total              653457 (100.000000%)
+

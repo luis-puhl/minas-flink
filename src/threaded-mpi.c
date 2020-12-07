@@ -297,7 +297,7 @@ void *detector(void *arg) {
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     unsigned long int maxInFlight = 0;
-    while (!args->EOS || args->inFlight > 0) {
+    while (!args->EOS || id < args->inFlight) {
         if (maxInFlight < args->inFlight) {
             maxInFlight = args->inFlight;
         }
@@ -315,6 +315,7 @@ void *detector(void *arg) {
         pthread_mutex_lock(&args->inFlightMutex);
         args->inFlight--;
         pthread_mutex_unlock(&args->inFlightMutex);
+        // consider only max id, there may be omitted due to classifier suppression
         if (example.id > id) {
             id = example.id;
         }
@@ -425,7 +426,7 @@ void *detector(void *arg) {
     //     free(unknowns[i].val);
     // }
     free(unknowns);
-    printTiming("detector");
+    printTiming("detector  ");
     return NULL;
 }
 
@@ -491,7 +492,7 @@ int main(int argc, char const *argv[]) {
                 cl->n_misses += remoteCl.n_misses;
             }
         }
-        fprintf(stderr, "[root   ] Statistics: %s\n", labelMatchStatistics(args.model, stats));
+        fprintf(stderr, "[root    ] Statistics: %s\n", labelMatchStatistics(args.model, stats));
         free(stats);
     } else {
         pthread_t classifier_t[args.nClassifiers], m_receiver_t;
@@ -514,7 +515,10 @@ int main(int argc, char const *argv[]) {
         fprintf(stderr, "[node %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
         free(stats);
     }
-    fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (args.mpiRank == MFOG_RANK_MAIN) {
+        fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+    }
     free(args.model);
     sem_destroy(&args.modelReadySemaphore);
     pthread_mutex_destroy(&args.modelMutex);

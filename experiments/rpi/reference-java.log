@@ -1,0 +1,31 @@
+class br.ufu.noveltydetection.minas.Minas with
+	filenameOffline = datasets/training.csv
+	filenameOnline = datasets/test.csv
+
+	outputDirectory = out/minas-og//2020-12-04T11-19-39.448
+	algClusteringOff = kmeans
+	algClusteringOnl = kmeans
+
+	threshold = 2.0
+	flagEvaluationType = 1
+	thresholdForgettingPast = 10000
+	numMicro = 100
+	flagMicroClusters = true
+
+	minExCluster = 20
+	validationCriterion = dec
+	isValidationCriterionDec = true
+
+	isGUIEnabled = false
+
+ Processing out/minas-og//2020-12-04T11-19-39.448_ initial phase...
+
+
+********************** Offline phase ****************************
+
+ Classes for the training phase (offline): 1
+Class N
+Storing model
+Storing model
+Offline time 1366.803
+********************** Online phase****************************
