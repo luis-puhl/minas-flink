@@ -18,3 +18,33 @@
 	312% CPU	(0 avgtext+0 avgdata	53060 maxresident)k
 	0 inputs+37392 outputs	(1 major+42442 minor)pagefaults	0 swaps
 "
+"./bin/offline
+	193.12 user	0.02 system	3:13.18 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16320 maxresident)k
+	0 inputs+96 outputs	(0 major+3771 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi
+	625.60 user	53.89 system	2:52.55 elapsed
+	393% CPU	(0 avgtext+0 avgdata	164736 maxresident)k
+	0 inputs+53104 outputs	(1 major+82849 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	192.04 user	0.04 system	3:12.11 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16192 maxresident)k
+	0 inputs+96 outputs	(0 major+3770 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi
+	516.58 user	50.96 system	2:24.32 elapsed
+	393% CPU	(0 avgtext+0 avgdata	62500 maxresident)k
+	0 inputs+36376 outputs	(1 major+49508 minor)pagefaults	0 swaps
+"
+"mpirun -n 2 ./bin/tmpi
+	508.97 user	55.18 system	4:26.43 elapsed
+	211% CPU	(0 avgtext+0 avgdata	319856 maxresident)k
+	0 inputs+42104 outputs	(1 major+81786 minor)pagefaults	0 swaps
+"
+"mpirun -n 3 ./bin/tmpi
+	399.16 user	65.77 system	2:04.95 elapsed
+	372% CPU	(0 avgtext+0 avgdata	153408 maxresident)k
+	0 inputs+40416 outputs	(1 major+76478 minor)pagefaults	0 swaps
+"

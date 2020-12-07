@@ -247,7 +247,7 @@ Match *identify(int kParam, int dim, double precision, double radiusF, Model *mo
 
 int printCluster(int dim, Cluster *cl) {
     int count = 0;
-    count += printf("Cluster: %10u, %s, %10u, %le, %le, %le",
+    count += printf("Cluster: %10u, %.4s, %10u, %le, %le, %le",
                 cl->id, printableLabel(cl->label), cl->n_matches,
                 cl->distanceAvg, cl->distanceStdDev, cl->radius);
     assertNotNull(cl->center);

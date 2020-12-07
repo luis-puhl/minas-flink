@@ -1,0 +1,79 @@
+./bin/ond; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
+	outputMode 2, nClassifiers 1
+ND consumed 1844, reclassified 0, garbageCollected 0
+ND consumed 1735, reclassified 57, garbageCollected 54
+ND consumed 1952, reclassified 32, garbageCollected 1
+ND consumed 1842, reclassified 62, garbageCollected 0
+ND consumed 1831, reclassified 93, garbageCollected 1
+ND consumed 1757, reclassified 150, garbageCollected 4
+ND consumed 1841, reclassified 105, garbageCollected 2
+ND consumed 1889, reclassified 64, garbageCollected 1
+ND consumed 1991, reclassified 6, garbageCollected 1
+ND consumed 1945, reclassified 51, garbageCollected 0
+ND consumed 1823, reclassified 94, garbageCollected 0
+ND consumed 1734, reclassified 152, garbageCollected 13
+ND consumed 1814, reclassified 130, garbageCollected 3
+ND consumed 1850, reclassified 98, garbageCollected 2
+ND consumed 1879, reclassified 51, garbageCollected 1
+ND consumed 1946, reclassified 31, garbageCollected 1
+ND consumed 1848, reclassified 116, garbageCollected 0
+[classifier] Statistics:     721411 items,      34872 misses,  'N':     642740 '1':        521 '2':      31238 '3':         75 '4':        214 '5':       1138 '6':      10169 '7':      15730 '8':       1345 '9':       4063 '10':       1925 '11':         86 '12':         82 '13':        229 '14':        831 '15':         34 '16':        116 '17':         35 '18':       2522 '19':         83 '20':         44 '21':       7555 '22':        278 '23':         24 '24':         68 '25':        266
+[./bin/ond] (ioTime 1.324024e+01), (cpuTime 9.659908e+01), (lockTime 0.000000e+00), (total 1.113358e+02), (rest -1.098392e+08). At src/online-nd.c:192
+
+"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/ond
+	99.46 user	11.87 system	1:51.61 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3616 maxresident)k
+	0 inputs+39400 outputs	(0 major+722 minor)pagefaults	0 swaps
+"
+Evaluate
+	title = Serial Online-ND
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/ond-1matches.csv
+	plotSavePath = experiments/online-nd.log.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Serial Online-ND
+
+saving experiments/online-nd.log.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-               29247    5625        -       0
+0                1946      51        A    1946
+1                 138       0        A     138
+10               1621       3        A    1621
+13                 22       0        A      22
+14                346       1        A     346
+16                 63      29        A      63
+17                  0       2        N       2
+18                207     123        A     207
+19                 19       1        A      19
+2               21379     408        A   21379
+20                  0      16        N      16
+21               4246       0        A    4246
+22                 43       0        A      43
+24                  6       0        A       6
+25                  0     229        N     229
+3                  34       0        A      34
+4                   0     106        N     106
+5                 845      85        A     845
+6                8502       2        A    8502
+7               10535    1106        A   10535
+8                1123       1        A    1123
+9                3849       0        A    3849
+N              363008  198490        N  198490
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('2', 162553), ('3', 162837), ('5', 163261), ('4', 167099), ('6', 173552), ('9', 173578), ('10', 173595), ('7', 173943), ('8', 173998), ('1', 223093), ('13', 312863), ('14', 341914), ('16', 387946), ('0', 396091), ('18', 523344), ('20', 569889), ('19', 570288), ('21', 581455), ('22', 592045), ('17', 608061), ('25', 609807), ('24', 610200)] 24
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               253767 ( 38.834478%)
+Misses             364818 ( 55.828837%)
+Unknowns            34872 (  5.336533%)
+Unk. reprocessed        1 (  0.002868%)
+Total              653457 ( 99.999847%)
+

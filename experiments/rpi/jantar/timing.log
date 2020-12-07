@@ -44,3 +44,33 @@ Command exited with non-zero status 1
 	370% CPU	(0 avgtext+0 avgdata	41312 maxresident)k
 	0 inputs+53568 outputs	(7 major+26180 minor)pagefaults	0 swaps
 "
+"./bin/offline
+	194.88 user	0.19 system	3:15.14 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16220 maxresident)k
+	0 inputs+96 outputs	(0 major+3770 minor)pagefaults	0 swaps
+"
+"mpirun -n 3 ./bin/tmpi
+	363.36 user	59.05 system	1:53.28 elapsed
+	372% CPU	(0 avgtext+0 avgdata	137304 maxresident)k
+	0 inputs+55624 outputs	(7 major+71115 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	192.46 user	0.03 system	3:12.60 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16312 maxresident)k
+	0 inputs+96 outputs	(0 major+3770 minor)pagefaults	0 swaps
+"
+"mpirun -n 3 ./bin/tmpi
+	373.53 user	61.19 system	1:56.47 elapsed
+	373% CPU	(0 avgtext+0 avgdata	148004 maxresident)k
+	0 inputs+58144 outputs	(7 major+75980 minor)pagefaults	0 swaps
+"
+"mpirun -n 2 ./bin/tmpi
+	570.74 user	55.33 system	4:56.51 elapsed
+	211% CPU	(0 avgtext+0 avgdata	355752 maxresident)k
+	0 inputs+59720 outputs	(7 major+93746 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi
+	515.47 user	48.64 system	2:23.43 elapsed
+	393% CPU	(0 avgtext+0 avgdata	141132 maxresident)k
+	0 inputs+68992 outputs	(7 major+66470 minor)pagefaults	0 swaps
+"

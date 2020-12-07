@@ -38,11 +38,22 @@ experiments/tmi-n: $(tmpi_nodes)
 $(tmpi_nodes): experiments/tmi-n%.log: datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n $(n) ./bin/tmpi > $(out)-0full.csv 2> $@
 	-grep -E -v '^(Unknown|Cluster):' $(out)-0full.csv > $(out)-1matches.csv
-	# -grep -E '^Unknown:'              $(out)-0full.csv > $(out)-2unknowns.csv
-	# -grep -E '^Cluster:'              $(out)-0full.csv > $(out)-3clusters.csv
+	-grep -E '^Unknown:'              $(out)-0full.csv > $(out)-2unknowns.csv
+	-grep -E '^Cluster:'              $(out)-0full.csv > $(out)-3clusters.csv
 	echo "" >> $@
 	-python3 src/evaluation/evaluate.py "Mfog tmi n$(n)" datasets/test.csv $(out)-1matches.csv $@.png >> $@
+experiments/rpi/almoco/tmi-n2.log:
+	nc -lp 3131 | grep -E -v '^(Unknown|Cluster):' | pv > out/rpi-almoco/tmi-n2.csv &
+	$(SSH) almoco "cd ./mfog && cat ./out/offline-model.csv ./datasets/test.csv | $(TIME) mpirun -n 2 ./bin/tmpi | nc -q 0 localhost 3131" 2> $@
+	echo "" >> $@
+	-python3 src/evaluation/evaluate.py "Cluster tmi n2" datasets/test.csv out/rpi-almoco/tmi-n2.csv $@.png >> $@
 #
+pi_recoop:
+	for i in almoco lanche jantar; do \
+		ssh $$i "cd ~/mfog/experiments && tar cz ." | tar xmzf - --directory=experiments/rpi/$$i/ & \
+		ssh $$i "cd ~/mfog/out && tar cz ." | tar xmzf - --directory=out/rpi-$$i/ & \
+	done;
+
 experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
 	echo '------ Fastest (no output) ------' > $@
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 0 > $(out)4-fastest.csv 2>> $@

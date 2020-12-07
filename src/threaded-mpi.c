@@ -65,7 +65,7 @@ void *classifier(void *arg) {
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
-    while (!args->EOS) {
+    while (1) {
         clock_t l0 = clock();
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
@@ -79,7 +79,6 @@ void *classifier(void *arg) {
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         clock_t l1 = clock();
         ioTime += (l1 - l0);
-        items++;
         //
         while (model->size < args->kParam) {
             sem_wait(&args->modelReadySemaphore);
@@ -89,6 +88,7 @@ void *classifier(void *arg) {
         lockTime += l2 - l1;
         Match match;
         identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match);
+        items++;
         example.label = match.label;
         clock_t l3 = clock();
         cpuTime += (l3 - l2);
@@ -196,6 +196,7 @@ void *sampler(void *arg) {
         fflush(stdout);
     }
     size_t n = 0;
+    unsigned long int *itemsWhere = calloc(args->mpiSize, sizeof(unsigned long int));
     while (!feof(stdin)) {
         clock_t t0 = clock();
         getline(&lineptr, &n, stdin);
@@ -207,6 +208,8 @@ void *sampler(void *arg) {
             addClusterLine(args->kParam, args->dim, model, lineptr);
             Cluster *cl = &(model->clusters[model->size -1]);
             cl->isIntrest = args->outputMode >= MFOG_OUTPUT_ALL;
+            cl->n_matches = 0;
+            cl->n_misses = 0;
             if (args->outputMode >= MFOG_OUTPUT_ALL)
                 printCluster(args->dim, cl);
             clock_t t2 = clock();
@@ -239,10 +242,18 @@ void *sampler(void *arg) {
         args->inFlight++;
         pthread_mutex_unlock(&args->inFlightMutex);
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+        itemsWhere[dest]++;
         clock_t t3 = clock();
         ioTime += t3 - t2;
     }
-    fprintf(stderr, "[sampler] args->inFlight %lu\n", args->inFlight);
+    char *whereStr = calloc(args->mpiSize * 20, sizeof(char));
+    int whereStrTail = 0;
+    for (dest = 0; dest < args->mpiSize; dest++) {
+        whereStrTail += sprintf(&whereStr[whereStrTail], ", %3d => %8lu", dest, itemsWhere[dest]);
+    }
+    fprintf(stderr, "[sampler] args->inFlight %lu, itemsWhere: %s\n", args->inFlight, whereStr);
+    free(whereStr);
+    free(itemsWhere);
     args->EOS = 1;
     example.label = MFOG_EOS_MARKER;
     int position = 0;
@@ -276,6 +287,7 @@ void *detector(void *arg) {
     fprintf(stderr, "[detector %d]\n", args->mpiRank);
     unsigned long int items = 0;
     int streams = args->nClassifiers * (args->mpiSize - 1);
+    int endOfStreams = 0;
     int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
     double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
     Example example;
@@ -290,6 +302,7 @@ void *detector(void *arg) {
     unsigned long int unknownsSize = 0, lastNDCheck = 0, id = 0;
     //
     int mpiReturn, exampleBufferLen, valueBufferLen, position;
+    MPI_Status st;
     assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
     assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
@@ -297,7 +310,8 @@ void *detector(void *arg) {
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     unsigned long int maxInFlight = 0;
-    while (!args->EOS || id < args->inFlight) {
+    unsigned long int *itemsWhere = calloc(args->mpiSize, sizeof(unsigned long int));
+    while (endOfStreams < streams) {
         if (maxInFlight < args->inFlight) {
             maxInFlight = args->inFlight;
         }
@@ -305,7 +319,7 @@ void *detector(void *arg) {
             fprintf(stderr, "[detector] args->inFlight %8lu (%3lu %%)\n", args->inFlight, 10 * (args->inFlight / (maxInFlight / 10)));
         }
         clock_t t0 = clock();
-        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, &st));
         clock_t t1 = clock();
         ioTime += t1 - t0;
         position = 0;
@@ -322,15 +336,16 @@ void *detector(void *arg) {
         items++;
         if (example.label == MFOG_EOS_MARKER) {
             streams--;
+            fprintf(stderr, "[detector %3d] MFOG_EOS_MARKER %d / %d \n", args->mpiRank, endOfStreams, streams);
             continue;
         }
+        itemsWhere[st.MPI_SOURCE]++;
         clock_t t2 = clock();
         cpuTime += t2 - t1;
         //
-        if (args->outputMode >= MFOG_OUTPUT_MINIMAL) {
-            printf("%10u,%s\n", example.id, printableLabelReuse(example.label, label));
-            fflush(stdout);
-        }
+        // if (args->outputMode >= MFOG_OUTPUT_MINIMAL) {
+        printf("%10u,%s\n", example.id, printableLabelReuse(example.label, label));
+        fflush(stdout);
         clock_t t3 = clock();
         ioTime += t3 - t2;
         if (example.label != MINAS_UNK_LABEL)
@@ -379,6 +394,8 @@ void *detector(void *arg) {
             for (unsigned long int k = prevSize; k < model->size; k++) {
                 Cluster *newCl = &model->clusters[k];
                 newCl->isIntrest = args->outputMode >= MFOG_OUTPUT_MINIMAL;
+                newCl->n_matches = 0;
+                newCl->n_misses = 0;
                 if (args->outputMode >= MFOG_OUTPUT_ALL)
                     printCluster(dim, newCl);
                 assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -398,12 +415,12 @@ void *detector(void *arg) {
                     consumed++;
                     continue;
                 }
-                distance = nearestClusterVal(dim, model->clusters, model->size - nNewClusters, unknowns[ex].val, &nearest);
-                assert(nearest != NULL);
-                if (distance <= nearest->distanceMax) {
-                    reclassified++;
-                    continue;
-                }
+                // distance = nearestClusterVal(dim, model->clusters, model->size - nNewClusters, unknowns[ex].val, &nearest);
+                // assert(nearest != NULL);
+                // if (distance <= nearest->distanceMax) {
+                //     reclassified++;
+                //     continue;
+                // }
                 if (unknowns[ex].id < lastNDCheck) {
                     garbageCollected++;
                     continue;
@@ -416,7 +433,14 @@ void *detector(void *arg) {
             lastNDCheck = id;
         }
     }
-    fprintf(stderr, "[detector] args->inFlight %lu\n", args->inFlight);
+    char *whereStr = calloc(args->mpiSize * 20, sizeof(char));
+    int whereStrTail = 0;
+    for (int dest = 0; dest < args->mpiSize; dest++) {
+        whereStrTail += sprintf(&whereStr[whereStrTail], ", %3d => %8lu", dest, itemsWhere[dest]);
+    }
+    fprintf(stderr, "[detector] args->inFlight %lu, itemsWhere: %s\n", args->inFlight, whereStr);
+    free(whereStr);
+    free(itemsWhere);
     Cluster cl;
     cl.label = MFOG_EOS_MARKER;
     assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -478,22 +502,6 @@ int main(int argc, char const *argv[]) {
         //
         sampler(&args);
         assertErrno(pthread_join(detector_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        //
-        char *stats = calloc(args.model->size * 30, sizeof(char));
-        fprintf(stderr, "[classifier %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
-        Cluster remoteCl;
-        #define MFOG_TAG_CLUSTER_STATS 3000
-        for (int src = 1; src < args.mpiSize; src++) {
-            for (unsigned long int i = 0; i < args.model->size; i++) {
-                assertMpi(MPI_Recv(&remoteCl, sizeof(Cluster), MPI_BYTE, MPI_ANY_SOURCE, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-                Cluster *cl = &(args.model->clusters[remoteCl.id]);
-                assert(cl != NULL && remoteCl.id == cl->id);
-                cl->n_matches += remoteCl.n_matches;
-                cl->n_misses += remoteCl.n_misses;
-            }
-        }
-        fprintf(stderr, "[root    ] Statistics: %s\n", labelMatchStatistics(args.model, stats));
-        free(stats);
     } else {
         pthread_t classifier_t[args.nClassifiers], m_receiver_t;
         for (unsigned long int i = 0; i < args.nClassifiers; i++) {
@@ -505,20 +513,43 @@ int main(int argc, char const *argv[]) {
             assertErrno(pthread_join(classifier_t[i], (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
         }
         assertErrno(pthread_join(m_receiver_t, (void **)&result) == 0, "Thread join fail%c.", '.', MPI_Finalize());
-        //
-        int mpiReturn;
-        for (unsigned long int i = 0; i < args.model->size; i++) {
-            Cluster *cl = &(args.model->clusters[i]);
-            assertMpi(MPI_Send(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_CLUSTER_STATS, MPI_COMM_WORLD));
-        }
-        char *stats = calloc(args.model->size * 30, sizeof(char));
-        fprintf(stderr, "[node %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
-        free(stats);
     }
+    char *stats = calloc(args.model->size * 30, sizeof(char));
+    fprintf(stderr, "[node %3d] Statistics: %s\n", args.mpiRank, labelMatchStatistics(args.model, stats));
+    unsigned int n_matches[args.model->size];
+    unsigned int n_misses[args.model->size];
+    for (unsigned long int i = 0; i < args.model->size; i++) {
+        n_matches[i] = args.model->clusters[i].n_matches;
+        n_misses[i] = args.model->clusters[i].n_misses;
+    }
+    int gsize;
+    assertMpi(MPI_Comm_size(MPI_COMM_WORLD, &gsize));
+    unsigned int *root_matches = calloc(gsize * args.model->size, sizeof(unsigned int));
+    unsigned int *root_misses = calloc(gsize * args.model->size, sizeof(unsigned int));
+    assertMpi(MPI_Gather(n_matches, args.model->size, MPI_UNSIGNED, root_matches, args.model->size, MPI_UNSIGNED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+    assertMpi(MPI_Gather(n_misses, args.model->size, MPI_UNSIGNED, root_misses, args.model->size, MPI_UNSIGNED, MFOG_RANK_MAIN, MPI_COMM_WORLD));
     MPI_Barrier(MPI_COMM_WORLD);
     if (args.mpiRank == MFOG_RANK_MAIN) {
+        for (unsigned long int i = 0; i < args.model->size; i++) {
+            Cluster *cl = &args.model->clusters[i];
+            cl->n_matches = 0;
+            cl->n_misses = 0;
+        }
+        for (size_t j = 0; j < gsize; j++) {
+            unsigned int *node_matches = &root_matches[j * args.model->size];
+            unsigned int *node_misses  = &root_misses[j * args.model->size];
+            for (unsigned long int i = 0; i < args.model->size; i++) {
+                Cluster *cl = &args.model->clusters[i];
+                cl->n_matches += node_matches[i];
+                cl->n_misses += node_misses[i];
+            }
+        }
+        fprintf(stderr, "[root    ] Statistics: %s\n", labelMatchStatistics(args.model, stats));
         fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     }
+    free(root_matches);
+    free(root_misses);
+    free(stats);
     free(args.model);
     sem_destroy(&args.modelReadySemaphore);
     pthread_mutex_destroy(&args.modelMutex);

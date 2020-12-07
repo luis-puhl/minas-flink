@@ -1,72 +1,74 @@
-[lanche:02742] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02742] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02746] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02746] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02747] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02747] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02748] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02748] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02749] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
-[lanche:02749] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03278] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03278] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03282] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03282] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03283] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03283] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03284] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03284] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03285] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:03285] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 	Hello from lanche, rank 0/4, outputMode 2, nClassifiers 1
 [sampler 0]
 Taking test stream from stdin, sampler at 0/4
-[detector 0]
 [m_receiver 1]
 [m_receiver 2]
-[classifier 1]
-[classifier 2]
 [m_receiver 3]
 [classifier 3]
+[classifier 1]
+[classifier 2]
+[detector 0]
 model complete
-ND consumed   1855, reclassified      0, garbageCollected      0
-ND consumed   1759, reclassified     24, garbageCollected     76
-ND consumed   1894, reclassified     66, garbageCollected      9
-ND consumed   1961, reclassified     21, garbageCollected      8
-ND consumed   1767, reclassified     94, garbageCollected     25
-ND consumed   1844, reclassified     92, garbageCollected     11
-ND consumed   1867, reclassified     69, garbageCollected      4
-ND consumed   1801, reclassified    118, garbageCollected     29
-ND consumed   1814, reclassified    134, garbageCollected     10
-ND consumed   1808, reclassified    136, garbageCollected     36
-ND consumed   1878, reclassified    103, garbageCollected     19
-ND consumed   1785, reclassified    141, garbageCollected      3
-[sampler] args->inFlight 100203
-[sampler   0] (items   653558) (ioTime 7.958532e+01), (cpuTime 3.871100e+01), (lockTime 0.000000e+00), (total 1.215792e+02). At src/threaded-mpi.c:262
-[detector] args->inFlight    99393 ( 70 %)
-ND consumed   1795, reclassified    122, garbageCollected     28
-[detector] args->inFlight    85194 ( 60 %)
-ND consumed   1919, reclassified     62, garbageCollected     13
-[detector] args->inFlight    70995 ( 50 %)
-ND consumed   1843, reclassified    100, garbageCollected     21
-[detector] args->inFlight    56796 ( 40 %)
-[detector] args->inFlight    42597 ( 30 %)
-[detector] args->inFlight    28398 ( 20 %)
+ND consumed   1847, reclassified      0, garbageCollected      0
+ND consumed   1816, reclassified      0, garbageCollected     54
+ND consumed   1901, reclassified      0, garbageCollected     32
+ND consumed   1934, reclassified      0, garbageCollected     38
+ND consumed   1805, reclassified      0, garbageCollected     52
+ND consumed   1683, reclassified      0, garbageCollected    133
+ND consumed   1778, reclassified      0, garbageCollected    106
+ND consumed   1843, reclassified      0, garbageCollected    103
+ND consumed   1839, reclassified      0, garbageCollected     76
+ND consumed   1786, reclassified      0, garbageCollected    123
+ND consumed   1842, reclassified      0, garbageCollected    144
+ND consumed   1865, reclassified      0, garbageCollected     69
+[sampler] args->inFlight 138518, itemsWhere: ,   0 =>        0,   1 =>   217820,   2 =>   217819,   3 =>   217819
+[sampler   0] (items   653558) (ioTime 7.247056e+01), (cpuTime 3.435482e+01), (lockTime 0.000000e+00), (total 1.099347e+02). At src/threaded-mpi.c:273
+[detector] args->inFlight   130024 ( 80 %)
+ND consumed   1768, reclassified      0, garbageCollected    126
+[detector] args->inFlight   113771 ( 70 %)
+[detector] args->inFlight    97518 ( 60 %)
+[detector] args->inFlight    81265 ( 50 %)
+ND consumed   1730, reclassified      0, garbageCollected    177
+[detector] args->inFlight    65012 ( 40 %)
+[detector] args->inFlight    48759 ( 30 %)
 [classifier   3] MFOG_EOS_MARKER
-[classifier   3] (items   217819) (ioTime 9.733925e+01), (cpuTime 3.702551e+01), (lockTime 1.653866e+00), (total 1.375224e+02). At src/threaded-mpi.c:107
+[classifier   3] (items   217819) (ioTime 9.198853e+01), (cpuTime 3.189109e+01), (lockTime 1.377969e+00), (total 1.266222e+02). At src/threaded-mpi.c:107
+[detector   0] MFOG_EOS_MARKER 0 / 2 
+[detector] args->inFlight    32506 ( 20 %)
+ND consumed   1743, reclassified      0, garbageCollected    179
+[detector] args->inFlight    16253 ( 10 %)
+[classifier   2] MFOG_EOS_MARKER
+[classifier   2] (items   217819) (ioTime 9.821515e+01), (cpuTime 3.440918e+01), (lockTime 1.488446e+00), (total 1.355976e+02). At src/threaded-mpi.c:107
+[detector   0] MFOG_EOS_MARKER 0 / 1 
+[detector] args->inFlight        0 (  0 %)
 [classifier   1] MFOG_EOS_MARKER
-[classifier   1] (items   217820) (ioTime 1.010042e+02), (cpuTime 3.808415e+01), (lockTime 1.422880e+00), (total 1.420272e+02). At src/threaded-mpi.c:107
-[detector] args->inFlight    14199 ( 10 %)
-ND consumed   1614, reclassified    264, garbageCollected     62
-[detector] args->inFlight 0
-[m_receiver   2] (items      540) (ioTime 1.458965e+02), (cpuTime 8.710000e-03), (lockTime 1.746570e-01), (total 1.500896e+02). At src/threaded-mpi.c:162
-[m_receiver   1] (items      540) (ioTime 1.456600e+02), (cpuTime 9.474000e-03), (lockTime 2.970630e-01), (total 1.478906e+02). At src/threaded-mpi.c:162
-[m_receiver   3] (items      540) (ioTime 1.423753e+02), (cpuTime 6.843000e-03), (lockTime 4.026040e-01), (total 1.449563e+02). At src/threaded-mpi.c:162
-[node   3] Statistics:     307888 items,      10565 misses,  'N':     300428 '1':        335 '2':        620 '3':       1091 '4':         90 '5':         98 '6':        113 '7':         69 '8':        639 '9':         39 '10':         26 '11':        101 '12':       3627 '13':         23 '14':         57 '15':        474 '16':         31
-[./bin/tmpi 3] 1.450530e+02 seconds. At src/threaded-mpi.c:518
-[detector   0] (items   653458) (ioTime 8.535689e+01), (cpuTime 4.914168e+01), (lockTime 0.000000e+00), (total 1.382959e+02). At src/threaded-mpi.c:429
-[classifier   0] Statistics:     100634 items,          0 misses,  'N':      95129 '1':        275 '2':        255 '3':        778 '4':         82 '5':         98 '6':        107 '7':         59 '8':        394 '9':         39 '10':         21 '11':        101 '12':       2686 '13':         22 '14':         57 '15':        473 '16':         31
-[root   ] Statistics:    1024390 items,      31604 misses,  'N':     993168 '1':       1301 '2':       2118 '3':       4034 '4':        365 '5':        392 '6':        443 '7':        261 '8':       2284 '9':        156 '10':         95 '11':        404 '12':      16481 '13':         98 '14':        312 '15':       2245 '16':        124
-[./bin/tmpi 0] 1.383960e+02 seconds. At src/threaded-mpi.c:518
-[classifier   2] (items   217819) (ioTime 1.066880e+02), (cpuTime 4.040300e+01), (lockTime 1.549713e+00), (total 1.500899e+02). At src/threaded-mpi.c:107
-[node   2] Statistics:     307666 items,      10787 misses,  'N':     298049 '1':        342 '2':        627 '3':       1088 '4':         95 '5':         98 '6':        112 '7':         67 '8':        635 '9':         39 '10':         24 '11':        101 '12':       5383 '13':         27 '14':        105 '15':        815 '16':         31
-[./bin/tmpi 2] 1.501884e+02 seconds. At src/threaded-mpi.c:518
-[node   1] Statistics:     308202 items,      10252 misses,  'N':     299562 '1':        349 '2':        616 '3':       1077 '4':         98 '5':         98 '6':        111 '7':         66 '8':        616 '9':         39 '10':         24 '11':        101 '12':       4785 '13':         26 '14':         93 '15':        483 '16':         31
-[./bin/tmpi 1] 1.479949e+02 seconds. At src/threaded-mpi.c:518
+[detector   0] MFOG_EOS_MARKER 0 / 0 
+[classifier   1] (items   217820) (ioTime 9.713661e+01), (cpuTime 3.915813e+01), (lockTime 1.423734e+00), (total 1.391062e+02). At src/threaded-mpi.c:107
+[detector] args->inFlight 4294967293, itemsWhere: ,   0 =>        0,   1 =>   217820,   2 =>   217819,   3 =>   217819
+[m_receiver   1] (items      522) (ioTime 1.302726e+02), (cpuTime 9.200000e-03), (lockTime 2.207390e-01), (total 1.391200e+02). At src/threaded-mpi.c:162
+[detector     0] (items   653461) (ioTime 7.465478e+01), (cpuTime 4.974553e+01), (lockTime 0.000000e+00), (total 1.281179e+02). At src/threaded-mpi.c:453
+[node   1] Statistics:     206375 items,      11445 misses,  'N':     204307 '1':         93 '2':        343 '3':          8 '4':          0 '5':        467 '6':         84 '7':         77 '8':        121 '9':        121 '10':        124 '11':          4 '12':          0 '13':        285 '14':        229
+[m_receiver   3] (items      522) (ioTime 1.296487e+02), (cpuTime 7.135000e-03), (lockTime 4.533390e-01), (total 1.338872e+02). At src/threaded-mpi.c:162
+[m_receiver   2] (items      522) (ioTime 1.312187e+02), (cpuTime 7.718000e-03), (lockTime 3.484940e-01), (total 1.375270e+02). At src/threaded-mpi.c:162
+[node   2] Statistics:     208955 items,       8864 misses,  'N':     207405 '1':         92 '2':        265 '3':          4 '4':          0 '5':        349 '6':         48 '7':         57 '8':         73 '9':         48 '10':         63 '11':          0 '12':          0 '13':        250 '14':        191
+[node   0] Statistics:          0 items,          0 misses,  'N':          0 '1':          0 '2':          0 '3':          0 '4':          0 '5':          0 '6':          0 '7':          0 '8':          0 '9':          0 '10':          0 '11':          0 '12':          0 '13':          0 '14':          0
+[node   3] Statistics:     208045 items,       9774 misses,  'N':     207011 '1':         70 '2':        289 '3':          8 '4':          0 '5':        306 '6':         49 '7':         53 '8':         73 '9':         52 '10':         64 '11':          0 '12':          0 '13':         16 '14':         54
+[root    ] Statistics:     623375 items,      30083 misses,  'N':     618723 '1':        255 '2':        897 '3':         20 '4':          0 '5':       1122 '6':        181 '7':        187 '8':        267 '9':        221 '10':        251 '11':          4 '12':          0 '13':        551 '14':        474
+[./bin/tmpi 0] 1.282292e+02 seconds. At src/threaded-mpi.c:548
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" mpirun -n 4 ./bin/tmpi
-	714.20 user	54.98 system	4:05.87 elapsed
-	312% CPU	(0 avgtext+0 avgdata	53060 maxresident)k
-	0 inputs+37400 outputs	(1 major+42529 minor)pagefaults	0 swaps
+	516.58 user	50.96 system	2:24.32 elapsed
+	393% CPU	(0 avgtext+0 avgdata	62500 maxresident)k
+	0 inputs+36384 outputs	(1 major+49596 minor)pagefaults	0 swaps
 "
 
