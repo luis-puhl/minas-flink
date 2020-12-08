@@ -259,8 +259,8 @@ void *sampler(void *arg) {
     int position = 0;
     assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     assertMpi(MPI_Pack(example.val, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-    for (size_t i = 0; i < args->nClassifiers; i++) {
-        for (dest = 1; dest < args->mpiSize; dest++) {
+    for (dest = 1; dest < args->mpiSize; dest++) {
+        for (size_t i = 0; i < args->nClassifiers; i++) {
             fprintf(stderr, "[sampler %d] MFOG_EOS_MARKER to %d\n", args->mpiRank, dest);
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         }
