@@ -112,17 +112,17 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 
 ### Single Node, Multi Thread
 
-| Cores | Workers | Classifer_t / Worker  | Tempo | speedup | Eficiencia  | Hit | Unk |
-| ----  | ------  | --------------------  | ----- | ---     | -----       | --- | --- |
-| 4     | 4       | 1                     |       |         |             |     |     |
-| 4     | 4       | 2                     |       |         |             |     |     |
-| 4     | 4       | 3                     |       |         |             |     |     |
-| 4     | 4       | 4                     |       |         |             |     |     |
+| Cores | Workers | Classifer_t / Worker  | Tempo     | speedup | Eficiencia  | Hit     | Unk   |
+| ----  | ------  | --------------------  | -----     | ---     | -----       | ---     | ---   |
+| 4     | 4       | 1                     | 2.99E+02  |  37.36% | 37.36%      | 36.52%  | 6.31% |
+| 4     | 4       | 2                     | DNF   |         |             |     |     |
+| 4     | 4       | 3                     | -     |         |             |     |     |
+| 4     | 4       | 4                     | -     |         |             |     |     |
 
 ### Multi Node, Multi Thread
 
-| Nodes | Workers | Classifer_t / Worker  | Tempo | speedup | Eficiencia  | Hit | Unk |
-| ----  | ------  | --------------------  | ----- | ---     | -----       | --- | --- |
-| 1     | 4       | x                     |       |         |             |     |     |
-| 2     | 8       | x                     |       |         |             |     |     |
-| 3     | 12      | x                     |       |         |             |     |     |
+| Nodes | Workers | Tempo     | speedup | Eficiencia  | Hit     | Unk   |
+| ----  | ------  | -----     | ---     | -----       | ---     | ---   |
+| 1     | 4       | 1.27E+02  | 87.97%  | 29.32%      | 34.69%  | 3.93% |
+| 2     | 8       | 1.17E+02  | 95.76%  | 13.68%      | 35.88%  | 5.52% |
+| 3     | 12      | 1.27E+02  | 88.22%  | 8.02%       | 35.23%  | 7.42% |
