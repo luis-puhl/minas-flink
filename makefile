@@ -48,11 +48,24 @@ experiments/rpi/almoco/tmi-n2.log:
 	echo "" >> $@
 	-python3 src/evaluation/evaluate.py "Cluster tmi n2" datasets/test.csv out/rpi-almoco/tmi-n2.csv $@.png >> $@
 #
+experiments/big-cluster.log: datasets/test.csv bin/tmpi
+	scp almoco:~/mfog/bin/tmpi jantar:~/mfog/bin/
+	scp almoco:~/mfog/bin/tmpi lanche:~/mfog/bin/
+	echo "" > $@
+	for i in {4..12}; do \
+		echo "-------- cluster with n $$i --------" ; \
+		echo "-------- cluster with n $$i --------" >> $@ ; \
+		cat out/offline-model.csv datasets/test.csv \
+			| $(TIME) mpirun -n $$i -hostfile ./conf/hostsfile ./bin/tmpi > $(out)-full.csv 2>> $@ ; \
+		grep -E -v '^(Unknown|Cluster):' $(out)-full.csv > $(out).csv ; \
+		python3 src/evaluation/evaluate.py "Cluster tmi n$$i" datasets/test.csv $(out).csv $@.png >> $@ || true; \
+	done
+	grep -E '(seconds.)|(system   )|(Hits  )|(Unknowns      )' $@ > $(subst .log,,$@)-simple.log
 pi_recoop:
 	for i in almoco lanche jantar; do \
 		ssh $$i "cd ~/mfog/experiments && tar cz ." | tar xmzf - --directory=experiments/rpi/$$i/ & \
 		ssh $$i "cd ~/mfog/out && tar cz ." | tar xmzf - --directory=out/rpi-$$i/ & \
-	done;
+	done
 
 experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
 	echo '------ Fastest (no output) ------' > $@

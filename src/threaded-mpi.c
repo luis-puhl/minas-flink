@@ -335,7 +335,7 @@ void *detector(void *arg) {
         }
         items++;
         if (example.label == MFOG_EOS_MARKER) {
-            streams--;
+            endOfStreams++;
             fprintf(stderr, "[detector %3d] MFOG_EOS_MARKER %d / %d \n", args->mpiRank, endOfStreams, streams);
             continue;
         }
@@ -545,7 +545,7 @@ int main(int argc, char const *argv[]) {
             }
         }
         fprintf(stderr, "[root    ] Statistics: %s\n", labelMatchStatistics(args.model, stats));
-        fprintf(stderr, "[%s %d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+        fprintf(stderr, "[%s %d/%d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, args.mpiSize, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     }
     free(root_matches);
     free(root_misses);
