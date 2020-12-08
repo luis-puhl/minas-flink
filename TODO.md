@@ -127,3 +127,8 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 | 1     | 4       | 1.27E+02  | 87.97%  | 29.32%      | 34.69%  | 3.93% |
 | 2     | 8       | 1.17E+02  | 95.76%  | 13.68%      | 35.88%  | 5.52% |
 | 3     | 12      | 1.27E+02  | 88.22%  | 8.02%       | 35.23%  | 7.42% |
+
+## Reunião 2020-12-08
+
+- [ ] RW-lock @ classifier/m_receiver;
+- [ ] 
