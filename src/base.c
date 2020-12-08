@@ -339,11 +339,11 @@ char *labelMatchStatistics(Model *model, char *stats) {
         matches[j] += cl->n_matches;
         nMisses += cl->n_misses;
     }
-    int statsIdx = sprintf(stats, "%10lu items, %10lu misses, ", nMatches, nMisses);
+    int statsIdx = sprintf(stats, "items: %10lu, misses: %10lu", nMatches, nMisses);
     char label[20];
     for (size_t j = 0; labels[j] != '\0'; j++) {
         printableLabelReuse(labels[j], label);
-        statsIdx += sprintf(&stats[statsIdx], " '%.4s': %10lu", label, matches[j]);
+        statsIdx += sprintf(&stats[statsIdx], ", '%.4s': %10lu", label, matches[j]);
     }
     free(labels);
     free(matches);

@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach bin/reboot/tmpi",
+            "name": "Att bin/tmpi",
             "type": "cppdbg",
             "request": "attach",
             "program": "${workspaceFolder}/bin/tmpi",
