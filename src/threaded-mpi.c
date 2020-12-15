@@ -420,7 +420,7 @@ void *detector(void *arg) {
                 // compress
                 unknowns[ex - (garbageCollected + consumed + reclassified)] = unknowns[ex];
                 Cluster *nearest;
-                double distance = nearestClusterVal(dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest, 0, 0);
+                double distance = nearestClusterVal(dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     consumed++;

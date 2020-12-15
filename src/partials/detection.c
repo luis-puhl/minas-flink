@@ -45,9 +45,9 @@ int main(int argc, char const *argv[]) {
             if (model->size <= cluster.id) {
                 addCluster(kParam, dim, &cluster, model);
                 printCluster(dim, &cluster);
-            }
-            if (model->size == kParam) {
-                fprintf(stderr, "model complete\n");
+                if (model->size == kParam) {
+                    fprintf(stderr, "[%s] model complete\n", argv[0]);
+                }
             }
         }
         if (lineType != 'U') {
@@ -105,13 +105,13 @@ int main(int argc, char const *argv[]) {
                 // compress
                 unknowns[ex - (garbageCollected + consumed + reclassified)] = unknowns[ex];
                 Cluster *nearest;
-                double distance = nearestClusterVal(dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest, 0, 0);
+                double distance = nearestClusterVal(dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     consumed++;
                     continue;
                 }
-                distance = nearestClusterVal(dim, model->clusters, model->size - nNewClusters, unknowns[ex].val, &nearest, 0, 0);
+                distance = nearestClusterVal(dim, model->clusters, model->size - nNewClusters, unknowns[ex].val, &nearest);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     printf("%10u,%s\n", example.id, printableLabel(match.label));

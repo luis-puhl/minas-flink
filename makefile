@@ -21,6 +21,8 @@ bin/dt: src/base.c src/partials/detection.c
 	gcc -g -Wall -lm $^ -o $@
 bin/zip: src/partials/zip.c
 	gcc -g -Wall $^ -o $@
+bin/rb: src/partials/robin.c
+	gcc -g -Wall $^ -o $@
 
 .PHONY: bin
 bin: bin/offline bin/ond bin/tmpi bin/fk bin/dt bin/zip

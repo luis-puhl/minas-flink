@@ -38,13 +38,35 @@ unsigned int fromPrintableLabel(char *label) {
     return ret;
 }
 
-double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest, unsigned int thresholdForgettingPast, unsigned int currentId) {
+double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest) {
     double minDist;
     *nearest = NULL;
     for (size_t k = 0; k < nClusters; k++) {
-        // if (thresholdForgettingPast > 0 && currentId - clusters[k].latest_match_id > thresholdForgettingPast) {
-        //     continue;
-        // }
+        double dist = 0.0;
+        for (size_t d = 0; d < dim; d++) {
+            double v = (clusters[k].center[d] - val[d]);
+            // dist += fabs(v);
+            dist += v * v;
+            if (k > 0 && dist > minDist) break;
+        }
+        if (k == 0 || dist <= minDist) {
+            minDist = dist;
+            *nearest = &clusters[k];
+        }
+    }
+    return sqrt(minDist);
+}
+
+double nearestClusterIdentify(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest, unsigned int thresholdForgettingPast, unsigned int currentId, unsigned int *skiped) {
+    double minDist;
+    *nearest = NULL;
+    for (size_t k = 0; k < nClusters; k++) {
+        if (thresholdForgettingPast > 0 && currentId - clusters[k].latest_match_id > thresholdForgettingPast) {
+            if (skiped != NULL) {
+                (*skiped)++;
+            }
+            continue;
+        }
         double dist = 0.0;
         for (size_t d = 0; d < dim; d++) {
             double v = (clusters[k].center[d] - val[d]);
@@ -89,7 +111,7 @@ double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example 
         globalDistance = 0.0;
         for (size_t i = 0; i < trainingSetSize; i++) {
             Cluster *nearest = NULL;
-            double minDist = nearestClusterVal(dim, clusters, kParam, trainingSet[i].val, &nearest, 0, 0);
+            double minDist = nearestClusterVal(dim, clusters, kParam, trainingSet[i].val, &nearest);
             globalDistance += minDist;
             nearest->n_matches++;
             for (size_t d = 0; d < dim; d++) {
@@ -129,7 +151,7 @@ Cluster* clustering(int kParam, int dim, double precision, double radiusF, Examp
     }
     for (size_t i = 0; i < trainingSetSize; i++) {
         Cluster *nearest = NULL;
-        double minDist = nearestClusterVal(dim, clusters, kParam, trainingSet[i].val, &nearest, 0, 0);
+        double minDist = nearestClusterVal(dim, clusters, kParam, trainingSet[i].val, &nearest);
         distances[i] = minDist;
         n_matches[i] = nearest;
         //
@@ -240,7 +262,17 @@ Match *identify(int kParam, int dim, double precision, double radiusF, Model *mo
     assertMsg(model->size > 0, "Can't find nearest in model(%d).", model->size);
     match->pointId = example->id;
     match->label = MINAS_UNK_LABEL;
-    match->distance = nearestClusterVal(dim, model->clusters, model->size, example->val, &match->cluster, thresholdForgettingPast, example->id);
+    unsigned int skiped = 0;
+    match->distance = nearestClusterIdentify(dim, model->clusters, model->size, example->val, &match->cluster, thresholdForgettingPast, example->id, &skiped);
+    if (model->size - skiped < kParam) {
+        // repopulate model
+        fprintf(stderr, "repopulate model\n");
+        for (size_t i = 0; i < model->size; i++) {
+            model->clusters[i].latest_match_id = example->id;
+        }
+        skiped = 0;
+        match->distance = nearestClusterIdentify(dim, model->clusters, model->size, example->val, &match->cluster, thresholdForgettingPast, example->id, &skiped);
+    }
     assertMsg(match->cluster != NULL, "Can't find nearest in model(%d).", model->size);
     if (match->distance <= match->cluster->radius) {
         match->isMatch = 1;
@@ -372,7 +404,7 @@ unsigned int noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_
         if (clusters[k].n_matches < minExamplesPerCluster) continue;
         //
         Cluster *nearest = NULL;
-        double minDist = nearestClusterVal(dim, model->clusters, model->size, clusters[k].center, &nearest, 0, 0);
+        double minDist = nearestClusterVal(dim, model->clusters, model->size, clusters[k].center, &nearest);
         assertMsg(nearest != NULL, "Didn't find nearest in model(%d).", model->size);
         if (minDist <= noveltyF * nearest->distanceStdDev) {
             clusters[k].label = nearest->label;

@@ -53,7 +53,8 @@ typedef struct {
 
 typedef struct {
     Cluster *clusters;
-    unsigned int size, nextLabel;
+    Cluster *activeClusters;
+    unsigned int size, activeSize, nextLabel;
 } Model;
 
 typedef struct {
@@ -72,7 +73,7 @@ typedef struct {
 char *printableLabel(unsigned int label);
 char *printableLabelReuse(unsigned int label, char *ret);
 unsigned int fromPrintableLabel(char *label);
-double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest, unsigned int thresholdForgettingPast, unsigned int currentId);
+double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest);
 Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example trainingSet[], unsigned int trainingSetSize);
 Cluster* clustering(int kParam, int dim, double precision, double radiusF, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);

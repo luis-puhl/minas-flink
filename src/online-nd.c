@@ -156,13 +156,13 @@ int main(int argc, char const *argv[]) {
                 // compress
                 args.unknowns[ex - (garbageCollected + consumed + reclassified)] = args.unknowns[ex];
                 Cluster *nearest;
-                double distance = nearestClusterVal(args.dim, &args.model->clusters[prevSize], nNewClusters, args.unknowns[ex].val, &nearest, 0, 0);
+                double distance = nearestClusterVal(args.dim, &args.model->clusters[prevSize], nNewClusters, args.unknowns[ex].val, &nearest);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     consumed++;
                     continue;
                 }
-                distance = nearestClusterVal(args.dim, args.model->clusters, args.model->size - nNewClusters, args.unknowns[ex].val, &nearest, 0, 0);
+                distance = nearestClusterVal(args.dim, args.model->clusters, args.model->size - nNewClusters, args.unknowns[ex].val, &nearest);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     reclassified++;

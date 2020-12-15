@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
             addCluster(kParam, dim, &cluster, model);
             printCluster(dim, &cluster);
             if (model->size == kParam) {
-                fprintf(stderr, "model complete\n");
+                fprintf(stderr, "[%s] model complete\n", argv[0]);
             }
         }
     }
