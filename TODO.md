@@ -132,3 +132,16 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 
 - [x] ~~RW-lock @ classifier/m_receiver;~~  did't change notth
 - [ ] 
+
+## Reunião 2020-12-15
+
+- micro batch quando taxa de entrada > taxa de processamento
+  - tempo para formação do batch é ocioso no classificador, pode levar a _bursts_ que são mais rápidos e consomem menos energia.
+- Discussão: Caso de ataque slow-morris e relação com unk-buff, unknowns[ex].id < lastNDCheck, garbageCollected++;
+- Escrever! Corpo:
+  - Proposal (retomar problema {iot, sec, ND}, objetivo, soluções {minas, paralelismo, distribuido, ~~py-kafka, flink,~~ mpi}, propor uma solução)
+  - Implementation (mpi, c, data-structures, data-flow, )
+  - Experiments (rpi, cluster, `evaluate.py`)
+  - Results
+  - Conclusion
+- Demonstrar o paralelismo com figura de pipeline (time vs instruction)
