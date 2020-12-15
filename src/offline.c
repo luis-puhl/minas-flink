@@ -11,13 +11,10 @@
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
-    int kParam = 100, dim = 22, minExamplesPerCluster = 20;
-    double precision = 1.0e-08, radiusF = 0.10, noveltyF = 2.0;
+    unsigned int kParam = 100, dim = 22, minExamplesPerCluster = 20, thresholdForgettingPast = 10000;
+    double precision = 1.0e-08, radiusF = 0.25, noveltyF = 1.4;
+    fprintf(stderr, "%s; kParam=%u; dim=%u; precision=%le; radiusF=%le; minExamplesPerCluster=%u; noveltyF=%le, thresholdForgettingPast=%u\n", argv[0], PARAMS);
     //
-    kParam=100; dim=22; precision=1.0e-08; radiusF=0.25; minExamplesPerCluster=20; noveltyF=1.4;
-    // kParam=100; dim=22; precision=1.0e-08; radiusF=0.10; minExamplesPerCluster=20; noveltyF=2.0;
-    //
-    fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le\n", argv[0], PARAMS);
     Model *model = training(kParam, dim, precision, radiusF);
     //
     for (size_t k = 0; k < model->size; k++) {

@@ -7,7 +7,7 @@
 #include <time.h>
 #include <ctype.h>
 
-#include "./base.h"
+#include "../base.h"
 
 struct LinkedArrayExs {
     Example *examples;
@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
     fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le\n", argv[0], PARAMS);
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
-    model->nextLabel = '\0';
+    model->nextLabel = 0;
     model->clusters = calloc(kParam, sizeof(Cluster));
     // void minasOnline(PARAMS_ARG, Model *model) {
     unsigned int id = 0;

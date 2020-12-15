@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <mpi.h>
 
-#include "./base.h"
+#include "../base.h"
 
 void minasOnline(PARAMS_ARG, Model *model) {
     unsigned int id = 0;
@@ -50,7 +50,8 @@ void minasOnline(PARAMS_ARG, Model *model) {
         //
         if (unknownsSize % noveltyDetectionTrigger == 0 && id - lastNDCheck > noveltyDetectionTrigger) {
             lastNDCheck = id;
-            unsigned int prevSize = model->size;
+            unsigned int prevSize = model->size, noveltyCount;
+            unsigned int nNewClusters = noveltyDetection(PARAMS, model, unknowns, unknownsSize, &noveltyCount);
             noveltyDetection(PARAMS, model, unknowns, unknownsSize);
             unsigned int nNewClusters = model->size - prevSize;
             //
@@ -65,7 +66,8 @@ void minasOnline(PARAMS_ARG, Model *model) {
                     reclassified++;
                 }
             }
-            fprintf(stderr, "Reclassified %lu\n", reclassified);
+            fprintf(stderr, "Novelties %3u, Extensions %3u, consumed %6lu, reclassified %6lu, garbageCollected %6lu\n",
+                    noveltyCount, nNewClusters - noveltyCount, consumed, reclassified, garbageCollected);
             unknownsSize -= reclassified;
         }
     }

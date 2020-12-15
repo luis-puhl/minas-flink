@@ -16,10 +16,10 @@
 #define MFOG_OUTPUT_ALL     2
 
 typedef struct {
-    int kParam, dim, minExamplesPerCluster;
+    unsigned int kParam, dim, minExamplesPerCluster, thresholdForgettingPast;
     double precision, radiusF, noveltyF;
     Model *model;
-    unsigned int noveltyDetectionTrigger, unknownsMaxSize, unknownsSize, lastNDCheck, currId;
+    unsigned long noveltyDetectionTrigger, unknownsMaxSize, unknownsSize, lastNDCheck, currId;
     Example *unknowns;
     char outputMode, nClassifiers;
 } ThreadArgs;
@@ -32,6 +32,7 @@ int main(int argc, char const *argv[]) {
         .outputMode = argc >= 2 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
         .nClassifiers = argc >= 3 ? atoi(argv[2]) : 1,
         .unknownsSize = 0, .lastNDCheck = 0, .currId = 0,
+        .thresholdForgettingPast = 10000,
     };
     args.model = calloc(1, sizeof(Model));
     args.model->size = 0;
@@ -61,34 +62,35 @@ int main(int argc, char const *argv[]) {
     }
     char *lineptr = NULL;
     size_t n = 0;
+    Cluster cluster;
+    cluster.center = calloc(args.dim, sizeof(double));
     while (!feof(stdin)) {
         clock_t t0 = clock();
-        getline(&lineptr, &n, stdin);
+        char lineType = getMfogLine(stdin, &lineptr, &n, args.kParam, args.dim, &args.currId, args.model, &cluster, &example);
         clock_t t1 = clock();
         ioTime += t1 - t0;
-        int readCur = 0, readTot = 0;
-        if (lineptr[0] == 'C') {
-            addClusterLine(args.kParam, args.dim, args.model, lineptr);
-            Cluster *cl = &(args.model->clusters[args.model->size -1]);
-            cl->isIntrest = args.outputMode >= MFOG_OUTPUT_ALL;
-            clock_t t2 = clock();
-            cpuTime += t2 - t1;
-            if (args.outputMode >= MFOG_OUTPUT_ALL)
-                printCluster(args.dim, cl);
-            clock_t t3 = clock();
-            ioTime += t3 - t2;
+        if (lineType == 'C') {
+            if (args.model->size < cluster.id) {
+                Cluster *cl = addCluster(args.kParam, args.dim, &cluster, args.model);
+                cl->isIntrest = args.outputMode >= MFOG_OUTPUT_ALL;
+                clock_t t2 = clock();
+                cpuTime += t2 - t1;
+                if (args.outputMode >= MFOG_OUTPUT_ALL) {
+                    printCluster(args.dim, cl);
+                    clock_t t3 = clock();
+                    ioTime += t3 - t2;
+                }
+                if (args.model->size == args.kParam) {
+                    fprintf(stderr, "model complete\n");
+                }
+            }
+        }
+        if (lineType != 'E') {
             continue;
         }
-        for (unsigned long int d = 0; d < args.dim; d++) {
-            assert(sscanf(&lineptr[readTot], "%lf,%n", &example.val[d], &readCur));
-            readTot += readCur;
-        }
-        // ignore class
-        example.id = args.currId;
-        args.currId++;
         //
         Match match;
-        identify(args.kParam, args.dim, args.precision, args.radiusF, args.model, &example, &match);
+        identify(args.kParam, args.dim, args.precision, args.radiusF, args.model, &example, &match, args.thresholdForgettingPast);
         example.label = match.label;
         clock_t t2 = clock();
         cpuTime += t2 - t1;
@@ -135,9 +137,8 @@ int main(int argc, char const *argv[]) {
         assert(args.unknownsSize < args.unknownsMaxSize);
         //
         if (args.unknownsSize >= args.noveltyDetectionTrigger && args.currId - args.lastNDCheck > args.noveltyDetectionTrigger) {
-            unsigned int prevSize = args.model->size;
-            noveltyDetection(args.kParam, args.dim, args.precision, args.radiusF, args.minExamplesPerCluster, args.noveltyF, args.model, args.unknowns, args.unknownsSize);
-            unsigned int nNewClusters = args.model->size - prevSize;
+            unsigned int prevSize = args.model->size, noveltyCount;
+            unsigned int nNewClusters = noveltyDetection(args.kParam, args.dim, args.precision, args.radiusF, args.thresholdForgettingPast , args.minExamplesPerCluster, args.noveltyF, args.model, args.unknowns, args.unknownsSize, &noveltyCount);
             clock_t t3 = clock();
             cpuTime += t3 - t2;
             //
@@ -155,13 +156,13 @@ int main(int argc, char const *argv[]) {
                 // compress
                 args.unknowns[ex - (garbageCollected + consumed + reclassified)] = args.unknowns[ex];
                 Cluster *nearest;
-                double distance = nearestClusterVal(args.dim, &args.model->clusters[prevSize], nNewClusters, args.unknowns[ex].val, &nearest);
+                double distance = nearestClusterVal(args.dim, &args.model->clusters[prevSize], nNewClusters, args.unknowns[ex].val, &nearest, 0, 0);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     consumed++;
                     continue;
                 }
-                distance = nearestClusterVal(args.dim, args.model->clusters, args.model->size - nNewClusters, args.unknowns[ex].val, &nearest);
+                distance = nearestClusterVal(args.dim, args.model->clusters, args.model->size - nNewClusters, args.unknowns[ex].val, &nearest, 0, 0);
                 assert(nearest != NULL);
                 if (distance <= nearest->distanceMax) {
                     reclassified++;
@@ -175,7 +176,8 @@ int main(int argc, char const *argv[]) {
             clock_t t5 = clock();
             cpuTime += t5 - t4;
             args.unknownsSize -= (garbageCollected + consumed + reclassified);
-            fprintf(stderr, "ND consumed %lu, reclassified %lu, garbageCollected %lu\n", consumed, reclassified, garbageCollected);
+            fprintf(stderr, "Novelties %3u, Extensions %3u, consumed %6lu, reclassified %6lu, garbageCollected %6lu\n",
+                    noveltyCount, nNewClusters - noveltyCount, consumed, reclassified, garbageCollected);
             args.lastNDCheck = args.currId;
         }
     }

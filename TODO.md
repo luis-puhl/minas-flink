@@ -130,5 +130,5 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 
 ## Reunião 2020-12-08
 
-- [ ] RW-lock @ classifier/m_receiver;
+- [x] ~~RW-lock @ classifier/m_receiver;~~  did't change notth
 - [ ] 

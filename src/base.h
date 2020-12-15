@@ -1,6 +1,7 @@
 #ifndef _BASE_H
 #define _BASE_H 1
 
+#include <stdio.h>
 #include <err.h>
 #include <string.h>
 
@@ -24,18 +25,18 @@
     }
 #define marker(txt) fprintf(stderr, txt" "__FILE__":%d\n", __LINE__);
 
-#define PARAMS kParam, dim, precision, radiusF, minExamplesPerCluster, noveltyF
-#define PARAMS_ARG int kParam, int dim, double precision, double radiusF, int minExamplesPerCluster, double noveltyF
+#define PARAMS kParam, dim, precision, radiusF, minExamplesPerCluster, noveltyF, thresholdForgettingPast
+#define PARAMS_ARG unsigned int kParam, unsigned int dim, double precision, double radiusF, unsigned int thresholdForgettingPast, unsigned int minExamplesPerCluster, double noveltyF
 
 typedef struct t_example {
     unsigned int id;
-    char label;
+    unsigned int label;
     double *val;
 } Example;
 
 typedef struct {
-    unsigned int id, n_matches, n_misses;
-    char label, isIntrest;
+    unsigned int id, n_matches, n_misses, latest_match_id, extensionOF;
+    unsigned int label, isIntrest;
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
     // double *valAverage, *valStdDev;
@@ -52,15 +53,14 @@ typedef struct {
 
 typedef struct {
     Cluster *clusters;
-    unsigned int size;
-    unsigned int nextLabel;
+    unsigned int size, nextLabel;
 } Model;
 
 typedef struct {
-    int pointId, clusterId;
+    unsigned int pointId, clusterId;
     // char clusterLabel, clusterCatergoy;
     // double clusterRadius;
-    char label, isMatch;
+    unsigned int label, isMatch;
     double distance; // , secondDistance;
     Cluster *cluster;
     // Example *example;
@@ -69,18 +69,22 @@ typedef struct {
 
 #define MINAS_UNK_LABEL '-'
 
-char *printableLabel(char label);
-char *printableLabelReuse(char label, char *ret);
-char fromPrintableLabel(char *label);
-double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest);
+char *printableLabel(unsigned int label);
+char *printableLabelReuse(unsigned int label, char *ret);
+unsigned int fromPrintableLabel(char *label);
+double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest, unsigned int thresholdForgettingPast, unsigned int currentId);
 Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example trainingSet[], unsigned int trainingSetSize);
 Cluster* clustering(int kParam, int dim, double precision, double radiusF, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 Model *training(int kParam, int dim, double precision, double radiusF);
-Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match);
-void noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknownsSize);
+Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match, unsigned int thresholdForgettingPast);
+unsigned int noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknownsSize, unsigned int *noveltyCount);
 
-int addClusterLine(int kParam, int dim, Model *model, char line[]);
+int readCluster(int kParam, int dim, Cluster *cluster, char lineptr[]);
+Cluster *addCluster(int kParam, int dim, Cluster *cluster, Model *model);
+
+char getMfogLine(FILE *fd, char **line, unsigned long *lineLen, int kParam, int dim, unsigned long *id, Model *model, Cluster *cluster, Example *example);
+
 int printCluster(int dim, Cluster *cl);
 char *labelMatchStatistics(Model *model, char *stats);
 
