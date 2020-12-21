@@ -139,7 +139,7 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
   - tempo para formação do batch é ocioso no classificador, pode levar a _bursts_ que são mais rápidos e consomem menos energia.
 - Discussão: Caso de ataque slow-morris e relação com unk-buff, unknowns[ex].id < lastNDCheck, garbageCollected++;
 - Escrever! Corpo:
-  - Proposal (retomar problema {iot, sec, ND}, objetivo, soluções {minas, paralelismo, distribuido, ~~py-kafka, flink,~~ mpi}, propor uma solução)
+  - Proposal (retomar problema {iot, sec, ND}, objetivo, soluções {minas, paralelismo, distribuído, ~~py-kafka, flink,~~ mpi}, propor uma solução)
   - Implementation (mpi, c, data-structures, data-flow, )
   - Experiments (rpi, cluster, `evaluate.py`)
   - Results

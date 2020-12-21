@@ -372,7 +372,7 @@ void *detector(void *arg) {
         ioTime += t4 - t3;
         //
         unknowns[unknownsSize].id = example.id;
-        unknowns[unknownsSize].label = example.label;
+        // unknowns[unknownsSize].label = example.label;
         for (size_t i = 0; i < args->dim; i++) {
             unknowns[unknownsSize].val[i] = valuePtr[i];
         }
@@ -418,7 +418,11 @@ void *detector(void *arg) {
             unsigned long int garbageCollected = 0, consumed = 0, reclassified = 0;
             for (unsigned long int ex = 0; ex < unknownsSize; ex++) {
                 // compress
-                unknowns[ex - (garbageCollected + consumed + reclassified)] = unknowns[ex];
+                // unknowns[ex - (garbageCollected + consumed + reclassified)] = unknowns[ex];
+                unknowns[ex - (garbageCollected + consumed + reclassified)].id = unknowns[ex].id;
+                for (size_t d = 0; d < args->dim; d++) {
+                    unknowns[ex - (garbageCollected + consumed + reclassified)].val[d] = unknowns[ex].val[d];
+                }
                 Cluster *nearest;
                 double distance = nearestClusterVal(dim, &model->clusters[prevSize], nNewClusters, unknowns[ex].val, &nearest, 0, 0);
                 assert(nearest != NULL);
