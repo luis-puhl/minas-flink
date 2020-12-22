@@ -71,7 +71,7 @@ int main(int argc, char const *argv[]) {
                 clock_t t2 = clock();
                 cpuTime += t2 - t1;
                 if (args.outputMode >= MFOG_OUTPUT_ALL) {
-                    printCluster(minasParams.dim, cl);
+                    printCluster(minasParams.dim, cl, label);
                     clock_t t3 = clock();
                     ioTime += t3 - t2;
                 }
@@ -125,7 +125,7 @@ int main(int argc, char const *argv[]) {
             for (ModelLink *curr = prevTail->next; curr != NULL; curr = curr->next) {
                 curr->cluster.isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
                 if (args.outputMode >= MFOG_OUTPUT_ALL) {
-                    printCluster(minasParams.dim, &curr->cluster);
+                    printCluster(minasParams.dim, &curr->cluster, label);
                 }
                 // assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 // assertMpi(MPI_Bcast(newCl->center, minasParams.dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));

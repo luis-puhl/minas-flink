@@ -113,11 +113,11 @@ char *printableLabel(unsigned int label);
 char *printableLabelReuse(unsigned int label, char *ret);
 unsigned int fromPrintableLabel(char *label);
 double nearestClusterVal(int dim, ModelLink *head, unsigned int limit, double val[], Cluster **nearest);
-ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
+ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize);
 double kMeans(int kParam, int dim, double precision, ModelLink *head, Example trainingSet[], unsigned int trainingSetSize);
 //
 
-ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
+ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize);
 Model *training(MinasParams *params);
 
 Match *identify(MinasParams *params, Model *model, Example *example, Match *match);
@@ -133,7 +133,7 @@ Cluster *addCluster(int dim, Cluster *cluster, Model *model);
 
 char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, Cluster *cluster, Example *example);
 
-int printCluster(int dim, Cluster *cl);
+int printCluster(int dim, Cluster *cl, char *reuseLabel);
 char *labelMatchStatistics(Model *model, char *stats);
 
 #endif // _BASE_H

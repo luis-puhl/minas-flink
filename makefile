@@ -58,7 +58,7 @@ experiments/tmi-n.log: makefile datasets/test.csv out/offline-model.csv bin/tmpi
 			tail $@ | grep "\[./bin/tmpi " ; \
 			printf "$$tmftx\n\n" >> $@ ; \
 			python3 src/evaluation/evaluate.py "Cluster tmi n$$n c$$c" \
-				datasets/test.csv out/tmi-n$$n-c$$c-matches.csv experiments/tmi-n$$n-c$$c.png \
+				datasets/test.csv out/tmi-n$$n-c$$c-matches.csv experiments/tmi-var/tmi-n$$n-c$$c.png \
 				| tee -a $@ | grep "./bin/tmpi " ; \
 		done ; \
 	done

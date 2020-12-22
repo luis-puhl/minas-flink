@@ -42,7 +42,7 @@ double nearestClusterVal(int dim, ModelLink *head, unsigned int limit, double va
     double minDist;
     *nearest = NULL;
     ModelLink *curr = head;
-    for (unsigned int k = 0; curr != NULL && k < limit; k++, curr = curr->next) {
+    for (unsigned int k = 0; curr != NULL && k < limit; k++) {
         double dist = 0.0;
         for (unsigned int d = 0; d < dim; d++) {
             double v = (curr->cluster.center[d] - val[d]);
@@ -54,30 +54,35 @@ double nearestClusterVal(int dim, ModelLink *head, unsigned int limit, double va
             minDist = dist;
             *nearest = &(curr->cluster);
         }
+        curr = curr->next;
     }
     return sqrt(minDist);
 }
 
-ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
+ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize) {
     if (trainingSetSize < kParam) {
         errx(EXIT_FAILURE, "Not enough examples for K-means. At "__FILE__":%d\n", __LINE__);
     }
-    ModelLink *cur, *head = calloc(1, sizeof(ModelLink));
-    cur = head;
-    for (size_t i = 0; i < kParam; i++) {
-        if (i > 0) {
-            cur->next = calloc(1, sizeof(ModelLink));
-            cur = cur->next;
+    Cluster empty = { 
+        .id = 0, .n_matches = 0, .n_misses = 0, .latest_match_id = 0, .extensionOF = 0, .evictions = 0,
+        .label = 0, .isIntrest = 0,
+    };
+    ModelLink *tail, *head = calloc(1, sizeof(ModelLink));
+    tail = head;
+    for (unsigned int i = 0; i < kParam; i++) {
+        tail->next = NULL;
+        tail->cluster = empty;
+        tail->cluster.center = calloc(dim, sizeof(double));
+        tail->cluster.ls_valLinearSum = calloc(dim, sizeof(double));
+        tail->cluster.ss_valSquareSum = calloc(dim, sizeof(double));
+        for (unsigned int d = 0; d < dim; d++) {
+            tail->cluster.center[d] = trainingSet[i].val[d];
+            tail->cluster.ls_valLinearSum[d] = trainingSet[i].val[d];
+            tail->cluster.ss_valSquareSum[d] = trainingSet[i].val[d] * trainingSet[i].val[d];
         }
-        cur->cluster.id = initalId + i;
-        cur->cluster.n_matches = 0;
-        cur->cluster.center = calloc(dim, sizeof(double));
-        cur->cluster.ls_valLinearSum = calloc(dim, sizeof(double));
-        cur->cluster.ss_valSquareSum = calloc(dim, sizeof(double));
-        for (size_t d = 0; d < dim; d++) {
-            cur->cluster.center[d] = trainingSet[i].val[d];
-            cur->cluster.ls_valLinearSum[d] = trainingSet[i].val[d];
-            cur->cluster.ss_valSquareSum[d] = trainingSet[i].val[d] * trainingSet[i].val[d];
+        if ((i + 1) < kParam) {
+            tail->next = calloc(1, sizeof(ModelLink));
+            tail = tail->next;
         }
     }
     return head;
@@ -116,20 +121,22 @@ double kMeans(int kParam, int dim, double precision, ModelLink* head, Example tr
     return globalDistance;
 }
 
-ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
-    ModelLink *head = kMeansInit(params->k, params->dim, trainingSet, trainingSetSize, initalId);
+ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize) {
+    ModelLink *head = kMeansInit(params->k, params->dim, trainingSet, trainingSetSize);
     kMeans(params->k, params->dim, params->precision, head, trainingSet, trainingSetSize);
     //
     double *distances = calloc(trainingSetSize, sizeof(double));
     Cluster **n_matches = calloc(trainingSetSize, sizeof(Cluster *));
-    ModelLink *curr = head;
-    for (unsigned int k = 0; curr != NULL && k < params->k; k++, curr = curr->next) {
+    unsigned int ks = 0;
+    for (ModelLink *curr = head; curr != NULL; curr = curr->next) {
         curr->cluster.radius = 0.0;
         curr->cluster.n_matches = 0;
         curr->cluster.distanceMax = 0.0;
         curr->cluster.distanceLinearSum = 0.0;
         curr->cluster.distanceSquareSum = 0.0;
+        ks++;
     }
+    assert(ks == params->k);
     for (unsigned int i = 0; i < trainingSetSize; i++) {
         Cluster *nearest = NULL;
         double minDist = nearestClusterVal(params->dim, head, params->k, trainingSet[i].val, &nearest);
@@ -150,8 +157,7 @@ ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int t
             nearest->ss_valSquareSum[d] += trainingSet[i].val[d] * trainingSet[i].val[d];
         }
     }
-    curr = head;
-    for (unsigned int k = 0; curr != NULL && k < params->k; k++) {
+    for (ModelLink *curr = head; curr != NULL; curr = curr->next) {
         if (curr->cluster.n_matches == 0) {
             ModelLink *toFree = curr;
             curr = curr->next;
@@ -230,6 +236,7 @@ Model *training(MinasParams *params) {
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
     model->nextLabel = 0;
+    model->nextId = 0;
     model->head = NULL;
     model->tail = model->head;
     for (unsigned int l = 0; l < nClasses; l++) {
@@ -237,20 +244,24 @@ Model *training(MinasParams *params) {
         unsigned int trainingSetSize = classesSize[l];
         char class = classes[l];
         fprintf(stderr, "Training %u examples from class %c\n", trainingSetSize, class);
-        ModelLink *head = clustering(params, trainingSet, trainingSetSize, model->nextId);
+        ModelLink *head = clustering(params, trainingSet, trainingSetSize);
         //
-        for (ModelLink *curr = head; curr != NULL; curr = curr->next) {
-            curr->cluster.label = class;
-        }
-        model->size += params->k;
-        model->nextId += params->k;
         if (model->head == NULL) {
             model->head = head;
         } else {
             model->tail->next = head;
         }
-        for (model->tail = head; model->tail->next != NULL; model->tail = model->tail->next) {}
+        model->tail = head;
+        for (ModelLink *curr = head; curr != NULL; curr = curr->next) {
+            curr->cluster.id = model->nextId;
+            curr->cluster.label = class;
+            model->nextId++;
+            model->tail = curr;
+        }
+        model->tail->next = NULL;
+        model->size += params->k;
     }
+    assert(model->nextId == model->size);
     return model;
 }
 
@@ -275,15 +286,18 @@ Match *identify(MinasParams *params, Model *model, Example *example, Match *matc
 
 unsigned int noveltyDetection(MinasParams *params, MinasState *state, unsigned int *noveltyCount) {
     marker("noveltyDetection");
-    ModelLink *head = clustering(params, state->unknowns, state->unknownsSize, state->model.size + 1);
+    ModelLink *head = clustering(params, state->unknowns, state->unknownsSize);
     unsigned int extensions = 0, novelties = 0;
     marker("evaluate clusters");
     for (ModelLink *curr = head; curr != NULL; ) {
-        fprintf(stderr, "evaluate cluster %u "__FILE__":%d\n", curr->cluster.id, __LINE__);
+        // fprintf(stderr, "evaluate cluster %10u, %.4s, %10u, %le, %le, %le"__FILE__":%d\n",
+        //         curr->cluster.id, printableLabel(curr->cluster.label), curr->cluster.n_matches,
+        //         curr->cluster.distanceAvg, curr->cluster.distanceStdDev, curr->cluster.radius, __LINE__);
         if (curr->cluster.n_matches < params->minExamplesPerCluster) {
             ModelLink *toFree = curr;
             curr = curr->next;
-            free(toFree);
+            // free(toFree->cluster.center);
+            // free(toFree);
             continue;
         }
         // check if extension or novelty
@@ -311,17 +325,18 @@ unsigned int noveltyDetection(MinasParams *params, MinasState *state, unsigned i
         curr->cluster.latest_match_id = state->currId;
         //
         state->model.size++;
-        ModelLink *toAdd = curr;
+        curr->cluster.id = state->model.nextId;
+        state->model.nextId++;
         curr = curr->next;
-        if (state->model.head == NULL) {
-            state->model.head = toAdd;
-            state->model.tail = toAdd;
+        if (state->model.head == NULL || state->model.tail == NULL) {
+            state->model.head = curr;
+            state->model.tail = curr;
         } else {
-            state->sleep.tail->next = toAdd;
-            state->model.tail = toAdd;
+            state->model.tail->next = curr;
+            state->model.tail = curr;
         }
-        state->model.tail->next = NULL;
     }
+    state->model.tail->next = NULL;
     // unsigned int earliestId = unknowns[0].id;
     // unsigned int latestId = unknowns[unknownsSize -1].id;
     // fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
@@ -430,7 +445,7 @@ void minasHandleSleep(MinasParams *params, MinasState *state) {
                 state->model.size--;
             }
         }
-        fprintf(stderr, "Forget Mechanic: k %4u, model %4u, sleep %4u\n", params->k, state->model.size, state->sleep.size);
+        fprintf(stderr, "Forget: k %4u, model %4u, sleep %4u\n", params->k, state->model.size, state->sleep.size);
     }
 }
 
@@ -476,12 +491,12 @@ char *labelMatchStatistics(Model *model, char *stats) {
     return stats;
 }
 
-int printCluster(int dim, Cluster *cl) {
+int printCluster(int dim, Cluster *cl, char *reuseLabel) {
     int count = 0;
     char *out = calloc(400, sizeof(char));
     count += sprintf(&out[count], "Cluster: %10u, %.4s, %10u, %le, %le, %le",
-                cl->id, printableLabel(cl->label), cl->n_matches,
-                cl->distanceAvg, cl->distanceStdDev, cl->radius);
+                     cl->id, printableLabelReuse(cl->label, reuseLabel), cl->n_matches,
+                     cl->distanceAvg, cl->distanceStdDev, cl->radius);
     assertNotNull(cl->center);
     for (unsigned int d = 0; d < dim; d++)
         count += sprintf(&out[count], ", %le", cl->center[d]);

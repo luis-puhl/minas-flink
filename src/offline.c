@@ -25,7 +25,6 @@ int main(int argc, char const *argv[]) {
     printArgs(minasParams, 2, 0);
     //
     Model *model = training(&minasParams);
-    marker("trained");
     //
     for (ModelLink *curr = model->head; curr != NULL; ) {
         Cluster *cl = &curr->cluster;
@@ -37,7 +36,6 @@ int main(int argc, char const *argv[]) {
         fprintf(stdout, "\n");
         curr = curr->next;
     }
-    marker("printed");
     free(model);
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return EXIT_SUCCESS;
