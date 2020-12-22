@@ -239,6 +239,9 @@ Model *training(MinasParams *params) {
         fprintf(stderr, "Training %u examples from class %c\n", trainingSetSize, class);
         ModelLink *head = clustering(params, trainingSet, trainingSetSize, model->nextId);
         //
+        for (ModelLink *curr = head; curr != NULL; curr = curr->next) {
+            curr->cluster.label = class;
+        }
         model->size += params->k;
         model->nextId += params->k;
         if (model->head == NULL) {
@@ -408,8 +411,8 @@ unsigned int minasHandleUnknown(MinasParams *params, MinasState *state, Example 
 }
 
 void minasHandleSleep(MinasParams *params, MinasState *state) {
-    if (state->currId > 0 && (state->currId - state->lastForgetCheck) > params->thresholdForgettingPast) {
-        marker("minasHandleSleep");
+    if (state->model.size > 2 * params->k && state->currId > 0 && (state->currId - state->lastForgetCheck) > params->thresholdForgettingPast) {
+        // marker("minasHandleSleep");
         for (ModelLink *curr = state->model.head; curr != NULL && state->model.size > params->k; ) {
             ModelLink *moved = curr;
             curr = curr->next;
@@ -427,7 +430,7 @@ void minasHandleSleep(MinasParams *params, MinasState *state) {
                 state->model.size--;
             }
         }
-        fprintf(stderr, "Forget Mechanic: model %4u, sleep %4u\n", state->model.size, state->sleep.size);
+        fprintf(stderr, "Forget Mechanic: k %4u, model %4u, sleep %4u\n", params->k, state->model.size, state->sleep.size);
     }
 }
 
@@ -510,6 +513,7 @@ int readCluster(int kParam, int dim, Cluster *cluster, char lineptr[]) {
     }
     return readTot;
 }
+
 Cluster *addCluster(int dim, Cluster *cluster, Model *model) {
     assert(cluster != NULL);
     assert(model != NULL);
@@ -529,7 +533,7 @@ Cluster *addCluster(int dim, Cluster *cluster, Model *model) {
     return &(model->tail->cluster);
 }
 
-char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, unsigned long *id, Model *model, Cluster *cluster, Example *example) {
+char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, Cluster *cluster, Example *example) {
     if (feof(fd)) {
         return 0;
     }
@@ -544,7 +548,7 @@ char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, un
     switch (*line[0]) {
     case 'C':
         readCluster(kParam, dim, cl, *line);
-        cl->latest_match_id = *id;
+        // cl->latest_match_id = *id;
         cl->isIntrest = 1;
         cl->n_matches = 0;
         cl->n_misses = 0;
@@ -557,9 +561,9 @@ char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, un
             assertMsg(sscanf(&(*line)[readTot], ", %le%n", &example->val[d], &readCur), "Didn't understand '%s'.", &(*line)[readTot]);
             readTot += readCur;
         }
-        if (example->id > *id) {
-            *id = example->id;
-        }
+        // if (example->id > *id) {
+        //     *id = example->id;
+        // }
         ret = 'U';
         break;
     case '#':
@@ -574,8 +578,8 @@ char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, un
             readTot += readCur;
         }
         // ignore class
-        example->id = *id;
-        (*id)++;
+        // example->id = *id;
+        // (*id)++;
         ret = 'E';
         break;
     }

@@ -60,13 +60,14 @@ int main(int argc, char const *argv[]) {
     cluster.center = calloc(minasParams.dim, sizeof(double));
     while (!feof(stdin)) {
         clock_t t0 = clock();
-        char lineType = getMfogLine(stdin, &lineptr, &n, minasParams.k, minasParams.dim, &minasState.currId, &minasState.model, &cluster, &example);
+        char lineType = getMfogLine(stdin, &lineptr, &n, minasParams.k, minasParams.dim, &cluster, &example);
         clock_t t1 = clock();
         ioTime += t1 - t0;
         if (lineType == 'C') {
-            if (minasState.model.size < cluster.id) {
+            if (minasState.model.size <= cluster.id) {
                 Cluster *cl = addCluster(minasParams.dim, &cluster, &minasState.model);
                 cl->isIntrest = args.outputMode >= MFOG_OUTPUT_ALL;
+                cl->latest_match_id = minasState.currId;
                 clock_t t2 = clock();
                 cpuTime += t2 - t1;
                 if (args.outputMode >= MFOG_OUTPUT_ALL) {
@@ -82,7 +83,11 @@ int main(int argc, char const *argv[]) {
         if (lineType != 'E') {
             continue;
         }
-        minasState.currId = example.id;
+        example.id = minasState.currId;
+        minasState.currId++;
+        // fprintf(stderr, "minasState.currId %u\n", minasState.currId);
+        // minasState.currId = example.id;
+        assert(minasState.model.size >= minasParams.k);
         //
         Match match;
         identify(&minasParams, &minasState.model, &example, &match);
@@ -119,8 +124,9 @@ int main(int argc, char const *argv[]) {
         if (prevTail != minasState.model.tail) {
             for (ModelLink *curr = prevTail->next; curr != NULL; curr = curr->next) {
                 curr->cluster.isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
-                if (args.outputMode >= MFOG_OUTPUT_ALL)
+                if (args.outputMode >= MFOG_OUTPUT_ALL) {
                     printCluster(minasParams.dim, &curr->cluster);
+                }
                 // assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
                 // assertMpi(MPI_Bcast(newCl->center, minasParams.dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
             }

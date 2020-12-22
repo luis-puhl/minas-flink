@@ -131,7 +131,7 @@ int readCluster(int kParam, int dim, Cluster *cluster, char lineptr[]);
 void restoreSleep(MinasParams *params, MinasState *state);
 Cluster *addCluster(int dim, Cluster *cluster, Model *model);
 
-char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, unsigned long *id, Model *model, Cluster *cluster, Example *example);
+char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, Cluster *cluster, Example *example);
 
 int printCluster(int dim, Cluster *cl);
 char *labelMatchStatistics(Model *model, char *stats);
