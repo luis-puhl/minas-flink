@@ -217,9 +217,10 @@ Unknowns            48980 (  7.495509%)
 Unk. reprocessed        1 (  0.002042%)
 Total              702437 (107.495355%)
 
-
+w/o sleep/forget
 [./bin/ond] (ioTime 9.364756e+00), (cpuTime 1.833568e+01), (lockTime 0.000000e+00), (total 2.816147e+01), (rest -2.770040e+07). At src/online-nd.c:155
 Hits               298431 ( 45.669500%)
 
+with sleep/forget (2s slower, better hit but expected worse)
 [./bin/ond] (ioTime 9.382890e+00), (cpuTime 2.034005e+01), (lockTime 0.000000e+00), (total 3.017332e+01), (rest -2.972291e+07). At src/online-nd.c:155
 Hits               300872 ( 46.043051%)
