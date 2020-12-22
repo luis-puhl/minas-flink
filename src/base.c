@@ -407,6 +407,7 @@ char *labelMatchStatistics(Model *model, char *stats) {
     int nLabels = 0;
     unsigned int *labels = calloc(model->size, sizeof(unsigned int));
     unsigned long int *matches = calloc(model->size, sizeof(unsigned long int));
+    unsigned int *clusters = calloc(model->size, sizeof(unsigned int));
     unsigned long int nMatches = 0, nMisses = 0;
     for (size_t i = 0; i < model->size; i++) {
         Cluster *cl = &(model->clusters[i]);
@@ -417,6 +418,7 @@ char *labelMatchStatistics(Model *model, char *stats) {
         labels[j] = cl->label;
         nMatches += cl->n_matches;
         matches[j] += cl->n_matches;
+        clusters[j]++;
         nMisses += cl->n_misses;
     }
     int statsIdx = sprintf(stats, "items: %10lu, hits: %10lu, misses: %10lu", nMatches + nMisses, nMatches, nMisses);
@@ -425,10 +427,11 @@ char *labelMatchStatistics(Model *model, char *stats) {
     for (size_t j = 0; labels[j] != '\0'; j++) {
         // if (matches[j] == 0) continue;
         printableLabelReuse(labels[j], label);
-        statsIdx += sprintf(&stats[statsIdx], ",%c'%4s': %10lu", (printed % 5 == 0) ? '\n' : ' ', label, matches[j]);
+        statsIdx += sprintf(&stats[statsIdx], ",%c'%4s' (%3u): %10lu", (printed % 5 == 0) ? '\n' : ' ', label, clusters[j], matches[j]);
         printed++;
     }
     free(labels);
+    free(clusters);
     free(matches);
     return stats;
 }

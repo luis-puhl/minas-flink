@@ -31,13 +31,8 @@ typedef struct {
     unsigned int kParam, dim, minExamplesPerCluster, thresholdForgettingPast;
     double precision, radiusF, noveltyF;
     Model *model;
-    char outputMode, nClassifiers;//, EOS;
-    // mpi stuff
+    char outputMode, nClassifiers;
     int mpiRank, mpiSize;
-    // pthread_mutex_t inFlightMutex;
-    // unsigned long int inFlight;
-    // threading stuff
-    // pthread_mutex_t modelMutex;
     pthread_rwlock_t modelLock;
     sem_t modelReadySemaphore;
 } ThreadArgs;
@@ -82,7 +77,6 @@ void *classifier(void *arg) {
         while (model->size < args->kParam) {
             sem_wait(&args->modelReadySemaphore);
         }
-        // pthread_mutex_lock(&args->modelMutex);
         pthread_rwlock_rdlock(&args->modelLock);
         clock_t l2 = clock();
         lockTime += l2 - l1;
@@ -92,7 +86,6 @@ void *classifier(void *arg) {
         example.label = match.label;
         clock_t l3 = clock();
         cpuTime += (l3 - l2);
-        // pthread_mutex_unlock(&args->modelMutex);
         pthread_rwlock_unlock(&args->modelLock);
         //
         position = 0;
@@ -130,8 +123,6 @@ void *m_receiver(void *arg) {
         clock_t t0 = clock();
         assertMpi(MPI_Bcast(cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         if (cl->label == MFOG_EOS_MARKER) {
-            // args->EOS = 1;
-            // fprintf(stderr, "[m_receiver %d] MFOG_EOS_MARKER\n", args->mpiRank);
             break;
         }
         assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
@@ -140,22 +131,18 @@ void *m_receiver(void *arg) {
         items++;
         clock_t t1 = clock();
         ioTime += t1 - t0;
-        // pthread_mutex_lock(&args->modelMutex);
         pthread_rwlock_wrlock(&args->modelLock);
         clock_t t2 = clock();
         lockTime += t2 - t1;
         if (model->size > 0 && model->size % args->kParam == 0) {
-            // fprintf(stderr, "[m_receiver %d] realloc model %d\n", args->mpiRank, model->size);
             model->clusters = realloc(model->clusters, (model->size + args->kParam) * sizeof(Cluster));
         }
         cl->n_matches = 0;
         cl->n_misses = 0;
         model->clusters[model->size] = *cl;
         model->size++;
-        // pthread_mutex_unlock(&args->modelMutex);
         pthread_rwlock_unlock(&args->modelLock);
         if (model->size == args->kParam) {
-            // fprintf(stderr, "model complete\n");
             for (size_t i = 0; i < args->nClassifiers; i++) {
                 sem_post(&args->modelReadySemaphore);
             }
@@ -249,9 +236,6 @@ void *sampler(void *arg) {
         do {
             dest = (dest + 1) % args->mpiSize;
         } while (dest == MFOG_RANK_MAIN);
-        // pthread_mutex_lock(&args->inFlightMutex);
-        // args->inFlight++;
-        // pthread_mutex_unlock(&args->inFlightMutex);
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         itemsWhere[dest]++;
         clock_t t3 = clock();
@@ -262,10 +246,9 @@ void *sampler(void *arg) {
     for (dest = 0; dest < args->mpiSize; dest++) {
         whereStrTail += sprintf(&whereStr[whereStrTail], ", %3d => %8lu", dest, itemsWhere[dest]);
     }
-    fprintf(stderr, "[sampler] args->inFlight %lu, itemsWhere: %s\n", 0l /* args->inFlight */, whereStr);
+    fprintf(stderr, "[sampler] itemsWhere: %s\n", whereStr);
     free(whereStr);
     free(itemsWhere);
-    // args->EOS = 1;
     example.label = MFOG_EOS_MARKER;
     int position = 0;
     assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
@@ -276,11 +259,6 @@ void *sampler(void *arg) {
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
         }
     }
-    // assertMpi(MPI_Send(buffer, position, MPI_PACKED, 0, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
-    // Cluster cl;
-    // cl.label = MFOG_EOS_MARKER;
-    // assertMpi(MPI_Bcast(&cl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-    //
     printTiming("sampler");
     return NULL;
 }
@@ -320,15 +298,8 @@ void *detector(void *arg) {
     int *buffer = calloc(bufferSize, sizeof(int));
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
-    // unsigned long int maxInFlight = 0;
     unsigned long int *itemsWhere = calloc(args->mpiSize, sizeof(unsigned long int));
     while (endOfStreams < streams) {
-        // if (maxInFlight < args->inFlight) {
-        //     maxInFlight = args->inFlight;
-        // }
-        // if (args->EOS && args->inFlight % (maxInFlight / 10) == 0) {
-        //     fprintf(stderr, "[detector] args->inFlight %8lu (%3lu %%)\n", args->inFlight, 10 * (args->inFlight / (maxInFlight / 10)));
-        // }
         clock_t t0 = clock();
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
         clock_t t1 = clock();
@@ -337,9 +308,6 @@ void *detector(void *arg) {
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
-        // pthread_mutex_lock(&args->inFlightMutex);
-        // args->inFlight--;
-        // pthread_mutex_unlock(&args->inFlightMutex);
         // consider only max id, there may be omitted due to classifier suppression
         if (example.id > id) {
             id = example.id;
@@ -377,22 +345,6 @@ void *detector(void *arg) {
             unknowns[unknownsSize].val[i] = valuePtr[i];
         }
         unknownsSize++;
-        if (unknownsSize >= unknownsMaxSize) {
-            unsigned long int garbageCollected = 0;
-            for (unsigned long int ex = 0; ex < unknownsSize; ex++) {
-                // compress
-                unknowns[ex - garbageCollected] = unknowns[ex];
-                if (unknowns[ex].id < lastNDCheck) {
-                    garbageCollected++;
-                    continue;
-                }
-            }
-            unknownsSize -= garbageCollected;
-            clock_t t5 = clock();
-            cpuTime += t5 - t4;
-            fprintf(stderr, "[detector %d] garbageCollect unknowns to %lu "__FILE__":%d\n", args->mpiSize, garbageCollected, __LINE__);
-        }
-        assert(unknownsSize < unknownsMaxSize);
         //
         if (unknownsSize >= noveltyDetectionTrigger && id - lastNDCheck > noveltyDetectionTrigger) {
             Model *model = args->model;
@@ -444,13 +396,28 @@ void *detector(void *arg) {
                     noveltyCount, nNewClusters - noveltyCount, consumed, reclassified, garbageCollected);
             lastNDCheck = id;
         }
+        if (unknownsSize >= unknownsMaxSize) {
+            unsigned long int garbageCollected = 0;
+            for (unsigned long int ex = 0; ex < unknownsSize; ex++) {
+                // compress
+                unknowns[ex - garbageCollected] = unknowns[ex];
+                if (unknowns[ex].id < lastNDCheck) {
+                    garbageCollected++;
+                    continue;
+                }
+            }
+            unknownsSize -= garbageCollected;
+            clock_t t5 = clock();
+            cpuTime += t5 - t4;
+            fprintf(stderr, "[detector] garbageCollect unknowns to %lu "__FILE__":%d\n", garbageCollected, __LINE__);
+        }
     }
     char *whereStr = calloc(args->mpiSize * 20, sizeof(char));
     int whereStrTail = 0;
     for (int dest = 0; dest < args->mpiSize; dest++) {
         whereStrTail += sprintf(&whereStr[whereStrTail], ", %3d => %8lu", dest, itemsWhere[dest]);
     }
-    fprintf(stderr, "[detector] args->inFlight %lu, itemsWhere: %s\n", 0l /* args->inFlight */, whereStr);
+    fprintf(stderr, "[detector] itemsWhere: %s\n", whereStr);
     free(whereStr);
     free(itemsWhere);
     Cluster cl;
@@ -473,29 +440,21 @@ int main(int argc, char const *argv[]) {
         .radiusF=0.25, .minExamplesPerCluster=20, .noveltyF=1.4,
         .outputMode = argc >= 2 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
         .nClassifiers = argc >= 3 ? atoi(argv[2]) : 1,
-        // .EOS = 0,
-        // .inFlight = 0,
         .thresholdForgettingPast = 10000,
     };
-    // unsigned int kParam = 100, dim = 22, minExamplesPerCluster = 20, thresholdForgettingPast = 10000;
-    // double precision = 1.0e-08, radiusF = 0.25, noveltyF = 1.4;
-    // fprintf(stderr, "%s; kParam=%u; dim=%u; precision=%le; radiusF=%le; minExamplesPerCluster=%u; noveltyF=%le, thresholdForgettingPast=%u\n", argv[0], PARAMS);
-    //
     // if (argc == 2) stdin = fopen(argv[1], "r");
     int provided;
     int mpiReturn = MPI_Init_thread(&argc, (char ***)&argv, MPI_THREAD_MULTIPLE, &provided);
     if (mpiReturn != MPI_SUCCESS || provided != MPI_THREAD_MULTIPLE) {
         MPI_Abort(MPI_COMM_WORLD, mpiReturn);
-        fail("Erro iniciando programa MPI #%d.\n", mpiReturn);
+        fail("Erro init programa MPI #%d.\n", mpiReturn);
     }
     MPI_Comm_rank(MPI_COMM_WORLD, &args.mpiRank);
     MPI_Comm_size(MPI_COMM_WORLD, &args.mpiSize);
     assertMsg(args.mpiSize > 1, "This is a multi-process program, got only %d process.", args.mpiSize);
     //
     assertErrno(sem_init(&args.modelReadySemaphore, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
-    // assertErrno(pthread_mutex_init(&args.modelMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
     assertErrno(pthread_rwlock_init(&args.modelLock, NULL) >= 0, "RW-Lock init fail%c.", '.', /**/);
-    // assertErrno(pthread_mutex_init(&args.inFlightMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
     //
     args.model = calloc(1, sizeof(Model));
     args.model->size = 0;
@@ -508,8 +467,7 @@ int main(int argc, char const *argv[]) {
         char mpiProcessorName[MPI_MAX_PROCESSOR_NAME + 1];
         MPI_Get_processor_name(mpiProcessorName, &namelen);
         fprintf(stderr,
-                "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le;\n"
-                "\tHello from %s, rank %d/%d, outputMode %d, nClassifiers %d\n",
+                "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le; Hello from %s, rank %d/%d, outputMode %d, nClassifiers %d\n",
                 argv[0],
                 args.kParam, args.dim, args.precision, args.radiusF, args.minExamplesPerCluster, args.noveltyF,
                 mpiProcessorName, args.mpiRank, args.mpiSize, args.outputMode, args.nClassifiers);
@@ -562,15 +520,13 @@ int main(int argc, char const *argv[]) {
             }
         }
         fprintf(stderr, "[root    ] Statistics %s\n", labelMatchStatistics(args.model, stats));
-        fprintf(stderr, "[%s %d/%d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, args.mpiSize, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+        fprintf(stderr, "[%s %d/%d c%d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, args.mpiSize, args.nClassifiers, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     }
     free(root_matches);
     free(root_misses);
     free(stats);
     free(args.model);
     sem_destroy(&args.modelReadySemaphore);
-    // pthread_mutex_destroy(&args.modelMutex)
     assertErrno(pthread_rwlock_destroy(&args.modelLock) >= 0, "RW-Lock destroy fail%c.", '.', /**/);
-    // pthread_mutex_destroy(&args.inFlightMutex);
     return MPI_Finalize();
 }

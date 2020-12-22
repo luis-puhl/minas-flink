@@ -119,22 +119,6 @@ int main(int argc, char const *argv[]) {
         args.unknowns[args.unknownsSize] = example;
         example.val = sw;
         args.unknownsSize++;
-        if (args.unknownsSize >= args.unknownsMaxSize) {
-            unsigned long int garbageCollected = 0;
-            for (unsigned long int ex = 0; ex < args.unknownsSize; ex++) {
-                // compress
-                args.unknowns[ex - garbageCollected] = args.unknowns[ex];
-                if (args.unknowns[ex].id < args.lastNDCheck) {
-                    garbageCollected++;
-                    continue;
-                }
-            }
-            args.unknownsSize -= garbageCollected;
-            clock_t t5 = clock();
-            cpuTime += t5 - t4;
-            fprintf(stderr, "[detector] garbageCollect unknowns to %lu "__FILE__":%d\n", garbageCollected, __LINE__);
-        }
-        assert(args.unknownsSize < args.unknownsMaxSize);
         //
         if (args.unknownsSize >= args.noveltyDetectionTrigger && args.currId - args.lastNDCheck > args.noveltyDetectionTrigger) {
             unsigned int prevSize = args.model->size, noveltyCount;
@@ -179,6 +163,21 @@ int main(int argc, char const *argv[]) {
             fprintf(stderr, "Novelties %3u, Extensions %3u, consumed %6lu, reclassified %6lu, garbageCollected %6lu\n",
                     noveltyCount, nNewClusters - noveltyCount, consumed, reclassified, garbageCollected);
             args.lastNDCheck = args.currId;
+        }
+        if (args.unknownsSize >= args.unknownsMaxSize) {
+            unsigned long int garbageCollected = 0;
+            for (unsigned long int ex = 0; ex < args.unknownsSize; ex++) {
+                // compress
+                args.unknowns[ex - garbageCollected] = args.unknowns[ex];
+                if (args.unknowns[ex].id < args.lastNDCheck) {
+                    garbageCollected++;
+                    continue;
+                }
+            }
+            args.unknownsSize -= garbageCollected;
+            clock_t t5 = clock();
+            cpuTime += t5 - t4;
+            fprintf(stderr, "[detector] garbageCollect unknowns to %lu "__FILE__":%d\n", garbageCollected, __LINE__);
         }
     }
     char *stats = calloc(args.model->size * 30, sizeof(char));
