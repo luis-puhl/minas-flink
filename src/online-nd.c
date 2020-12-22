@@ -32,6 +32,8 @@ int main(int argc, char const *argv[]) {
     minasParams.unknownsMaxSize = minasParams.noveltyDetectionTrigger * 2;
     MinasState minasState = MINAS_STATE_EMPTY;
     minasState.unknowns = calloc(minasParams.unknownsMaxSize + 1, sizeof(Example));
+    minasState.model.size = 0;
+    minasState.model.clusters = calloc(minasParams.k, sizeof(Cluster));
     for (unsigned long int i = 0; i < minasParams.unknownsMaxSize + 1; i++) {
         minasState.unknowns[i].val = calloc(minasParams.dim, sizeof(double));
     }
@@ -65,7 +67,7 @@ int main(int argc, char const *argv[]) {
         ioTime += t1 - t0;
         if (lineType == 'C') {
             if (minasState.model.size <= cluster.id) {
-                Cluster *cl = addCluster(minasParams.dim, &cluster, &minasState.model);
+                Cluster *cl = addCluster(&minasParams, &minasState, &cluster);
                 cl->isIntrest = args.outputMode >= MFOG_OUTPUT_ALL;
                 cl->latest_match_id = minasState.currId;
                 clock_t t2 = clock();
@@ -90,7 +92,7 @@ int main(int argc, char const *argv[]) {
         assert(minasState.model.size >= minasParams.k);
         //
         Match match;
-        identify(&minasParams, &minasState.model, &example, &match);
+        identify(&minasParams, &minasState, &example, &match);
         example.label = match.label;
         minasHandleSleep(&minasParams, &minasState);
         clock_t t2 = clock();
@@ -116,23 +118,21 @@ int main(int argc, char const *argv[]) {
         clock_t t4 = clock();
         ioTime += t4 - t3;
         //
-        // unsigned int prevSize = minasState.model.size;
-        ModelLink *prevTail = minasState.model.tail;
+        unsigned int prevSize = minasState.model.size;
         minasHandleUnknown(&minasParams, &minasState, &example);
         clock_t t5 = clock();
         cpuTime += t5 - t4;
-        if (prevTail != minasState.model.tail) {
-            for (ModelLink *curr = prevTail->next; curr != NULL; curr = curr->next) {
-                curr->cluster.isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
-                if (args.outputMode >= MFOG_OUTPUT_ALL) {
-                    printCluster(minasParams.dim, &curr->cluster);
-                }
-                // assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-                // assertMpi(MPI_Bcast(newCl->center, minasParams.dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+        for (unsigned int k = prevSize; k < minasState.model.size; k++) {
+            Cluster *cl = &minasState.model.clusters[k];
+            cl->isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
+            if (args.outputMode >= MFOG_OUTPUT_ALL) {
+                printCluster(minasParams.dim, cl);
             }
-            clock_t t6 = clock();
-            ioTime += t6 - t5;
+            // assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            // assertMpi(MPI_Bcast(newCl->center, minasParams.dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         }
+        clock_t t6 = clock();
+        ioTime += t6 - t5;
     }
     char *stats = calloc(minasState.model.size * 30, sizeof(char));
     restoreSleep(&minasParams, &minasState);

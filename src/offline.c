@@ -18,6 +18,8 @@ int main(int argc, char const *argv[]) {
     minasParams.noveltyDetectionTrigger = minasParams.minExamplesPerCluster * minasParams.k;
     minasParams.unknownsMaxSize = minasParams.noveltyDetectionTrigger * 2;
     MinasState minasState = MINAS_STATE_EMPTY;
+    minasState.model.size = 0;
+    minasState.model.clusters = calloc(minasParams.k, sizeof(Cluster));
     minasState.unknowns = calloc(minasParams.unknownsMaxSize + 1, sizeof(Example));
     for (unsigned long int i = 0; i < minasParams.unknownsMaxSize + 1; i++) {
         minasState.unknowns[i].val = calloc(minasParams.dim, sizeof(double));
@@ -25,19 +27,16 @@ int main(int argc, char const *argv[]) {
     printArgs(minasParams, 2, 0);
     //
     Model *model = training(&minasParams);
-    marker("trained");
     //
-    for (ModelLink *curr = model->head; curr != NULL; ) {
-        Cluster *cl = &curr->cluster;
+    for (size_t k = 0; k < model->size; k++) {
+        Cluster *cl = &model->clusters[k];
         fprintf(stdout, "Cluster: %10u, %s, %10u, %le, %le, %le",
                 cl->id, printableLabel(cl->label), cl->n_matches,
                 cl->distanceAvg, cl->distanceStdDev, cl->radius);
         for (unsigned int d = 0; d < minasParams.dim; d++)
             fprintf(stdout, ", %le", cl->center[d]);
         fprintf(stdout, "\n");
-        curr = curr->next;
     }
-    marker("printed");
     free(model);
     fprintf(stderr, "[%s] %le seconds. At %s:%d\n", argv[0], ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     return EXIT_SUCCESS;

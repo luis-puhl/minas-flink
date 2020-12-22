@@ -35,8 +35,10 @@ typedef struct t_example {
 } Example;
 
 typedef struct {
-    unsigned int id, n_matches, n_misses, latest_match_id, extensionOF, evictions;
-    unsigned int label, isIntrest;
+    unsigned int id;
+    unsigned int label;
+    unsigned int n_matches, n_misses, latest_match_id;
+    unsigned int extensionOF, isIntrest, isSleep, evictions;
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
     // double *valAverage, *valStdDev;
@@ -50,17 +52,15 @@ typedef struct {
     // double time_relevance_stamp_50;
     // unsigned int *ids, idSize; // used only to reconstruct clusters from snapshot
 } Cluster;
+#define CLUSTER_EMPTY { .id = 0, .label = 0, \
+    .n_matches = 0, .n_misses = 0, .latest_match_id = 0, \
+    .extensionOF = 0, .isIntrest = 0, .isSleep = 0, .evictions = 0, \
+    .center = NULL, .ls_valLinearSum = NULL, .ss_valSquareSum = NULL, };
 
-
-typedef struct ModelLink_st {
-    Cluster cluster;
-    struct ModelLink_st *next;
-    unsigned int rank;
-} ModelLink;
 
 typedef struct {
-    ModelLink *head, *tail;
-    unsigned int size, nextLabel, nextId;
+    Cluster *clusters;
+    unsigned int size;
 } Model;
 
 typedef struct {
@@ -87,21 +87,21 @@ typedef struct MinasParams_st {
 } MinasParams;
 
 typedef struct MinasState_st {
-    Model model, sleep;
+    Model model;
     Example *unknowns;
     unsigned long unknownsSize;
     unsigned long lastNDCheck;
     unsigned long lastForgetCheck;
     unsigned long currId;
     unsigned int noveltyCount;
+    unsigned int sleepCounter, nextLabel, nextId;
 } MinasState;
 
 #define MINAS_UNK_LABEL '-'
 
 #define MINAS_STATE_EMPTY { \
         .noveltyCount = 0, .unknownsSize = 0, .lastNDCheck = 0, .currId = 0, \
-        .model = { .size = 0, .nextLabel = 0, .nextId = 0, .head = NULL, .tail = NULL }, \
-        .sleep = { .size = 0, .nextLabel = 0, .nextId = 0, .head = NULL, .tail = NULL }, \
+        .model = { .size = 0, .clusters = NULL, }, \
     };
 
 #define printArgs(minasParams, outputMode, nClassifiers)                                                           \
@@ -112,15 +112,15 @@ typedef struct MinasState_st {
 char *printableLabel(unsigned int label);
 char *printableLabelReuse(unsigned int label, char *ret);
 unsigned int fromPrintableLabel(char *label);
-double nearestClusterVal(int dim, ModelLink *head, unsigned int limit, double val[], Cluster **nearest);
-ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
-double kMeans(int kParam, int dim, double precision, ModelLink *head, Example trainingSet[], unsigned int trainingSetSize);
+double nearestClusterVal(int dim, Cluster clusters[], unsigned int nClusters, double val[], Cluster **nearest);
+Cluster *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
+double kMeans(int kParam, int dim, double precision,Cluster clusters[], Example trainingSet[], unsigned int trainingSetSize);
 //
 
-ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
+Cluster *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 Model *training(MinasParams *params);
 
-Match *identify(MinasParams *params, Model *model, Example *example, Match *match);
+Match *identify(MinasParams *params, MinasState *state, Example *example, Match *match);
 void minasHandleSleep(MinasParams *params, MinasState *state);
 
 unsigned int noveltyDetection(MinasParams *params, MinasState *state, unsigned int *noveltyCount);
@@ -129,7 +129,7 @@ unsigned int minasHandleUnknown(MinasParams *params, MinasState *state, Example 
 
 int readCluster(int kParam, int dim, Cluster *cluster, char lineptr[]);
 void restoreSleep(MinasParams *params, MinasState *state);
-Cluster *addCluster(int dim, Cluster *cluster, Model *model);
+Cluster *addCluster(MinasParams *params, MinasState *state, Cluster *cluster);
 
 char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, Cluster *cluster, Example *example);
 
