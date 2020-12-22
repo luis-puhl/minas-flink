@@ -27,11 +27,10 @@
 #define MFOG_OUTPUT_MINIMAL 1
 #define MFOG_OUTPUT_ALL     2
 
-typedef struct {
-    unsigned int kParam, dim, minExamplesPerCluster, thresholdForgettingPast;
-    double precision, radiusF, noveltyF;
-    Model *model;
-    char outputMode, nClassifiers;//, EOS;
+typedef struct ThreadArgs_st {
+    MinasParams *minasParams;
+    MinasState *minasState;
+    char outputMode, nClassifiers;
     // mpi stuff
     int mpiRank, mpiSize;
     // pthread_mutex_t inFlightMutex;
@@ -53,15 +52,15 @@ typedef struct {
 void *classifier(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
+    unsigned int dim = args->minasParams->dim;
     Example example;
-    double valuePtr[args->dim];
-    Model *model = args->model;
+    double valuePtr[dim];
     unsigned long int items = 0;
     //
     int exampleBufferLen, valueBufferLen;
     int mpiReturn;
     assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
-    assertMpi(MPI_Pack_size(args->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
+    assertMpi(MPI_Pack_size(dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
     int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = (int *)malloc(bufferSize);
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
@@ -70,7 +69,7 @@ void *classifier(void *arg) {
         assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
         int position = 0;
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
         if (example.label == MFOG_EOS_MARKER) {
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
@@ -79,26 +78,24 @@ void *classifier(void *arg) {
         clock_t l1 = clock();
         ioTime += (l1 - l0);
         //
-        while (model->size < args->kParam) {
+        while (args->minasState->model.size < args->minasParams->k) {
             sem_wait(&args->modelReadySemaphore);
         }
-        // pthread_mutex_lock(&args->modelMutex);
         pthread_rwlock_rdlock(&args->modelLock);
         clock_t l2 = clock();
         lockTime += l2 - l1;
         Match match;
-        identify(args->kParam, args->dim, args->precision, args->radiusF, model, &example, &match, args->thresholdForgettingPast);
+        identify(args->minasParams, &args->minasState->model, &example, &match);
         items++;
         example.label = match.label;
         clock_t l3 = clock();
         cpuTime += (l3 - l2);
-        // pthread_mutex_unlock(&args->modelMutex);
         pthread_rwlock_unlock(&args->modelLock);
         //
         position = 0;
         if (example.label == MINAS_UNK_LABEL || match.cluster->isIntrest) {
             assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMpi(MPI_Pack(valuePtr, args->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+            assertMpi(MPI_Pack(valuePtr, dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
             assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
         }
         clock_t l4 = clock();
@@ -118,12 +115,12 @@ void *classifier(void *arg) {
 void *m_receiver(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
+    unsigned int dim = args->minasParams->dim;
     fprintf(stderr, "[m_receiver %d]\n", args->mpiRank);
     Cluster *cl = calloc(1, sizeof(Cluster));
-    cl->center = calloc(args->dim, sizeof(double));
+    cl->center = calloc(dim, sizeof(double));
     double *valuePtr = cl->center;
     int mpiReturn;
-    Model *model = args->model;
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     unsigned long int items = 0;
     while (1) {
@@ -134,7 +131,7 @@ void *m_receiver(void *arg) {
             // fprintf(stderr, "[m_receiver %d] MFOG_EOS_MARKER\n", args->mpiRank);
             break;
         }
-        assertMpi(MPI_Bcast(valuePtr, args->dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+        assertMpi(MPI_Bcast(valuePtr, dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
         cl->center = valuePtr;
         assert(cl->id == model->size);
         items++;
@@ -299,10 +296,8 @@ void *detector(void *arg) {
     unsigned long int items = 0;
     int streams = args->nClassifiers * (args->mpiSize - 1);
     int endOfStreams = 0;
-    int kParam = args->kParam, dim = args->dim, minExamplesPerCluster = args->minExamplesPerCluster;
-    double precision = args->precision, radiusF = args->radiusF, noveltyF = args->noveltyF;
     Example example;
-    double valuePtr[args->dim];
+    double valuePtr[args->minasParams.dim];
     //
     unsigned long int noveltyDetectionTrigger = args->minExamplesPerCluster * args->kParam;
     unsigned long int unknownsMaxSize = noveltyDetectionTrigger * 2;
@@ -472,20 +467,27 @@ void *detector(void *arg) {
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
-    ThreadArgs args = {
-        .kParam=100, .dim=22, .precision=1.0e-08,
+    MinasParams minasParams = {
+        .k=100, .dim=22, .precision=1.0e-08,
         .radiusF=0.25, .minExamplesPerCluster=20, .noveltyF=1.4,
-        .outputMode = argc >= 2 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
-        .nClassifiers = argc >= 3 ? atoi(argv[2]) : 1,
-        // .EOS = 0,
-        // .inFlight = 0,
         .thresholdForgettingPast = 10000,
     };
-    // unsigned int kParam = 100, dim = 22, minExamplesPerCluster = 20, thresholdForgettingPast = 10000;
-    // double precision = 1.0e-08, radiusF = 0.25, noveltyF = 1.4;
-    // fprintf(stderr, "%s; kParam=%u; dim=%u; precision=%le; radiusF=%le; minExamplesPerCluster=%u; noveltyF=%le, thresholdForgettingPast=%u\n", argv[0], PARAMS);
+    minasParams.noveltyDetectionTrigger = minasParams.minExamplesPerCluster * minasParams.k;
+    minasParams.unknownsMaxSize = minasParams.noveltyDetectionTrigger * 2;
+    MinasState minasState = MINAS_STATE_EMPTY;
+    minasState.unknowns = calloc(minasParams.unknownsMaxSize + 1, sizeof(Example));
+    for (unsigned long int i = 0; i < minasParams.unknownsMaxSize + 1; i++) {
+        minasState.unknowns[i].val = calloc(minasParams.dim, sizeof(double));
+    }
     //
-    // if (argc == 2) stdin = fopen(argv[1], "r");
+    ThreadArgs args = {
+        .outputMode = argc >= 2 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
+        .nClassifiers = argc >= 3 ? atoi(argv[2]) : 1,
+        .minasParams = &minasParams,
+        .minasState = &minasState,
+    };
+    // printArgs(minasParams, args.outputMode, args.nClassifiers);
+    //
     int provided;
     int mpiReturn = MPI_Init_thread(&argc, (char ***)&argv, MPI_THREAD_MULTIPLE, &provided);
     if (mpiReturn != MPI_SUCCESS || provided != MPI_THREAD_MULTIPLE) {
@@ -497,14 +499,7 @@ int main(int argc, char const *argv[]) {
     assertMsg(args.mpiSize > 1, "This is a multi-process program, got only %d process.", args.mpiSize);
     //
     assertErrno(sem_init(&args.modelReadySemaphore, 0, 0) >= 0, "Semaphore init fail%c.", '.', /**/);
-    // assertErrno(pthread_mutex_init(&args.modelMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
     assertErrno(pthread_rwlock_init(&args.modelLock, NULL) >= 0, "RW-Lock init fail%c.", '.', /**/);
-    // assertErrno(pthread_mutex_init(&args.inFlightMutex, NULL) >= 0, "Mutex init fail%c.", '.', /**/);
-    //
-    args.model = calloc(1, sizeof(Model));
-    args.model->size = 0;
-    args.model->nextLabel = '\0';
-    args.model->clusters = calloc(args.kParam, sizeof(Cluster));
     //
     int result;
     if (args.mpiRank == MFOG_RANK_MAIN) {
@@ -514,8 +509,8 @@ int main(int argc, char const *argv[]) {
         fprintf(stderr,
                 "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le;\n"
                 "\tHello from %s, rank %d/%d, outputMode %d, nClassifiers %d\n",
-                argv[0],
-                args.kParam, args.dim, args.precision, args.radiusF, args.minExamplesPerCluster, args.noveltyF,
+                argv[0], minasParams.k, minasParams.dim, minasParams.precision,
+                minasParams.radiusF, minasParams.minExamplesPerCluster, minasParams.noveltyF, args.outputMode, args.nClassifiers,
                 mpiProcessorName, args.mpiRank, args.mpiSize, args.outputMode, args.nClassifiers);
 
         pthread_t detector_t;

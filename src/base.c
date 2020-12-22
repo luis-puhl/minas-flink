@@ -38,100 +38,106 @@ unsigned int fromPrintableLabel(char *label) {
     return ret;
 }
 
-double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest, unsigned int thresholdForgettingPast, unsigned int currentId) {
+double nearestClusterVal(int dim, ModelLink *head, unsigned int limit, double val[], Cluster **nearest) {
     double minDist;
     *nearest = NULL;
-    for (size_t k = 0; k < nClusters; k++) {
-        // if (thresholdForgettingPast > 0 && currentId - clusters[k].latest_match_id > thresholdForgettingPast) {
-        //     continue;
-        // }
+    ModelLink *curr = head;
+    for (unsigned int k = 0; curr != NULL && k < limit; k++, curr = curr->next) {
         double dist = 0.0;
-        for (size_t d = 0; d < dim; d++) {
-            double v = (clusters[k].center[d] - val[d]);
+        for (unsigned int d = 0; d < dim; d++) {
+            double v = (curr->cluster.center[d] - val[d]);
             // dist += fabs(v);
             dist += v * v;
             if (k > 0 && dist > minDist) break;
         }
         if (k == 0 || dist <= minDist) {
             minDist = dist;
-            *nearest = &clusters[k];
+            *nearest = &(curr->cluster);
         }
     }
     return sqrt(minDist);
 }
 
-Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
+ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
     if (trainingSetSize < kParam) {
         errx(EXIT_FAILURE, "Not enough examples for K-means. At "__FILE__":%d\n", __LINE__);
     }
-    Cluster *clusters = calloc(kParam, sizeof(Cluster));
+    ModelLink *cur, *head = calloc(1, sizeof(ModelLink));
+    cur = head;
     for (size_t i = 0; i < kParam; i++) {
-        clusters[i].id = initalId + i;
-        clusters[i].n_matches = 0;
-        clusters[i].center = calloc(dim, sizeof(double));
-        clusters[i].ls_valLinearSum = calloc(dim, sizeof(double));
-        clusters[i].ss_valSquareSum = calloc(dim, sizeof(double));
+        if (i > 0) {
+            cur->next = calloc(1, sizeof(ModelLink));
+            cur = cur->next;
+        }
+        cur->cluster.id = initalId + i;
+        cur->cluster.n_matches = 0;
+        cur->cluster.center = calloc(dim, sizeof(double));
+        cur->cluster.ls_valLinearSum = calloc(dim, sizeof(double));
+        cur->cluster.ss_valSquareSum = calloc(dim, sizeof(double));
         for (size_t d = 0; d < dim; d++) {
-            clusters[i].center[d] = trainingSet[i].val[d];
-            clusters[i].ls_valLinearSum[d] = trainingSet[i].val[d];
-            clusters[i].ss_valSquareSum[d] = trainingSet[i].val[d] * trainingSet[i].val[d];
+            cur->cluster.center[d] = trainingSet[i].val[d];
+            cur->cluster.ls_valLinearSum[d] = trainingSet[i].val[d];
+            cur->cluster.ss_valSquareSum[d] = trainingSet[i].val[d] * trainingSet[i].val[d];
         }
     }
-    return clusters;
+    return head;
 }
 
-double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example trainingSet[], unsigned int trainingSetSize) {
-    // clock_t start = clock();
+double kMeans(int kParam, int dim, double precision, ModelLink* head, Example trainingSet[], unsigned int trainingSetSize) {
     double improvement, prevGlobalDistance, globalDistance = dim * kParam * trainingSetSize * 2;
     unsigned int iteration = 0;
     do {
         prevGlobalDistance = globalDistance;
         globalDistance = 0.0;
-        for (size_t i = 0; i < trainingSetSize; i++) {
+        for (unsigned int i = 0; i < trainingSetSize; i++) {
             Cluster *nearest = NULL;
-            double minDist = nearestClusterVal(dim, clusters, kParam, trainingSet[i].val, &nearest, 0, 0);
+            double minDist = nearestClusterVal(dim, head, kParam, trainingSet[i].val, &nearest);
             globalDistance += minDist;
             nearest->n_matches++;
-            for (size_t d = 0; d < dim; d++) {
+            for (unsigned int d = 0; d < dim; d++) {
                 nearest->ls_valLinearSum[d] += trainingSet[i].val[d];
                 nearest->ss_valSquareSum[d] += trainingSet[i].val[d] * trainingSet[i].val[d];
             }
         }
-        for (size_t k = 0; k < kParam; k++) {
-            for (size_t d = 0; d < dim; d++) {
-                if (clusters[k].n_matches > 0)
-                    clusters[k].center[d] = clusters[k].ls_valLinearSum[d] / clusters[k].n_matches;
-                clusters[k].ls_valLinearSum[d] = 0.0;
-                clusters[k].ss_valSquareSum[d] = 0.0;
+        ModelLink* curr = head;
+        for (unsigned int k = 0; curr != NULL || k < kParam; k++, curr = curr->next) {
+            for (unsigned int d = 0; d < dim; d++) {
+                if (curr->cluster.n_matches > 0)
+                    curr->cluster.center[d] = curr->cluster.ls_valLinearSum[d] / curr->cluster.n_matches;
+                curr->cluster.ls_valLinearSum[d] = 0.0;
+                curr->cluster.ss_valSquareSum[d] = 0.0;
             }
-            clusters[k].n_matches = 0;
+            curr->cluster.n_matches = 0;
         }
         improvement = globalDistance - prevGlobalDistance;
-        // fprintf(stderr, "\t[%3u] k-Means %le -> %le (%+le)\n", iteration, prevGlobalDistance, globalDistance, improvement);
+        // fprintf(stderr, "\t[%3u] k-Means %le -> %le (%+le / %+le)\n", iteration, prevGlobalDistance, globalDistance, improvement, precision);
         iteration++;
-    } while (fabs(improvement) > precision && iteration < 100);
-    // printTiming(kMeans, trainingSetSize);
+    } while (prevGlobalDistance != globalDistance && fabs(improvement) > precision && iteration < 100);
     return globalDistance;
 }
 
-Cluster* clustering(int kParam, int dim, double precision, double radiusF, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
-    Cluster *clusters = kMeansInit(kParam, dim, trainingSet, trainingSetSize, initalId);
-    kMeans(kParam, dim, precision, clusters, trainingSet, trainingSetSize);
+ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
+    ModelLink *head = kMeansInit(params->k, params->dim, trainingSet, trainingSetSize, initalId);
+    kMeans(params->k, params->dim, params->precision, head, trainingSet, trainingSetSize);
     //
     double *distances = calloc(trainingSetSize, sizeof(double));
     Cluster **n_matches = calloc(trainingSetSize, sizeof(Cluster *));
-    for (size_t k = 0; k < kParam; k++) {
-        clusters[k].radius = 0.0;
-        clusters[k].n_matches = 0;
-        clusters[k].distanceMax = 0.0;
-        clusters[k].distanceLinearSum = 0.0;
-        clusters[k].distanceSquareSum = 0.0;
+    ModelLink *curr = head;
+    for (unsigned int k = 0; curr != NULL && k < params->k; k++, curr = curr->next) {
+        curr->cluster.radius = 0.0;
+        curr->cluster.n_matches = 0;
+        curr->cluster.distanceMax = 0.0;
+        curr->cluster.distanceLinearSum = 0.0;
+        curr->cluster.distanceSquareSum = 0.0;
     }
-    for (size_t i = 0; i < trainingSetSize; i++) {
+    for (unsigned int i = 0; i < trainingSetSize; i++) {
         Cluster *nearest = NULL;
-        double minDist = nearestClusterVal(dim, clusters, kParam, trainingSet[i].val, &nearest, 0, 0);
+        double minDist = nearestClusterVal(params->dim, head, params->k, trainingSet[i].val, &nearest);
         distances[i] = minDist;
         n_matches[i] = nearest;
+        // if (exampleToClusterMap != NULL) {
+        //     exampleToClusterMap[i] = nearest->id;
+        // }
         //
         nearest->n_matches++;
         nearest->distanceLinearSum += minDist;
@@ -139,32 +145,41 @@ Cluster* clustering(int kParam, int dim, double precision, double radiusF, Examp
         if (minDist > nearest->distanceMax) {
             nearest->distanceMax = minDist;
         }
-        for (size_t d = 0; d < dim; d++) {
+        for (unsigned int d = 0; d < params->dim; d++) {
             nearest->ls_valLinearSum[d] += trainingSet[i].val[d];
             nearest->ss_valSquareSum[d] += trainingSet[i].val[d] * trainingSet[i].val[d];
         }
     }
-    for (size_t k = 0; k < kParam; k++) {
-        if (clusters[k].n_matches == 0) continue;
-        clusters[k].distanceAvg = clusters[k].distanceLinearSum / clusters[k].n_matches;
-        clusters[k].distanceStdDev = 0.0;
-        for (size_t i = 0; i < trainingSetSize; i++) {
-            if (n_matches[i] == &clusters[k]) {
-                double p = distances[i] - clusters[k].distanceAvg;
-                clusters[k].distanceStdDev += p * p;
+    curr = head;
+    for (unsigned int k = 0; curr != NULL && k < params->k; k++) {
+        if (curr->cluster.n_matches == 0) {
+            ModelLink *toFree = curr;
+            curr = curr->next;
+            free(toFree->cluster.ls_valLinearSum);
+            free(toFree->cluster.ss_valSquareSum);
+            free(toFree);
+            continue;
+        }
+        curr->cluster.distanceAvg = curr->cluster.distanceLinearSum / curr->cluster.n_matches;
+        curr->cluster.distanceStdDev = 0.0;
+        for (unsigned int i = 0; i < trainingSetSize; i++) {
+            if (n_matches[i] == &curr->cluster) {
+                double p = distances[i] - curr->cluster.distanceAvg;
+                curr->cluster.distanceStdDev += p * p;
             }
         }
-        clusters[k].distanceStdDev = sqrt(clusters[k].distanceStdDev);
-        clusters[k].radius = radiusF * clusters[k].distanceStdDev;
-        free(clusters[k].ls_valLinearSum);
-        free(clusters[k].ss_valSquareSum);
+        curr->cluster.distanceStdDev = sqrt(curr->cluster.distanceStdDev);
+        curr->cluster.radius = params->radiusF * curr->cluster.distanceStdDev;
+        free(curr->cluster.ls_valLinearSum);
+        free(curr->cluster.ss_valSquareSum);
+        curr = curr->next;
     }
     free(distances);
     free(n_matches);
-    return clusters;
+    return head;
 }
 
-Model *training(int kParam, int dim, double precision, double radiusF) {
+Model *training(MinasParams *params) {
     // read training stream
     unsigned int id = 0, nClasses = 0;
     Example *trainingSetByClass[255];
@@ -177,8 +192,8 @@ Model *training(int kParam, int dim, double precision, double radiusF) {
     }
     fprintf(stderr, "Taking training set from stdin\n");
     while (!feof(stdin)) {
-        double *value = calloc(dim, sizeof(double));
-        for (size_t d = 0; d < dim; d++) {
+        double *value = calloc(params->dim, sizeof(double));
+        for (size_t d = 0; d < params->dim; d++) {
             scanf("%lf,", &value[d]);
         }
         char class;
@@ -209,38 +224,39 @@ Model *training(int kParam, int dim, double precision, double radiusF) {
     }
     //
     fprintf(stderr, "Training %u examples with %d classes (%s)\n", id, nClasses, classes);
-    if (id < kParam) {
+    if (id < params->k) {
         errx(EXIT_FAILURE, "Not enough examples for training. At "__FILE__":%d\n", __LINE__);
     }
     Model *model = calloc(1, sizeof(Model));
     model->size = 0;
     model->nextLabel = 0;
-    model->clusters = calloc(1, sizeof(Cluster));
-    for (size_t l = 0; l < nClasses; l++) {
+    model->head = NULL;
+    model->tail = model->head;
+    for (unsigned int l = 0; l < nClasses; l++) {
         Example *trainingSet = trainingSetByClass[l];
         unsigned int trainingSetSize = classesSize[l];
         char class = classes[l];
         fprintf(stderr, "Training %u examples from class %c\n", trainingSetSize, class);
-        Cluster *clusters = clustering(kParam, dim, precision, radiusF, trainingSet, trainingSetSize, model->size);
+        ModelLink *head = clustering(params, trainingSet, trainingSetSize, model->nextId);
         //
-        unsigned int prevSize = model->size;
-        model->size += kParam;
-        model->clusters = realloc(model->clusters, model->size * sizeof(Cluster));
-        for (size_t k = 0; k < kParam; k++) {
-            clusters[k].label = class;
-            model->clusters[prevSize + k] = clusters[k];
+        model->size += params->k;
+        model->nextId += params->k;
+        if (model->head == NULL) {
+            model->head = head;
+        } else {
+            model->tail->next = head;
         }
-        free(clusters);
+        for (model->tail = head; model->tail->next != NULL; model->tail = model->tail->next) {}
     }
     return model;
 }
 
-Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match, unsigned int thresholdForgettingPast) {
+Match *identify(MinasParams *params, Model *model, Example *example, Match *match) {
     // Match *match = calloc(1, sizeof(Match));
     assertMsg(model->size > 0, "Can't find nearest in model(%d).", model->size);
     match->pointId = example->id;
     match->label = MINAS_UNK_LABEL;
-    match->distance = nearestClusterVal(dim, model->clusters, model->size, example->val, &match->cluster, thresholdForgettingPast, example->id);
+    match->distance = nearestClusterVal(params->dim, model->head, model->size, example->val, &match->cluster);
     assertMsg(match->cluster != NULL, "Can't find nearest in model(%d).", model->size);
     if (match->distance <= match->cluster->radius) {
         match->isMatch = 1;
@@ -252,6 +268,209 @@ Match *identify(int kParam, int dim, double precision, double radiusF, Model *mo
         match->cluster->n_misses++;
     }
     return match;
+}
+
+unsigned int noveltyDetection(MinasParams *params, MinasState *state, unsigned int *noveltyCount) {
+    marker("noveltyDetection");
+    ModelLink *head = clustering(params, state->unknowns, state->unknownsSize, state->model.size + 1);
+    unsigned int extensions = 0, novelties = 0;
+    marker("evaluate clusters");
+    for (ModelLink *curr = head; curr != NULL; ) {
+        fprintf(stderr, "evaluate cluster %u "__FILE__":%d\n", curr->cluster.id, __LINE__);
+        if (curr->cluster.n_matches < params->minExamplesPerCluster) {
+            ModelLink *toFree = curr;
+            curr = curr->next;
+            free(toFree);
+            continue;
+        }
+        // check if extension or novelty
+        Cluster *nearest = NULL;
+        double minDist = nearestClusterVal(params->dim, state->model.head, state->model.size, curr->cluster.center, &nearest);
+        assertMsg(nearest != NULL, "Didn't find nearest in model(%d).", state->model.size);
+        if (minDist <= params->noveltyF * nearest->distanceStdDev) {
+            curr->cluster.label = nearest->label;
+            curr->cluster.extensionOF = nearest->id;
+            extensions++;
+        } else {
+            curr->cluster.label = state->model.nextLabel;
+            // inc label
+            do {
+                state->model.nextLabel++;
+            } while (isalpha(state->model.nextLabel) || state->model.nextLabel == '-');
+            // fprintf(stderr, "Novelty %s\n", printableLabel(curr->cluster.label));
+            novelties++;
+        }
+        //
+        curr->cluster.id = state->model.nextId;
+        state->model.nextId++;
+        curr->cluster.n_matches = 0;
+        curr->cluster.n_misses = 0;
+        curr->cluster.latest_match_id = state->currId;
+        //
+        state->model.size++;
+        ModelLink *toAdd = curr;
+        curr = curr->next;
+        if (state->model.head == NULL) {
+            state->model.head = toAdd;
+            state->model.tail = toAdd;
+        } else {
+            state->sleep.tail->next = toAdd;
+            state->model.tail = toAdd;
+        }
+        state->model.tail->next = NULL;
+    }
+    // unsigned int earliestId = unknowns[0].id;
+    // unsigned int latestId = unknowns[unknownsSize -1].id;
+    // fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
+    if (noveltyCount != NULL) {
+        *noveltyCount = novelties;
+    }
+    return novelties + extensions;
+}
+
+unsigned int minasHandleUnknown(MinasParams *params, MinasState *state, Example *example) {
+    unsigned int nNewClusters = 0;
+    state->currId = example->id;
+    // Example *unknowns = state->unknowns;
+    state->unknowns[state->unknownsSize].id = example->id;
+    for (size_t i = 0; i < params->dim; i++) {
+        state->unknowns[state->unknownsSize].val[i] = example->val[i];
+    }
+    state->unknownsSize++;
+    //
+    if (state->unknownsSize == params->unknownsMaxSize ||
+        (state->unknownsSize >= params->noveltyDetectionTrigger && state->currId - state->lastNDCheck > params->noveltyDetectionTrigger)
+    ) {
+        restoreSleep(params, state);
+        unsigned int noveltyCount;
+        // unsigned int prevSize = state->model.size;
+        ModelLink *prevTail = state->model.tail;
+        nNewClusters = noveltyDetection(params, state, &noveltyCount);
+        //
+        unsigned long garbageCollected = 0, consumed = 0, reclassified = 0;
+        for (unsigned long int ex = 0; ex < state->unknownsSize; ex++) {
+            // compress
+            unsigned long offset = garbageCollected + consumed + reclassified;
+            if (offset > 0) {
+                state->unknowns[ex - offset].id = state->unknowns[ex].id;
+                for (size_t d = 0; d < params->dim; d++) {
+                    state->unknowns[ex - offset].val[d] = state->unknowns[ex].val[d];
+                }
+            }
+            // discart if consumed by new clusters in model
+            Cluster *nearest;
+            double distance = nearestClusterVal(params->dim, prevTail->next, nNewClusters, state->unknowns[ex].val, &nearest);
+            assert(nearest != NULL);
+            if (distance <= nearest->distanceMax) {
+                consumed++;
+                continue;
+            }
+            // discart if can be classified by previous model (aka, classifier model is behind this model)
+            // distance = nearestClusterVal(params->dim, state->model.clusters, state->model.size - nNewClusters, unknowns[ex].val, &nearest);
+            // assert(nearest != NULL);
+            // if (distance <= nearest->distanceMax) {
+            //     reclassified++;
+            //     continue;
+            // }
+            // discart if example was present in last novelty detection (second round)
+            if (state->unknowns[ex].id < state->lastNDCheck) {
+                garbageCollected++;
+                continue;
+            }
+        }
+        state->unknownsSize -= (garbageCollected + consumed + reclassified);
+        fprintf(stderr, "Novelties %3u, Extensions %3u, consumed %6lu, reclassified %6lu, garbageCollected %6lu\n",
+                noveltyCount, nNewClusters - noveltyCount, consumed, reclassified, garbageCollected);
+        state->lastNDCheck = state->currId;
+    }
+    // assert(state->unknownsSize < params->unknownsMaxSize);
+    if (state->unknownsSize >= params->unknownsMaxSize) {
+        unsigned long int garbageCollected = 1;
+        for (unsigned long int ex = 1; ex < state->unknownsSize; ex++) {
+            // compress
+            if (garbageCollected > 0) {
+                state->unknowns[ex - garbageCollected].id = state->unknowns[ex].id;
+                for (size_t d = 0; d < params->dim; d++) {
+                    state->unknowns[ex - garbageCollected].val[d] = state->unknowns[ex].val[d];
+                }
+            }
+            // discart if example was present in last novelty detection
+            state->unknowns[ex - garbageCollected] = state->unknowns[ex];
+            if (state->unknowns[ex].id < state->lastNDCheck) {
+                garbageCollected++;
+                continue;
+            }
+        }
+        state->unknownsSize -= garbageCollected;
+        fprintf(stderr, "garbageCollected %6lu\n", garbageCollected);
+    }
+    return nNewClusters;
+}
+
+void minasHandleSleep(MinasParams *params, MinasState *state) {
+    if (state->currId > 0 && (state->currId - state->lastForgetCheck) > params->thresholdForgettingPast) {
+        marker("minasHandleSleep");
+        for (ModelLink *curr = state->model.head; curr != NULL && state->model.size > params->k; ) {
+            ModelLink *moved = curr;
+            curr = curr->next;
+            if (state->currId - moved->cluster.latest_match_id > params->thresholdForgettingPast) {
+                // move
+                if (state->sleep.head == NULL) {
+                    state->sleep.head = moved;
+                    state->sleep.tail = moved;
+                } else {
+                    state->sleep.tail->next = moved;
+                    state->model.tail = moved;
+                }
+                state->sleep.tail->next = NULL;
+                state->sleep.size++;
+                state->model.size--;
+            }
+        }
+        fprintf(stderr, "Forget Mechanic: model %4u, sleep %4u\n", state->model.size, state->sleep.size);
+    }
+}
+
+void restoreSleep(MinasParams *params, MinasState *state) {
+    if (state->sleep.size == 0) {
+        return;
+    }
+    marker("restoreSleep");
+    state->model.tail->next = state->sleep.head;
+    state->sleep.head = NULL;
+    state->sleep.tail = NULL;
+    state->sleep.size = 0;
+    state->model.size += state->sleep.size;
+}
+
+char *labelMatchStatistics(Model *model, char *stats) {
+    int nLabels = 0;
+    unsigned int *labels = calloc(model->size, sizeof(unsigned int));
+    unsigned long int *matches = calloc(model->size, sizeof(unsigned long int));
+    unsigned long int nMatches = 0, nMisses = 0;
+    for (ModelLink *curr = model->head; curr != NULL; ) {
+        Cluster *cl = &curr->cluster;
+        //
+        size_t j = 0;
+        for (; labels[j] != cl->label && labels[j] != '\0' && j < nLabels; j++);
+        if (labels[j] == '\0') nLabels++;
+        labels[j] = cl->label;
+        nMatches += cl->n_matches;
+        matches[j] += cl->n_matches;
+        nMisses += cl->n_misses;
+    }
+    int statsIdx = sprintf(stats, "items: %10lu, hits: %10lu, misses: %10lu", nMatches + nMisses, nMatches, nMisses);
+    char label[20];
+    int printed = 0;
+    for (size_t j = 0; labels[j] != '\0'; j++) {
+        // if (matches[j] == 0) continue;
+        printableLabelReuse(labels[j], label);
+        statsIdx += sprintf(&stats[statsIdx], ",%c'%4s': %10lu", (printed % 5 == 0) ? '\n' : ' ', label, matches[j]);
+        printed++;
+    }
+    free(labels);
+    free(matches);
+    return stats;
 }
 
 int printCluster(int dim, Cluster *cl) {
@@ -291,24 +510,26 @@ int readCluster(int kParam, int dim, Cluster *cluster, char lineptr[]) {
     }
     return readTot;
 }
-Cluster *addCluster(int kParam, int dim, Cluster *cluster, Model *model) {
-    if (model->size > 0 && model->size % kParam == 0) {
-        fprintf(stderr, "realloc model %d\n", model->size + kParam);
-        model->clusters = realloc(model->clusters, (model->size + kParam) * sizeof(Cluster));
-    }
-    model->clusters[model->size] = *cluster;
+Cluster *addCluster(int dim, Cluster *cluster, Model *model) {
+    assert(cluster != NULL);
+    assert(model != NULL);
     model->size++;
-    model->clusters[model->size].center = calloc(dim, sizeof(double));
-    for (size_t d = 0; d < dim; d++) {
-        model->clusters[model->size].center[d] = cluster->center[d];
+    if (model->tail == NULL) {
+        model->head = calloc(1, sizeof(ModelLink));
+        model->tail = model->head;
+    } else {
+        model->tail->next = calloc(1, sizeof(ModelLink));
+        model->tail = model->tail->next;
     }
+    model->tail->cluster = *cluster;
+    cluster->center = calloc(dim, sizeof(double));
     if (!isalpha(cluster->label) && model->nextLabel <= cluster->label) {
         model->nextLabel = cluster->label + 1;
     }
-    return &model->clusters[model->size];
+    return &(model->tail->cluster);
 }
 
-char getMfogLine(FILE *fd, char **line, unsigned long *lineLen, int kParam, int dim, unsigned long *id, Model *model, Cluster *cluster, Example *example) {
+char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, unsigned long *id, Model *model, Cluster *cluster, Example *example) {
     if (feof(fd)) {
         return 0;
     }
@@ -345,10 +566,10 @@ char getMfogLine(FILE *fd, char **line, unsigned long *lineLen, int kParam, int 
         ret = '#';
         break;
     default:
-        for (size_t d = 0; d < dim; d++) {
+        for (unsigned int d = 0; d < dim; d++) {
             int scanned = sscanf(&((*line)[readTot]), "%lf,%n", &example->val[d], &readCur);
             if (!scanned) {
-                errx(EXIT_FAILURE, "Read error with line '%s' and d=%lu. At "__FILE__":%d\n", *line, d, __LINE__);
+                errx(EXIT_FAILURE, "Read error with line '%s' and d=%u. At "__FILE__":%d\n", *line, d, __LINE__);
             }
             readTot += readCur;
         }
@@ -363,74 +584,6 @@ char getMfogLine(FILE *fd, char **line, unsigned long *lineLen, int kParam, int 
         free(cl);
     }
     return ret;
-}
-
-unsigned int noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknownsSize, unsigned int *noveltyCount) {
-    Cluster *clusters = clustering(kParam, dim, precision, radiusF, unknowns, unknownsSize, model->size);
-    unsigned int extensions = 0, novelties = 0;
-    for (size_t k = 0; k < kParam; k++) {
-        if (clusters[k].n_matches < minExamplesPerCluster) continue;
-        //
-        Cluster *nearest = NULL;
-        double minDist = nearestClusterVal(dim, model->clusters, model->size, clusters[k].center, &nearest, 0, 0);
-        assertMsg(nearest != NULL, "Didn't find nearest in model(%d).", model->size);
-        if (minDist <= noveltyF * nearest->distanceStdDev) {
-            clusters[k].label = nearest->label;
-            clusters[k].extensionOF = nearest->id;
-            extensions++;
-        } else {
-            clusters[k].label = model->nextLabel;
-            // inc label
-            do {
-                model->nextLabel++;
-            } while (model->nextLabel < 128 && (isalpha(model->nextLabel) || model->nextLabel == '-'));
-            // fprintf(stderr, "Novelty %s\n", printableLabel(clusters[k].label));
-            novelties++;
-        }
-        //
-        clusters[k].id = model->size;
-        model->size++;
-        model->clusters = realloc(model->clusters, model->size * sizeof(Cluster));
-        model->clusters[model->size - 1] = clusters[k];
-    }
-    // unsigned int earliestId = unknowns[0].id;
-    // unsigned int latestId = unknowns[unknownsSize -1].id;
-    // fprintf(stderr, "ND clusters (%u, %u): %d extensions, %d novelties\n", earliestId, latestId, extensions, novelties);
-    free(clusters);
-    if (noveltyCount != NULL) {
-        *noveltyCount = novelties;
-    }
-    return novelties + extensions;
-}
-
-char *labelMatchStatistics(Model *model, char *stats) {
-    int nLabels = 0;
-    unsigned int *labels = calloc(model->size, sizeof(unsigned int));
-    unsigned long int *matches = calloc(model->size, sizeof(unsigned long int));
-    unsigned long int nMatches = 0, nMisses = 0;
-    for (size_t i = 0; i < model->size; i++) {
-        Cluster *cl = &(model->clusters[i]);
-        //
-        size_t j = 0;
-        for (; labels[j] != cl->label && labels[j] != '\0' && j < nLabels; j++);
-        if (labels[j] == '\0') nLabels++;
-        labels[j] = cl->label;
-        nMatches += cl->n_matches;
-        matches[j] += cl->n_matches;
-        nMisses += cl->n_misses;
-    }
-    int statsIdx = sprintf(stats, "items: %10lu, hits: %10lu, misses: %10lu", nMatches + nMisses, nMatches, nMisses);
-    char label[20];
-    int printed = 0;
-    for (size_t j = 0; labels[j] != '\0'; j++) {
-        // if (matches[j] == 0) continue;
-        printableLabelReuse(labels[j], label);
-        statsIdx += sprintf(&stats[statsIdx], ",%c'%4s': %10lu", (printed % 5 == 0) ? '\n' : ' ', label, matches[j]);
-        printed++;
-    }
-    free(labels);
-    free(matches);
-    return stats;
 }
 
 #endif // _BASE_C
