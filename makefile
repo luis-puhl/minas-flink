@@ -122,8 +122,8 @@ experiments/partials.log: makefile
 	printf "$$tmftx\n\n" >> experiments/partials.log
 
 # -------------------------- Remote Pi Cluster Experiments ---------------------
-SSH = ssh -i ./secrets/id_rsa -F ./conf/ssh.config
-SCP = scp -i ./secrets/id_rsa -F ./conf/ssh.config
+SSH = ssh -F ./conf/ssh.config
+SCP = scp -F ./conf/ssh.config
 .PHONY: experiments/rpi send
 send:
 	$(SSH) almoco "if [ ! -d mfog/bin ]; then mkdir -p mfog/bin mfog/out; fi"

@@ -35,7 +35,7 @@ typedef struct t_example {
 } Example;
 
 typedef struct {
-    unsigned int id, n_matches, n_misses, latest_match_id, extensionOF;
+    unsigned int id, n_matches, n_misses, latest_match_id, extensionOF, evictions;
     unsigned int label, isIntrest;
     double *center;
     double *ls_valLinearSum, *ss_valSquareSum;
@@ -51,9 +51,16 @@ typedef struct {
     // unsigned int *ids, idSize; // used only to reconstruct clusters from snapshot
 } Cluster;
 
+
+typedef struct ModelLink_st {
+    Cluster cluster;
+    struct ModelLink_st *next;
+    unsigned int rank;
+} ModelLink;
+
 typedef struct {
-    Cluster *clusters;
-    unsigned int size, nextLabel;
+    ModelLink *head, *tail;
+    unsigned int size, nextLabel, nextId;
 } Model;
 
 typedef struct {
@@ -67,23 +74,64 @@ typedef struct {
     char *labelStr;
 } Match;
 
+typedef struct MinasParams_st {
+    unsigned int k;
+    unsigned int dim;
+    double precision;
+    double radiusF;
+    unsigned int minExamplesPerCluster;
+    double noveltyF;
+    unsigned int thresholdForgettingPast;
+    unsigned long noveltyDetectionTrigger;
+    unsigned long unknownsMaxSize;
+} MinasParams;
+
+typedef struct MinasState_st {
+    Model model, sleep;
+    Example *unknowns;
+    unsigned long unknownsSize;
+    unsigned long lastNDCheck;
+    unsigned long lastForgetCheck;
+    unsigned long currId;
+    unsigned int noveltyCount;
+} MinasState;
+
 #define MINAS_UNK_LABEL '-'
+
+#define MINAS_STATE_EMPTY { \
+        .noveltyCount = 0, .unknownsSize = 0, .lastNDCheck = 0, .currId = 0, \
+        .model = { .size = 0, .nextLabel = 0, .nextId = 0, .head = NULL, .tail = NULL }, \
+        .sleep = { .size = 0, .nextLabel = 0, .nextId = 0, .head = NULL, .tail = NULL }, \
+    };
+
+#define printArgs(minasParams, outputMode, nClassifiers)                                                           \
+    fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le; outputMode %d, nClassifiers %d\n", \
+            argv[0], minasParams.k, minasParams.dim, minasParams.precision, minasParams.radiusF,                   \
+            minasParams.minExamplesPerCluster, minasParams.noveltyF, outputMode, nClassifiers);
 
 char *printableLabel(unsigned int label);
 char *printableLabelReuse(unsigned int label, char *ret);
 unsigned int fromPrintableLabel(char *label);
-double nearestClusterVal(int dim, Cluster clusters[], size_t nClusters, double val[], Cluster **nearest, unsigned int thresholdForgettingPast, unsigned int currentId);
-Cluster* kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
-double kMeans(int kParam, int dim, double precision, Cluster* clusters, Example trainingSet[], unsigned int trainingSetSize);
-Cluster* clustering(int kParam, int dim, double precision, double radiusF, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
-Model *training(int kParam, int dim, double precision, double radiusF);
-Match *identify(int kParam, int dim, double precision, double radiusF, Model *model, Example *example, Match *match, unsigned int thresholdForgettingPast);
-unsigned int noveltyDetection(PARAMS_ARG, Model *model, Example *unknowns, size_t unknownsSize, unsigned int *noveltyCount);
+double nearestClusterVal(int dim, ModelLink *head, unsigned int limit, double val[], Cluster **nearest);
+ModelLink *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
+double kMeans(int kParam, int dim, double precision, ModelLink *head, Example trainingSet[], unsigned int trainingSetSize);
+//
+
+ModelLink *clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
+Model *training(MinasParams *params);
+
+Match *identify(MinasParams *params, Model *model, Example *example, Match *match);
+void minasHandleSleep(MinasParams *params, MinasState *state);
+
+unsigned int noveltyDetection(MinasParams *params, MinasState *state, unsigned int *noveltyCount);
+unsigned int minasHandleUnknown(MinasParams *params, MinasState *state, Example *example);
+//
 
 int readCluster(int kParam, int dim, Cluster *cluster, char lineptr[]);
-Cluster *addCluster(int kParam, int dim, Cluster *cluster, Model *model);
+void restoreSleep(MinasParams *params, MinasState *state);
+Cluster *addCluster(int dim, Cluster *cluster, Model *model);
 
-char getMfogLine(FILE *fd, char **line, unsigned long *lineLen, int kParam, int dim, unsigned long *id, Model *model, Cluster *cluster, Example *example);
+char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, unsigned int dim, Cluster *cluster, Example *example);
 
 int printCluster(int dim, Cluster *cl);
 char *labelMatchStatistics(Model *model, char *stats);
