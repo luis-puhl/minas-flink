@@ -1,41 +1,26 @@
 ./bin/ond; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
 model complete
-Novelties  12, Extensions  23, Unknowns   4000, consumed   3789, reclassified      0, garbageCollected      0
-Novelties   9, Extensions  21, Unknowns   2000, consumed   1879, reclassified      0, garbageCollected     30
-Novelties   0, Extensions   5, Unknowns   4000, consumed   3751, reclassified      0, garbageCollected     86
-Novelties   0, Extensions  17, Unknowns   2000, consumed   1738, reclassified      0, garbageCollected     89
-Novelties   2, Extensions  17, Unknowns   2000, consumed   1801, reclassified      0, garbageCollected     75
-Novelties   4, Extensions  15, Unknowns   2000, consumed   1688, reclassified      0, garbageCollected     65
-Novelties   1, Extensions  11, Unknowns   2000, consumed   1713, reclassified      0, garbageCollected    193
-Novelties   4, Extensions  20, Unknowns   2000, consumed   1701, reclassified      0, garbageCollected     58
-Novelties   0, Extensions   7, Unknowns   2000, consumed   1769, reclassified      0, garbageCollected    177
-Novelties   3, Extensions  12, Unknowns   2000, consumed   1623, reclassified      0, garbageCollected     40
-Novelties   2, Extensions  17, Unknowns   2000, consumed   1548, reclassified      0, garbageCollected    218
-Novelties   3, Extensions  18, Unknowns   2000, consumed   1685, reclassified      0, garbageCollected    113
-Novelties   1, Extensions  17, Unknowns   2000, consumed   1765, reclassified      0, garbageCollected     99
-Novelties   0, Extensions  18, Unknowns   2000, consumed   1717, reclassified      0, garbageCollected     89
-Novelties   0, Extensions  19, Unknowns   2000, consumed   1714, reclassified      0, garbageCollected    104
-Novelties   0, Extensions  23, Unknowns   2000, consumed   1751, reclassified      0, garbageCollected     98
-Novelties   1, Extensions  19, Unknowns   2000, consumed   1747, reclassified      0, garbageCollected     87
-Novelties   1, Extensions  20, Unknowns   2000, consumed   1759, reclassified      0, garbageCollected     91
-Novelties   1, Extensions  17, Unknowns   2000, consumed   1773, reclassified      0, garbageCollected    104
-[classifier] Statistics: items:     689572, hits:     649207, misses:      40365,
-'   N':     319544, '   1':      28610, '   2':      12348, '   3':      10034, '   4':      82732,
-'   5':      16709, '   6':       6424, '   7':      87265, '   8':      20826, '   9':       3518,
-'  10':       7090, '  11':      26239, '  12':        596, '  13':       4825, '  14':       3654,
-'  15':       2790, '  16':       1251, '  17':        285, '  18':       3250, '  19':       1602,
-'  20':        939, '  21':        233, '  22':       1067, '  23':        292, '  24':        112,
-'  25':         78, '  26':        340, '  27':         82, '  28':        265, '  29':        354,
-'  30':        205, '  31':        598, '  32':         63, '  33':       1916, '  34':        255,
-'  35':         46, '  36':         22, '  37':       2129, '  38':         43, '  39':         29,
-'  40':        340, '  41':         45, '  42':         61, '  43':        101
-[./bin/ond] (ioTime 9.364756e+00), (cpuTime 1.833568e+01), (lockTime 0.000000e+00), (total 2.816147e+01), (rest -2.770040e+07). At src/online-nd.c:155
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1844, reclassified      0, garbageCollected      0
+Novelties   3, Extensions  13, Unknowns   2000, consumed   1773, reclassified      0, garbageCollected    121
+Novelties   0, Extensions  11, Unknowns   2000, consumed   1878, reclassified      0, garbageCollected     57
+Novelties   0, Extensions  19, Unknowns   2000, consumed   1801, reclassified      0, garbageCollected     45
+Novelties   0, Extensions  13, Unknowns   2000, consumed   1823, reclassified      0, garbageCollected    117
+Novelties   2, Extensions  20, Unknowns   2000, consumed   1827, reclassified      0, garbageCollected     48
+Novelties   1, Extensions  11, Unknowns   2000, consumed   1787, reclassified      0, garbageCollected     99
+Novelties   0, Extensions  11, Unknowns   2000, consumed   1769, reclassified      0, garbageCollected     87
+Novelties   1, Extensions  10, Unknowns   2000, consumed   1725, reclassified      0, garbageCollected     92
+Novelties   0, Extensions  12, Unknowns   2000, consumed   1799, reclassified      0, garbageCollected    105
+[classifier] Statistics: items:     671189, hits:     651001, misses:      20188,
+'   N':     648191, '   1':        575, '   2':       1164, '   3':         60, '   4':        316,
+'   5':        614, '   6':         46, '   7':         35
+[./bin/ond] (ioTime 8.262964e+00), (cpuTime 6.608505e+00), (lockTime 0.000000e+00), (total 1.531572e+01), (rest -1.487145e+07). At src/online-nd.c:154
 
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/ond
-	23.31 user	4.84 system	0:28.30 elapsed
-	99% CPU	(0 avgtext+0 avgdata	3620 maxresident)k
-	0 inputs+44600 outputs	(0 major+575 minor)pagefaults	0 swaps
+	10.98 user	4.32 system	0:15.42 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3336 maxresident)k
+	0 inputs+42888 outputs	(0 major+502 minor)pagefaults	0 swaps
 "
+Repeats 0
 Evaluate
 	title = Serial Online-ND
 	examplesFileName = datasets/test.csv
@@ -49,178 +34,28 @@ A      447179
 N      206278
 ### Serial Online-ND
 
-NaN labels: 40364
+NaN labels: 0
 saving experiments/online-nd.log.png
 Confusion Matrix
 Classes (act)       A       N assigned    hits
 Labels (pred)                                 
-   0             1317     221        A    1317
-   1            16872   10874        A   16872
-   2             7347    4006        A    7347
-   3             6269    3316        A    6269
-   4            44895   29553        A   44895
-   5             9780    6045        A    9780
-   6             3385    1840        A    3385
-   7            61069   21831        A   61069
-   8            12219    6966        A   12219
-   9             2042    1203        A    2042
-  10             3423    2605        A    3423
-  11            16341    9811        A   16341
-  12              256     171        A     256
-  13             2809    1845        A    2809
-  14             2434    1135        A    2434
-  15             1515     876        A    1515
-  16              736     247        A     736
-  17               26      22        A      26
-  18             1596     880        A    1596
-  19              877     482        A     877
-  20              339     214        A     339
-  21              126      45        A     126
-  22              385     285        A     385
-  23              208      58        A     208
-  24                6       3        A       6
-  25               12       6        A      12
-  26              196      64        A     196
-  28              168      76        A     168
-  29              115     114        A     115
-  30               50      27        A      50
-  31              129      85        A     129
-  32               17       5        A      17
-  33              907     858        A     907
-  34               47      38        A      47
-  35               16       3        A      16
-  37                9       5        A       9
-  38               10       7        A      10
-  40               55      34        A      55
-  41                5       4        A       5
-  42               12       7        A      12
--               28549   11816        -       0
-N              249159  100411        N  100411
+-               15396    4792        -       0
+0                 185      40        A     185
+1                 198       0        A     198
+2                 868      98        A     868
+3                   0      31        N      31
+4                   2       0        A       2
+5                  12       0        A      12
+6                   0       5        N       5
+N              430518  201312        N  201312
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 0), ('   4', 80), ('   7', 83), ('   8', 128), ('   6', 167), ('   1', 209), ('   5', 212), ('   3', 297), ('  10', 542), ('   9', 702), ('   2', 1290), ('  11', 1942), ('  13', 5065), ('  18', 5103), ('  14', 5115), ('  19', 5177), ('  12', 5309), ('  16', 5487), ('  20', 9438), ('  15', 11374), ('  21', 32459), ('   0', 34561), ('  26', 44708), ('  22', 47553), ('  23', 57081), ('  24', 58724), ('  29', 71730), ('  28', 72354), ('  31', 72390), ('  25', 89604), ('  33', 109649), ('  34', 134971), ('  35', 163887), ('  30', 191785), ('  38', 201065), ('  37', 206219), ('  32', 208564), ('  17', 236142), ('  40', 387333), ('  41', 479353), ('  42', 534883)] 42
+Labels (item)     [('N', 0), ('-', 19), ('2', 163228), ('3', 167099), ('1', 217774), ('0', 324906), ('5', 501312), ('4', 508715), ('6', 511666)] 9
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               298431 ( 45.669500%)
-Misses             355026 ( 54.330347%)
-Unknowns            40365 (  6.177138%)
-Unk. reprocessed        1 (  0.002477%)
-Total              693822 (106.176985%)
+Hits               202613 ( 31.006277%)
+Misses             430656 ( 65.904159%)
+Unknowns            20188 (  3.089410%)
+Unk. reprocessed        1 (  0.004953%)
+Total              653457 ( 99.999847%)
 
-./bin/ond; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
-model complete
-Novelties  12, Extensions  23, Unknowns   4000, consumed   3789, reclassified      0, garbageCollected      0
-Novelties   9, Extensions  21, Unknowns   2000, consumed   1879, reclassified      0, garbageCollected     30
-Novelties   0, Extensions   5, Unknowns   4000, consumed   3751, reclassified      0, garbageCollected     86
-Novelties   0, Extensions  17, Unknowns   2000, consumed   1738, reclassified      0, garbageCollected     89
-Novelties   2, Extensions  17, Unknowns   2000, consumed   1801, reclassified      0, garbageCollected     75
-Novelties   4, Extensions  15, Unknowns   2000, consumed   1688, reclassified      0, garbageCollected     65
-Novelties   1, Extensions  11, Unknowns   2000, consumed   1724, reclassified      0, garbageCollected    190
-Novelties   3, Extensions  22, Unknowns   2000, consumed   1761, reclassified      0, garbageCollected     46
-Novelties   0, Extensions   9, Unknowns   2000, consumed   1783, reclassified      0, garbageCollected    154
-Novelties   3, Extensions  15, Unknowns   2000, consumed   1681, reclassified      0, garbageCollected     58
-Novelties   1, Extensions  17, Unknowns   2000, consumed   1699, reclassified      0, garbageCollected    179
-Novelties   2, Extensions  13, Unknowns   2000, consumed   1743, reclassified      0, garbageCollected     88
-Novelties   1, Extensions   6, Unknowns   2000, consumed   1783, reclassified      0, garbageCollected    125
-Novelties   3, Extensions  19, Unknowns   2000, consumed   1793, reclassified      0, garbageCollected     50
-Novelties   0, Extensions  19, Unknowns   2000, consumed   1650, reclassified      0, garbageCollected    116
-Novelties   1, Extensions  21, Unknowns   2000, consumed   1673, reclassified      0, garbageCollected    172
-Novelties   1, Extensions  15, Unknowns   2000, consumed   1760, reclassified      0, garbageCollected    101
-Novelties   1, Extensions  20, Unknowns   2000, consumed   1725, reclassified      0, garbageCollected     85
-Novelties   2, Extensions  11, Unknowns   2000, consumed   1668, reclassified      0, garbageCollected    173
-Novelties   2, Extensions  22, Unknowns   2000, consumed   1796, reclassified      0, garbageCollected     54
-Novelties   1, Extensions   9, Unknowns   2000, consumed   1709, reclassified      0, garbageCollected    150
-Novelties   1, Extensions   8, Unknowns   2000, consumed   1725, reclassified      0, garbageCollected    100
-Novelties   0, Extensions  12, Unknowns   2000, consumed   1740, reclassified      0, garbageCollected    152
-Novelties   1, Extensions  14, Unknowns   2000, consumed   1811, reclassified      0, garbageCollected     84
-[classifier] Statistics: items:     698517, hits:     649537, misses:      48980,
-'   N':     319724, '   1':      28936, '   2':      12125, '   3':      10167, '   4':      83297,
-'   5':      16786, '   6':       5929, '   7':      87098, '   8':      20358, '   9':       3272,
-'  10':       6962, '  11':      26239, '  12':        364, '  13':       4567, '  14':       3654,
-'  15':       5253, '  16':       1139, '  17':        276, '  18':       3279, '  19':       1565,
-'  20':        674, '  21':        296, '  22':       1116, '  23':        292, '  24':         95,
-'  25':        104, '  26':        414, '  27':         32, '  28':       2327, '  29':        291,
-'  30':        667, '  31':         89, '  32':         21, '  33':       1036, '  34':         22,
-'  35':         33, '  36':        137, '  37':         75, '  38':         69, '  39':        109,
-'  40':         56, '  41':         68, '  42':        114, '  43':         48, '  44':         33,
-'  46':         22, '  47':        156, '  48':         28, '  49':         72, '  50':         28,
-'  51':         23
-[./bin/ond] (ioTime 9.382890e+00), (cpuTime 2.034005e+01), (lockTime 0.000000e+00), (total 3.017332e+01), (rest -2.972291e+07). At src/online-nd.c:155
-
-Evaluate
-	title = Serial Online-ND
-	examplesFileName = datasets/test.csv
-	matchesFileName = out/ond-1matches.csv
-	plotSavePath = experiments/online-nd.log.png
-
-Count per class
-           id
-class        
-A      447179
-N      206278
-### Serial Online-ND
-
-NaN labels: 48979
-saving experiments/online-nd.log.png
-Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
-   0             1688     340        A    1688
-   1            17246   10507        A   17246
-   2             7098    4233        A    7098
-   3             6123    3362        A    6123
-   4            43394   27165        A   43394
-   5            10197    5546        A   10197
-   6             3098    1817        A    3098
-   7            60404   22813        A   60404
-   8            12024    7225        A   12024
-   9             2001    1217        A    2001
-  10             3345    2809        A    3345
-  11            17398    8754        A   17398
-  12              208     136        A     208
-  13             2828    1548        A    2828
-  14             2491    1078        A    2491
-  15             2099    1009        A    2099
-  16              659     244        A     659
-  17               14      13        A      14
-  18             1636     915        A    1636
-  19              958     510        A     958
-  20              344     200        A     344
-  21              139      46        A     139
-  22              520     331        A     520
-  23              212      54        A     212
-  24               14       9        A      14
-  25               19       4        A      19
-  26              244     111        A     244
-  28              149      90        A     149
-  29               87      69        A      87
-  30              254     262        N     262
-  31               17      10        A      17
-  33              167     103        A     167
-  38               29      10        A      29
-  41                4       6        N       6
-  44                7       5        A       7
-  47               39      23        A      39
-  48                3       4        N       4
-  50                4       1        A       4
-  51                1       0        A       1
--               33683   15297        -       0
-N              250017  103699        N  103699
-Classes           ['A' 'N']
-Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 0), ('   4', 80), ('   7', 83), ('   8', 128), ('   6', 167), ('   1', 209), ('   5', 212), ('   3', 297), ('  10', 542), ('   9', 702), ('   2', 1290), ('  11', 1942), ('  13', 5065), ('  18', 5103), ('  14', 5115), ('  19', 5177), ('  12', 5309), ('  16', 5487), ('  20', 9438), ('  15', 11374), ('  21', 32459), ('   0', 34561), ('  26', 52787), ('  22', 56393), ('  23', 57004), ('  24', 58641), ('  30', 76243), ('  28', 76316), ('  25', 89530), ('  33', 134450), ('  29', 189838), ('  31', 206331), ('  41', 360837), ('  38', 383596), ('  17', 454518), ('  44', 486634), ('  47', 516276), ('  48', 532028), ('  50', 569506), ('  51', 600983)] 41
-Total examples    (653457, 25)
-Total matches     (653458, 4)
-Hits               300872 ( 46.043051%)
-Misses             352585 ( 53.956796%)
-Unknowns            48980 (  7.495509%)
-Unk. reprocessed        1 (  0.002042%)
-Total              702437 (107.495355%)
-
-w/o sleep/forget
-[./bin/ond] (ioTime 9.364756e+00), (cpuTime 1.833568e+01), (lockTime 0.000000e+00), (total 2.816147e+01), (rest -2.770040e+07). At src/online-nd.c:155
-Hits               298431 ( 45.669500%)
-
-with sleep/forget (2s slower, better hit but expected worse)
-[./bin/ond] (ioTime 9.382890e+00), (cpuTime 2.034005e+01), (lockTime 0.000000e+00), (total 3.017332e+01), (rest -2.972291e+07). At src/online-nd.c:155
-Hits               300872 ( 46.043051%)

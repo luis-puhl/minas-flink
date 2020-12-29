@@ -31,9 +31,9 @@ int main(int argc, char const *argv[]) {
     minasParams.noveltyDetectionTrigger = minasParams.minExamplesPerCluster * minasParams.k;
     minasParams.unknownsMaxSize = minasParams.noveltyDetectionTrigger * 2;
     MinasState minasState = MINAS_STATE_EMPTY;
-    minasState.unknowns = calloc(minasParams.unknownsMaxSize + 1, sizeof(Example));
     minasState.model.size = 0;
     minasState.model.clusters = calloc(minasParams.k, sizeof(Cluster));
+    minasState.unknowns = calloc(minasParams.unknownsMaxSize + 1, sizeof(Example));
     for (unsigned long int i = 0; i < minasParams.unknownsMaxSize + 1; i++) {
         minasState.unknowns[i].val = calloc(minasParams.dim, sizeof(double));
     }
@@ -85,10 +85,9 @@ int main(int argc, char const *argv[]) {
         if (lineType != 'E') {
             continue;
         }
-        example.id = minasState.currId;
-        minasState.currId++;
-        // fprintf(stderr, "minasState.currId %u\n", minasState.currId);
-        // minasState.currId = example.id;
+        example.id = minasState.nextId;
+        minasState.currId = example.id;
+        minasState.nextId++;
         assert(minasState.model.size >= minasParams.k);
         //
         Match match;
@@ -99,7 +98,7 @@ int main(int argc, char const *argv[]) {
         cpuTime += t2 - t1;
         //
         if (args.outputMode >= MFOG_OUTPUT_MINIMAL) {
-            printf("%10u,%s\n", example.id, printableLabelReuse(example.label, label));
+            printf("%20lu,%s\n", example.id, printableLabelReuse(example.label, label));
             fflush(stdout);
         }
         //
@@ -109,7 +108,7 @@ int main(int argc, char const *argv[]) {
             continue;
         }
         if (args.outputMode >= MFOG_OUTPUT_ALL) {
-            printf("Unknown: %10u", example.id);
+            printf("Unknown: %20lu", example.id);
             for (unsigned int d = 0; d < minasParams.dim; d++)
                 printf(", %le", example.val[d]);
             printf("\n");

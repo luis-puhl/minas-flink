@@ -17,7 +17,11 @@
         "streambuf": "c",
         "variant": "c",
         "tuple": "c",
-        "string": "c"
+        "string": "c",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "*.def": "cpp",
+        "*.inc": "cpp"
     },
     "cSpell.words": [
         "Flink",

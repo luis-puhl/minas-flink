@@ -41,7 +41,7 @@ def getMatchesDf(path):
         try:
             df = pd.read_csv(filepath_or_buffer=path)
             df['id'] = df['#pointId'].astype(int)
-            df['og_label'] = df['label']
+            df['og_label'] = df['label'].str.strip()
             return df
         except pd.errors.ParserError as err:
             print((err, path))

@@ -15,12 +15,12 @@ bin/ond: src/base.c src/online-nd.c
 bin/tmpi: src/base.c src/threaded-mpi.c
 	mpicc -g -Wall -lm $^ -o $@
 
-bin/fk: src/base.c src/partials/classifier.c
-	gcc -g -Wall -lm $^ -o $@
-bin/dt: src/base.c src/partials/detection.c
-	gcc -g -Wall -lm $^ -o $@
-bin/zip: src/partials/zip.c
-	gcc -g -Wall $^ -o $@
+# bin/fk: src/base.c src/partials/classifier.c
+# 	gcc -g -Wall -lm $^ -o $@
+# bin/dt: src/base.c src/partials/detection.c
+# 	gcc -g -Wall -lm $^ -o $@
+# bin/zip: src/partials/zip.c
+# 	gcc -g -Wall $^ -o $@
 
 .PHONY: bin
 bin: bin/offline bin/ond bin/tmpi bin/fk bin/dt bin/zip
@@ -29,25 +29,43 @@ bin: bin/offline bin/ond bin/tmpi bin/fk bin/dt bin/zip
 export TIME_FORMAT="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n"
 TIME := /usr/bin/time --format="$$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$$TIME_FORMAT"
 out/offline-model.csv: datasets/training.csv bin/offline
+	-@mkdir -p experiments
 	cat datasets/training.csv | $(TIME) ./bin/offline > out/offline-model.csv 2> experiments/offline-model.log
 
 experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond
+	-@mkdir -p experiments
 	cat out/offline-model.csv datasets/test.csv | $(TIME) ./bin/ond > out/ond-0full.csv 2> $@
 	-grep -E -v '^(Unknown|Cluster):' out/ond-0full.csv > out/ond-1matches.csv
+	@echo -n "Repeats " | tee -a $@
+	@sort out/ond-1matches.csv | uniq --count --repeated --check-chars=20 \
+		| tee -a out/ond-1matches-repeats.csv | wc -l | tee -a $@
+	-grep -E '^Cluster:' out/ond-0full.csv > out/ond-2model.csv
+	-grep -E '^Unknown:' out/ond-0full.csv > out/ond-3unk.csv
 	-python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv $@.png >> $@
+experiments/tmi-base.log: datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
+	-@mkdir -p experiments
+	printf "$$tmftx\n\n" > $@
+	cat out/offline-model.csv datasets/test.csv \
+		| /usr/bin/time --format="$$tmfmt" mpirun -n 4 ./bin/tmpi 2 2 2>> $@ > out/tmi-full.csv
+	grep -E -v '^(Unknown|Cluster):' out/tmi-full.csv > out/tmi-matches.csv
+	python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv $@.png >> $@
+	printf "$$tmftx\n" > $(subst .log,,$@)-simple.log
+	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> $(subst .log,,$@)-simple.log
 
 # ds = datasets/training.csv datasets/emtpyline datasets/test.csv
 # n = $(subst experiments/tmi-n,,$(subst .log,,$@))
-# out = $(subst experiments/,out/,$(subst .log,,$@))
+out = $(subst experiments/,out/,$(subst .log,,$@))
 # tmpi_nodes := $(foreach wrd,2 3 4,experiments/tmi-n$(wrd).log)
 # experiments/tmi-n: $(tmpi_nodes)
-# .PHONY: experiments/tmi-n
+.PHONY: experiments
+experiments: experiments/online-nd.log experiments/tmi-base.log experiments/tmi-MT-classifers/tmi-n.log experiments/tmi-supressed.log
 # $(tmpi_nodes): experiments/tmi-n.log: datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
 export tmfmt=[%C %x]\t %E \t %S \t %U \t %P; \t %M \t %F \t %R \t %w \t %c \t %W; \t %I \t %O \t %r \t %s \t %k;
 export tmftx=['cmd' ex]\t elapsed \t kernel \t user \t cpu%%; \t max-KB \t pf \t pf-rec \t waits \t switch \t swap; \t ins \t outs \t rcv \t sent \t sigs;
-experiments/tmi-n.log: makefile datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
+experiments/tmi-MT-classifers/tmi-n.log: datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
+	-@mkdir -p experiments/tmi-MT-classifers
 	printf "$$tmftx\n\n" > $@
-	for n in {2..4}; do \
+	-for n in {2..4}; do \
 		for c in {1..4}; do \
 			echo "-------- cluster with n $$n and c $$c --------" | tee -a $@ ; \
 			cat out/offline-model.csv datasets/test.csv \
@@ -58,12 +76,12 @@ experiments/tmi-n.log: makefile datasets/test.csv out/offline-model.csv bin/tmpi
 			tail $@ | grep "\[./bin/tmpi " ; \
 			printf "$$tmftx\n\n" >> $@ ; \
 			python3 src/evaluation/evaluate.py "Cluster tmi n$$n c$$c" \
-				datasets/test.csv out/tmi-n$$n-c$$c-matches.csv experiments/tmi-n$$n-c$$c.png \
+				datasets/test.csv out/tmi-n$$n-c$$c-matches.csv experiments/tmi-MT-classifers/tmi-n$$n-c$$c.png \
 				| tee -a $@ | grep "./bin/tmpi " ; \
 		done ; \
 	done
-	printf "$$tmftx\n" > $(subst .log,,$@)-simple.log
-	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> $(subst .log,,$@)-simple.log
+	printf "$$tmftx\n" > experiments/tmi-MT-classifers/tmi-simple.log
+	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> experiments/tmi-MT-classifers/tmi-simple.log
 experiments/rpi/almoco/tmi-n2.log:
 	nc -lp 3131 | grep -E -v '^(Unknown|Cluster):' | pv > out/rpi-almoco/tmi-n2.csv &
 	$(SSH) almoco "cd ./mfog && cat ./out/offline-model.csv ./datasets/test.csv | $(TIME) mpirun -n 2 ./bin/tmpi | nc -q 0 localhost 3131" 2> $@
@@ -101,25 +119,25 @@ experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
 	-python3 src/evaluation/evaluate.py 'Full Output' datasets/test.csv $(out)4-matches.csv $@.png >> $@
 #
 
-out/fk-base.csv: makefile bin/fk bin/dt bin/zip out/offline-model.csv datasets/test.csv
-	printf "$$tmftx\n\n" > experiments/partials.log
-	cat datasets/test.csv | /usr/bin/time --format="$$tmfmt" bin/fk out/offline-model.csv > out/fk-base.csv 2>> experiments/partials.log
-	printf "$$tmftx\n\n" >> experiments/partials.log
-out/dt-base.csv: out/fk-base.csv
-	grep -E '^(Cluster|Unknown)' out/fk-base.csv | /usr/bin/time --format="$$tmfmt" bin/dt > out/dt-base.csv 2>> experiments/partials.log
-	printf "$$tmftx\n\n" >> experiments/partials.log
-out/fk-fullmodel.csv: out/dt-base.csv
-	grep -E '^(Cluster)' out/dt-base.csv > out/fk-full-in.csv
-	cat out/fk-full-in.csv datasets/test.csv | /usr/bin/time --format="$$tmfmt" bin/fk > out/fk-fullmodel.csv 2>> experiments/partials.log
-	printf "$$tmftx\n\n" >> experiments/partials.log
-experiments/partials.log: makefile
-	printf "# Mario the pipe worker\n\n" >> experiments/partials.log
-	cat datasets/test.csv \
-		| /usr/bin/time --format="$$tmfmt" bin/fk out/dt.csv | tee out/fk-zip.csv \
-		| grep -E '^(Cluster|Unknown)' | bin/zip out/offline-model.csv \
-		| /usr/bin/time --format="$$tmfmt" bin/dt | tee out/dt-zip.csv \
-		| grep -E '^(Cluster)' > out/dt.csv 2>> experiments/partials.log
-	printf "$$tmftx\n\n" >> experiments/partials.log
+# out/fk-base.csv: makefile bin/fk bin/dt bin/zip out/offline-model.csv datasets/test.csv
+# 	printf "$$tmftx\n\n" > experiments/partials.log
+# 	cat datasets/test.csv | /usr/bin/time --format="$$tmfmt" bin/fk out/offline-model.csv > out/fk-base.csv 2>> experiments/partials.log
+# 	printf "$$tmftx\n\n" >> experiments/partials.log
+# out/dt-base.csv: out/fk-base.csv
+# 	grep -E '^(Cluster|Unknown)' out/fk-base.csv | /usr/bin/time --format="$$tmfmt" bin/dt > out/dt-base.csv 2>> experiments/partials.log
+# 	printf "$$tmftx\n\n" >> experiments/partials.log
+# out/fk-fullmodel.csv: out/dt-base.csv
+# 	grep -E '^(Cluster)' out/dt-base.csv > out/fk-full-in.csv
+# 	cat out/fk-full-in.csv datasets/test.csv | /usr/bin/time --format="$$tmfmt" bin/fk > out/fk-fullmodel.csv 2>> experiments/partials.log
+# 	printf "$$tmftx\n\n" >> experiments/partials.log
+# experiments/partials.log: makefile
+# 	printf "# Mario the pipe worker\n\n" >> experiments/partials.log
+# 	cat datasets/test.csv \
+# 		| /usr/bin/time --format="$$tmfmt" bin/fk out/dt.csv | tee out/fk-zip.csv \
+# 		| grep -E '^(Cluster|Unknown)' | bin/zip out/offline-model.csv \
+# 		| /usr/bin/time --format="$$tmfmt" bin/dt | tee out/dt-zip.csv \
+# 		| grep -E '^(Cluster)' > out/dt.csv 2>> experiments/partials.log
+# 	printf "$$tmftx\n\n" >> experiments/partials.log
 
 # -------------------------- Remote Pi Cluster Experiments ---------------------
 SSH = ssh -F ./conf/ssh.config
@@ -134,16 +152,16 @@ experiments/rpi:
 	if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
 	tar cz conf src makefile | $(SSH) almoco "cd mfog && tar xmvzf - >/dev/null"
 	$(SSH) almoco "cd mfog && make bin" > experiments/rpi-make-bin.log 2>&1
-	$(SCP) almoco:~/mfog/bin/* jantar:~/mfog/bin/
-	$(SCP) almoco:~/mfog/bin/* lanche:~/mfog/bin/
-	$(SSH) almoco "cd mfog && make @pi_experiments" >> experiments/rpi-make-bin.log 2>&1
-	$(SSH) almoco "tar cz ~/mfog/experiments/rpi/*" | tar xmzf - --directory experiments/rpi
+	-$(SCP) almoco:~/mfog/bin/* jantar:~/mfog/bin/
+	-$(SCP) almoco:~/mfog/bin/* lanche:~/mfog/bin/
+	$(SSH) almoco "cd mfog && make @pi_experiments" | tee -a experiments/rpi-make-bin.log 2>&1
+	$(SSH) almoco "cd ~/mfog/experiments/ && tar cz ." | tar xmzf - --directory experiments/rpi/almoco
 .PHONY: @pi_setup @pi_experiments mv@py
 @pi_setup:
 	if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
 	if [ ! -d out ]; then mkdir -p out; fi
 	$(TIME) mpirun -hostfile ./conf/hostsfile hostname > experiments/rpi/base-time.log 2>&1
-@pi_experiments: @pi_setup @pi_experiments/online-nd.log @pi_experiments/tmi-n.log
+@pi_experiments: @pi_setup experiments
 	cd experiments && find . -maxdepth 1 -type f -exec mv -t rpi {} \+
 @pi_experiments/online-nd.log @pi_experiments/tmi-n: @pi_experiments/%: $(subst @pi_,,$@)
 	echo $@ => $(subst @pi_,,$@)

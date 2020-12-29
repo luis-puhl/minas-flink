@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
     //
     for (size_t k = 0; k < model->size; k++) {
         Cluster *cl = &model->clusters[k];
-        fprintf(stdout, "Cluster: %10u, %s, %10u, %le, %le, %le",
+        fprintf(stdout, "Cluster: %20lu, %s, %10u, %le, %le, %le",
                 cl->id, printableLabel(cl->label), cl->n_matches,
                 cl->distanceAvg, cl->distanceStdDev, cl->radius);
         for (unsigned int d = 0; d < minasParams.dim; d++)

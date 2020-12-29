@@ -1,0 +1,69 @@
+./bin/ond; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
+model complete
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1844, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  14, Unknowns   2069, consumed   1922, reclassified      0, garbageCollected     91
+Novelties   2, Extensions  20, Unknowns   2000, consumed   1827, reclassified      0, garbageCollected     33
+Novelties   1, Extensions  17, Unknowns   2000, consumed   1735, reclassified      0, garbageCollected     78
+Novelties   0, Extensions  14, Unknowns   2000, consumed   1650, reclassified      0, garbageCollected    132
+Novelties   0, Extensions  15, Unknowns   2000, consumed   1653, reclassified      0, garbageCollected    138
+Novelties   0, Extensions   8, Unknowns   2000, consumed   1764, reclassified      0, garbageCollected    176
+Novelties   3, Extensions  23, Unknowns   2000, consumed   1721, reclassified      0, garbageCollected     37
+Novelties   2, Extensions  14, Unknowns   2000, consumed   1749, reclassified      0, garbageCollected    131
+Novelties   1, Extensions  12, Unknowns   2000, consumed   1793, reclassified      0, garbageCollected     60
+Novelties   0, Extensions  19, Unknowns   2000, consumed   1636, reclassified      0, garbageCollected    118
+Novelties   0, Extensions  12, Unknowns   2000, consumed   1646, reclassified      0, garbageCollected    162
+Novelties   1, Extensions  32, Unknowns   2000, consumed   1698, reclassified      0, garbageCollected     65
+Novelties   1, Extensions  20, Unknowns   2000, consumed   1742, reclassified      0, garbageCollected    127
+Novelties   0, Extensions  15, Unknowns   2000, consumed   1846, reclassified      0, garbageCollected     68
+[classifier] Statistics: items:     679183, hits:     650616, misses:      28567,
+'   N':     647906, '   1':       1654, '   2':        251, '   3':         25, '   4':        207,
+'   5':        166, '   6':         24, '   7':         52, '   8':        138, '   9':         27,
+'  10':        121, '  11':         22, '  12':         23
+[./bin/ond] (ioTime 3.464079e+01), (cpuTime 5.662134e+01), (lockTime 0.000000e+00), (total 9.273513e+01), (rest -9.126204e+07). At src/online-nd.c:154
+
+"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/ond
+	80.74 user	12.00 system	1:33.62 elapsed
+	99% CPU	(0 avgtext+0 avgdata	2824 maxresident)k
+	96 inputs+48592 outputs	(1 major+523 minor)pagefaults	0 swaps
+"
+Repeats 0
+Evaluate
+	title = Serial Online-ND
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/ond-1matches.csv
+	plotSavePath = experiments/online-nd.log.png
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Serial Online-ND
+
+NaN labels: 0
+saving experiments/online-nd.log.png
+Confusion Matrix
+Classes (act)       A       N assigned    hits
+Labels (pred)                                 
+-               16086   12481        -       0
+0                  94       3        A      94
+1                 995      94        A     995
+10                 34       0        A      34
+2                 104       0        A     104
+4                   0      47        N      47
+5                  23       0        A      23
+6                   3       0        A       3
+7                  29       0        A      29
+8                  46      11        A      46
+N              429765  193642        N  193642
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('1', 94155), ('4', 123906), ('2', 223093), ('10', 395955), ('8', 396384), ('7', 420012), ('5', 421541), ('6', 480464), ('0', 488058)] 11
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               195017 ( 29.843846%)
+Misses             429873 ( 65.784335%)
+Unknowns            28567 (  4.371666%)
+Unk. reprocessed        1 (  0.003501%)
+Total              653457 ( 99.999847%)
+

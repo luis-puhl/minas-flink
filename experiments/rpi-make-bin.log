@@ -1,3 +1,30 @@
 gcc -g -Wall -lm -pthread src/base.c src/offline.c -o bin/offline
 gcc -g -Wall -lm src/base.c src/online-nd.c -o bin/ond
 mpicc -g -Wall -lm src/base.c src/threaded-mpi.c -o bin/tmpi
+if [ ! -d experiments/rpi ]; then mkdir -p experiments/rpi; fi
+if [ ! -d out ]; then mkdir -p out; fi
+/usr/bin/time --format="$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$TIME_FORMAT" mpirun -hostfile ./conf/hostsfile hostname > experiments/rpi/base-time.log 2>&1
+cat datasets/training.csv | /usr/bin/time --format="$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$TIME_FORMAT" ./bin/offline > out/offline-model.csv 2> experiments/offline-model.log
+cat out/offline-model.csv datasets/test.csv | /usr/bin/time --format="$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$TIME_FORMAT" ./bin/ond > out/ond-0full.csv 2> experiments/online-nd.log
+grep -E -v '^(Unknown|Cluster):' out/ond-0full.csv > out/ond-1matches.csv
+Repeats 0
+grep -E '^Cluster:' out/ond-0full.csv > out/ond-2model.csv
+grep -E '^Unknown:' out/ond-0full.csv > out/ond-3unk.csv
+python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv experiments/online-nd.log.png >> experiments/online-nd.log
+printf "$tmftx\n\n" > experiments/tmi-base.log
+cat out/offline-model.csv datasets/test.csv \
+	| /usr/bin/time --format="$tmfmt" mpirun -n 4 ./bin/tmpi 2 2 2>> experiments/tmi-base.log > out/tmi-full.csv
+grep -E -v '^(Unknown|Cluster):' out/tmi-full.csv > out/tmi-matches.csv
+python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv experiments/tmi-base.log.png >> experiments/tmi-base.log
+printf "$tmftx\n" > experiments/tmi-base-simple.log
+grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' experiments/tmi-base.log >> experiments/tmi-base-simple.log
+echo '------ Fastest (no output) ------' > experiments/tmi-supressed.log
+cat out/offline-model.csv datasets/test.csv | /usr/bin/time --format="$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$TIME_FORMAT" mpirun -n 4 ./bin/tmpi 0 > out/tmi-supressed4-fastest.csv 2>> experiments/tmi-supressed.log
+echo '------ Fast (only unk and novelty output) ------' >> experiments/tmi-supressed.log
+cat out/offline-model.csv datasets/test.csv | /usr/bin/time --format="$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$TIME_FORMAT" mpirun -n 4 ./bin/tmpi 1 > out/tmi-supressed4-fast.csv 2>> experiments/tmi-supressed.log
+python3 src/evaluation/evaluate.py 'Output Only Unk and Novelty' datasets/test.csv out/tmi-supressed4-fast.csv experiments/tmi-supressed.log-fast.png >> experiments/tmi-supressed.log
+echo '------ Full (all labels) ------' >> experiments/tmi-supressed.log
+cat out/offline-model.csv datasets/test.csv | /usr/bin/time --format="$TIME_FORMAT" /usr/bin/time --output=experiments/timing.log --append --format="$TIME_FORMAT" mpirun -n 4 ./bin/tmpi 2 > out/tmi-supressed4.csv 2>> experiments/tmi-supressed.log
+grep -E -v '^(Unknown|Cluster):' out/tmi-supressed4.csv > out/tmi-supressed4-matches.csv
+python3 src/evaluation/evaluate.py 'Full Output' datasets/test.csv out/tmi-supressed4-matches.csv experiments/tmi-supressed.log.png >> experiments/tmi-supressed.log
+cd experiments && find . -maxdepth 1 -type f -exec mv -t rpi {} \+

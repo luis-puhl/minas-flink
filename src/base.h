@@ -28,14 +28,17 @@
 #define PARAMS kParam, dim, precision, radiusF, minExamplesPerCluster, noveltyF, thresholdForgettingPast
 #define PARAMS_ARG unsigned int kParam, unsigned int dim, double precision, double radiusF, unsigned int thresholdForgettingPast, unsigned int minExamplesPerCluster, double noveltyF
 
+// unsigned int id;     // MAX 4294967295               // %10u
+// unsigned long id;    // MAX 18446744073709551615     // %20lu
+
 typedef struct t_example {
-    unsigned int id;
+    unsigned long id; // MAX 4294967295
     unsigned int label;
     double *val;
 } Example;
 
 typedef struct {
-    unsigned int id;
+    unsigned long id;
     unsigned int label;
     unsigned int n_matches, n_misses, latest_match_id;
     unsigned int extensionOF, isIntrest, isSleep, evictions;
@@ -64,7 +67,7 @@ typedef struct {
 } Model;
 
 typedef struct {
-    unsigned int pointId, clusterId;
+    unsigned long pointId, clusterId;
     // char clusterLabel, clusterCatergoy;
     // double clusterRadius;
     unsigned int label, isMatch;
@@ -93,14 +96,14 @@ typedef struct MinasState_st {
     unsigned long lastNDCheck;
     unsigned long lastForgetCheck;
     unsigned long currId;
-    unsigned int noveltyCount;
-    unsigned int sleepCounter, nextLabel, nextId;
+    unsigned long noveltyCount;
+    unsigned long sleepCounter, nextLabel, nextId;
 } MinasState;
 
 #define MINAS_UNK_LABEL '-'
 
 #define MINAS_STATE_EMPTY { \
-        .noveltyCount = 0, .unknownsSize = 0, .lastNDCheck = 0, .currId = 0, \
+        .noveltyCount = 0, .unknownsSize = 0, .lastNDCheck = 0, .currId = 0, .nextId = 0, \
         .model = { .size = 0, .clusters = NULL, }, \
     };
 
@@ -112,7 +115,7 @@ typedef struct MinasState_st {
 char *printableLabel(unsigned int label);
 char *printableLabelReuse(unsigned int label, char *ret);
 unsigned int fromPrintableLabel(char *label);
-double nearestClusterVal(int dim, Cluster clusters[], unsigned int nClusters, double val[], Cluster **nearest);
+double nearestClusterVal(int dim, Cluster clusters[], unsigned int nClusters, double val[], Cluster **nearest, char skipSleep);
 Cluster *kMeansInit(int kParam, int dim, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId);
 double kMeans(int kParam, int dim, double precision,Cluster clusters[], Example trainingSet[], unsigned int trainingSetSize);
 //

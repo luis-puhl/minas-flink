@@ -1,0 +1,73 @@
+['cmd' ex]	 elapsed 	 kernel 	 user 	 cpu%; 	 max-KB 	 pf 	 pf-rec 	 waits 	 switch 	 swap; 	 ins 	 outs 	 rcv 	 sent 	 sigs;
+-------- cluster with n 2 and c 1 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
+[./bin/tmpi 0/2 c1] 2.234444e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 2 ./bin/tmpi 2 1 0]	 0:14.53 	 12.95 	 39.95 	 363%; 	 213896 	 57 	 57893 	 218844 	 157736 	 0; 	 0 	 0 	 0 	 0 	 0;
+Hits               204420 ( 31.282806%)
+Unknowns            14217 (  2.175656%)
+-------- cluster with n 2 and c 2 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 2
+[./bin/tmpi 0/2 c2] 2.125045e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 2 ./bin/tmpi 2 2 0]	 0:12.41 	 14.23 	 36.56 	 409%; 	 146240 	 47 	 41084 	 274390 	 105889 	 0; 	 0 	 0 	 0 	 0 	 0;
+Hits               204495 ( 31.294284%)
+Unknowns            13995 (  2.141683%)
+-------- cluster with n 2 and c 3 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 3
+[./bin/tmpi 0/2 c3] 2.094651e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 2 ./bin/tmpi 2 3 0]	 0:10.97 	 13.25 	 33.90 	 429%; 	 63088 	 54 	 20364 	 240477 	 115094 	 0; 	 0 	 0 	 0 	 0 	 0;
+Hits               204475 ( 31.291223%)
+Unknowns            13980 (  2.139388%)
+-------- cluster with n 2 and c 4 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 4
+[./bin/tmpi 0/2 c4] 2.125080e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 2 ./bin/tmpi 2 4 0]	 0:11.34 	 13.50 	 34.70 	 424%; 	 56428 	 48 	 19000 	 269114 	 97257 	 0; 	 0 	 8 	 0 	 0 	 0;
+Hits               207353 ( 31.731649%)
+Unknowns            14418 (  2.206416%)
+-------- cluster with n 3 and c 1 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
+[./bin/tmpi 0/3 c1] 1.985292e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 3 ./bin/tmpi 2 1 0]	 0:11.63 	 13.98 	 46.75 	 522%; 	 97976 	 87 	 47209 	 134534 	 498213 	 0; 	 0 	 16 	 0 	 0 	 0;
+Hits               217087 ( 33.221263%)
+Unknowns            17450 (  2.670409%)
+-------- cluster with n 3 and c 2 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 2
+[./bin/tmpi 0/3 c2] 1.777912e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 3 ./bin/tmpi 2 2 0]	 0:09.56 	 13.22 	 39.36 	 549%; 	 40512 	 78 	 22572 	 130608 	 595121 	 0; 	 0 	 8 	 0 	 0 	 0;
+Hits               204434 ( 31.284949%)
+Unknowns            12624 (  1.931876%)
+-------- cluster with n 3 and c 3 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 3
+[./bin/tmpi 0/3 c3] 1.784005e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 3 ./bin/tmpi 2 3 0]	 0:09.75 	 13.06 	 40.05 	 544%; 	 42832 	 94 	 29852 	 182990 	 478900 	 0; 	 0 	 16 	 0 	 0 	 0;
+Hits               204632 ( 31.315249%)
+Unknowns            16075 (  2.459990%)
+-------- cluster with n 3 and c 4 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 4
+[./bin/tmpi 0/3 c4] 1.737224e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 3 ./bin/tmpi 2 4 0]	 0:09.46 	 12.94 	 38.28 	 541%; 	 38396 	 127 	 26108 	 201706 	 521508 	 0; 	 0 	 16 	 0 	 0 	 0;
+Hits               204411 ( 31.281429%)
+Unknowns            14285 (  2.186062%)
+-------- cluster with n 4 and c 1 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
+[./bin/tmpi 0/4 c1] 2.112886e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 4 ./bin/tmpi 2 1 0]	 0:11.83 	 13.29 	 55.49 	 581%; 	 34244 	 99 	 23147 	 102136 	 665216 	 0; 	 0 	 8 	 0 	 0 	 0;
+Hits               213586 ( 32.685498%)
+Unknowns            16341 (  2.500696%)
+-------- cluster with n 4 and c 2 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 2
+[./bin/tmpi 0/4 c2] 1.860747e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 4 ./bin/tmpi 2 2 0]	 0:11.33 	 12.69 	 52.80 	 578%; 	 40160 	 135 	 32853 	 120962 	 557286 	 0; 	 0 	 16 	 0 	 0 	 0;
+Hits               211368 ( 32.346073%)
+Unknowns            14737 (  2.255233%)
+-------- cluster with n 4 and c 3 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 3
+[./bin/tmpi 0/4 c3] 1.872825e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 4 ./bin/tmpi 2 3 0]	 0:11.22 	 12.72 	 52.60 	 582%; 	 40488 	 139 	 33304 	 128273 	 505776 	 0; 	 0 	 16 	 0 	 0 	 0;
+Hits               214473 ( 32.821237%)
+Unknowns            14732 (  2.254468%)
+-------- cluster with n 4 and c 4 --------
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 4
+[./bin/tmpi 0/4 c4] 1.915009e+01 seconds. At src/threaded-mpi.c:465
+[mpirun -n 4 ./bin/tmpi 2 4 0]	 0:11.34 	 12.95 	 53.71 	 587%; 	 43008 	 156 	 38598 	 148546 	 443273 	 0; 	 0 	 24 	 0 	 0 	 0;
+Hits               205080 ( 31.383807%)
+Unknowns            13994 (  2.141530%)
