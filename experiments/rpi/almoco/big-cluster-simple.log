@@ -1,27 +1,27 @@
-[./bin/tmpi 0/4] 1.178379e+02 seconds. At src/threaded-mpi.c:548
-Hits               226700 ( 34.692360%)
-Unknowns            25695 (  3.932158%)
-[./bin/tmpi 0/5] 1.448877e+02 seconds. At src/threaded-mpi.c:548
-Hits               243086 ( 37.199942%)
-Unknowns            56329 (  8.620141%)
-[./bin/tmpi 0/6] 1.271499e+02 seconds. At src/threaded-mpi.c:548
-Hits               291680 ( 44.636381%)
-Unknowns            36131 (  5.529200%)
-[./bin/tmpi 0/7] 1.537723e+02 seconds. At src/threaded-mpi.c:548
-Hits               234436 ( 35.876215%)
-Unknowns            64220 (  9.827717%)
-[./bin/tmpi 0/8] 1.289064e+02 seconds. At src/threaded-mpi.c:548
-Hits               234447 ( 35.877899%)
-Unknowns            36057 (  5.517876%)
-[./bin/tmpi 0/9] 1.348001e+02 seconds. At src/threaded-mpi.c:548
-Hits               242492 ( 37.109041%)
-Unknowns            39133 (  5.988602%)
-[./bin/tmpi 0/10] 1.238029e+02 seconds. At src/threaded-mpi.c:548
-Hits               209871 ( 32.116984%)
-Unknowns            29996 (  4.590349%)
-[./bin/tmpi 0/11] 1.422989e+02 seconds. At src/threaded-mpi.c:548
-Hits               265125 ( 40.572615%)
-Unknowns            57074 (  8.734150%)
-[./bin/tmpi 0/12] 1.441258e+02 seconds. At src/threaded-mpi.c:548
-Hits               230235 ( 35.233328%)
-Unknowns            48458 (  7.415626%)
+[./bin/tmpi 0/4 c1] 1.006057e+02 seconds. At src/threaded-mpi.c:465
+Hits               213543 ( 32.678917%)
+Unknowns            14253 (  2.181165%)
+[./bin/tmpi 0/5 c1] 1.079789e+02 seconds. At src/threaded-mpi.c:465
+Hits               204132 ( 31.238733%)
+Unknowns            17247 (  2.639343%)
+[./bin/tmpi 0/6 c1] 1.102170e+02 seconds. At src/threaded-mpi.c:465
+Hits               205266 ( 31.412271%)
+Unknowns            15334 (  2.346593%)
+[./bin/tmpi 0/7 c1] 1.073710e+02 seconds. At src/threaded-mpi.c:465
+Hits               204331 ( 31.269186%)
+Unknowns            14636 (  2.239777%)
+[./bin/tmpi 0/8 c1] 1.176333e+02 seconds. At src/threaded-mpi.c:465
+Hits               204454 ( 31.288009%)
+Unknowns            15400 (  2.356693%)
+[./bin/tmpi 0/9 c1] 1.088359e+02 seconds. At src/threaded-mpi.c:465
+Hits               212462 ( 32.513490%)
+Unknowns            14539 (  2.224933%)
+[./bin/tmpi 0/10 c1] 1.126423e+02 seconds. At src/threaded-mpi.c:465
+Hits               208731 ( 31.942527%)
+Unknowns            14349 (  2.195857%)
+[./bin/tmpi 0/11 c1] 1.079924e+02 seconds. At src/threaded-mpi.c:465
+Hits               205129 ( 31.391306%)
+Unknowns            15288 (  2.339554%)
+[./bin/tmpi 0/12 c1] 1.064449e+02 seconds. At src/threaded-mpi.c:465
+Hits               205150 ( 31.394520%)
+Unknowns            16003 (  2.448971%)

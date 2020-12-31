@@ -15,6 +15,8 @@
 \usepackage{xcolor}
 % \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, allcolors=black}
 \begin{document}
 
 \title{IoT Intrusion Detection with Distributed Novelty Detection:
@@ -300,10 +302,17 @@ to extract classification quality metrics.
 
 TODO: Começe aqui;
 
+For the experimental setup we dedicated 3 Raspberry Pi single board computers
+connected via Gigabit Ethernet Switch.
 
-
-The experimental setup is composed of 2 environments and 3 datasets.
-Kyoto December 2015.
+The dataset usded is the December 2015 segment of 
+Kyoto 2006+ Dataset\footnote{Available at \url{http://www.takakura.com/Kyoto_data/}}
+(Traffic Data from Kyoto University's Honeypots)
+\cite{Song2011}.
+This segment is also reduced (from 7,865,245 instances) to only examples
+associated to known attack types identified by existing IDS, and attack types
+with more than 10,000 instances, this removes 46,390 instances.
+The resulting 
 
 \begin{quote}
   For the experiments, we used the Kyoto 2006+ dataset
@@ -328,7 +337,7 @@ Kyoto December 2015.
 % Avoid the stilted expression ``one of us (R. B. G.) thanks $\ldots$''.
 % Instead, try ``R. B. G. thanks$\ldots$''.
 % Put sponsor  acknowledgments in the unnumbered footnote on the first page.
-The authors thank CAPES (Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Código de Financiamento 001).
+The authors thank CNPq (Contract 167345/2018-4).
 Hermes Senger also thanks CNPq (Contract 305032/2015-1) and FAPESP (Contract 2018/00452-2, and Contract 2015/24461-2) for their support.
 
 % \bibliography{IEEEabrv,refs.bib}
