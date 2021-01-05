@@ -181,7 +181,7 @@ Apache Kafka and Apache Spark for stream processing and
 %   - Conclusion
 % - Demonstrar o paralelismo com figura de pipeline (time vs instruction)
 
-\section{Proposal}\label{sec:implementation}
+\section{Proposal}\label{sec:prop}
 % Proposal:
 %  - retomar problema {iot, sec, ND};
 %  - objetivo;
@@ -193,9 +193,11 @@ Fog computing infrastructure aims to offload
 computing resources from cloud providers by placing edge
 devices closer to end-users and/or data sources.
 
-Distributed novelty detection in streams using limited hardware.
+Objective: Distributed novelty detection in streams using limited hardware.
 
 To achieve
+
+
 
 \section{Implementation}\label{sec:implementation}
 
@@ -280,6 +282,24 @@ of the clustering algorithm.
 %   - Volume máximo do sistema;
 %   - Diferenças de precisão de acordo com a carga;
 
+
+\newcommand{\reffig}[1]{Figure \ref{fig:#1}\xspace}
+
+For \mfog the Message Passing Interface (MPI) library was used.
+In MPI programming, multiple processes of the same program are created by the
+runtime and each process instance receives a rank parameter, for \mfog this
+paramaters indicate if the process is root, rank $0$, or leaf otherwise.
+Beyond this division, each process also operates two trheads, for the root
+there is a sampler and detector threads, for the leafs each has a model receiver
+therad and multiple classifer threads.
+The overall sequence of creation is shown in \reffig{mfog-mpi-life}.
+
+\begin{figure}[htbp]
+  \centerline{\includegraphics[width=0.45\textwidth]{figures/mfog-arch-mpi.png}}
+  \caption{\mfog life line overview.}
+  \label{fig:mfog-mpi-life}
+\end{figure}
+
 Polices
 
 - Detecção de novidades e manutenção de modelo em ambiente distribuído:
@@ -300,29 +320,50 @@ to extract classification quality metrics.
 % ----------------------------------------------------------------------------------------------------------------------
 \section{Experimental Setup and Results}\label{sec:experiments}
 
-TODO: Começe aqui;
-
 For the experimental setup we dedicated 3 Raspberry Pi single board computers
-connected via Gigabit Ethernet Switch.
+connected via Gigabit Ethernet Switch forming a simple cluster.
+This cluster stored all source code, binaries (compiled and linked in place) and
+datasets, being acessed via our laboratory network over Secure Shell (SSH).
+All experiments were executed in this cluster for isolation of otherwise unforseen
+variations.
 
-The dataset usded is the December 2015 segment of 
+The dataset usded is the December 2015 segment of
 Kyoto 2006+ Dataset\footnote{Available at \url{http://www.takakura.com/Kyoto_data/}}
 (Traffic Data from Kyoto University's Honeypots)
 \cite{Song2011}.
-This segment is also reduced (from 7,865,245 instances) to only examples
+This segment was filtered (from $7,865,245$ instances) to only examples
 associated to known attack types identified by existing IDS, and attack types
-with more than 10,000 instances, this removes 46,390 instances.
-The resulting 
+with more than $10,000$ instances for significance as done by \cite{Cassales2019a}.
+% , this removes 46,390 instances. TODO: revisar, pois 7M != 700K.
+The remaining instantes then were transformed by normalization, transforming
+each feature value space (e.g. IP Address, Duration, Service) to the
+Real interval $[0, 1]$.
+The result is stored in two sets, training set and test set, using the holdout technique
+resulting in $72,000$ instances for training set and $653,457$ for test set.
 
-\begin{quote}
-  For the experiments, we used the Kyoto 2006+ dataset
-  which contains data collected from 2006 to December 2015.
-  We selected examples from one month, December, 2015. Only the examples of known
-  attack types and known IDS alert code with a minimum of 10,000 occurrences (for
-  significance) were considered. The offline training was performed with 72,000
-  examples (i.e., 10\% of the dataset) using the holdout technique.
-  \cite{Cassales2019a}
-\end{quote}
+% \begin{quote}
+%   For the experiments, we used the Kyoto 2006+ dataset
+%   which contains data collected from 2006 to December 2015.
+%   We selected examples from one month, December, 2015. Only the examples of known
+%   attack types and known IDS alert code with a minimum of 10,000 occurrences (for
+%   significance) were considered. The offline training was performed with 72,000
+%   examples (i.e., 10\% of the dataset) using the holdout technique.
+%   \cite{Cassales2019a}
+% \end{quote}
+
+Four main experiments need detailed discussion:
+reference implementation of Minas (\refminas) \cite{Faria2016minas};
+new implementation in serial, single-node multi-processed and
+multi-node multi-processed.
+Each experiment uses the adequate binary executable, initial model
+(or training set for the reference implementation) and test set
+to compute a resulting output stream which is stored for qualitative evaluation
+using our python script evaluation.
+Therefore each experiment result consists of a time mesure (using GNU Time 1.9),
+qualitative overview mesure with the confusion matrix and
+qualitative stream measure with Stream hits and novelties visualization chart.
+
+\input{experiments/online-nd.tex}
 
 \input{experiments/ref-CM.tex}
 \input{experiments/ref-eval-CM.tex}

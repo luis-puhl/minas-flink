@@ -1,0 +1,40 @@
+\small
+% \begin{center}
+\begin{table}
+  \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
+  \begin{tabular}
+    { l                     | r           | r           | r                 | r }
+    \textbf{Classes (act)}  & \textbf{A}  & \textbf{N}  \\
+    \textbf{Labels (pred)}  &             &             & \textbf{Assigned} & \textbf{Hits} \\
+    \hline
+    \hline \textbf{-}      &   $16086$   & $12481$     & $-$               &        $0$ \\
+    \hline \textbf{0}      &   $94$      & $3$         & $A$               &       $94$ \\
+    \hline \textbf{1}      &   $995$     & $94$        & $A$               &      $995$ \\
+    \hline \textbf{10}     &   $34$      & $0$         & $A$               &       $34$ \\
+    \hline \textbf{2}      &   $104$     & $0$         & $A$               &      $104$ \\
+    \hline \textbf{4}      &   $0$       & $47$        & $N$               &       $47$ \\
+    \hline \textbf{5}      &   $23$      & $0$         & $A$               &       $23$ \\
+    \hline \textbf{6}      &   $3$       & $0$         & $A$               &        $3$ \\
+    \hline \textbf{7}      &   $29$      & $0$         & $A$               &       $29$ \\
+    \hline \textbf{8}      &   $46$      & $11$        & $A$               &       $46$ \\
+    \hline \textbf{N}      &   $429765$  & $193642$    & $N$               &   $193642$ \\
+    \hline
+    \hline \textbf{Metric}  & \textbf{Value}  & \textbf{Ratio}   \\
+    \hline Total input      & $653457$        &               \\
+    \hline Total output     & $653458$        &               \\
+    \hline Hits             & $195017$        & $0.29843846$  \\
+    \hline Misses           & $429873$        & $0.65784335$ \\
+    \hline Unknowns         & $ 28567 $       & $0.04371666$ \\
+  \end{tabular}
+  \label{fig:serial-matrix}
+\end{table}
+
+\begin{figure}[htbp]
+  \centerline{\includegraphics[width=0.45\textwidth]{experiments/online-nd.log.png}}
+  \caption{Serial implementation: Stream hits and novelties visualization}
+  \label{fig:serial-hits}
+\end{figure}
+
+% \end{center}
+\normalsize
+

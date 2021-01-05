@@ -30,19 +30,19 @@
 ## scripts
 
 ```sh
+
+# wget http://www.takakura.com/Kyoto_data/new_data201704/2015/201512.zip
+
 # cat datasets/Kyoto2016/header.tsv datasets/Kyoto2016/2015/12/* | awk -F '\t' '{print $15 }' |
 # echo "1325-1-14(1),19559-1-6(1),6-128-2(1)" | sed -E 's;\([0-9]+\);;g' | sed -E 's;,;\n;g' |
 
+# get field 15 (IDS_detection), drop alarm counter, split the many alarm codes
 cat datasets/Kyoto2016/2015/12/* \
     | awk -F '\t' '{print $15 }' \
     | sed -E 's;\([0-9]+\);;g' | sed -E 's;,;\n;g' \
-    | sort > datasets/Kyoto2016/IDS_detection.all
-
-cat datasets/Kyoto2016/IDS_detection.all \
-    | uniq > datasets/Kyoto2016/IDS_detection
-
-cat datasets/Kyoto2016/IDS_detection.all | uniq -c | sort -bgr \
+    | sort | uniq -c | sort -bgr \
     > datasets/Kyoto2016/IDS_detection.count
+# sort, count each code, sort by count
 ```
 
 | count   | label     | count | label      | count | label     |
