@@ -16,6 +16,10 @@
 % \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \usepackage{hyperref}
+
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\newcounter{todocounter}
+
 \hypersetup{colorlinks=true, allcolors=black}
 \begin{document}
 
@@ -38,6 +42,47 @@ Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
 }
 
 \maketitle
+
+% \newcommand{\toreview}{}
+
+% \ifx\toreview\undefined
+%   \newcommandx{\nota}[2][1=]{}
+%   \newcommand{\hl}[1]{}
+
+%   \newcommandx{\notahl}[2][1=]{}
+%   \newcommand{\hlhl}[1]{}
+%   \newcommandx{\notake}[2][1=]{}
+%   \newcommand{\hlke}[1]{}
+%   \newcommandx{\notafa}[2][1=]{}
+%   \newcommand{\hlfa}[1]{}
+% \else
+%   \newcommandx{\nota}[2][1=]{\stepcounter{todocounter}\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{[\thetodocounter] #2}}
+%   \newcommand{\hl}[1]{\colorbox{red!25}{#1}}
+
+%   \newcommandx{\notahl}[2][1=]{\stepcounter{todocounter}\todo[
+%     linecolor=green,
+%     backgroundcolor=green!25,
+%     bordercolor=green,#1]{[Helio \thetodocounter] #2}}
+%   \newcommand{\hlhl}[1]{\colorbox{green}{#1}}
+
+%   \usepackage{cancel}
+%   \newcommandx{\notake}[2][1=]{\stepcounter{todocounter}\todo[
+%     linecolor=yellow,
+%     backgroundcolor=yellow!25,
+%     bordercolor=yellow,#1]{[Kelton \thetodocounter] #2}}
+%   \newcommand{\hlke}[1]{\colorbox{yellow}{#1}}
+
+%   \newcommandx{\notafa}[2][1=]{\stepcounter{todocounter}\todo[
+%     linecolor=blue,
+%     backgroundcolor=blue!25,
+%     bordercolor=blue,#1]{[Faria \thetodocounter] #2}}
+%   \newcommand{\hlfa}[1]{\colorbox{blue!30}{#1}}
+
+%   \usepackage[showframe,layoutvoffset=0mm,includeall,tmargin=15mm,bmargin=20mm]{geometry}
+%   \marginparwidth=34mm
+%   \hoffset=-25mm
+%   \textwidth=165mm
+% \fi
 
 \begin{abstract}
   The implementation of the Internet of Things (IoT) is sharply increasing the small
@@ -261,6 +306,8 @@ defined as a tuple containing \textit{uid} and assigned label.
 %     inflar a métrica de precisão;
 %   - **Solução:** *em aberto*;
 
+Adicionar fig arch fisica.
+
 Another implementation decision related to the output stream is whether or not
 to reprocess, and add to the output stream, examples in the unknown buffer after
 the novelty detection procedure, meaning one item can be classified once as
@@ -339,7 +386,14 @@ The remaining instantes then were transformed by normalization, transforming
 each feature value space (e.g. IP Address, Duration, Service) to the
 Real interval $[0, 1]$.
 The result is stored in two sets, training set and test set, using the holdout technique
-resulting in $72,000$ instances for training set and $653,457$ for test set.
+filtering in only normal class
+resulting in $72,000$ instances for training set and $653,457$ for test set,
+containing 
+% Count per class
+%            id
+% class        
+% A      447179
+% N      206278
 
 % \begin{quote}
 %   For the experiments, we used the Kyoto 2006+ dataset
@@ -351,14 +405,27 @@ resulting in $72,000$ instances for training set and $653,457$ for test set.
 %   \cite{Cassales2019a}
 % \end{quote}
 
+O que quer testar com os experimentos.
+  Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
+  Seria inviável por conta do atraso de distribuição de moldelo e,
+  limitação pelo hardware pequeno.
+  MFOG: Um Agregador Regional, instalado na FOG, que observa .
+
+Como realizou (cenário, rpi, setup, coleta de métricas).
+
+Quais resultados obteve.
+
+Como interpretar os resutados.
+
 Four main experiments need detailed discussion:
-reference implementation of Minas (\refminas) \cite{Faria2016minas};
-new implementation in serial, single-node multi-processed and
-multi-node multi-processed.
+(a) reference implementation of Minas (\refminas) \cite{Faria2016minas};
+(b) new implementation in serial mode;
+(c) new implementation in single-node, multi-task mode and
+(d) new implementation in multi-node, multi-task mode.
 Each experiment uses the adequate binary executable, initial model
 (or training set for the reference implementation) and test set
 to compute a resulting output stream which is stored for qualitative evaluation
-using our python script evaluation.
+using a python script.
 Therefore each experiment result consists of a time mesure (using GNU Time 1.9),
 qualitative overview mesure with the confusion matrix and
 qualitative stream measure with Stream hits and novelties visualization chart.

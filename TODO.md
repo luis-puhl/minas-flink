@@ -145,3 +145,20 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
   - Results
   - Conclusion
 - Demonstrar o paralelismo com figura de pipeline (time vs instruction)
+
+## Reunião 2021-01-06
+
+- [ ] Resultados:
+  - [ ] Completar com tempo dentro da matriz resultado;
+  - [ ] Transpor a matriz de confusão;
+- [ ] Interpretar e Distutir resultados (serial vs paralelo, og vs serial etc).
+- [ ] Descrever na proposta a metodoligia de avaliação, detalhar o scrpit evaluate.py
+- [ ] Experimentos:
+  - [ ] O que quer testar com os experimentos.
+    - [ ] Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
+    - [ ] Seria inviável por conta do atraso de distribuição de moldelo e,
+    - [ ] limitação pelo hardware pequeno.
+    - [ ] MFOG: Um Agregador Regional, instalado na FOG, que observa .
+  - [ ] Como realizou (cenário, rpi, setup, coleta de métricas).
+  - [ ] Quais resultados obteve.
+  - [ ] Como interpretar os resutados.
