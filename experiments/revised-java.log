@@ -1,0 +1,205 @@
+a08f4ef5508197ac85d1381499151b34dc7a0785  bin/minas/revised.jar
+Fast K-Means
+Processing datasets/training.csv initial phase...
+********************** Offline phase ****************************
+Classes for the training phase (offline): 1
+Class N
+Offline time 51.986578335000004s 0.8664429722500001m
+********************** Online phase****************************
+Novelties  11, Extensions   0, Unknowns   2000, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  11, Unknowns   2025, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  10, Unknowns   2032, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  10, Unknowns   2039, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  10, Unknowns   2043, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  11, Unknowns   2073, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  13, Unknowns   2085, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  13, Unknowns   2094, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  12, Unknowns   2106, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  12, Unknowns   2116, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  13, Unknowns   2140, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  12, Unknowns   2165, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  13, Unknowns   2189, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  14, Unknowns   2197, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  14, Unknowns   2261, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  16, Unknowns   2285, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  16, Unknowns   2310, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  17, Unknowns   2425, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  17, Unknowns   2515, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2537, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  17, Unknowns   2553, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2566, consumed      0, reclassified      0, garbageCollected      0
+Novelties   3, Extensions  18, Unknowns   2576, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  19, Unknowns   2590, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  20, Unknowns   2593, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  20, Unknowns   2613, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  20, Unknowns   2616, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  19, Unknowns   2621, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  20, Unknowns   2626, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  20, Unknowns   2631, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  19, Unknowns   2644, consumed   2644, reclassified      0, garbageCollected      0
+Novelties  12, Extensions   2, Unknowns   2000, consumed   2000, reclassified      0, garbageCollected      0
+Novelties   9, Extensions   2, Unknowns   2000, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  12, Unknowns   2019, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  11, Unknowns   2023, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  11, Unknowns   2106, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  13, Unknowns   2107, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  15, Unknowns   2140, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  17, Unknowns   2144, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  14, Unknowns   2199, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  15, Unknowns   2217, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  15, Unknowns   2224, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  14, Unknowns   2260, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  14, Unknowns   2291, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  15, Unknowns   2851, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  17, Unknowns   2985, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2990, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2993, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2995, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2996, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   2998, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   3001, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   3003, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   3004, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  19, Unknowns   3006, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  19, Unknowns   3007, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  19, Unknowns   3008, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  18, Unknowns   3077, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  18, Unknowns   3113, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  20, Unknowns   3152, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  21, Unknowns   3700, consumed      0, reclassified      0, garbageCollected      0
+Novelties   3, Extensions  23, Unknowns   4094, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  26, Unknowns   4106, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  26, Unknowns   4180, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  27, Unknowns   4257, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  28, Unknowns   4277, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  27, Unknowns   4317, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  27, Unknowns   4328, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  27, Unknowns   4333, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  28, Unknowns   4349, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  30, Unknowns   4502, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  32, Unknowns   4507, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  31, Unknowns   4593, consumed      0, reclassified      0, garbageCollected      0
+Novelties   2, Extensions  31, Unknowns   4664, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  32, Unknowns   4671, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  33, Unknowns   4731, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  34, Unknowns   4745, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  34, Unknowns   4754, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  35, Unknowns   4761, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  36, Unknowns   4771, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  36, Unknowns   4803, consumed      0, reclassified      0, garbageCollected      0
+Novelties   5, Extensions  36, Unknowns   4899, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  41, Unknowns   4908, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  40, Unknowns   4912, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  40, Unknowns   4921, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  42, Unknowns   4940, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  41, Unknowns   4954, consumed      0, reclassified      0, garbageCollected      0
+Novelties   7, Extensions  42, Unknowns   6220, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  48, Unknowns   6234, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  48, Unknowns   6249, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  49, Unknowns   6303, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  50, Unknowns   6313, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  50, Unknowns   6331, consumed      0, reclassified      0, garbageCollected      0
+Novelties   4, Extensions  47, Unknowns   6816, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  52, Unknowns   6843, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  51, Unknowns   6863, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  51, Unknowns   6898, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  53, Unknowns   6919, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  53, Unknowns   6923, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  53, Unknowns   6929, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  53, Unknowns   6936, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  53, Unknowns   6957, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  51, Unknowns   6962, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  51, Unknowns   6963, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  51, Unknowns   6966, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  51, Unknowns   6971, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  51, Unknowns   6984, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  52, Unknowns   6989, consumed      0, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  53, Unknowns   7002, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  53, Unknowns   7006, consumed      0, reclassified      0, garbageCollected      0
+Novelties   0, Extensions  55, Unknowns   7013, consumed   7013, reclassified      0, garbageCollected      0
+Online time 105.689020494s 1.7614836749m
+********************** Results ****************************
+Final Confusion Matrix Using the Proposed methodology:
+	C N	N 1	N 2	N 3	N 4	N 5	N 6	N 7	N 8	N 9	N 10	N 11	N 12	Unk
+------------------------------------------------------------------------------------------------
+
+C N	199263	0	79	44	0	0	0	229	181	826	5088	289	0	279
+
+C A	439530	123	145	368	8	52	165	1	1046	2133	3467	71	26	44
+Final Confusion Matrix Using the Literature methodology:
+	C N	N 1	N 2	N 3	N 4	N 5	N 6	N 7	N 8	N 9	N 10	N 11	N 12	Unk
+------------------------------------------------------------------------------------------------
+
+C N	199263	0	79	44	0	0	0	229	181	826	5088	289	0	279
+
+C A	439530	123	145	368	8	52	165	1	1046	2133	3467	71	26	44
+Results time 2.120076304s 0.03533460506666666m
+Minas time 159795675133ns, 159.795675133s 2m
+"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" java -ea -classpath bin/minas/revised.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/revised-java.log true
+        175.47 user	2.02 system	2:40.17 elapsed
+        110% CPU        (0 avgtext+0 avgdata    1544224 maxresident)k
+        0 inputs+80056 outputs  (0 major+564091 minor)pagefaults        0 swaps
+"
+Evaluate
+	title = Minas Ref. mk1.1
+	examplesFileName = datasets/test.csv
+	matchesFileName = out/revised-java.log
+	logPath = experiments/revised-java.log
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Minas Ref. mk1.1
+
+saving experiments/revised-java.log.png
+NaN labels: 0
+Confusion Matrix
+Classes       A       N assigned    hits          og_labels
+Labels                                                     
+-          3774    8206        -       0              [Unk]
+1           123       0        A     123         [ExtNov 1]
+10         2489    4066        N    4066  [ExtNov 10, N 10]
+11           71     289        N     289  [ExtNov 11, N 11]
+12           26       0        A      26  [N 12, ExtNov 12]
+2           145      79        A     145         [ExtNov 2]
+3           368      44        A     368         [ExtNov 3]
+4             8       0        A       8         [ExtNov 4]
+5            52       0        A      52         [ExtNov 5]
+6           165       0        A     165    [N 6, ExtNov 6]
+7             1     229        N     229         [ExtNov 7]
+8          1046     181        A    1046    [N 8, ExtNov 8]
+9           161     154        A     161              [N 9]
+N        438750  193030        N  193030    [C N, ExtCon N]
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('2', 58967), ('5', 68703), ('1', 72359), ('4', 82210), ('6', 89216), ('8', 92969), ('7', 102815), ('3', 104440), ('9', 132969), ('10', 285552), ('11', 288345), ('12', 524072)] 14
+Total examples    (653457, 25)
+Total matches     (653457, 3)
+Hits               199708 ( 30.561766%)
+Misses             441769 ( 67.604907%)
+Unknowns            11980 (  1.833326%)
+Unk. reprocessed        0 (  0.000000%)
+Total              653457 (100.000000%)
+\begin{tabular}{l|r}
+
+Metric   &       Value \\\hline
+\hline
+Hits     &    0.305618 \\\hline
+Misses   &    0.676049 \\\hline
+Unknowns &    0.018333 \\\hline
+Time     &  175.470000 \\\hline
+System   &    2.020000 \\\hline
+Elapsed  &  160.170000 
+\end{tabular}
+
+               Value
+Metric              
+Hits        0.305618
+Misses      0.676049
+Unknowns    0.018333
+Time      175.470000
+System      2.020000
+Elapsed   160.170000
+

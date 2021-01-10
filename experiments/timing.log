@@ -1,25 +1,75 @@
 "./bin/offline
-	25.30 user	0.08 system	0:25.54 elapsed
+	23.51 user	0.02 system	0:23.66 elapsed
 	99% CPU	(0 avgtext+0 avgdata	19000 maxresident)k
-	0 inputs+88 outputs	(0 major+4409 minor)pagefaults	0 swaps
+	0 inputs+96 outputs	(0 major+4407 minor)pagefaults	0 swaps
 "
 "./bin/ond
-	10.98 user	4.32 system	0:15.42 elapsed
-	99% CPU	(0 avgtext+0 avgdata	3336 maxresident)k
-	0 inputs+42888 outputs	(0 major+421 minor)pagefaults	0 swaps
+	10.45 user	3.72 system	0:14.27 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3276 maxresident)k
+	0 inputs+42912 outputs	(0 major+421 minor)pagefaults	0 swaps
+"
+"/usr/bin/time --format=[%C %x]\t %E \t %S \t %U \t %P; \t %M \t %F \t %R \t %w \t %c \t %W; \t %I \t %O \t %r \t %s \t %k; mpirun -n 4 ./bin/tmpi 2 2
+	99.85 user	16.80 system	0:25.47 elapsed
+	458% CPU	(0 avgtext+0 avgdata	21660 maxresident)k
+	0 inputs+38192 outputs	(106 major+18841 minor)pagefaults	0 swaps
 "
 "mpirun -n 4 ./bin/tmpi 0
-	47.21 user	6.67 system	0:08.84 elapsed
-	609% CPU	(0 avgtext+0 avgdata	29552 maxresident)k
-	0 inputs+568 outputs	(98 major+21811 minor)pagefaults	0 swaps
+	50.66 user	4.58 system	0:10.39 elapsed
+	531% CPU	(0 avgtext+0 avgdata	21192 maxresident)k
+	0 inputs+672 outputs	(115 major+17359 minor)pagefaults	0 swaps
 "
 "mpirun -n 4 ./bin/tmpi 1
-	54.06 user	7.49 system	0:10.50 elapsed
-	586% CPU	(0 avgtext+0 avgdata	21472 maxresident)k
-	0 inputs+2376 outputs	(124 major+17650 minor)pagefaults	0 swaps
+	59.32 user	5.06 system	0:12.88 elapsed
+	499% CPU	(0 avgtext+0 avgdata	26720 maxresident)k
+	0 inputs+2560 outputs	(109 major+22134 minor)pagefaults	0 swaps
 "
 "mpirun -n 4 ./bin/tmpi 2
-	56.17 user	13.83 system	0:11.46 elapsed
-	610% CPU	(0 avgtext+0 avgdata	31708 maxresident)k
-	0 inputs+38784 outputs	(120 major+24668 minor)pagefaults	0 swaps
+	69.74 user	10.02 system	0:16.11 elapsed
+	494% CPU	(0 avgtext+0 avgdata	26880 maxresident)k
+	0 inputs+39544 outputs	(126 major+21909 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	22.40 user	0.02 system	0:22.47 elapsed
+	99% CPU	(0 avgtext+0 avgdata	19056 maxresident)k
+	0 inputs+88 outputs	(0 major+4410 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	9.29 user	3.40 system	0:12.73 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3260 maxresident)k
+	0 inputs+42888 outputs	(0 major+421 minor)pagefaults	0 swaps
+"
+"/usr/bin/time --format=[%C %x]\t %E \t %S \t %U \t %P; \t %M \t %F \t %R \t %w \t %c \t %W; \t %I \t %O \t %r \t %s \t %k; mpirun -n 4 ./bin/tmpi 2 2
+	72.49 user	11.48 system	0:18.37 elapsed
+	457% CPU	(0 avgtext+0 avgdata	26116 maxresident)k
+	0 inputs+38248 outputs	(127 major+20692 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 0
+	69.43 user	6.44 system	0:14.77 elapsed
+	513% CPU	(0 avgtext+0 avgdata	21220 maxresident)k
+	0 inputs+672 outputs	(106 major+15707 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 1
+	99.66 user	6.97 system	0:23.16 elapsed
+	460% CPU	(0 avgtext+0 avgdata	21244 maxresident)k
+	0 inputs+2320 outputs	(108 major+17545 minor)pagefaults	0 swaps
+"
+"mpirun -n 4 ./bin/tmpi 2
+	176.13 user	16.29 system	0:47.55 elapsed
+	404% CPU	(0 avgtext+0 avgdata	21144 maxresident)k
+	0 inputs+38816 outputs	(122 major+18370 minor)pagefaults	0 swaps
+"
+"java -ea -classpath bin/minas/revised.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/minas-kyoto-out.txt
+	620.46 user	3.99 system	10:03.15 elapsed
+	103% CPU	(0 avgtext+0 avgdata	1549060 maxresident)k
+	16 inputs+78264 outputs	(0 major+503334 minor)pagefaults	0 swaps
+"
+"java -ea -classpath bin/minas/revised.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/minas-kyoto-out.txt true
+	171.12 user	2.08 system	2:37.17 elapsed
+	110% CPU	(0 avgtext+0 avgdata	1488788 maxresident)k
+	16 inputs+80048 outputs	(0 major+563611 minor)pagefaults	0 swaps
+"
+"java -ea -classpath bin/minas/revised.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/revised-java.log true
+	175.47 user	2.02 system	2:40.17 elapsed
+	110% CPU	(0 avgtext+0 avgdata	1544224 maxresident)k
+	0 inputs+80048 outputs	(0 major+564012 minor)pagefaults	0 swaps
 "

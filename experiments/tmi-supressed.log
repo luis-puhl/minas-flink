@@ -1,24 +1,25 @@
 ------ Fastest (no output) ------
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 0, nClassifiers 1
-[sampler 0]
-[detector 0]
-Taking test stream from stdin, sampler at 0/4
-[m_receiver 3]
-[classifier 2]
-[m_receiver 1]
-[m_receiver 2]
-[classifier 3]
-model complete
 [classifier 1]
-Novelties   2, Extensions  21, Unknowns   2000, consumed   1834, reclassified      0, garbageCollected      0
+[m_receiver 1]
+[sampler 0]
+Taking test stream from stdin, sampler at 0/4
+[classifier 2]
+[m_receiver 2]
+model complete
+[detector 0]
+[classifier 3]
+[m_receiver 3]
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1846, reclassified      0, garbageCollected      0
 realloc model 200
 realloc model 200
 realloc model 200
-Novelties   3, Extensions  14, Unknowns   2000, consumed   1763, reclassified      0, garbageCollected    128
-Novelties   0, Extensions   5, Unknowns   2000, consumed   1773, reclassified      0, garbageCollected    108
-Novelties   0, Extensions  23, Unknowns   2000, consumed   1752, reclassified      0, garbageCollected     55
-Novelties   4, Extensions  17, Unknowns   2000, consumed   1715, reclassified      0, garbageCollected    116
-Novelties   1, Extensions  14, Unknowns   2000, consumed   1688, reclassified      0, garbageCollected    118
+Novelties   2, Extensions  14, Unknowns   2000, consumed   1776, reclassified      0, garbageCollected    124
+Novelties   0, Extensions   9, Unknowns   2000, consumed   1792, reclassified      0, garbageCollected     91
+Novelties   1, Extensions  12, Unknowns   2000, consumed   1761, reclassified      0, garbageCollected     77
+Novelties   2, Extensions  11, Unknowns   2000, consumed   1834, reclassified      0, garbageCollected     99
+Novelties   0, Extensions  24, Unknowns   2000, consumed   1788, reclassified      0, garbageCollected     61
+Novelties   0, Extensions  16, Unknowns   2000, consumed   1666, reclassified      0, garbageCollected    131
 realloc model 300
 realloc model 300
 realloc model 300
@@ -26,108 +27,112 @@ realloc model 300
 [sampler 0] MFOG_EOS_MARKER to 1
 [sampler 0] MFOG_EOS_MARKER to 2
 [sampler 0] MFOG_EOS_MARKER to 3
-[classifier 1] sends 4001
+[sampler   0] (items        0) (ioTime 1.909552e+01), (cpuTime 1.522709e+00), (lockTime 0.000000e+00), (total 2.171486e+01). At src/threaded-mpi.c:269
+[classifier 2] sends 4922
+[classifier   2] (items   217819) (ioTime 1.172963e+01), (cpuTime 5.142974e+00), (lockTime 3.922890e-01), (total 1.760635e+01). At src/threaded-mpi.c:106
+[classifier 1] sends 4770
+[classifier   1] (items   217820) (ioTime 1.155828e+01), (cpuTime 5.353918e+00), (lockTime 3.814070e-01), (total 1.763358e+01). At src/threaded-mpi.c:106
 [detector   0] MFOG_EOS_MARKER 1 / 3
-[classifier   1] (items   217820) (ioTime 6.177152e+00), (cpuTime 5.322895e+00), (lockTime 4.665470e-01), (total 1.238244e+01). At src/threaded-mpi.c:106
-[sampler   0] (items        0) (ioTime 1.340540e+01), (cpuTime 1.414726e+00), (lockTime 0.000000e+00), (total 1.592593e+01). At src/threaded-mpi.c:269
 [detector   0] MFOG_EOS_MARKER 2 / 3
-[classifier 3] sends 4172
-[classifier   3] (items   217819) (ioTime 6.608893e+00), (cpuTime 4.816641e+00), (lockTime 4.640020e-01), (total 1.228458e+01). At src/threaded-mpi.c:106
 [detector   0] MFOG_EOS_MARKER 3 / 3
-[detector] itemsWhere: ,   0 =>        0,   1 =>     4001,   2 =>     3816,   3 =>     4172
-[classifier 2] sends 3816
-[classifier   2] (items   217819) (ioTime 5.859426e+00), (cpuTime 5.425263e+00), (lockTime 5.176880e-01), (total 1.222816e+01). At src/threaded-mpi.c:106
-[m_receiver   1] (items      204) (ioTime 1.118298e+01), (cpuTime 9.580000e-04), (lockTime 5.260000e-04), (total 1.240155e+01). At src/threaded-mpi.c:156
-[m_receiver   3] (items      204) (ioTime 1.121526e+01), (cpuTime 1.246100e-02), (lockTime 1.829000e-03), (total 1.230108e+01). At src/threaded-mpi.c:156
-[detector     0] (items    11992) (ioTime 1.337215e+01), (cpuTime 2.551234e+00), (lockTime 0.000000e+00), (total 1.594172e+01). At src/threaded-mpi.c:368
-[m_receiver   2] (items      204) (ioTime 1.106627e+01), (cpuTime 6.870000e-04), (lockTime 2.880000e-04), (total 1.222820e+01). At src/threaded-mpi.c:156
-[node   2] Statistics items:     228190, hits:     224374, misses:       3816,
-'   N':     222275, '   1':        568, '   2':        124, '   3':        113, '   4':        902,
-'   5':        115, '   6':        194, '   7':         26, '   8':         30, '   9':         27
-[node   0] Statistics items:      10371, hits:      10371, misses:          0,
-'   N':       9028, '   1':        312, '   2':         64, '   3':         90, '   4':        499,
-'   5':        102, '   6':        194, '   7':         26, '   8':         29, '   9':         27
-[node   3] Statistics items:     228190, hits:     224018, misses:       4172,
-'   N':     221942, '   1':        553, '   2':        121, '   3':        104, '   4':        902,
-'   5':        118, '   6':        194, '   7':         28, '   8':         29, '   9':         27
-[node   1] Statistics items:     228191, hits:     224190, misses:       4001,
-'   N':     222109, '   1':        560, '   2':        128, '   3':        119, '   4':        877,
-'   5':        114, '   6':        195, '   7':         32, '   8':         29, '   9':         27
-[root    ] Statistics items:     694942, hits:     682953, misses:      11989,
-'   N':     675354, '   1':       1993, '   2':        437, '   3':        426, '   4':       3180,
-'   5':        449, '   6':        777, '   7':        112, '   8':        117, '   9':        108
-[./bin/tmpi 0/4 c1] 1.596295e+01 seconds. At src/threaded-mpi.c:465
+[detector] itemsWhere: ,   0 =>        0,   1 =>     4770,   2 =>     4922,   3 =>     5002
+[detector     0] (items    14697) (ioTime 1.836882e+01), (cpuTime 3.318903e+00), (lockTime 0.000000e+00), (total 2.172493e+01). At src/threaded-mpi.c:368
+[classifier 3] sends 5002
+[classifier   3] (items   217819) (ioTime 1.182721e+01), (cpuTime 5.035660e+00), (lockTime 3.956920e-01), (total 1.763216e+01). At src/threaded-mpi.c:106
+[m_receiver   3] (items      214) (ioTime 1.600446e+01), (cpuTime 1.039000e-03), (lockTime 2.356000e-03), (total 1.763267e+01). At src/threaded-mpi.c:156
+[m_receiver   1] (items      214) (ioTime 1.597945e+01), (cpuTime 9.630000e-04), (lockTime 1.161000e-03), (total 1.764740e+01). At src/threaded-mpi.c:156
+[m_receiver   2] (items      214) (ioTime 1.600389e+01), (cpuTime 8.501000e-03), (lockTime 2.376000e-03), (total 1.762021e+01). At src/threaded-mpi.c:156
+[node   3] Statistics items:     230123, hits:     225121, misses:       5002,
+'   N':     223948, '   1':        660, '   2':         49, '   3':        196, '   4':         43,
+'   5':        225
+[node   2] Statistics items:     230123, hits:     225201, misses:       4922,
+'   N':     224030, '   1':        658, '   2':         63, '   3':        190, '   4':         39,
+'   5':        221
+[node   1] Statistics items:     230124, hits:     225354, misses:       4770,
+'   N':     224190, '   1':        652, '   2':         57, '   3':        196, '   4':         39,
+'   5':        220
+[node   0] Statistics items:      12304, hits:      12304, misses:          0,
+'   N':      11632, '   1':        280, '   2':         22, '   3':        139, '   4':         24,
+'   5':        207
+[root    ] Statistics items:     702674, hits:     687980, misses:      14694,
+'   N':     683800, '   1':       2250, '   2':        191, '   3':        721, '   4':        145,
+'   5':        873
+[./bin/tmpi 0/4 c1] 2.175548e+01 seconds. At src/threaded-mpi.c:465
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" mpirun -n 4 ./bin/tmpi 0
-	47.21 user	6.67 system	0:08.84 elapsed
-	609% CPU	(0 avgtext+0 avgdata	29552 maxresident)k
-	0 inputs+576 outputs	(98 major+21890 minor)pagefaults	0 swaps
+	69.43 user	6.44 system	0:14.77 elapsed
+	513% CPU	(0 avgtext+0 avgdata	21220 maxresident)k
+	0 inputs+680 outputs	(106 major+15790 minor)pagefaults	0 swaps
 "
 ------ Fast (only unk and novelty output) ------
-[m_receiver 3]
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 1, nClassifiers 1
+[classifier 2]
+[classifier 3]
 [classifier 1]
 [m_receiver 1]
 [sampler 0]
 Taking test stream from stdin, sampler at 0/4
-[detector 0]
-[classifier 2]
-model complete
-[classifier 3]
+[m_receiver 3]
 [m_receiver 2]
-Novelties   1, Extensions  22, Unknowns   2000, consumed   1842, reclassified      0, garbageCollected      0
+[detector 0]
+model complete
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1845, reclassified      0, garbageCollected      0
 realloc model 200
 realloc model 200
 realloc model 200
-Novelties   3, Extensions  13, Unknowns   2000, consumed   1770, reclassified      0, garbageCollected    122
-Novelties   0, Extensions   4, Unknowns   2000, consumed   1813, reclassified      0, garbageCollected    107
-Novelties   0, Extensions  16, Unknowns   2000, consumed   1745, reclassified      0, garbageCollected     68
-Novelties   0, Extensions   9, Unknowns   2000, consumed   1747, reclassified      0, garbageCollected    150
-Novelties   0, Extensions  12, Unknowns   2000, consumed   1657, reclassified      0, garbageCollected     90
-Novelties   1, Extensions  19, Unknowns   2000, consumed   1757, reclassified      0, garbageCollected    105
-Novelties   0, Extensions  14, Unknowns   2000, consumed   1725, reclassified      0, garbageCollected    130
+Novelties   2, Extensions  15, Unknowns   2000, consumed   1780, reclassified      0, garbageCollected    124
+Novelties   0, Extensions  11, Unknowns   2000, consumed   1798, reclassified      0, garbageCollected     87
+Novelties   1, Extensions  17, Unknowns   2000, consumed   1750, reclassified      0, garbageCollected     75
+Novelties   1, Extensions  13, Unknowns   2000, consumed   1832, reclassified      0, garbageCollected     85
+Novelties   2, Extensions  24, Unknowns   2000, consumed   1796, reclassified      0, garbageCollected     44
 realloc model 300
 realloc model 300
 realloc model 300
+Novelties   1, Extensions  17, Unknowns   2000, consumed   1709, reclassified      0, garbageCollected    116
 [sampler] itemsWhere: ,   0 =>        0,   1 =>   217820,   2 =>   217819,   3 =>   217819
 [sampler 0] MFOG_EOS_MARKER to 1
 [sampler 0] MFOG_EOS_MARKER to 2
 [sampler 0] MFOG_EOS_MARKER to 3
-[sampler   0] (items        0) (ioTime 1.491621e+01), (cpuTime 1.565815e+00), (lockTime 0.000000e+00), (total 1.760989e+01). At src/threaded-mpi.c:269
+[sampler   0] (items        0) (ioTime 2.593364e+01), (cpuTime 1.561122e+00), (lockTime 0.000000e+00), (total 2.864604e+01). At src/threaded-mpi.c:269
 [detector   0] MFOG_EOS_MARKER 1 / 3
-[classifier 3] sends 17546
-[classifier   3] (items   217819) (ioTime 7.776885e+00), (cpuTime 5.228694e+00), (lockTime 4.867630e-01), (total 1.388612e+01). At src/threaded-mpi.c:106
+[classifier 3] sends 17031
+[classifier   3] (items   217819) (ioTime 1.910741e+01), (cpuTime 5.358121e+00), (lockTime 4.319470e-01), (total 2.526945e+01). At src/threaded-mpi.c:106
 [detector   0] MFOG_EOS_MARKER 2 / 3
-[classifier 2] sends 17533
-[classifier   2] (items   217819) (ioTime 7.712282e+00), (cpuTime 5.397126e+00), (lockTime 4.751150e-01), (total 1.397255e+01). At src/threaded-mpi.c:106
+[classifier 2] sends 17055
+[classifier   2] (items   217819) (ioTime 1.936509e+01), (cpuTime 5.242373e+00), (lockTime 3.846350e-01), (total 2.532560e+01). At src/threaded-mpi.c:106
+[classifier 1] sends 17171
+[classifier   1] (items   217820) (ioTime 1.952356e+01), (cpuTime 5.160133e+00), (lockTime 3.715950e-01), (total 2.537303e+01). At src/threaded-mpi.c:106
 [detector   0] MFOG_EOS_MARKER 3 / 3
-[detector] itemsWhere: ,   0 =>        0,   1 =>    17513,   2 =>    17533,   3 =>    17546
-[classifier 1] sends 17513
-[classifier   1] (items   217820) (ioTime 7.794609e+00), (cpuTime 5.363585e+00), (lockTime 5.292660e-01), (total 1.415531e+01). At src/threaded-mpi.c:106
-[m_receiver   1] (items      214) (ioTime 1.400659e+01), (cpuTime 1.254000e-03), (lockTime 4.550000e-04), (total 1.415839e+01). At src/threaded-mpi.c:156
-[m_receiver   2] (items      214) (ioTime 1.382377e+01), (cpuTime 8.330000e-04), (lockTime 4.060000e-04), (total 1.397942e+01). At src/threaded-mpi.c:156
-[detector     0] (items    52595) (ioTime 1.399573e+01), (cpuTime 3.593191e+00), (lockTime 0.000000e+00), (total 1.766674e+01). At src/threaded-mpi.c:368
-[m_receiver   3] (items      214) (ioTime 1.371574e+01), (cpuTime 2.798700e-02), (lockTime 2.742000e-03), (total 1.390241e+01). At src/threaded-mpi.c:156
-[node   0] Statistics items:      13860, hits:      13860, misses:          0,
-'   N':      13008, '   1':        289, '   2':         80, '   3':        453, '   4':         30
-[node   1] Statistics items:     231680, hits:     226688, misses:       4992,
-'   N':     225316, '   1':        409, '   2':         97, '   3':        836, '   4':         30
-[node   2] Statistics items:     231679, hits:     226547, misses:       5132,
-'   N':     225164, '   1':        412, '   2':         95, '   3':        846, '   4':         30
-[node   3] Statistics items:     231679, hits:     226598, misses:       5081,
-'   N':     225222, '   1':        399, '   2':         91, '   3':        856, '   4':         30
-[root    ] Statistics items:     708898, hits:     693693, misses:      15205,
-'   N':     688710, '   1':       1509, '   2':        363, '   3':       2991, '   4':        120
-[./bin/tmpi 0/4 c1] 1.768892e+01 seconds. At src/threaded-mpi.c:465
+[detector] itemsWhere: ,   0 =>        0,   1 =>    17171,   2 =>    17055,   3 =>    17031
+[detector     0] (items    51260) (ioTime 2.422788e+01), (cpuTime 4.340174e+00), (lockTime 0.000000e+00), (total 2.865756e+01). At src/threaded-mpi.c:368
+[m_receiver   1] (items      227) (ioTime 2.532014e+01), (cpuTime 1.471000e-03), (lockTime 8.350000e-04), (total 2.537647e+01). At src/threaded-mpi.c:156
+[m_receiver   3] (items      227) (ioTime 2.522320e+01), (cpuTime 1.278600e-02), (lockTime 2.246000e-03), (total 2.528802e+01). At src/threaded-mpi.c:156
+[node   3] Statistics items:     230128, hits:     225601, misses:       4527,
+'   N':     223783, '   1':        668, '   2':         53, '   3':        165, '   4':        757,
+'   5':        129, '   6':         26, '   7':         20
+[m_receiver   2] (items      227) (ioTime 2.525378e+01), (cpuTime 1.177000e-03), (lockTime 7.620000e-04), (total 2.533558e+01). At src/threaded-mpi.c:156
+[node   2] Statistics items:     230128, hits:     225592, misses:       4536,
+'   N':     223782, '   1':        667, '   2':         55, '   3':        162, '   4':        754,
+'   5':        126, '   6':         26, '   7':         20
+[node   1] Statistics items:     230129, hits:     225716, misses:       4413,
+'   N':     223915, '   1':        662, '   2':         61, '   3':        167, '   4':        738,
+'   5':        126, '   6':         27, '   7':         20
+[node   0] Statistics items:      12309, hits:      12309, misses:          0,
+'   N':      11083, '   1':        287, '   2':         44, '   3':        106, '   4':        625,
+'   5':        119, '   6':         25, '   7':         20
+[root    ] Statistics items:     702694, hits:     689218, misses:      13476,
+'   N':     682563, '   1':       2284, '   2':        213, '   3':        600, '   4':       2874,
+'   5':        500, '   6':        104, '   7':         80
+[./bin/tmpi 0/4 c1] 2.868651e+01 seconds. At src/threaded-mpi.c:465
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" mpirun -n 4 ./bin/tmpi 1
-	54.06 user	7.49 system	0:10.50 elapsed
-	586% CPU	(0 avgtext+0 avgdata	21472 maxresident)k
-	0 inputs+2376 outputs	(124 major+17730 minor)pagefaults	0 swaps
+	99.66 user	6.97 system	0:23.16 elapsed
+	460% CPU	(0 avgtext+0 avgdata	21244 maxresident)k
+	0 inputs+2320 outputs	(108 major+17625 minor)pagefaults	0 swaps
 "
 Evaluate
 	title = Output Only Unk and Novelty
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/tmi-supressed4-fast.csv
-	plotSavePath = experiments/tmi-supressed.log-fast.png
+	logPath = experiments/tmi-supressed.log-fast.png
 
 Count per class
            id
@@ -136,50 +141,52 @@ A      447179
 N      206278
 ### Output Only Unk and Novelty
 
-NaN labels: 600865
-saving experiments/tmi-supressed.log-fast.png
+saving experiments/tmi-supressed.log-fast.png.png
+NaN labels: 602200
 Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--               12062    3143        -       0
-0                 113      40        A     113
-1                 200       0        A     200
-2                   0      43        N      43
-3                1109      70        A    1109
-N              433695  202982        N  202982
+Classes       A       N assigned    hits
+Labels                                  
+-         10269    3207        -       0
+0           142      42        A     142
+1           888      95        A     888
+2             0      37        N      37
+3           175       1        A     175
+4           346      16        A     346
+5             0       5        N       5
+6             4       0        A       4
+N        435355  202875        N  202875
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19), ('3', 166440), ('2', 190483), ('1', 221931), ('0', 420636)] 6
+Labels (item)     [('N', 0), ('-', 19), ('1', 172917), ('2', 202723), ('4', 387946), ('3', 419934), ('0', 420636), ('5', 577522), ('6', 578593)] 9
 Total examples    (653457, 25)
-Total matches     (52592, 4)
-Hits               204447 ( 31.286986%)
-Misses             433805 ( 66.386159%)
-Unknowns            15205 (  2.326855%)
-Unk. reprocessed  -600865 (-3951.759290%)
+Total matches     (51257, 4)
+Hits               204472 ( 31.290812%)
+Misses             435509 ( 66.646926%)
+Unknowns            13476 (  2.062263%)
+Unk. reprocessed  -602200 (-4468.685070%)
 Total              653457 (100.000000%)
-
 ------ Full (all labels) ------
+[classifier 2]
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
-[classifier 3]
-[m_receiver 2]
 [sampler 0]
 Taking test stream from stdin, sampler at 0/4
-[detector 0]
-[m_receiver 3]
 [classifier 1]
 [m_receiver 1]
-[classifier 2]
+[m_receiver 2]
+[classifier 3]
+[detector 0]
+[m_receiver 3]
 model complete
-Novelties   1, Extensions  22, Unknowns   2000, consumed   1845, reclassified      0, garbageCollected      0
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1844, reclassified      0, garbageCollected      0
 realloc model 200
 realloc model 200
 realloc model 200
-Novelties   3, Extensions  14, Unknowns   2000, consumed   1772, reclassified      0, garbageCollected    122
-Novelties   0, Extensions   5, Unknowns   2000, consumed   1837, reclassified      0, garbageCollected     93
-Novelties   1, Extensions  19, Unknowns   2000, consumed   1798, reclassified      0, garbageCollected     43
-Novelties   0, Extensions   8, Unknowns   2000, consumed   1800, reclassified      0, garbageCollected    137
-Novelties   1, Extensions  24, Unknowns   2000, consumed   1810, reclassified      0, garbageCollected     24
-Novelties   3, Extensions  10, Unknowns   2000, consumed   1615, reclassified      0, garbageCollected    134
+Novelties   2, Extensions  17, Unknowns   2000, consumed   1799, reclassified      0, garbageCollected    110
+Novelties   0, Extensions   6, Unknowns   2000, consumed   1814, reclassified      0, garbageCollected     91
+Novelties   0, Extensions  15, Unknowns   2000, consumed   1788, reclassified      0, garbageCollected     67
+Novelties   2, Extensions   8, Unknowns   2000, consumed   1792, reclassified      0, garbageCollected     85
+Novelties   0, Extensions  20, Unknowns   2000, consumed   1718, reclassified      0, garbageCollected     75
+Novelties   2, Extensions  11, Unknowns   2000, consumed   1644, reclassified      0, garbageCollected    128
 realloc model 300
 realloc model 300
 realloc model 300
@@ -187,47 +194,47 @@ realloc model 300
 [sampler 0] MFOG_EOS_MARKER to 1
 [sampler 0] MFOG_EOS_MARKER to 2
 [sampler 0] MFOG_EOS_MARKER to 3
-[sampler   0] (items        0) (ioTime 1.749411e+01), (cpuTime 1.536554e+00), (lockTime 0.000000e+00), (total 2.019251e+01). At src/threaded-mpi.c:269
-[detector   0] MFOG_EOS_MARKER 1 / 3
-[classifier 2] sends 217819
-[classifier   2] (items   217819) (ioTime 7.016792e+00), (cpuTime 6.305474e+00), (lockTime 5.831680e-01), (total 1.439357e+01). At src/threaded-mpi.c:106
-[classifier 3] sends 217819
-[detector   0] MFOG_EOS_MARKER 2 / 3
-[classifier   3] (items   217819) (ioTime 6.694393e+00), (cpuTime 6.439547e+00), (lockTime 5.601840e-01), (total 1.419708e+01). At src/threaded-mpi.c:106
-[detector   0] MFOG_EOS_MARKER 3 / 3
+[sampler   0] (items        0) (ioTime 4.446445e+01), (cpuTime 1.751765e+00), (lockTime 0.000000e+00), (total 4.739993e+01). At src/threaded-mpi.c:269
 [classifier 1] sends 217820
+[classifier   1] (items   217820) (ioTime 3.946960e+01), (cpuTime 5.090126e+00), (lockTime 4.139940e-01), (total 4.528747e+01). At src/threaded-mpi.c:106
+[detector   0] MFOG_EOS_MARKER 1 / 3
+[classifier 3] sends 217819
+[classifier   3] (items   217819) (ioTime 3.960172e+01), (cpuTime 5.134838e+00), (lockTime 3.671510e-01), (total 4.543386e+01). At src/threaded-mpi.c:106
+[detector   0] MFOG_EOS_MARKER 2 / 3
+[classifier 2] sends 217819
+[detector   0] MFOG_EOS_MARKER 3 / 3
 [detector] itemsWhere: ,   0 =>        0,   1 =>   217820,   2 =>   217819,   3 =>   217819
-[classifier   1] (items   217820) (ioTime 6.767154e+00), (cpuTime 6.821471e+00), (lockTime 5.857870e-01), (total 1.468080e+01). At src/threaded-mpi.c:106
-[m_receiver   2] (items      211) (ioTime 1.364117e+01), (cpuTime 8.690000e-04), (lockTime 3.770000e-04), (total 1.458055e+01). At src/threaded-mpi.c:156
-[m_receiver   3] (items      211) (ioTime 1.323317e+01), (cpuTime 1.893100e-02), (lockTime 2.287000e-03), (total 1.422422e+01). At src/threaded-mpi.c:156
-[detector     0] (items   653461) (ioTime 1.451048e+01), (cpuTime 5.130020e+00), (lockTime 0.000000e+00), (total 2.076773e+01). At src/threaded-mpi.c:368
-[m_receiver   1] (items      211) (ioTime 1.362922e+01), (cpuTime 1.223000e-03), (lockTime 5.670000e-04), (total 1.468121e+01). At src/threaded-mpi.c:156
-[node   3] Statistics items:     230068, hits:     225410, misses:       4658,
-'   N':     221845, '   1':        354, '   2':        496, '   3':         95, '   4':       2460,
-'   5':         69, '   6':         30, '   7':         26, '   8':         35
-[node   1] Statistics items:     230069, hits:     225515, misses:       4554,
-'   N':     221855, '   1':        372, '   2':        476, '   3':        110, '   4':       2544,
-'   5':         67, '   6':         31, '   7':         27, '   8':         33
-[node   2] Statistics items:     230068, hits:     225294, misses:       4774,
-'   N':     221594, '   1':        369, '   2':        498, '   3':        103, '   4':       2568,
-'   5':         71, '   6':         30, '   7':         26, '   8':         35
-[node   0] Statistics items:      12249, hits:      12249, misses:          0,
-'   N':      10201, '   1':        240, '   2':        144, '   3':         80, '   4':       1430,
-'   5':         65, '   6':         30, '   7':         26, '   8':         33
-[root    ] Statistics items:     702454, hits:     688468, misses:      13986,
-'   N':     675495, '   1':       1335, '   2':       1614, '   3':        388, '   4':       9002,
-'   5':        272, '   6':        121, '   7':        105, '   8':        136
-[./bin/tmpi 0/4 c1] 2.078943e+01 seconds. At src/threaded-mpi.c:465
+[classifier   2] (items   217819) (ioTime 3.955963e+01), (cpuTime 5.103831e+00), (lockTime 3.927050e-01), (total 4.540192e+01). At src/threaded-mpi.c:106
+[m_receiver   1] (items      206) (ioTime 4.208236e+01), (cpuTime 1.165000e-03), (lockTime 1.177000e-03), (total 4.529270e+01). At src/threaded-mpi.c:156
+[m_receiver   3] (items      206) (ioTime 4.229194e+01), (cpuTime 8.815000e-03), (lockTime 2.598000e-03), (total 4.543117e+01). At src/threaded-mpi.c:156
+[detector     0] (items   653461) (ioTime 4.109457e+01), (cpuTime 5.235908e+00), (lockTime 0.000000e+00), (total 4.739605e+01). At src/threaded-mpi.c:368
+[node   0] Statistics items:      12124, hits:      12124, misses:          0,
+'   N':      10930, '   1':        305, '   2':         75, '   3':        540, '   4':         26,
+'   5':        216, '   6':         32
+[m_receiver   2] (items      206) (ioTime 4.218478e+01), (cpuTime 8.780000e-04), (lockTime 1.113000e-03), (total 4.539693e+01). At src/threaded-mpi.c:156
+[node   1] Statistics items:     229944, hits:     225421, misses:       4523,
+'   N':     223663, '   1':        694, '   2':         99, '   3':        668, '   4':         41,
+'   5':        224, '   6':         32
+[node   3] Statistics items:     229943, hits:     225161, misses:       4782,
+'   N':     223361, '   1':        703, '   2':         89, '   3':        699, '   4':         44,
+'   5':        231, '   6':         34
+[node   2] Statistics items:     229943, hits:     225194, misses:       4749,
+'   N':     223400, '   1':        710, '   2':         95, '   3':        691, '   4':         41,
+'   5':        223, '   6':         34
+[root    ] Statistics items:     701954, hits:     687900, misses:      14054,
+'   N':     681354, '   1':       2412, '   2':        358, '   3':       2598, '   4':        152,
+'   5':        894, '   6':        132
+[./bin/tmpi 0/4 c1] 4.743039e+01 seconds. At src/threaded-mpi.c:465
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" mpirun -n 4 ./bin/tmpi 2
-	56.17 user	13.83 system	0:11.46 elapsed
-	610% CPU	(0 avgtext+0 avgdata	31708 maxresident)k
-	0 inputs+38792 outputs	(120 major+24748 minor)pagefaults	0 swaps
+	176.13 user	16.29 system	0:47.55 elapsed
+	404% CPU	(0 avgtext+0 avgdata	21144 maxresident)k
+	0 inputs+38824 outputs	(122 major+18450 minor)pagefaults	0 swaps
 "
 Evaluate
 	title = Full Output
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/tmi-supressed4-matches.csv
-	plotSavePath = experiments/tmi-supressed.log.png
+	logPath = experiments/tmi-supressed.log
 
 Count per class
            id
@@ -236,30 +243,48 @@ A      447179
 N      206278
 ### Full Output
 
-NaN labels: 0
 saving experiments/tmi-supressed.log.png
+NaN labels: 0
 Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--               11009    2977        -       0
-0                 128      40        A     128
-1                 221       1        A     221
-2                 938     100        A     938
-3                   0      68        N      68
-4                3207      60        A    3207
-5                   0      12        N      12
-6                   0       1        N       1
-7                   0       1        N       1
-8                   4       0        A       4
-N              431672  203018        N  203018
+Classes       A       N assigned    hits
+Labels                                  
+-         11097    2957        -       0
+0           152      43        A     152
+1           939     100        A     939
+2             0      58        N      58
+3           410      16        A     410
+4             0      48        N      48
+6             4       0        A       4
+N        434577  203056        N  203056
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
-Labels (item)     [('N', 0), ('-', 19), ('2', 163228), ('3', 167099), ('1', 217774), ('4', 287165), ('0', 324906), ('5', 511666), ('7', 629154), ('8', 646939), ('6', 652836)] 11
+Labels (item)     [('N', 0), ('-', 19), ('1', 165784), ('2', 167099), ('3', 368467), ('4', 382929), ('0', 420636), ('6', 646939)] 8
 Total examples    (653457, 25)
 Total matches     (653458, 4)
-Hits               207598 ( 31.769142%)
-Misses             431873 ( 66.090399%)
-Unknowns            13986 (  2.140306%)
-Unk. reprocessed        1 (  0.007150%)
+Hits               204667 ( 31.320605%)
+Misses             434736 ( 66.528530%)
+Unknowns            14054 (  2.150712%)
+Unk. reprocessed        1 (  0.007115%)
 Total              653457 ( 99.999847%)
+\begin{tabular}{l|r}
+
+Metric   &       Value \\\hline
+Metric   &             \\\hline
+\hline
+Hits     &    0.313206 \\\hline
+Misses   &    0.665285 \\\hline
+Unknowns &    0.021507 \\\hline
+Time     &  176.130000 \\\hline
+System   &   16.290000 \\\hline
+Elapsed  &   47.550000 
+\end{tabular}
+
+               Value
+Metric              
+Hits        0.313206
+Misses      0.665285
+Unknowns    0.021507
+Time      176.130000
+System     16.290000
+Elapsed    47.550000
 

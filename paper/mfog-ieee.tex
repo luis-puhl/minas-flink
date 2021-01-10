@@ -430,10 +430,45 @@ Therefore each experiment result consists of a time mesure (using GNU Time 1.9),
 qualitative overview mesure with the confusion matrix and
 qualitative stream measure with Stream hits and novelties visualization chart.
 
-\input{experiments/online-nd.tex}
+\begin{table}
+  % \begin{center}
+    \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
+    \input{../experiments/revised-java.log.tex}
+    \label{fig:java-matrix}
+  % \end{center}
+\end{table}
+\begin{figure}[htbp]
+  \centerline{\includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}}
+  \caption{Reference implementation: Stream hits and novelties visualization}
+  \label{fig:java-hits}
+\end{figure}
 
-\input{experiments/ref-CM.tex}
-\input{experiments/ref-eval-CM.tex}
+\begin{table}
+  % \begin{center}
+    \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
+    \input{../experiments/online-nd.log.tex}
+    \label{fig:serial-matrix}
+  % \end{center}
+\end{table}
+\begin{figure}[htbp]
+  \centerline{\includegraphics[width=0.45\textwidth]{../experiments/online-nd.log.png}}
+  \caption{Serial implementation: Stream hits and novelties visualization}
+  \label{fig:serial-hits}
+\end{figure}
+
+\begin{table}
+  % \begin{center}
+    \caption{Parallel implementation: Confusion Matrix and Qualitative Metrics}
+    \input{../experiments/tmi-base.log.tex}
+    \label{fig:tmi-matrix}
+  % \end{center}
+\end{table}
+\begin{figure}[htbp]
+  \centerline{\includegraphics[width=0.45\textwidth]{../experiments/tmi-base.log.png}}
+  \caption{Parallel implementation: Stream hits and novelties visualization}
+  \label{fig:tmi-hits}
+\end{figure}
+
 
 % ----------------------------------------------------------------------------------------------------------------------
 \section{Conclusion}\label{sec:conclusion}

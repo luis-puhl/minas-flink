@@ -3,6 +3,7 @@
 
 import sys
 import os.path
+import re
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -63,18 +64,16 @@ def getMatchesDf(path):
         })
     return False
 
-def printEval(exDf, maDf, plotSavePath=None, title=None):
-    # df = merge(exDf, maDf)
-    # cf, classes, labels, off, ass = confusionMatrix(df)
+def confusionMatrix(exDf, maDf):
     assert pd.Series(['id', 'class']).isin(exDf.columns).all()
     assert pd.Series(['id', 'label']).isin(maDf.columns).all()
     #
     merged = pd.merge(exDf[['id', 'class']], maDf[['id', 'label']], on='id', how='left')
-    print('NaN labels:', merged['label'].isna().sum())
+    nanLabels = merged['label'].isna().sum()
     merged['label'] = merged['label'].fillna('N')
     # assert merged.columns.all(['id', 'class', 'label'])
     cf = pd.crosstab(merged['class'], merged['label'],
-                     rownames=['Classes (act)'], colnames=['Labels (pred)']).transpose()
+                     rownames=['Classes'], colnames=['Labels']).transpose()
     classes = cf.columns.values
     labels = cf.index.to_list()
     off = ['-'] + [c for c in classes if c in labels]
@@ -88,9 +87,53 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
             ogLabelsMap[cleanLabel(og)] += [og]
         cf['og_labels'] = [ogLabelsMap[l] for l in cf.index ]
     #
-    # return (cf, classes, labels, off, assignment)
+    return (cf, merged, classes, labels, off, assignment, ogLabelsMap, nanLabels)
+
+def fixTex(tex):
+    rep = {'\\midrule': '\\hline', '\\toprule': '', '\\\\\n\\bottomrule': '', '\\\\': '\\\\\hline', 'Assigned': '\hline\nAssigned'}
+    for a in rep:
+        tex = tex.replace(a, rep[a])
+    r = re.compile(r'\{l([lr]+)\}')
+    ma = r.search(tex)
+    if ma:
+        tex = tex.replace(ma.group(0), '{l' + ma.group(1).replace('r', 'l').replace('l', '|r') + '}')
+    return tex
+
+def getConfusionMatrixTex(exDf, maDf, off):
+    merged = pd.merge(exDf[['id', 'class']], maDf[['id', 'label']], on='id', how='left')
+    cf = pd.crosstab(merged['class'], merged['label'], rownames=['Classes'], colnames=['Labels'])
+    cf = cf[cf.columns.sort_values(key=lambda idx: idx.map(lambda x: int(x) if x.isnumeric() else -1))]
+    cf = cf.transpose()
+    cf['Assigned'] = [l if l in off else c for l, c in zip(cf.index.to_list(), cf.idxmax(axis='columns'))]
+    cf['Hits'] = [0 if l == '-' else cf.at[i, l] for i, l in cf['Assigned'].iteritems()]
+    cf = cf.transpose()
     # 
-    df, labelSet = plotHitMissUnkRate(merged, assignment, off, plotSavePath, title)
+    return fixTex(cf.to_latex())
+
+def getTimeFromLog(logPath):
+    user = -1
+    system = -1
+    elapsed = -1
+    try:
+        with open(logPath, 'r') as f:
+            content = f.readlines()
+            for line in content:
+                if 'user	' in line:
+                    r = re.compile(r'(\d+\.\d+) user	(\d+\.\d+) system	(\d+):(\d+\.\d+) elapsed')
+                    m = r.search(line)
+                    user = float(m.group(1))
+                    system = float(m.group(2))
+                    elapsed = float(m.group(3)) * 60 + float(m.group(4))
+    except IOError:
+        print("Timing not available")
+    return { 'user': user, 'system': system, 'elapsed': elapsed }
+
+def printEval(exDf, maDf, logPath=None, title=None):
+    # df = merge(exDf, maDf)
+    cf, merged, classes, labels, off, assignment, ogLabelsMap, nanLabels = confusionMatrix(exDf, maDf)
+    # 
+    df, labelSet = plotHitMissUnkRate(merged, assignment, off, logPath + '.png', title)
+    print('NaN labels:', nanLabels)
     print("Confusion Matrix")
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
         print(cf)
@@ -100,7 +143,7 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
     tot = max(totalMatches, totalExamples)
     hits = df['hit'].sum()
     misses = df['miss'].sum()
-    unks = df['unk'].sum()
+    unknowns = df['unk'].sum()
     repro = totalMatches - totalExamples
 
     print('Classes          ', classes)
@@ -111,25 +154,38 @@ def printEval(exDf, maDf, plotSavePath=None, title=None):
     print('Total matches    ', maDf.shape)
     print('Hits             %8d (%10f%%)' % (hits, (hits/tot) * 100.0))
     print('Misses           %8d (%10f%%)' % (misses, (misses/tot) * 100.0))
-    print('Unknowns         %8d (%10f%%)' % (unks, (unks/tot) * 100.0))
-    print('Unk. reprocessed %8d (%10f%%)' % (repro, (repro/unks) * 100.0))
-    print('Total            %8d (%10f%%)' % (hits + misses + unks, ((hits + misses + unks)/tot) * 100.0))
+    print('Unknowns         %8d (%10f%%)' % (unknowns, (unknowns/tot) * 100.0))
+    print('Unk. reprocessed %8d (%10f%%)' % (repro, (repro/unknowns) * 100.0))
+    print('Total            %8d (%10f%%)' % (hits + misses + unknowns, ((hits + misses + unknowns)/tot) * 100.0))
+    #
+    tm = getTimeFromLog(logPath)
+    resume = pd.DataFrame({
+        'Metric': ['Hits', 'Misses', 'Unknowns', 'Time', 'System', 'Elapsed' ],
+        'Value': [hits/tot, misses/tot, unknowns/tot, tm['user'], tm['system'], tm['elapsed'] ],
+    }).set_index('Metric')
+    resumeTex = fixTex(resume.to_latex()).replace('{}', 'Metric  ').replace('Metric   &             \\\\\hline\n', '')
+    print(resumeTex)
+    print(resume)
+    with open(logPath + '.tex', 'w') as f:
+        f.write(getConfusionMatrixTex(exDf, maDf, off))
+        f.write(resumeTex)
+    #
     return df, cf, classes, labels, off, assignment, ogLabelsMap
 
 def main(
     title='Reference',
     examplesFileName='datasets/test.csv',
     matchesFileName='out/og/kmeans-nd/results',
-    plotSavePath='out/hits.png',
+    logPath='experiments/online-nd.log',
 ):
-    if len(plotSavePath) == 0:
-        plotSavePath = None
+    if len(logPath) == 0:
+        logPath='experiments/online-nd.log'
     print(
         'Evaluate\n' +
         '\ttitle = %s\n' % title +
         '\texamplesFileName = %s\n' % examplesFileName +
         '\tmatchesFileName = %s\n' % matchesFileName +
-        '\tplotSavePath = %s\n' % plotSavePath
+        '\tlogPath = %s\n' % logPath
     )
     examplesDf = getExamplesDf(examplesFileName)
     countPerClass = examplesDf.groupby('class').count()[['id']]
@@ -139,14 +195,14 @@ def main(
     matchesDf = getMatchesDf(matchesFileName)
     
     print("### "+title+"\n")
-    return examplesDf, matchesDf, printEval(examplesDf, matchesDf, plotSavePath, title)
+    return examplesDf, matchesDf, printEval(examplesDf, matchesDf, logPath, title)
 
 if __name__ == "__main__":
     params = [
         'title',
         'examplesFileName',
         'matchesFileName',
-        'plotSavePath',
+        'logPath',
     ]
     r = main(**dict(zip(params, sys.argv[1:])))
     print('')

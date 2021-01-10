@@ -149,9 +149,9 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
 ## Reunião 2021-01-06
 
 - [ ] Resultados:
-  - [ ] Completar com tempo dentro da matriz resultado;
-  - [ ] Transpor a matriz de confusão;
-- [ ] Interpretar e Distutir resultados (serial vs paralelo, og vs serial etc).
+  - [x] Completar com tempo dentro da matriz resultado;
+  - [x] Transpor a matriz de confusão;
+- [ ] Interpretar e Discutir resultados (serial vs paralelo, og vs serial etc).
 - [ ] Descrever na proposta a metodoligia de avaliação, detalhar o scrpit evaluate.py
 - [ ] Experimentos:
   - [ ] O que quer testar com os experimentos.

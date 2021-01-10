@@ -1,0 +1,51 @@
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 4
+[classifier 1]
+[sampler 0]
+[detector 0]
+Taking test stream from stdin, sampler at 0/2
+[m_receiver 1]
+[classifier 1]
+[classifier 1]
+model complete
+[classifier 1]
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1844, reclassified      0, garbageCollected      0
+realloc model 200
+Novelties   3, Extensions  15, Unknowns   2000, consumed   1781, reclassified      0, garbageCollected    121
+Novelties   0, Extensions   9, Unknowns   2000, consumed   1853, reclassified      0, garbageCollected     75
+Novelties   0, Extensions  18, Unknowns   2000, consumed   1794, reclassified      0, garbageCollected     43
+Novelties   1, Extensions  10, Unknowns   2000, consumed   1800, reclassified      0, garbageCollected    127
+Novelties   0, Extensions  15, Unknowns   2000, consumed   1723, reclassified      0, garbageCollected     60
+[sampler] itemsWhere: ,   0 =>        0,   1 =>   653458
+[sampler 0] MFOG_EOS_MARKER to 1
+[sampler 0] MFOG_EOS_MARKER to 1
+[sampler 0] MFOG_EOS_MARKER to 1
+[sampler 0] MFOG_EOS_MARKER to 1
+[sampler   0] (items        0) (ioTime 2.134827e+01), (cpuTime 1.548687e+00), (lockTime 0.000000e+00), (total 2.392021e+01). At src/threaded-mpi.c:269
+Novelties   2, Extensions  25, Unknowns   2000, consumed   1751, reclassified      0, garbageCollected     66
+realloc model 300
+[detector   0] MFOG_EOS_MARKER 1 / 4
+[detector   0] MFOG_EOS_MARKER 2 / 4
+[detector   0] MFOG_EOS_MARKER 3 / 4
+[detector   0] MFOG_EOS_MARKER 4 / 4
+[detector] itemsWhere: ,   0 =>        0,   1 =>   653458
+[detector     0] (items   653462) (ioTime 1.952761e+01), (cpuTime 4.921188e+00), (lockTime 0.000000e+00), (total 2.550096e+01). At src/threaded-mpi.c:368
+[node   0] Statistics items:      12314, hits:      12314, misses:          0,
+'   N':      10915, '   1':        305, '   2':         86, '   3':        106, '   4':        726,
+'   5':        130, '   6':         46
+[root    ] Statistics items:     677836, hits:     663124, misses:      14712,
+'   N':     658627, '   1':       1802, '   2':        217, '   3':        421, '   4':       1690,
+'   5':        273, '   6':         94
+[./bin/tmpi 0/2 c4] 2.551762e+01 seconds. At src/threaded-mpi.c:465
+[classifier 1] sends 160092
+[classifier 1] sends 167715
+[classifier   1] (items   167715) (ioTime 1.866316e+01), (cpuTime 6.561019e+00), (lockTime 4.567980e-01), (total 2.614172e+01). At src/threaded-mpi.c:106
+[classifier 1] sends 164529
+[classifier   1] (items   164529) (ioTime 1.870199e+01), (cpuTime 6.681375e+00), (lockTime 3.584150e-01), (total 2.614216e+01). At src/threaded-mpi.c:106
+[classifier 1] sends 161122
+[classifier   1] (items   161122) (ioTime 1.845708e+01), (cpuTime 6.800424e+00), (lockTime 3.697530e-01), (total 2.613539e+01). At src/threaded-mpi.c:106
+[m_receiver   1] (items      221) (ioTime 2.381703e+01), (cpuTime 1.988300e-02), (lockTime 1.906480e-01), (total 2.614225e+01). At src/threaded-mpi.c:156
+[classifier   1] (items   160092) (ioTime 1.869769e+01), (cpuTime 6.500365e+00), (lockTime 5.289880e-01), (total 2.614168e+01). At src/threaded-mpi.c:106
+[node   1] Statistics items:     665522, hits:     650810, misses:      14712,
+'   N':     647712, '   1':       1497, '   2':        131, '   3':        315, '   4':        964,
+'   5':        143, '   6':         48
+[mpirun -n 2 ./bin/tmpi 2 4 0]	 0:18.82 	 10.97 	 44.61 	 295%; 	 93412 	 51 	 31375 	 133449 	 182730 	 0; 	 0 	 8 	 0 	 0 	 0;

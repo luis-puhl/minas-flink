@@ -13,19 +13,19 @@ Novelties   0, Extensions  12, Unknowns   2000, consumed   1799, reclassified   
 [classifier] Statistics: items:     671189, hits:     651001, misses:      20188,
 '   N':     648191, '   1':        575, '   2':       1164, '   3':         60, '   4':        316,
 '   5':        614, '   6':         46, '   7':         35
-[./bin/ond] (ioTime 8.262964e+00), (cpuTime 6.608505e+00), (lockTime 0.000000e+00), (total 1.531572e+01), (rest -1.487145e+07). At src/online-nd.c:154
+[./bin/ond] (ioTime 6.714817e+00), (cpuTime 5.618794e+00), (lockTime 0.000000e+00), (total 1.269949e+01), (remains -1.233360e+07). At src/online-nd.c:154
 
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/ond
-	10.98 user	4.32 system	0:15.42 elapsed
-	99% CPU	(0 avgtext+0 avgdata	3336 maxresident)k
-	0 inputs+42888 outputs	(0 major+502 minor)pagefaults	0 swaps
+	9.29 user	3.40 system	0:12.73 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3260 maxresident)k
+	0 inputs+42888 outputs	(0 major+501 minor)pagefaults	0 swaps
 "
 Repeats 0
 Evaluate
 	title = Serial Online-ND
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/ond-1matches.csv
-	plotSavePath = experiments/online-nd.log.png
+	logPath = experiments/online-nd.log
 
 Count per class
            id
@@ -34,20 +34,20 @@ A      447179
 N      206278
 ### Serial Online-ND
 
-NaN labels: 0
 saving experiments/online-nd.log.png
+NaN labels: 0
 Confusion Matrix
-Classes (act)       A       N assigned    hits
-Labels (pred)                                 
--               15396    4792        -       0
-0                 185      40        A     185
-1                 198       0        A     198
-2                 868      98        A     868
-3                   0      31        N      31
-4                   2       0        A       2
-5                  12       0        A      12
-6                   0       5        N       5
-N              430518  201312        N  201312
+Classes       A       N assigned    hits
+Labels                                  
+-         15396    4792        -       0
+0           185      40        A     185
+1           198       0        A     198
+2           868      98        A     868
+3             0      31        N      31
+4             2       0        A       2
+5            12       0        A      12
+6             0       5        N       5
+N        430518  201312        N  201312
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels (item)     [('N', 0), ('-', 19), ('2', 163228), ('3', 167099), ('1', 217774), ('0', 324906), ('5', 501312), ('4', 508715), ('6', 511666)] 9
@@ -58,4 +58,24 @@ Misses             430656 ( 65.904159%)
 Unknowns            20188 (  3.089410%)
 Unk. reprocessed        1 (  0.004953%)
 Total              653457 ( 99.999847%)
+\begin{tabular}{l|r}
+
+Metric   &      Value \\\hline
+\hline
+Hits     &   0.310063 \\\hline
+Misses   &   0.659042 \\\hline
+Unknowns &   0.030894 \\\hline
+Time     &   9.290000 \\\hline
+System   &   3.400000 \\\hline
+Elapsed  &  12.730000 
+\end{tabular}
+
+              Value
+Metric             
+Hits       0.310063
+Misses     0.659042
+Unknowns   0.030894
+Time       9.290000
+System     3.400000
+Elapsed   12.730000
 

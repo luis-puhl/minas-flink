@@ -15,13 +15,6 @@ bin/ond: src/base.c src/online-nd.c
 bin/tmpi: src/base.c src/threaded-mpi.c
 	mpicc -g -Wall -lm $^ -o $@
 
-# bin/fk: src/base.c src/partials/classifier.c
-# 	gcc -g -Wall -lm $^ -o $@
-# bin/dt: src/base.c src/partials/detection.c
-# 	gcc -g -Wall -lm $^ -o $@
-# bin/zip: src/partials/zip.c
-# 	gcc -g -Wall $^ -o $@
-
 .PHONY: bin
 bin: bin/offline bin/ond bin/tmpi bin/fk bin/dt bin/zip
 
@@ -41,14 +34,14 @@ experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond
 		| tee -a out/ond-1matches-repeats.csv | wc -l | tee -a $@
 	-grep -E '^Cluster:' out/ond-0full.csv > out/ond-2model.csv
 	-grep -E '^Unknown:' out/ond-0full.csv > out/ond-3unk.csv
-	-python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv $@.png >> $@
+	-python3 src/evaluation/evaluate.py "Serial Online-ND" datasets/test.csv out/ond-1matches.csv $@ >> $@
 experiments/tmi-base.log: datasets/test.csv out/offline-model.csv bin/tmpi src/evaluation/evaluate.py
 	-@mkdir -p experiments
 	printf "$$tmftx\n\n" > $@
 	cat out/offline-model.csv datasets/test.csv \
-		| /usr/bin/time --format="$$tmfmt" mpirun -n 4 ./bin/tmpi 2 2 2>> $@ > out/tmi-full.csv
+		| $(TIME) /usr/bin/time --format="$$tmfmt" mpirun -n 4 ./bin/tmpi 2 2 2>> $@ > out/tmi-full.csv
 	grep -E -v '^(Unknown|Cluster):' out/tmi-full.csv > out/tmi-matches.csv
-	python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv $@.png >> $@
+	python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv $@ >> $@
 	printf "$$tmftx\n" > $(subst .log,,$@)-simple.log
 	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> $(subst .log,,$@)-simple.log
 
@@ -69,14 +62,14 @@ experiments/tmi-MT-classifers/tmi-n.log: datasets/test.csv out/offline-model.csv
 		for c in {1..4}; do \
 			echo "-------- cluster with n $$n and c $$c --------" | tee -a $@ ; \
 			cat out/offline-model.csv datasets/test.csv \
-				| /usr/bin/time --format="$$tmfmt" mpirun -n $$n ./bin/tmpi 2 $$c 2>> $@ \
+				| /usr/bin/time --format="$$tmfmt" mpirun -n $$n ./bin/tmpi 2 $$c 2>> experiments/tmi-MT-classifers/tmi-n$$n-c$$c.log \
 				| tee out/tmi-n$$n-c$$c-full.csv \
 				| grep -E -v '^(Unknown|Cluster):' \
 				> out/tmi-n$$n-c$$c-matches.csv ; \
 			tail $@ | grep "\[./bin/tmpi " ; \
 			printf "$$tmftx\n\n" >> $@ ; \
 			python3 src/evaluation/evaluate.py "Cluster tmi n$$n c$$c" \
-				datasets/test.csv out/tmi-n$$n-c$$c-matches.csv experiments/tmi-MT-classifers/tmi-n$$n-c$$c.png \
+				datasets/test.csv out/tmi-n$$n-c$$c-matches.csv experiments/tmi-MT-classifers/tmi-n$$n-c$$c.log \
 				| tee -a $@ | grep "./bin/tmpi " ; \
 		done ; \
 	done
@@ -86,7 +79,7 @@ experiments/rpi/almoco/tmi-n2.log:
 	nc -lp 3131 | grep -E -v '^(Unknown|Cluster):' | pv > out/rpi-almoco/tmi-n2.csv &
 	$(SSH) almoco "cd ./mfog && cat ./out/offline-model.csv ./datasets/test.csv | $(TIME) mpirun -n 2 ./bin/tmpi | nc -q 0 localhost 3131" 2> $@
 	echo "" >> $@
-	-python3 src/evaluation/evaluate.py "Cluster tmi n2" datasets/test.csv out/rpi-almoco/tmi-n2.csv $@.png >> $@
+	-python3 src/evaluation/evaluate.py "Cluster tmi n2" datasets/test.csv out/rpi-almoco/tmi-n2.csv $@ >> $@
 #
 experiments/big-cluster.log: datasets/test.csv bin/tmpi
 	scp almoco:~/mfog/bin/tmpi jantar:~/mfog/bin/
@@ -98,7 +91,7 @@ experiments/big-cluster.log: datasets/test.csv bin/tmpi
 		cat out/offline-model.csv datasets/test.csv \
 			| $(TIME) mpirun -n $$i -hostfile ./conf/hostsfile ./bin/tmpi > $(out)-full.csv 2>> $@ ; \
 		grep -E -v '^(Unknown|Cluster):' $(out)-full.csv > $(out).csv ; \
-		python3 src/evaluation/evaluate.py "Cluster tmi n$$i" datasets/test.csv $(out).csv $@.png >> $@ || true; \
+		python3 src/evaluation/evaluate.py "Cluster tmi n$$i" datasets/test.csv $(out).csv $@ >> $@ || true; \
 	done
 	grep -E '(seconds.)|(system   )|(Hits  )|(Unknowns      )' $@ > $(subst .log,,$@)-simple.log
 pi_recoop:
@@ -116,7 +109,7 @@ experiments/tmi-supressed.log: out/offline-model.csv datasets/test.csv bin/tmpi
 	echo '------ Full (all labels) ------' >> $@
 	cat out/offline-model.csv datasets/test.csv | $(TIME) mpirun -n 4 ./bin/tmpi 2 > $(out)4.csv 2>> $@
 	-grep -E -v '^(Unknown|Cluster):' $(out)4.csv > $(out)4-matches.csv
-	-python3 src/evaluation/evaluate.py 'Full Output' datasets/test.csv $(out)4-matches.csv $@.png >> $@
+	-python3 src/evaluation/evaluate.py 'Full Output' datasets/test.csv $(out)4-matches.csv $@ >> $@
 #
 
 # out/fk-base.csv: makefile bin/fk bin/dt bin/zip out/offline-model.csv datasets/test.csv
@@ -189,18 +182,11 @@ experiments/rpi/reboot.log: code@almoco
 
 # -------------------------- Experiments ---------------------------------------
 # --------- Experiments: Java reference ---------
-experiments/reference-java.log: bin/minas/src-minas.jar datasets/training.csv datasets/test.csv
-	$(TIME) java -classpath 'bin/minas/src-minas.jar:' br.ufu.noveltydetection.minas.Minas \
-		datasets/training.csv datasets/test.csv out/minas-og/ \
-		kmeans kmeans \
-		2.0 1 10000 100 true | tee -a $@
-experiments/reference-java.log.png: experiments/reference-java.log out/minas-og/2020-08-25T12-18-16.272/results
-	python3 src/evaluation/evaluate.py Reference-Java datasets/test.csv out/minas-og/2020-08-25T12-18-16.272/results $@ >> experiments/reference-java.log
-experiments/reference-java-nf.log: bin/minas/src-minas-mfogFormat.jar datasets/training.csv datasets/test.csv
-	$(TIME) java -ea -classpath 'bin/minas/src-minas-mfogFormat.jar:' br.ufu.noveltydetection.minas.MinasOg \
-		datasets/training.csv datasets/test.csv out/minas-nf/ \
-		kmeans kmeans \
-		2.0 lit 10000 100 false false > $@
-experiments/reference-java-nf.log.png: experiments/reference-java-nf.log out/minas-nf/2020-10-05T15-55-37.147/results
-	python3 src/evaluation/evaluate.py Reference-Java datasets/test.csv out/minas-nf/2020-10-05T15-55-37.147/results $@ >> experiments/reference-java-nf.log
+
+experiments/revised-java.log: bin/minas/revised.jar datasets/training.csv datasets/test.csv
+	sha1sum bin/minas/revised.jar > $@
+	$(TIME) java -ea -classpath 'bin/minas/revised.jar:' NoveltyDetection.MinasRevised \
+		datasets/training.csv datasets/test.csv out/revised-java.log true 2>&1 | tee -a $@
+	python3 src/evaluation/evaluate.py "Minas Ref. mk1.1" datasets/test.csv out/revised-java.log $@ >> $@
+	cp out/revised-java.log-{Literature,Proposed}-chart.png experiments
 #

@@ -1,0 +1,38 @@
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 2
+[classifier 3]
+[sampler 0]
+Taking test stream from stdin, sampler at 0/4
+[detector 0]
+[classifier 3]
+[classifier 1]
+[classifier 2]
+[m_receiver 2]
+[m_receiver 3]
+[classifier 2]
+[classifier 1]
+model complete
+[m_receiver 1]
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1844, reclassified      0, garbageCollected      0
+realloc model 200
+realloc model 200
+realloc model 200
+Novelties   3, Extensions  14, Unknowns   2000, consumed   1772, reclassified      0, garbageCollected    123
+Novelties   0, Extensions   4, Unknowns   2000, consumed   1786, reclassified      0, garbageCollected    111
+Novelties   0, Extensions  17, Unknowns   2000, consumed   1815, reclassified      0, garbageCollected     64
+Novelties   1, Extensions  11, Unknowns   2000, consumed   1799, reclassified      0, garbageCollected     88
+Novelties   1, Extensions  20, Unknowns   2000, consumed   1733, reclassified      0, garbageCollected     57
+Novelties   0, Extensions   5, Unknowns   2000, consumed   1620, reclassified      0, garbageCollected    211
+[pokebola:107468] *** Process received signal ***
+[pokebola:107468] Signal: Segmentation fault (11)
+[pokebola:107468] Signal code: Address not mapped (1)
+[pokebola:107468] Failing at address: 0x88
+[pokebola:107468] [ 0] /usr/lib/libpthread.so.0(+0x140f0)[0x7f684d5470f0]
+[pokebola:107468] [ 1] /usr/local/lib/openmpi/mca_iof_hnp.so(orte_iof_hnp_read_local_handler+0x356)[0x7f68496673e6]
+[pokebola:107468] [ 2] /usr/lib/libevent_core-2.1.so.7(+0x20246)[0x7f684d57a246]
+[pokebola:107468] [ 3] /usr/lib/libevent_core-2.1.so.7(event_base_loop+0x37f)[0x7f684d57aa2f]
+[pokebola:107468] [ 4] mpirun(+0x1352)[0x56473e46c352]
+[pokebola:107468] [ 5] /usr/lib/libc.so.6(__libc_start_main+0xf2)[0x7f684d392152]
+[pokebola:107468] [ 6] mpirun(+0x112e)[0x56473e46c12e]
+[pokebola:107468] *** End of error message ***
+Command terminated by signal 11
+[mpirun -n 4 ./bin/tmpi 2 2 0]	 0:17.70 	 2.69 	 0.89 	 20%; 	 21452 	 8 	 3951 	 71427 	 126850 	 0; 	 16 	 8 	 0 	 0 	 0;
