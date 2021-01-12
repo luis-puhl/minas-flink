@@ -16,7 +16,7 @@
 | 12  | Dst_host_serror_rate              | 0.00 |
 | 13  | Dst_host_srv_serror_rate          | 0.00 |
 | 14  | Flag                              | RSTOS0 |
-| 15  | IDS_detection                     | 4060-1-8(1),1448-1-19(1),2418-1-10(1 |
+| 15  | IDS_detection                     | 4060-1-8(1),1448-1-19(1),2418-1-10(1) |
 | 16  | Malware_detection                 | 0 |
 | 17  | Ashula_detection                  | 0 |
 | 18  | Label                             | -1 |
