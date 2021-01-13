@@ -43,9 +43,16 @@ cat datasets/Kyoto2016/2015/12/* \
     | sort | uniq -c | sort -bgr \
     > datasets/Kyoto2016/IDS_detection.count
 # sort, count each code, sort by count
+
+cat datasets/Kyoto2016/2015/12/* | awk -F '\t' '{print $18 }' | sort | uniq -c | sort -bgr > datasets/Kyoto2016/18_Label.count
 ```
 
-| count   | label     | count | label      | count | label     |
+| count   | 18_Label |
+| 7571065 | -1  |
+|  294007 | 1   |
+|     173 | -2  |
+
+| count   | IDS_detection| count | IDS_detection | count | IDS_detection|
 | -----   | -----     | ----- | -----      | ----- | -----     |
 | 7338541 | 0         |  6083 | 382-1-11   |  1008 | 4-138-1   |
 |  182761 | 19187-3-7 |  4764 | 4060-1-8   |   548 | 17110-1-4 |
@@ -61,7 +68,7 @@ cat datasets/Kyoto2016/2015/12/* \
 |   10689 | 1448-1-19 |  1230 | 1418-1-18  |   282 | 368-1-10  |
 |   10635 | 2418-1-10 |  1128 | 23039-3-3  |   279 | 373-1-10  |
 
-| count | label      | count | label      | count | label      |
+| count | IDS_detection | count | IDS_detection | count | IDS_detection |
 | ----- | -----      | ----- | -----      | ----- | -----      |
 |   276 | 17110-1-3  |  20   | 257-1-17   |     2 | 9419-1-9   |
 |   263 | 22113-1-5  |  20   | 16350-1-5  |     2 | 255-1-23   |
@@ -85,6 +92,10 @@ cat datasets/Kyoto2016/2015/12/* \
 |    23 | 17317-1-11 |  3    | 2-133-2    |       |            |
 |    22 | 15912-3-8  |  3    | 1444-1-9   |       |            |
 
+Filtering IDS alarm keys with more than 10k examples.
+Summation on the above table gives $522 519$ but with repeats removed
+there are $505 018$ examples.
+
 ```sh
 # cat datasets/Kyoto2016/IDS_detection | while IFS= read -r line; do cat datasets/Kyoto2016/2015/12/* | grep "$line" > datasets/Kyoto2016/IDS_$line ; done
 
@@ -92,7 +103,7 @@ cat datasets/Kyoto2016/header.tsv | awk -F '\t' '{print $16 }' > datasets/Kyoto2
 cat datasets/Kyoto2016/full.tsv | awk -F '\t' '{print $16 }' | sort | uniq -c | sort -rgb > datasets/Kyoto2016/dic/16-mlw.dic &
 
 # IDS_lbls='' ; cat datasets/Kyoto2016/IDS_detection | while IFS= read -r line; do IDS_lbls="$IDS_lbls|$line"; done
-IDS_lbls='0|19187-3-7|21355-3-4|384-1-8|6-128-2|1917-1-15|402-1-15|28556-1-2|19559-1-6|2049-1-8|1325-1-14|1448-1-19|2418-1-10'
+IDS_lbls='19187-3-7|21355-3-4|384-1-8|6-128-2|1917-1-15|402-1-15|28556-1-2|19559-1-6|2049-1-8|1325-1-14|1448-1-19|2418-1-10'
 
 cat datasets/Kyoto2016/2015/12/* | awk -F '\t' "\$15 ~ /$IDS_lbls/ {print NR, \$0 }" > datasets/Kyoto2016/IDS_dataset
 
@@ -113,4 +124,16 @@ for i in {1..24};
         | sort | uniq -c | sort -bgr \
         >> datasets/Kyoto2016/IDS_dataset.dic;
 done;
+```
+
+### Cassales filter
+
+```sh
+IDS_lbls='#IDS_detection|19187-3-7|21355-3-4|384-1-8|6-128-2|1917-1-15|402-1-15|28556-1-2|19559-1-6|2049-1-8|1325-1-14|1448-1-19|2418-1-10'
+cat datasets/Kyoto2016/{header.tsv,2015/12/*} \
+    | awk -F '\t' "(\$15 ~ /$IDS_lbls/ && \$18 ~ /-1|#Label/) || \$18 == /^1/ {print NR, \$0 }" \
+    > datasets/Kyoto2016/cassales-filter.tsv
+
+wc -l datasets/Kyoto2016/cassales-filter.tsv
+# 509733 datasets/Kyoto2016/cassales-filter.tsv
 ```
