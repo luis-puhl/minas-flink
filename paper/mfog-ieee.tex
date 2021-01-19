@@ -335,10 +335,10 @@ of the clustering algorithm.
 For \mfog the Message Passing Interface (MPI) library was used.
 In MPI programming, multiple processes of the same program are created by the
 runtime and each process instance receives a rank parameter, for \mfog this
-paramaters indicate if the process is root, rank $0$, or leaf otherwise.
-Beyond this division, each process also operates two trheads, for the root
+parameters indicate if the process is root, rank $0$, or leaf otherwise.
+Beyond this division, each process also operates two threads, for the root
 there is a sampler and detector threads, for the leafs each has a model receiver
-therad and multiple classifer threads.
+thread and multiple classifier threads.
 The overall sequence of creation is shown in \reffig{mfog-mpi-life}.
 
 \begin{figure}[htbp]
@@ -364,31 +364,32 @@ multi-class confusion matrix with label-class association
 \cite{Faria2016minas}
 to extract classification quality metrics.
 
-% ----------------------------------------------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
 \section{Experiments and Results}\label{sec:experiments}
 
 For the experimental setup we dedicated 3 Raspberry Pi single board computers
 connected via Gigabit Ethernet Switch forming a simple cluster.
 This cluster stored all source code, binaries (compiled and linked in place) and
-datasets, being acessed via our laboratory network over Secure Shell (SSH).
-All experiments were executed in this cluster for isolation of otherwise unforseen
+datasets, being accessed via our laboratory network over Secure Shell (SSH).
+All experiments were executed in this cluster for isolation of otherwise unforeseen
 variations.
 
-The dataset usded is the December 2015 segment of
+The dataset used is the December 2015 segment of
 Kyoto 2006+ Dataset\footnote{Available at \url{http://www.takakura.com/Kyoto_data/}}
 (Traffic Data from Kyoto University's Honeypots)
 \cite{Song2011}.
-This segment was filtered (from $7,865,245$ instances) to only examples
+This segment was filtered (from $7 865 245$ instances) to only examples
 associated to known attack types identified by existing IDS, and attack types
-with more than $10,000$ instances for significance as done by \cite{Cassales2019a}.
+with more than $10 000$ instances for significance as done by \cite{Cassales2019a}.
 % , this removes 46,390 instances. TODO: revisar, pois 7M != 700K.
 The remaining instantes then were transformed by normalization, transforming
 each feature value space (e.g. IP Address, Duration, Service) to the
 Real interval $[0, 1]$.
-The result is stored in two sets, training set and test set, using the holdout technique
-filtering in only normal class
-resulting in $72,000$ instances for training set and $653,457$ for test set,
-containing 
+The result is stored in two sets, training set and test set, using the holdout
+technique filtering in only normal class resulting in $72 000$ instances for
+training set and $653 457$ for test set, containing $206 278$ $N$ (normal) class
+and $447 179$ $A$ (attack) class.
+
 % Count per class
 %            id
 % class        
@@ -406,16 +407,18 @@ containing
 % \end{quote}
 
 O que quer testar com os experimentos.
-  Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
-  Seria inviável por conta do atraso de distribuição de moldelo e,
-  limitação pelo hardware pequeno.
-  MFOG: Um Agregador Regional, instalado na FOG, que observa .
+\begin{itemize}
+  \item Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
+  \item Seria inviável por conta do atraso de distribuição de modelo e,
+  \item limitação pelo hardware pequeno.
+  \item MFOG: Um Agregador Regional, instalado na FOG, que observa .
+\end{itemize}
 
 Como realizou (cenário, rpi, setup, coleta de métricas).
 
 Quais resultados obteve.
 
-Como interpretar os resutados.
+Como interpretar os resultados.
 
 Four main experiments need detailed discussion:
 (a) reference implementation of Minas (\refminas) \cite{Faria2016minas};
@@ -424,11 +427,79 @@ Four main experiments need detailed discussion:
 (d) new implementation in multi-node, multi-task mode.
 Each experiment uses the adequate binary executable, initial model
 (or training set for the reference implementation) and test set
-to compute a resulting output stream which is stored for qualitative evaluation
-using a python script.
-Therefore each experiment result consists of a time mesure (using GNU Time 1.9),
-qualitative overview mesure with the confusion matrix and
-qualitative stream measure with Stream hits and novelties visualization chart.
+to compute a resulting output stream which is stored for qualitative evaluation.
+
+There are two broad evaluation metrics for each experiment:
+a time mesure extracted by using \emph{GNU Time 1.9} and,
+a set of qualitative mesures extracted by a python program.
+The first metric is straightforward and is the time measure of the full program execution.
+The latter metric is not as simple and for its extraction required a
+purposely build python program.
+This program takes two inputs, the test dataset and the captured output stream,
+and outputs the confusion matrix, label-class association,
+final quality summary with: Hits (accuracy), Misses (Err), Unknowns (UnkR); and
+stream visualization chart with per example instance summary with novelty label markers.
+
+For clarity, it is necessary to detail how to interpret and compare each metric,
+as for some it is trivial but others are not so straightforward.
+
+In the confusion matrix $M = m_{ij} \in \mathbb{N} ^{c \times{} l}$,
+computed by our evaluation program,
+each row denotes one of the datasets original (actual) class
+and each column denotes the marked (predicted) label present in the captured output stream.
+Thus, each cell $M_{c, l}$ contains the count of examples from the test dataset of class $c$
+found in the output stream with the label $l$ assigned by the under evaluation experiment.
+For the dataset under use, original classes are \emph{N} and \emph{A}, and
+for the labels we have the training class \emph{N}, unknown label \emph{-} and
+the novelties $i \in \mathbb{N}$.
+
+Added to the original confusion matrix $C$ are the rows \emph{Assigned} and
+\emph{Hits}.
+The former represents which original class $c$ (or if unknown, \emph{-}) the
+label $l$ is assigned to, this is computed by using the original class if
+$c = l$ or by associated novelty label to original class as described in
+\cite{DeFaria2015} section 4.1.
+The latter row, \emph{Hits}, shows the true positive count for each label,
+computed by coping the value of the cell $M_{c, l}$ where the label is the same
+and the class $c$ is the value in the above \emph{Assigned} row.
+The \emph{Hits} row is also used to compute the overall accuracy.
+
+For the metric summary table, six metrics from two sources are displayed.
+Three metrics \emph{Hits} \emph{Unknowns} \emph{Misses} represented as ratio of the
+captured output stream, extracted from the evaluation python
+program, computed as follows:
+\emph{Hits} (overall accuracy) is the summation of the homograph row in the
+extended confusion matrix;
+\emph{Unknowns} is the count of examples in the captured output stream marked
+with the unknown label \emph{-};
+\emph{Misses} is the count of all examples in the captured output stream marked
+with a label distinct from the \emph{Assigned} original class and are not marked
+as unknown.
+\emph{Time}, \emph{System} and \emph{Elapsed} represented in seconds,
+are extracted from \emph{GNU Time}.
+\emph{Time} is the amount of CPU seconds expended in user-mode
+(indicates time used doing CPU intensive computing, e.g. math);
+\emph{System} is the amount of CPU seconds expended in kernel-mode
+(for our case it indicates time doing input or output);
+\emph{Elapsed} is the real-world (wall clock) elapsed time
+(indicates how long another system or person had to wait for the result).
+To compare the time metric is simple, the lower time taken, the better.
+
+Lastly, the stream visualization chart shows the summary quality metrics
+(\emph{Hits} \emph{Unknowns} \emph{Misses})
+computed for each example in the captured output stream.
+This summary is computed for each example but it uses the \emph{Assigned} row
+computed previously to evaluate \emph{Hits}, other metrics are derived as
+described before.
+Therefore, horizontal axis (domain) plots the index of the example and the
+vertical axis shows the metric computed until that example index on the captured
+output stream.
+Adding to the summary metrics, novelty label markers are represented as vertical
+lines indicating \emph{when} in the captured output stream a new label first
+appeared.
+Some of the novelty label markers include the label itself ($l \in \mathbb{N}$)
+for reference as if showing every label would turn this feature unreadable due
+to overlapping.
 
 \begin{table*}
   % \begin{center}

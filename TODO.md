@@ -153,7 +153,7 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
   - [x] Transpor a matriz de confusão;
 - [ ] Interpretar e Discutir resultados (serial vs paralelo, og vs serial etc).
 - [ ] Descrever na proposta a metodologia de avaliação, detalhar o script evaluate.py
-  - [ ] Instruções para leitura das matrizes de confusão
+  - [x] Instruções para leitura das matrizes de confusão
 - [ ] Experimentos:
   - [ ] O que quer testar com os experimentos.
     - [ ] Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
