@@ -136,4 +136,7 @@ cat datasets/Kyoto2016/{header.tsv,2015/12/*} \
 
 wc -l datasets/Kyoto2016/cassales-filter.tsv
 # 509733 datasets/Kyoto2016/cassales-filter.tsv
+
+wc -l datasets/Kyoto2016/cassales-normalized.csv 
+# 2524362 datasets/Kyoto2016/cassales-normalized.csv
 ```
