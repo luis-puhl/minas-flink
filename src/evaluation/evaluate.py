@@ -102,7 +102,7 @@ def fixTex(tex):
 def getConfusionMatrixTex(exDf, maDf, off):
     merged = pd.merge(exDf[['id', 'class']], maDf[['id', 'label']], on='id', how='left')
     cf = pd.crosstab(merged['class'], merged['label'], rownames=['Classes'], colnames=['Labels'])
-    cf = cf[cf.columns.sort_values(key=lambda idx: idx.map(lambda x: int(x) if x.isnumeric() else -1))]
+    cf = cf[sorted(list(cf.columns), key=lambda x: int(x) if x.isnumeric() else -1)]
     cf = cf.transpose()
     cf['Assigned'] = [l if l in off else c for l, c in zip(cf.index.to_list(), cf.idxmax(axis='columns'))]
     cf['Hits'] = [0 if l == '-' else cf.at[i, l] for i, l in cf['Assigned'].iteritems()]
