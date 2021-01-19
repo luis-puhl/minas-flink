@@ -152,6 +152,7 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
   - [x] Completar com tempo dentro da matriz resultado;
   - [x] Transpor a matriz de confusão;
 - [ ] Interpretar e Discutir resultados (serial vs paralelo, og vs serial etc).
+  - [ ] Discutir parâmetros utilizados;
 - [ ] Descrever na proposta a metodologia de avaliação, detalhar o script evaluate.py
   - [x] Instruções para leitura das matrizes de confusão
 - [ ] Experimentos:

@@ -43,46 +43,48 @@ Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
 
 \maketitle
 
-% \newcommand{\toreview}{}
+\newcommand{\toreview}{}
 
-% \ifx\toreview\undefined
-%   \newcommandx{\nota}[2][1=]{}
-%   \newcommand{\hl}[1]{}
+\ifx\toreview\undefined
+  \newcommandx{\nota}[2][1=]{}
+  \newcommand{\hl}[1]{}
 
-%   \newcommandx{\notahl}[2][1=]{}
-%   \newcommand{\hlhl}[1]{}
-%   \newcommandx{\notake}[2][1=]{}
-%   \newcommand{\hlke}[1]{}
-%   \newcommandx{\notafa}[2][1=]{}
-%   \newcommand{\hlfa}[1]{}
-% \else
-%   \newcommandx{\nota}[2][1=]{\stepcounter{todocounter}\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{[\thetodocounter] #2}}
-%   \newcommand{\hl}[1]{\colorbox{red!25}{#1}}
+  \newcommandx{\notahl}[2][1=]{}
+  \newcommand{\hlhl}[1]{}
+  \newcommandx{\notake}[2][1=]{}
+  \newcommand{\hlke}[1]{}
+  \newcommandx{\notafa}[2][1=]{}
+  \newcommand{\hlfa}[1]{}
+\else
+  % \newcommandx{\nota}[2][1=]{
+  %   \stepcounter{todocounter}
+  %   \todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{[\thetodocounter] #2}}
+  \newcommand{\hl}[1]{\colorbox{red!25}{#1}}
 
-%   \newcommandx{\notahl}[2][1=]{\stepcounter{todocounter}\todo[
-%     linecolor=green,
-%     backgroundcolor=green!25,
-%     bordercolor=green,#1]{[Helio \thetodocounter] #2}}
-%   \newcommand{\hlhl}[1]{\colorbox{green}{#1}}
+  % \newcommandx{\notahl}[2][1=]{\stepcounter{todocounter}\todo[
+  %   linecolor=green,
+  %   backgroundcolor=green!25,
+  %   bordercolor=green,#1]{[Helio \thetodocounter] #2}}
+  % \newcommand{\hlhl}[1]{\colorbox{green}{#1}}
 
-%   \usepackage{cancel}
-%   \newcommandx{\notake}[2][1=]{\stepcounter{todocounter}\todo[
-%     linecolor=yellow,
-%     backgroundcolor=yellow!25,
-%     bordercolor=yellow,#1]{[Kelton \thetodocounter] #2}}
-%   \newcommand{\hlke}[1]{\colorbox{yellow}{#1}}
+  % \usepackage{cancel}
+  % \newcommandx{\notake}[2][1=]{\stepcounter{todocounter}\todo[
+  %   linecolor=yellow,
+  %   backgroundcolor=yellow!25,
+  %   bordercolor=yellow,#1]{[Kelton \thetodocounter] #2}}
+  % \newcommand{\hlke}[1]{\colorbox{yellow}{#1}}
 
-%   \newcommandx{\notafa}[2][1=]{\stepcounter{todocounter}\todo[
-%     linecolor=blue,
-%     backgroundcolor=blue!25,
-%     bordercolor=blue,#1]{[Faria \thetodocounter] #2}}
-%   \newcommand{\hlfa}[1]{\colorbox{blue!30}{#1}}
+  % \newcommandx{\notafa}[2][1=]{\stepcounter{todocounter}\todo[
+  %   linecolor=blue,
+  %   backgroundcolor=blue!25,
+  %   bordercolor=blue,#1]{[Faria \thetodocounter] #2}}
+  % \newcommand{\hlfa}[1]{\colorbox{blue!30}{#1}}
 
-%   \usepackage[showframe,layoutvoffset=0mm,includeall,tmargin=15mm,bmargin=20mm]{geometry}
-%   \marginparwidth=34mm
-%   \hoffset=-25mm
-%   \textwidth=165mm
-% \fi
+  % \usepackage[showframe,layoutvoffset=0mm,includeall,tmargin=15mm,bmargin=20mm]{geometry}
+  % \marginparwidth=34mm
+  % \hoffset=-25mm
+  % \textwidth=165mm
+\fi
 
 \begin{abstract}
   The implementation of the Internet of Things (IoT) is sharply increasing the small
@@ -411,7 +413,7 @@ O que quer testar com os experimentos.
   \item Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
   \item Seria inviável por conta do atraso de distribuição de modelo e,
   \item limitação pelo hardware pequeno.
-  \item MFOG: Um Agregador Regional, instalado na FOG, que observa .
+  \item MFOG: Um Agregador Regional, instalado na FOG, que observa a rede local.
 \end{itemize}
 
 Como realizou (cenário, rpi, setup, coleta de métricas).
@@ -419,6 +421,8 @@ Como realizou (cenário, rpi, setup, coleta de métricas).
 Quais resultados obteve.
 
 Como interpretar os resultados.
+
+\hl{BEGIN Oritações de leitura das métricas e visualizações.}
 
 Four main experiments need detailed discussion:
 (a) reference implementation of Minas (\refminas) \cite{Faria2016minas};
@@ -428,6 +432,8 @@ Four main experiments need detailed discussion:
 Each experiment uses the adequate binary executable, initial model
 (or training set for the reference implementation) and test set
 to compute a resulting output stream which is stored for qualitative evaluation.
+
+\subsection{Metrics and Visualizations}
 
 There are two broad evaluation metrics for each experiment:
 a time mesure extracted by using \emph{GNU Time 1.9} and,
@@ -485,6 +491,22 @@ are extracted from \emph{GNU Time}.
 (indicates how long another system or person had to wait for the result).
 To compare the time metric is simple, the lower time taken, the better.
 
+\begin{table}[h]
+  \begin{center}
+\caption{Experiments Collected Metrics Summary}
+\begin{tabular}{l|r|r|r|r}
+             &    Exp. (a) & Exp. (b) & Exp. (c) & Exp. (d)   \\\hline
+             Hits     &      0.3056 &   0.2984 &   0.3125 &       -    \\\hline
+    Misses   &      0.6760 &   0.6578 &   0.6676 &       -    \\\hline
+    Unknowns &      0.0183 &   0.0437 &   0.0197 &       -    \\\hline
+    Time     &   2761.8300 &  80.7900 & 574.1700 &       -    \\\hline
+    System   &      7.1500 &  11.5100 &  49.4200 &       -    \\\hline
+    Elapsed  &   2772.0700 &  93.0300 & 159.0600 &       -    
+  \end{tabular}
+  \label{tab:libc-matrix}
+\end{center}
+\end{table}
+
 Lastly, the stream visualization chart shows the summary quality metrics
 (\emph{Hits} \emph{Unknowns} \emph{Misses})
 computed for each example in the captured output stream.
@@ -501,45 +523,99 @@ Some of the novelty label markers include the label itself ($l \in \mathbb{N}$)
 for reference as if showing every label would turn this feature unreadable due
 to overlapping.
 
-\begin{table*}
-  % \begin{center}
+\begin{figure*}[tb]
+  \centerline{
+    \includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}
+    \includegraphics[width=0.45\textwidth]{../experiments/online-nd.log.png}
+  }
+  \caption{Reference (a) and Serial (b) implementation: Stream hits and novelties visualization}
+  \label{fig:java-serial}
+\end{figure*}
+
+\begin{figure*}[tb]
+  \centerline{
+    \includegraphics[width=0.45\textwidth]{../experiments/rpi/almoco/tmi-n4.log.png}
+    \includegraphics[width=0.45\textwidth]{../experiments/rpi/almoco/big-cluster.log.png}
+    }
+  \caption{Parallel single-node (c) and multi-node (d) modes: Stream hits and novelties visualization}
+  \label{fig:java-serial}
+\end{figure*}
+
+
+\hl{END Oritações de leitura das métricas e visualizações.}
+
+\begin{table*}[htb]
+  \begin{center}
     \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
-    \input{../experiments/revised-java.log.tex}
-    \label{fig:java-matrix}
-  % \end{center}
+    % \input{../experiments/revised-java.log.tex}
+    \begin{tabular}{l||r|r|r|r|r|r|r|r|r|r|r|r|r|r}
+      
+      Labels &     - &       N &    1 &    2 &    3 &  4 &   5 &    6 &    7 &     8 &    9 &    10 &   11 &  12 \\\hline
+      Classes  &       &         &      &      &      &    &     &      &      &       &      &       &      &     \\\hline
+      \hline
+      A        &  3774 &  438750 &  123 &  145 &  368 &  8 &  52 &  165 &    1 &  1046 &  161 &  2489 &   71 &  26 \\\hline
+      N        &  8206 &  193030 &    0 &   79 &   44 &  0 &   0 &    0 &  229 &   181 &  154 &  4066 &  289 &   0 \\\hline
+      \hline
+      Assigned &     - &       N &    A &    A &    A &  A &   A &    A &    N &     A &    A &     N &    N &   A \\\hline
+      Hits     &     0 &  193030 &  123 &  145 &  368 &  8 &  52 &  165 &  229 &  1046 &  161 &  4066 &  289 &  26 
+    \end{tabular}
+    \label{tab:java-matrix}
+  \end{center}
 \end{table*}
-\begin{figure}[htbp]
-  \centerline{\includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}}
-  \caption{Reference implementation: Stream hits and novelties visualization}
-  \label{fig:java-hits}
-\end{figure}
-
-\begin{table*}
-  % \begin{center}
+\begin{table*}[htb]
+  \begin{center}
     \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
-    \input{../experiments/online-nd.log.tex}
-    \label{fig:serial-matrix}
-  % \end{center}
+    \begin{tabular}{l|r|r|r|r|r|r|r|r|r}
+      Labels &      - &       N &    0 &    1 &    2 &   3 &  4 &   5 &  6 \\\hline
+      Classes  &        &         &      &      &      &     &    &     &    \\\hline
+      \hline
+      A        &  15396 &  430518 &  185 &  198 &  868 &   0 &  2 &  12 &  0 \\\hline
+      N        &   4792 &  201312 &   40 &    0 &   98 &  31 &  0 &   0 &  5 \\\hline
+      \hline
+      Assigned &      - &       N &    A &    A &    A &   N &  A &   A &  N \\\hline
+      Hits     &      0 &  201312 &  185 &  198 &  868 &  31 &  2 &  12 &  5 
+    \end{tabular}
+    \label{tab:libc-matrix}
+  \end{center}
 \end{table*}
-\begin{figure}[htbp]
-  \centerline{\includegraphics[width=0.45\textwidth]{../experiments/online-nd.log.png}}
-  \caption{Serial implementation: Stream hits and novelties visualization}
-  \label{fig:serial-hits}
-\end{figure}
 
-\begin{table*}
-  % \begin{center}
-    \caption{Parallel implementation: Confusion Matrix and Qualitative Metrics}
-    \input{../experiments/tmi-base.log.tex}
-    \label{fig:tmi-matrix}
-  % \end{center}
-\end{table*}
-\begin{figure}[htbp]
-  \centerline{\includegraphics[width=0.45\textwidth]{../experiments/tmi-base.log.png}}
-  \caption{Parallel implementation: Stream hits and novelties visualization}
-  \label{fig:tmi-hits}
-\end{figure}
+\subsection{Results Discussion}
 
+The four 
+
+
+% \setcounter{MaxMatrixCols}{20}
+% \begin{table*}[htb]
+  %   \begin{center}
+    %     \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
+    %     \begin{math}\begin{pmatrix}
+      %       - & N & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12
+%     \end{pmatrix}\end{math}
+%     \begin{math}\begin{pmatrix}
+%     3774 &  438750 &  123 &  145 &  368 &  8 &  52 &  165 &    1 &  1046 &  161 &  2489 &   71 &  26 \\
+%     8206 &  193030 &    0 &   79 &   44 &  0 &   0 &    0 &  229 &   181 &  154 &  4066 &  289 &   0
+%     \end{pmatrix}\end{math}
+%     \begin{math}\begin{pmatrix}
+%       - &       N &    A &    A &    A &  A &   A &    A &    N &     A &    A &     N &    N &   A \\
+%       0 &  193030 &  123 &  145 &  368 &  8 &  52 &  165 &  229 &  1046 &  161 &  4066 &  289 &  26 
+%     \end{pmatrix}\end{math}
+%     \label{math-tab}
+%   \end{center}
+% \end{table*}
+
+% \begin{figure*}
+%   \centering
+%   \centerline{
+%     \includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}
+%     \includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}
+%   }
+%   \\
+%   \centerline{
+%     \includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}
+%     \includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}
+%   }
+% \label{fig1} 
+% \end{figure*}
 
 % ----------------------------------------------------------------------------------------------------------------------
 \section{Conclusion}\label{sec:conclusion}
