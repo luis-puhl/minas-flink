@@ -2,9 +2,9 @@
 Taking training set from stdin
 Training 72000 examples with 1 classes (N)
 Training 72000 examples from class N
-[./bin/offline] 1.995801e+02 seconds. At src/offline.c:41
+[./bin/offline] 1.939964e+02 seconds. At src/offline.c:41
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/offline
-	199.56 user	0.02 system	3:19.70 elapsed
-	99% CPU	(0 avgtext+0 avgdata	16888 maxresident)k
-	0 inputs+104 outputs	(0 major+4048 minor)pagefaults	0 swaps
+	193.94 user	0.05 system	3:14.04 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16824 maxresident)k
+	0 inputs+112 outputs	(0 major+4051 minor)pagefaults	0 swaps
 "

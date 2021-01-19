@@ -23,7 +23,7 @@
 \hypersetup{colorlinks=true, allcolors=black}
 \begin{document}
 
-\title{IoT Intrusion Detection with Distributed Novelty Detection:
+\title{IoT Data Stream Novelty Detection:
 Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
 
 \author{
@@ -244,8 +244,6 @@ Objective: Distributed novelty detection in streams using limited hardware.
 
 Previous attempts to attain the objective of distributed fast 
 
-
-
 \section{Implementation}\label{sec:implementation}
 
 The original MINAS algorithm has a companion implementation (\refminas)
@@ -258,8 +256,8 @@ from the distances of elements forming the cluster and the cluster's center,
 where the former uses the maximum distance, the latter uses the standard deviation
 of all distances as described in \cite{Faria2016minas}.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[width=0.45\textwidth]{figures/mfog-arch-v2_en.png}}
+\begin{figure}[htb]
+\centerline{\includegraphics[width=0.5\textwidth]{figures/mfog-arch-v2_en.png}}
 \caption{\mfog architecture overview.}
 \label{fig:mfog-architecture}
 \end{figure}
@@ -308,7 +306,7 @@ defined as a tuple containing \textit{uid} and assigned label.
 %     inflar a métrica de precisão;
 %   - **Solução:** *em aberto*;
 
-Adicionar fig arch fisica.
+\hl{Adicionar fig arch fisica.}
 
 Another implementation decision related to the output stream is whether or not
 to reprocess, and add to the output stream, examples in the unknown buffer after
@@ -343,8 +341,8 @@ there is a sampler and detector threads, for the leafs each has a model receiver
 thread and multiple classifier threads.
 The overall sequence of creation is shown in \reffig{mfog-mpi-life}.
 
-\begin{figure}[htbp]
-  \centerline{\includegraphics[width=0.45\textwidth]{figures/mfog-arch-mpi.png}}
+\begin{figure}[htb]
+  \centerline{\includegraphics[width=0.5\textwidth]{figures/mfog-arch-mpi.png}}
   \caption{\mfog life line overview.}
   \label{fig:mfog-mpi-life}
 \end{figure}
@@ -424,15 +422,6 @@ Como interpretar os resultados.
 
 \hl{BEGIN Oritações de leitura das métricas e visualizações.}
 
-Four main experiments need detailed discussion:
-(a) reference implementation of Minas (\refminas) \cite{Faria2016minas};
-(b) new implementation in serial mode;
-(c) new implementation in single-node, multi-task mode and
-(d) new implementation in multi-node, multi-task mode.
-Each experiment uses the adequate binary executable, initial model
-(or training set for the reference implementation) and test set
-to compute a resulting output stream which is stored for qualitative evaluation.
-
 \subsection{Metrics and Visualizations}
 
 There are two broad evaluation metrics for each experiment:
@@ -455,8 +444,8 @@ each row denotes one of the datasets original (actual) class
 and each column denotes the marked (predicted) label present in the captured output stream.
 Thus, each cell $M_{c, l}$ contains the count of examples from the test dataset of class $c$
 found in the output stream with the label $l$ assigned by the under evaluation experiment.
-For the dataset under use, original classes are \emph{N} and \emph{A}, and
-for the labels we have the training class \emph{N}, unknown label \emph{-} and
+For the dataset under use, original classes are \emph{``N''} and \emph{``A''}, and
+for the labels we have the training class \emph{``N''}, unknown label \emph{``-''} and
 the novelties $i \in \mathbb{N}$.
 
 Added to the original confusion matrix $C$ are the rows \emph{Assigned} and
@@ -491,30 +480,14 @@ are extracted from \emph{GNU Time}.
 (indicates how long another system or person had to wait for the result).
 To compare the time metric is simple, the lower time taken, the better.
 
-\begin{table}[h]
-  \begin{center}
-\caption{Experiments Collected Metrics Summary}
-\begin{tabular}{l|r|r|r|r}
-             &    Exp. (a) & Exp. (b) & Exp. (c) & Exp. (d)   \\\hline
-             Hits     &      0.3056 &   0.2984 &   0.3125 &       -    \\\hline
-    Misses   &      0.6760 &   0.6578 &   0.6676 &       -    \\\hline
-    Unknowns &      0.0183 &   0.0437 &   0.0197 &       -    \\\hline
-    Time     &   2761.8300 &  80.7900 & 574.1700 &       -    \\\hline
-    System   &      7.1500 &  11.5100 &  49.4200 &       -    \\\hline
-    Elapsed  &   2772.0700 &  93.0300 & 159.0600 &       -    
-  \end{tabular}
-  \label{tab:libc-matrix}
-\end{center}
-\end{table}
-
 Lastly, the stream visualization chart shows the summary quality metrics
 (\emph{Hits} \emph{Unknowns} \emph{Misses})
 computed for each example in the captured output stream.
 This summary is computed for each example but it uses the \emph{Assigned} row
 computed previously to evaluate \emph{Hits}, other metrics are derived as
 described before.
-Therefore, horizontal axis (domain) plots the index of the example and the
-vertical axis shows the metric computed until that example index on the captured
+Therefore, horizontal axis (x, domain) plots the index of the example and the
+vertical axis (y, image) shows the metric computed until that example index on the captured
 output stream.
 Adding to the summary metrics, novelty label markers are represented as vertical
 lines indicating \emph{when} in the captured output stream a new label first
@@ -523,66 +496,69 @@ Some of the novelty label markers include the label itself ($l \in \mathbb{N}$)
 for reference as if showing every label would turn this feature unreadable due
 to overlapping.
 
+\hl{END Oritações de leitura das métricas e visualizações.}
+
+\subsection{Results Discussion}
+
+Four main experiments need detailed discussion:
+(a) reference implementation of Minas (\refminas) \cite{Faria2016minas};
+(b) new implementation in serial mode;
+(c) new implementation in single-node, multi-task mode and
+(d) new implementation in multi-node, multi-task mode.
+Each experiment uses the adequate binary executable, initial model
+(or training set for the reference implementation) and test set
+to compute a resulting output stream which is stored for qualitative evaluation.
+The summary of all four experiments is shown in Table \ref{tab:exper-summary}.
+
+\begin{table}[h]\begin{center}
+  \caption{Experiments Collected Metrics Summary}
+  \input{../experiments/rpi/almoco/summary.tex}
+  \label{tab:exper-summary}
+\end{center}\end{table}
+
+The first two experiments (a and b) comparison does serve as validation for our
+implementation, while the latter three (b, c and d) serves as showcase for
+the effects of distribution.
+
 \begin{figure*}[tb]
   \centerline{
-    \includegraphics[width=0.45\textwidth]{../experiments/revised-java.log.png}
-    \includegraphics[width=0.45\textwidth]{../experiments/online-nd.log.png}
+    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/revised-java.log.png}
+    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/online-nd.log.png}
   }
   \caption{Reference (a) and Serial (b) implementation: Stream hits and novelties visualization}
   \label{fig:java-serial}
 \end{figure*}
 
+\begin{table*}[htb]\begin{center}
+  \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
+  \input{../experiments/rpi/almoco/revised-java.log.tex}
+  \label{tab:java-matrix}
+\end{center}\end{table*}
+\begin{table*}[htb]\begin{center}
+  \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
+  \input{../experiments/rpi/almoco/online-nd.log.tex}
+  \label{tab:libc-matrix}
+\end{center}\end{table*}
+
 \begin{figure*}[tb]
   \centerline{
-    \includegraphics[width=0.45\textwidth]{../experiments/rpi/almoco/tmi-n4.log.png}
-    \includegraphics[width=0.45\textwidth]{../experiments/rpi/almoco/big-cluster.log.png}
-    }
+    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/tmi-base.log.png}
+    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/tmi-n12.log.png}
+  }
   \caption{Parallel single-node (c) and multi-node (d) modes: Stream hits and novelties visualization}
-  \label{fig:java-serial}
+  \label{fig:cluster}
 \end{figure*}
 
-
-\hl{END Oritações de leitura das métricas e visualizações.}
-
-\begin{table*}[htb]
-  \begin{center}
-    \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
-    % \input{../experiments/revised-java.log.tex}
-    \begin{tabular}{l||r|r|r|r|r|r|r|r|r|r|r|r|r|r}
-      
-      Labels &     - &       N &    1 &    2 &    3 &  4 &   5 &    6 &    7 &     8 &    9 &    10 &   11 &  12 \\\hline
-      Classes  &       &         &      &      &      &    &     &      &      &       &      &       &      &     \\\hline
-      \hline
-      A        &  3774 &  438750 &  123 &  145 &  368 &  8 &  52 &  165 &    1 &  1046 &  161 &  2489 &   71 &  26 \\\hline
-      N        &  8206 &  193030 &    0 &   79 &   44 &  0 &   0 &    0 &  229 &   181 &  154 &  4066 &  289 &   0 \\\hline
-      \hline
-      Assigned &     - &       N &    A &    A &    A &  A &   A &    A &    N &     A &    A &     N &    N &   A \\\hline
-      Hits     &     0 &  193030 &  123 &  145 &  368 &  8 &  52 &  165 &  229 &  1046 &  161 &  4066 &  289 &  26 
-    \end{tabular}
-    \label{tab:java-matrix}
-  \end{center}
-\end{table*}
-\begin{table*}[htb]
-  \begin{center}
-    \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
-    \begin{tabular}{l|r|r|r|r|r|r|r|r|r}
-      Labels &      - &       N &    0 &    1 &    2 &   3 &  4 &   5 &  6 \\\hline
-      Classes  &        &         &      &      &      &     &    &     &    \\\hline
-      \hline
-      A        &  15396 &  430518 &  185 &  198 &  868 &   0 &  2 &  12 &  0 \\\hline
-      N        &   4792 &  201312 &   40 &    0 &   98 &  31 &  0 &   0 &  5 \\\hline
-      \hline
-      Assigned &      - &       N &    A &    A &    A &   N &  A &   A &  N \\\hline
-      Hits     &      0 &  201312 &  185 &  198 &  868 &  31 &  2 &  12 &  5 
-    \end{tabular}
-    \label{tab:libc-matrix}
-  \end{center}
-\end{table*}
-
-\subsection{Results Discussion}
-
-The four 
-
+\begin{table}[htb]\begin{center}
+  \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
+  \input{../experiments/rpi/almoco/tmi-base.log.tex}
+  \label{tab:java-matrix}
+\end{center}\end{table}
+\begin{table}[htb]\begin{center}
+  \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
+  \input{../experiments/rpi/almoco/tmi-base.log.tex}
+  \label{tab:libc-matrix}
+\end{center}\end{table}
 
 % \setcounter{MaxMatrixCols}{20}
 % \begin{table*}[htb]

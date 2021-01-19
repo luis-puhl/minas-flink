@@ -163,4 +163,8 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
     - [ ] MFOG: Um Agregador Regional, instalado na FOG, que observa .
   - [ ] Como realizou (cenário, rpi, setup, coleta de métricas).
   - [ ] Quais resultados obteve.
+    - [ ] Classificação paralela difere da serial por atraso do modelo, gerando
+      aumento no número de desconhecidos, e pelo método de distribuição Round
+      Robin, sem uso de micro-batching) o que acarreta em pior caso no
+      _overhead_ para empacotamento e envio pela rede e consequente baixa escalabilidade.
   - [ ] Como interpretar os resultados.

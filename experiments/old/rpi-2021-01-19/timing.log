@@ -30,18 +30,3 @@ Command exited with non-zero status 1
 	392% CPU	(0 avgtext+0 avgdata	28236 maxresident)k
 	0 inputs+54752 outputs	(7 major+14735 minor)pagefaults	0 swaps
 "
-"./bin/offline
-	193.94 user	0.05 system	3:14.04 elapsed
-	99% CPU	(0 avgtext+0 avgdata	16824 maxresident)k
-	0 inputs+104 outputs	(0 major+3964 minor)pagefaults	0 swaps
-"
-"/usr/bin/time --format=[%C %x]\t %E \t %S \t %U \t %P; \t %M \t %F \t %R \t %w \t %c \t %W; \t %I \t %O \t %r \t %s \t %k; mpirun -n 4 ./bin/tmpi 2 2
-	522.10 user	47.77 system	2:25.04 elapsed
-	392% CPU	(0 avgtext+0 avgdata	24612 maxresident)k
-	48 inputs+56200 outputs	(7 major+13739 minor)pagefaults	0 swaps
-"
-mpirun -n 12 -hostfile ./conf/hostsfile ./bin/tmpi
-	207.13 user	157.61 system	1:35.38 elapsed
-	382% CPU	(0 avgtext+0 avgdata	33800 maxresident)k
-	752 inputs+56264 outputs	(23 major+16391 minor)pagefaults	0 swaps
-

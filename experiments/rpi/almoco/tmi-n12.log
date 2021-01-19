@@ -1,0 +1,238 @@
+[lanche:01062] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01062] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01065] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01065] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01066] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01066] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01067] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01067] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01068] pmix_mca_base_component_repository_open: unable to open mca_gds_ds21: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+[lanche:01068] pmix_mca_base_component_repository_open: unable to open mca_gds_ds12: /usr/lib/arm-linux-gnueabihf/libmca_common_dstore.so.1: undefined symbol: pmix_cb_t_class (ignored)
+./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 1
+[sampler 0]
+Taking test stream from stdin, sampler at 0/12
+[classifier 1]
+[classifier 2]
+[m_receiver 1]
+[m_receiver 2]
+[m_receiver 4]
+[classifier 6]
+[m_receiver 7]
+[m_receiver 8]
+[classifier 9]
+[m_receiver 9]
+[m_receiver 11]
+[classifier 10]
+[m_receiver 10]
+[classifier 11]
+[m_receiver 3]
+[classifier 8]
+[classifier 5]
+[classifier 4]
+[classifier 7]
+[m_receiver 6]
+[m_receiver 5]
+[detector 0]
+[classifier 3]
+model complete
+Novelties   1, Extensions  22, Unknowns   2000, consumed   1845, reclassified      0, garbageCollected      0
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+realloc model 200
+Novelties   2, Extensions  15, Unknowns   2000, consumed   1783, reclassified      0, garbageCollected    117
+Novelties   0, Extensions   8, Unknowns   2000, consumed   1788, reclassified      0, garbageCollected     91
+Novelties   1, Extensions  15, Unknowns   2000, consumed   1751, reclassified      0, garbageCollected     67
+Novelties   0, Extensions  10, Unknowns   2000, consumed   1837, reclassified      0, garbageCollected    100
+Novelties   0, Extensions  23, Unknowns   2000, consumed   1709, reclassified      0, garbageCollected     46
+Novelties   2, Extensions  14, Unknowns   2000, consumed   1694, reclassified      0, garbageCollected    113
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+realloc model 300
+Novelties   0, Extensions  14, Unknowns   2000, consumed   1682, reclassified      0, garbageCollected    154
+[sampler] itemsWhere: ,   0 =>        0,   1 =>    59406,   2 =>    59406,   3 =>    59406,   4 =>    59405,   5 =>    59405,   6 =>    59405,   7 =>    59405,   8 =>    59405,   9 =>    59405,  10 =>    59405,  11 =>    59405
+[sampler 0] MFOG_EOS_MARKER to 1
+[sampler 0] MFOG_EOS_MARKER to 2
+[sampler 0] MFOG_EOS_MARKER to 3
+[sampler 0] MFOG_EOS_MARKER to 4
+[sampler 0] MFOG_EOS_MARKER to 5
+[classifier 2] sends 59406
+[sampler 0] MFOG_EOS_MARKER to 6
+[classifier   2] (items    59406) (ioTime 6.938975e+01), (cpuTime 7.390961e+00), (lockTime 4.924740e-01), (total 7.767299e+01). At src/threaded-mpi.c:106
+[sampler 0] MFOG_EOS_MARKER to 7
+[sampler 0] MFOG_EOS_MARKER to 8
+[sampler 0] MFOG_EOS_MARKER to 9
+[sampler 0] MFOG_EOS_MARKER to 10
+[sampler 0] MFOG_EOS_MARKER to 11
+[sampler   0] (items        0) (ioTime 9.606373e+01), (cpuTime 5.721719e+00), (lockTime 0.000000e+00), (total 1.060669e+02). At src/threaded-mpi.c:269
+[detector   0] MFOG_EOS_MARKER 1 / 11
+[classifier 3] sends 59406
+[classifier   3] (items    59406) (ioTime 7.197949e+01), (cpuTime 6.693826e+00), (lockTime 4.015820e-01), (total 7.941239e+01). At src/threaded-mpi.c:106
+[classifier 5] sends 59405
+[classifier 7] sends 59405
+[classifier   7] (items    59405) (ioTime 8.597779e+01), (cpuTime 6.585619e+00), (lockTime 3.874880e-01), (total 9.332328e+01). At src/threaded-mpi.c:106
+[detector   0] MFOG_EOS_MARKER 2 / 11
+[detector   0] MFOG_EOS_MARKER 3 / 11
+[detector   0] MFOG_EOS_MARKER 4 / 11
+[classifier   5] (items    59405) (ioTime 8.599817e+01), (cpuTime 6.595228e+00), (lockTime 7.123530e-01), (total 9.402264e+01). At src/threaded-mpi.c:106
+[classifier 4] sends 59405
+[classifier   4] (items    59405) (ioTime 8.633738e+01), (cpuTime 4.880015e+00), (lockTime 5.873070e-01), (total 9.224974e+01). At src/threaded-mpi.c:106
+[classifier 6] sends 59405
+[classifier   6] (items    59405) (ioTime 8.790767e+01), (cpuTime 5.183771e+00), (lockTime 3.589950e-01), (total 9.384139e+01). At src/threaded-mpi.c:106
+[detector   0] MFOG_EOS_MARKER 5 / 11
+[detector   0] MFOG_EOS_MARKER 6 / 11
+[detector   0] MFOG_EOS_MARKER 7 / 11
+[detector   0] MFOG_EOS_MARKER 8 / 11
+[detector   0] MFOG_EOS_MARKER 9 / 11
+[detector   0] MFOG_EOS_MARKER 10 / 11
+[classifier 1] sends 59406
+[classifier   1] (items    59406) (ioTime 7.057839e+01), (cpuTime 7.081822e+00), (lockTime 3.890020e-01), (total 7.837868e+01). At src/threaded-mpi.c:106
+[classifier 8] sends 59405
+[classifier   8] (items    59405) (ioTime 8.976435e+01), (cpuTime 3.763891e+00), (lockTime 2.448990e-01), (total 9.404002e+01). At src/threaded-mpi.c:106
+[classifier 10] sends 59405
+[classifier  10] (items    59405) (ioTime 8.920306e+01), (cpuTime 3.564527e+00), (lockTime 2.401850e-01), (total 9.324836e+01). At src/threaded-mpi.c:106
+[classifier 9] sends 59405
+[classifier   9] (items    59405) (ioTime 8.970812e+01), (cpuTime 3.844530e+00), (lockTime 2.572570e-01), (total 9.406961e+01). At src/threaded-mpi.c:106
+[detector   0] MFOG_EOS_MARKER 11 / 11
+[classifier 11] sends 59405
+[detector] itemsWhere: ,   0 =>        0,   1 =>    59406,   2 =>    59406,   3 =>    59406,   4 =>    59405,   5 =>    59405,   6 =>    59405,   7 =>    59405,   8 =>    59405,   9 =>    59405,  10 =>    59405,  11 =>    59405
+[classifier  11] (items    59405) (ioTime 8.598212e+01), (cpuTime 5.700383e+00), (lockTime 4.486300e-01), (total 9.253420e+01). At src/threaded-mpi.c:106
+[m_receiver   1] (items      227) (ioTime 7.607159e+01), (cpuTime 4.853000e-03), (lockTime 6.622000e-03), (total 7.840730e+01). At src/threaded-mpi.c:156
+[m_receiver   3] (items      227) (ioTime 7.735548e+01), (cpuTime 4.118000e-03), (lockTime 4.144000e-03), (total 7.944706e+01). At src/threaded-mpi.c:156
+[detector     0] (items   653469) (ioTime 7.304953e+01), (cpuTime 2.884451e+01), (lockTime 0.000000e+00), (total 1.060764e+02). At src/threaded-mpi.c:368
+[node   1] Statistics items:      73261, hits:      71896, misses:       1365,
+'   N':      71082, '   1':        401, '   2':         78, '   3':        110, '   4':        176,
+'   5':         49
+[node   3] Statistics items:      73261, hits:      71867, misses:       1394,
+'   N':      71071, '   1':        384, '   2':         74, '   3':        113, '   4':        176,
+'   5':         49
+[node   0] Statistics items:      13855, hits:      13855, misses:          0,
+'   N':      13181, '   1':        283, '   2':         71, '   3':         97, '   4':        174,
+'   5':         49
+[root    ] Statistics items:     819718, hits:     804219, misses:      15499,
+'   N':     794720, '   1':       4531, '   2':        957, '   3':       1326, '   4':       2097,
+'   5':        588
+[m_receiver   2] (items      227) (ioTime 7.536282e+01), (cpuTime 3.754000e-03), (lockTime 5.378000e-03), (total 7.770149e+01). At src/threaded-mpi.c:156
+[node   2] Statistics items:      73261, hits:      71952, misses:       1309,
+'   N':      71173, '   1':        363, '   2':         83, '   3':        110, '   4':        174,
+'   5':         49
+[m_receiver   9] (items      227) (ioTime 9.137073e+01), (cpuTime 2.942000e-03), (lockTime 1.642000e-03), (total 9.408889e+01). At src/threaded-mpi.c:156
+[m_receiver   5] (items      227) (ioTime 9.123156e+01), (cpuTime 3.097000e-03), (lockTime 1.727000e-03), (total 9.405252e+01). At src/threaded-mpi.c:156
+[m_receiver  10] (items      227) (ioTime 9.050309e+01), (cpuTime 2.305000e-03), (lockTime 1.164000e-03), (total 9.326929e+01). At src/threaded-mpi.c:156
+[node  10] Statistics items:      73260, hits:      71810, misses:       1450,
+'   N':      70986, '   1':        405, '   2':         79, '   3':        117, '   4':        174,
+'   5':         49
+[m_receiver   6] (items      227) (ioTime 9.088021e+01), (cpuTime 2.192000e-03), (lockTime 2.188000e-03), (total 9.386380e+01). At src/threaded-mpi.c:156
+[m_receiver  11] (items      227) (ioTime 8.982162e+01), (cpuTime 4.921000e-03), (lockTime 1.520900e-02), (total 9.253633e+01). At src/threaded-mpi.c:156
+[m_receiver   7] (items      227) (ioTime 9.091655e+01), (cpuTime 2.203000e-03), (lockTime 1.766000e-03), (total 9.335889e+01). At src/threaded-mpi.c:156
+[node   7] Statistics items:      73260, hits:      71817, misses:       1443,
+'   N':      71013, '   1':        385, '   2':         78, '   3':        117, '   4':        175,
+'   5':         49
+[./bin/tmpi 0/12 c1] 1.062507e+02 seconds. At src/threaded-mpi.c:465
+[m_receiver   8] (items      227) (ioTime 9.128901e+01), (cpuTime 2.499000e-03), (lockTime 1.150000e-03), (total 9.406090e+01). At src/threaded-mpi.c:156
+[node   8] Statistics items:      73260, hits:      71866, misses:       1394,
+'   N':      71051, '   1':        394, '   2':         88, '   3':        109, '   4':        175,
+'   5':         49
+[node   5] Statistics items:      73260, hits:      71858, misses:       1402,
+'   N':      71074, '   1':        369, '   2':         82, '   3':        110, '   4':        174,
+'   5':         49
+[node   9] Statistics items:      73260, hits:      71852, misses:       1408,
+'   N':      71061, '   1':        372, '   2':         83, '   3':        112, '   4':        175,
+'   5':         49
+[m_receiver   4] (items      227) (ioTime 8.960661e+01), (cpuTime 1.236200e-02), (lockTime 4.055000e-03), (total 9.228489e+01). At src/threaded-mpi.c:156
+[node   4] Statistics items:      73260, hits:      71823, misses:       1437,
+'   N':      71020, '   1':        387, '   2':         83, '   3':        110, '   4':        174,
+'   5':         49
+[node  11] Statistics items:      73260, hits:      71833, misses:       1427,
+'   N':      71033, '   1':        386, '   2':         81, '   3':        110, '   4':        174,
+'   5':         49
+[node   6] Statistics items:      73260, hits:      71790, misses:       1470,
+'   N':      70975, '   1':        402, '   2':         77, '   3':        111, '   4':        176,
+'   5':         49
+/usr/bin/time --output=experiments/timing.log --append --format=%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n mpirun -n 12 -hostfile ./conf/hostsfile ./bin/tmpi
+	207.14 user	157.61 system	1:35.38 elapsed
+	382% CPU	(0 avgtext+0 avgdata	33800 maxresident)k
+	752 inputs+56272 outputs	(23 major+16477 minor)pagefaults	0 swaps
+
+Evaluate
+	title = Cluster Multi Node
+	examplesFileName = datasets/test.csv
+	matchesFileName = experiments/rpi/almoco/out/tmi-n12-matches.csv
+	logPath = experiments/rpi/almoco/tmi-n12.log
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+Evaluate
+	title = Cluster Multi Node
+	examplesFileName = datasets/test.csv
+	matchesFileName = experiments/rpi/almoco/out/tmi-n12-matches.csv
+	logPath = experiments/rpi/almoco/tmi-n12.log
+
+Count per class
+           id
+class        
+A      447179
+N      206278
+### Cluster Multi Node
+
+saving experiments/rpi/almoco/tmi-n12.log.png
+NaN labels: 0
+Confusion Matrix
+Classes       A       N assigned    hits
+Labels                                  
+-         12378    3121        -       0
+0           117      40        A     117
+1           886      96        A     886
+2             0     105        N     105
+3           162       0        A     162
+4             5       0        A       5
+N        433631  202916        N  202916
+Classes           ['A' 'N']
+Initial labels    ['-', 'N']
+Labels (item)     [('N', 0), ('-', 19), ('1', 168126), ('2', 190483), ('3', 419934), ('0', 420636), ('4', 648857)] 7
+Total examples    (653457, 25)
+Total matches     (653458, 4)
+Hits               204191 ( 31.247762%)
+Misses             433767 ( 66.380242%)
+Unknowns            15499 (  2.371843%)
+Unk. reprocessed        1 (  0.006452%)
+Total              653457 ( 99.999847%)
+\begin{tabular}{l|r}
+
+Metric   &       Value \\\hline
+\hline
+Hits     &    0.312478 \\\hline
+Misses   &    0.663802 \\\hline
+Unknowns &    0.023718 \\\hline
+Time     &  207.140000 \\\hline
+System   &  157.610000 \\\hline
+Elapsed  &   95.380000 
+\end{tabular}
+
+               Value
+Metric              
+Hits        0.312478
+Misses      0.663802
+Unknowns    0.023718
+Time      207.140000
+System    157.610000
+Elapsed    95.380000
+

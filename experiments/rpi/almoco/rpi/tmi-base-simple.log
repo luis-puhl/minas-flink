@@ -1,6 +1,0 @@
-['cmd' ex]	 elapsed 	 kernel 	 user 	 cpu%; 	 max-KB 	 pf 	 pf-rec 	 waits 	 switch 	 swap; 	 ins 	 outs 	 rcv 	 sent 	 sigs;
-./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 2
-[./bin/tmpi 0/4 c2] 2.602150e+02 seconds. At src/threaded-mpi.c:465
-[mpirun -n 4 ./bin/tmpi 2 2 0]	 8:41.12 	 30.47 	 1082.08 	 213%; 	 15948 	 51 	 9939 	 428699 	 1001981 	 0; 	 6544 	 54496 	 0 	 0 	 0;
-Hits               204435 ( 31.285102%)
-Unknowns            12577 (  1.924684%)
