@@ -512,7 +512,7 @@ The summary of all four experiments is shown in Table \ref{tab:exper-summary}.
 
 \begin{table}[h]\begin{center}
   \caption{Experiments Collected Metrics Summary}
-  \input{../experiments/rpi/almoco/summary.tex}
+  \input{experiments/summary.tex}
   \label{tab:exper-summary}
 \end{center}\end{table}
 
@@ -522,8 +522,8 @@ the effects of distribution.
 
 \begin{figure*}[tb]
   \centerline{
-    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/revised-java.log.png}
-    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/online-nd.log.png}
+    \includegraphics[width=0.5\textwidth]{experiments/revised-java.log.png}
+    \includegraphics[width=0.5\textwidth]{experiments/online-nd.log.png}
   }
   \caption{Reference (a) and Serial (b) implementation: Stream hits and novelties visualization}
   \label{fig:java-serial}
@@ -531,19 +531,19 @@ the effects of distribution.
 
 \begin{table*}[htb]\begin{center}
   \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
-  \input{../experiments/rpi/almoco/revised-java.log.tex}
+  \input{experiments/revised-java.log.tex}
   \label{tab:java-matrix}
 \end{center}\end{table*}
 \begin{table*}[htb]\begin{center}
   \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
-  \input{../experiments/rpi/almoco/online-nd.log.tex}
+  \input{experiments/online-nd.log.tex}
   \label{tab:libc-matrix}
 \end{center}\end{table*}
 
 \begin{figure*}[tb]
   \centerline{
-    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/tmi-base.log.png}
-    \includegraphics[width=0.5\textwidth]{../experiments/rpi/almoco/tmi-n12.log.png}
+    \includegraphics[width=0.5\textwidth]{experiments/tmi-base.log.png}
+    \includegraphics[width=0.5\textwidth]{experiments/tmi-n12.log.png}
   }
   \caption{Parallel single-node (c) and multi-node (d) modes: Stream hits and novelties visualization}
   \label{fig:cluster}
@@ -551,12 +551,12 @@ the effects of distribution.
 
 \begin{table}[htb]\begin{center}
   \caption{Reference implementation: Confusion Matrix and Qualitative Metrics}
-  \input{../experiments/rpi/almoco/tmi-base.log.tex}
+  \input{experiments/tmi-base.log.tex}
   \label{tab:java-matrix}
 \end{center}\end{table}
 \begin{table}[htb]\begin{center}
   \caption{Serial implementation: Confusion Matrix and Qualitative Metrics}
-  \input{../experiments/rpi/almoco/tmi-base.log.tex}
+  \input{experiments/tmi-base.log.tex}
   \label{tab:libc-matrix}
 \end{center}\end{table}
 
