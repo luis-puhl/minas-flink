@@ -18,6 +18,7 @@
 \usepackage{hyperref}
 % \usepackage[clean]{svg}
 \usepackage{subcaption}
+\usepackage{mdframed}% http://ctan.org/pkg/mdframed
 
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \newcounter{todocounter}
@@ -46,6 +47,7 @@ Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
 \maketitle
 
 \newcommand{\toreview}{}
+\newcommand{\reffig}[1]{Figure \ref{fig:#1}\xspace}
 
 \ifx\toreview\undefined
   \newcommandx{\nota}[2][1=]{}
@@ -62,6 +64,11 @@ Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
   %   \stepcounter{todocounter}
   %   \todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{[\thetodocounter] #2}}
   \newcommand{\hl}[1]{\colorbox{red!25}{#1}}
+  % 
+  \newenvironment{highlight}{\begin{mdframed}[backgroundcolor=red!25]}{\end{mdframed}}
+  % \newenvironment{myHeartEnv}
+  % {\color{purple}{\heartsuit}\kern-2.5pt\color{green}{\heartsuit}}
+  % {\text{ forever}}
 
   % \newcommandx{\notahl}[2][1=]{\stepcounter{todocounter}\todo[
   %   linecolor=green,
@@ -89,7 +96,7 @@ Design, Implementation and Evaluation [DRAFT]\thanks{CNPq}}
 \fi
 
 \begin{abstract}
-  The implementation of the Internet of Things (IoT) is sharply increasing the small
+  The ongoing implementation of the Internet of Things (IoT) is sharply increasing the small
   devices count and variety on edge networks and, following this increase the
   attack opportunities for hostile agents also increases, requiring more from
   the network administrator role and the need for tools to detect and react to those
@@ -156,6 +163,8 @@ novelty detection, intrusion detection, data streams, distributed system, edge c
 \newcommand{\refminas}{\textit{Ref}\xspace}
 \newcommand{\mfog}{\textit{MFOG}\xspace}
 \newcommand{\iot}{IoT\xspace}
+\newcommand{\nids}{NIDS\xspace}
+\newcommand{\ds}{DS\xspace}
 
 The advent of Internet of Things (\iot) is growing the count and diversity of
 devices on edge networks, this growth increases network traffic patterns and
@@ -185,6 +194,7 @@ areas.
 %     - Definição de raio `r = f * σ` (fator vezes desvio padrão) para `r = max(distance)` (distância máxima);
 %     - Tamanho do buffer de desconhecidos e frequência de execução do passo de detecção de novidade;
 
+\begin{highlight}
 Expected results:
 A system that embraces and explores the inherent distribution of fog computing
 in a IoT scenario opposing regular systems where data streams are collected and
@@ -197,6 +207,7 @@ IDS characteristics and description of physical scenario.
 MINAS characteristics.
 
 Distribution and IDSA-IoT architecture.
+\end{highlight}
 
 This paper is structured as follows:
 Section \ref{sec:related} presents previous works that addresses related
@@ -210,7 +221,6 @@ we also evaluate communication delay effects on classification metrics and
 conclude with the speedup per core and overall maximum stream speed.
 Section \ref{sec:conclusion} summarizes the research results and presents our
 final conclusions and future works.
-
 
 % ----------------------------------------------------------------------------------------------------------------------
 \section{Related Work}\label{sec:related}
@@ -237,22 +247,51 @@ Apache Kafka and Apache Spark for stream processing and
 %  - soluções {minas, paralelismo, distribuído, ~~py-kafka, flink,~~ mpi}
 %  - propor uma solução
 
+Amid of \iot expansion in multiple fields, from industry to daily life,
+the constant threat of intrusion, subversion (overthrow), denial of service
+or any other unexpected detrimental behavior by any component of a system or
+external actors is a prospect looming over many systems administrators.
+Following that reasoning, new \nids and other autonomous and analytics system
+surveillance tools are being proposed, many employing technics such as Anomaly
+and Novelty Detection.
 
+These tools require the network packet traffic to be constantly analysed,
+aggregated into flow descriptors and further processed in a classification
+and any Intrusion Detection.
+This requirement in turn, requesting more computing power at the edge.
+While requesting more computing power in a cloud environment is trivial and
+inexpensive, the same cannot be said 
+
+\begin{highlight}
 Fog computing infrastructure aims to offload
 computing resources from cloud providers by placing edge
 devices closer to end-users and/or data sources.
 
 Objective: Distributed novelty detection in streams using limited hardware.
 
-Previous attempts to attain the objective of distributed fast 
+Previous attempts to attain the objective of distributed fast
+\end{highlight}
+
+The overall organization of components, connections and interactions with external
+actors is shown in \reffig{mfog-phy-arch-cloud},
+from bottom left to top right: sensor network; fog containing gateway router
+and novelty detection cluster; cloud storage for model, alarms and statistics
+and; human supervisor addressing alarms and statistics.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=0.9\linewidth,page=1]{figures/mfog-arch-fisica.svg.pdf}
+  \caption{\mfog physical architecture overview with cloud model storage.}
+  \label{fig:mfog-phy-arch-cloud}
+\end{figure}
 
 \section{Implementation}\label{sec:implementation}
 
 The original MINAS algorithm has a companion implementation (\refminas)
 written in Java using MOA library base algorithms such as K-means and CluStream.
-\refminas employs Java's double, a $64 bits$ number whose precision is not
-absolutely necessary and, as it is often necessary to shuffle between nodes via
-network and a small economy could be made with only a float number with $32 bits$.
+% \refminas employs Java's double, a $64 bits$ number whose precision is not
+% absolutely necessary and, as it is often necessary to shuffle between nodes via
+% network and a small economy could be made with only a float number with $32 bits$.
 Another difference between \refminas and \mfog is cluster radius calculation
 from the distances of elements forming the cluster and the cluster's center,
 where the former uses the maximum distance, the latter uses the standard deviation
@@ -308,17 +347,6 @@ defined as a tuple containing \textit{uid} and assigned label.
 %     inflar a métrica de precisão;
 %   - **Solução:** *em aberto*;
 
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=\linewidth,page=1]{figures/mfog-arch-fisica.svg.pdf}
-  \caption{\mfog physical architecture overview with cloud model storage.
-  From bottom left to top right: sensor network; fog containing gateway router
-  and novelty detection cluster; cloud storage for model, alarms and statistics
-  and; human supervisor addressing alarms and statistics.
-  }
-  \label{fig:mfog-phy-arch-cloud}
-\end{figure}
-
 Another implementation decision related to the output stream is whether or not
 to reprocess, and add to the output stream, examples in the unknown buffer after
 the novelty detection procedure, meaning one item can be classified once as
@@ -340,9 +368,6 @@ of the clustering algorithm.
 %   - Volume máximo do sistema;
 %   - Diferenças de precisão de acordo com a carga;
 
-
-\newcommand{\reffig}[1]{Figure \ref{fig:#1}\xspace}
-
 For \mfog the Message Passing Interface (MPI) library was used.
 In MPI programming, multiple processes of the same program are created by the
 runtime and each process instance receives a rank parameter, for \mfog this
@@ -358,6 +383,7 @@ The overall sequence of creation is shown in \reffig{mfog-mpi-life}.
   \label{fig:mfog-mpi-life}
 \end{figure}
 
+\begin{highlight}
 Polices
 
 - Detecção de novidades e manutenção de modelo em ambiente distribuído:
@@ -368,7 +394,7 @@ Polices
   - Mecanismo de esquecimento local vs global (modelo único ou por nó);
 
   - Atraso na reclassificação dos desconhecidos;
-
+\end{highlight}
 
 The Evaluation Module was also build following reference techniques like
 multi-class confusion matrix with label-class association
@@ -389,17 +415,17 @@ The dataset used is the December 2015 segment of
 Kyoto 2006+ Dataset\footnote{Available at \url{http://www.takakura.com/Kyoto_data/}}
 (Traffic Data from Kyoto University's Honeypots)
 \cite{Song2011}.
-This segment was filtered (from $7 865 245$ instances) to only examples
+This segment was filtered (from $7\:865\:245$ instances) to only examples
 associated to known attack types identified by existing IDS, and attack types
-with more than $10 000$ instances for significance as done by \cite{Cassales2019a}.
+with more than $10\:000$ instances for significance as done by \cite{Cassales2019a}.
 % , this removes 46,390 instances. TODO: revisar, pois 7M != 700K.
 The remaining instantes then were transformed by normalization, transforming
 each feature value space (e.g. IP Address, Duration, Service) to the
 Real interval $[0, 1]$.
 The result is stored in two sets, training set and test set, using the holdout
-technique filtering in only normal class resulting in $72 000$ instances for
-training set and $653 457$ for test set, containing $206 278$ $N$ (normal) class
-and $447 179$ $A$ (attack) class.
+technique filtering in only normal class resulting in $72\:000$ instances for
+training set and $653\:457$ for test set, containing $206\:278$ $N$ (normal) class
+and $447\:179$ $A$ (attack) class.
 
 % Count per class
 %            id
@@ -417,6 +443,7 @@ and $447 179$ $A$ (attack) class.
 %   \cite{Cassales2019a}
 % \end{quote}
 
+\begin{highlight}
 O que quer testar com os experimentos.
 \begin{itemize}
   \item Tese: Mostrar que detecção por novidade e classificação continua viável em fog.
@@ -430,8 +457,9 @@ Como realizou (cenário, rpi, setup, coleta de métricas).
 Quais resultados obteve.
 
 Como interpretar os resultados.
+\end{highlight}
 
-\hl{BEGIN Oritações de leitura das métricas e visualizações.}
+% \hl{BEGIN Oritações de leitura das métricas e visualizações.}
 
 \subsection{Metrics and Visualizations}
 
@@ -507,7 +535,7 @@ Some of the novelty label markers include the label itself ($l \in \mathbb{N}$)
 for reference as if showing every label would turn this feature unreadable due
 to overlapping.
 
-\hl{END Oritações de leitura das métricas e visualizações.}
+% \hl{END Oritações de leitura das métricas e visualizações.}
 
 \subsection{Results Discussion}
 
@@ -533,11 +561,21 @@ the effects of distribution.
 
 \begin{figure*}[tb]
   \centerline{
-    \includegraphics[width=0.5\textwidth]{experiments/revised-java.log.png}
-    \includegraphics[width=0.5\textwidth]{experiments/online-nd.log.png}
+    \begin{subfigure}{.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{experiments/revised-java.log.png}
+      \caption{Reference Implementation}
+      \label{fig:validation-sub-java}
+    \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{experiments/online-nd.log.png}
+      \caption{Serial Implementation}
+      \label{fig:validation-sub-serial}
+    \end{subfigure}
   }
-  \caption{Reference (a) and Serial (b) implementation: Stream hits and novelties visualization}
-  \label{fig:java-serial}
+  \caption{Validation Comparison: Stream hits and novelties visualization}
+  \label{fig:validation-java-serial}
 \end{figure*}
 
 \begin{table*}[htb]\begin{center}
@@ -553,10 +591,20 @@ the effects of distribution.
 
 \begin{figure*}[tb]
   \centerline{
-    \includegraphics[width=0.5\textwidth]{experiments/tmi-base.log.png}
-    \includegraphics[width=0.5\textwidth]{experiments/tmi-n12.log.png}
+    \begin{subfigure}{.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{experiments/tmi-base.log.png}
+      \caption{Parallel single-node}
+      \label{fig:cluster-sub-single}
+    \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{experiments/tmi-n12.log.png}
+      \caption{Parallel multi-node}
+      \label{fig:cluster-sub-multi}
+    \end{subfigure}
   }
-  \caption{Parallel single-node (c) and multi-node (d) modes: Stream hits and novelties visualization}
+  \caption{Parallelism Comparison: Stream hits and novelties visualization}
   \label{fig:cluster}
 \end{figure*}
 
