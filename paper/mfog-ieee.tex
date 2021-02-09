@@ -16,6 +16,8 @@
 % \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 %     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \usepackage{hyperref}
+% \usepackage[clean]{svg}
+\usepackage{subcaption}
 
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \newcounter{todocounter}
@@ -306,7 +308,16 @@ defined as a tuple containing \textit{uid} and assigned label.
 %     inflar a métrica de precisão;
 %   - **Solução:** *em aberto*;
 
-\hl{Adicionar fig arch fisica.}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\linewidth,page=1]{figures/mfog-arch-fisica.svg.pdf}
+  \caption{\mfog physical architecture overview with cloud model storage.
+  From bottom left to top right: sensor network; fog containing gateway router
+  and novelty detection cluster; cloud storage for model, alarms and statistics
+  and; human supervisor addressing alarms and statistics.
+  }
+  \label{fig:mfog-phy-arch-cloud}
+\end{figure}
 
 Another implementation decision related to the output stream is whether or not
 to reprocess, and add to the output stream, examples in the unknown buffer after
