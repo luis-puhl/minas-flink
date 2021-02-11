@@ -1,0 +1,3 @@
+[submodule "mfog-ICCSA-2021"]
+	path = mfog-ICCSA-2021
+	url = git@github.com:luis-puhl/mfog-ICCSA-2021.git
