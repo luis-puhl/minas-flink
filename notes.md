@@ -234,3 +234,11 @@ Luís Henrique Puhl de Souza (Mestrado em Ciência da Computação)
 - Deadline submissão 07/03/2021
 - Deadline tese 07/05/2021
 - Deadline defesa 07/07/2021
+
+## ICCSA Important Dates
+
+- March 28, 2021: Deadline for abstract and paper submission to the General Tracks. Workshops may have their own deadline
+- April 18, 2021: Notification of Acceptance 
+- May 10, 2021: Submission deadline for the final version of the Proceeding Paper (hard deadline)
+- May 10 2021: Registration ends (hard deadline)
+- July 5-8, 2021: ICCSA 2021 Conference
