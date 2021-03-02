@@ -242,3 +242,24 @@ Luís Henrique Puhl de Souza (Mestrado em Ciência da Computação)
 - May 10, 2021: Submission deadline for the final version of the Proceeding Paper (hard deadline)
 - May 10 2021: Registration ends (hard deadline)
 - July 5-8, 2021: ICCSA 2021 Conference
+
+## Meeting 2021-03-02
+
+You5:25 PM
+https://www.omg.org/spec/UML/2.4.1/Superstructure/PDF
+https://sequencediagram.org/
+Helio Crestana Guardia5:44 PM
+https://stackoverflow.com/questions/1643733/how-to-illustrate-multiple-threads-in-sequence-diagram/47797194
+Helio Crestana Guardia5:54 PM
+https://stackoverflow.com/questions/5583257/writing-pseudocode-for-parallel-programming
+Helio Crestana Guardia6:00 PM
+https://tex.stackexchange.com/questions/503234/writing-pseudocode-for-parallel-programming
+Helio Crestana Guardia6:19 PM
+https://pt.overleaf.com/learn/latex/algorithms
+Helio Crestana Guardia6:22 PM
+https://stackoverflow.com/questions/34332252/how-to-implement-a-pseudocode-of-several-stages-into-latex
+
+- [ ] Definir data stream
+- [ ] Algoritmo minas
+- [ ] Algoritmo para cada componente mfog
+- [ ] svg uml seguindo padrão usado em sistemas distribuídos/programas assíncronos.
