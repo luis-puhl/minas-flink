@@ -1,3 +1,6 @@
 [submodule "paper"]
 	path = paper
 	url = git@github.com:luis-puhl/minas-MPI-ICCSA-2021.git
+[submodule "thesis"]
+	path = thesis
+	url = git@github.com:luis-puhl/minas-paralelo-paper.git

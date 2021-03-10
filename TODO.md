@@ -168,3 +168,74 @@ Estudo da distribuição do dataset em cada um dos nós da borda.
       Robin, sem uso de micro-batching) o que acarreta em pior caso no
       _overhead_ para empacotamento e envio pela rede e consequente baixa escalabilidade.
   - [ ] Como interpretar os resultados.
+
+## Cronograma
+
+```md
+Luís Henrique Puhl de Souza (Mestrado em Ciência da Computação)
+- Realizou a integralização de créditos, sendo o prazo máximo em 07/02/2020
+- Apresentou a proficiência linguística em 29/04/2019, sendo o prazo máximo em 07/03/2020
+- Realizou o exame de qualificação em 06/03/2020, sendo o prazo máximo em 07/03/2020
+- Prazo para defesa em 244 dias (07/07/2021)
+```
+
+- Deadline resultados 07/12/2021
+- Deadline artigo 07/01/2021
+- Deadline submissão 07/03/2021
+- Deadline tese 07/05/2021
+- Deadline defesa 07/07/2021
+
+## ICCSA Important Dates
+
+- March 28, 2021: Deadline for abstract and paper submission to the General Tracks. Workshops may have their own deadline
+- April 18, 2021: Notification of Acceptance 
+- May 10, 2021: Submission deadline for the final version of the Proceeding Paper (hard deadline)
+- May 10 2021: Registration ends (hard deadline)
+- July 5-8, 2021: ICCSA 2021 Conference
+
+## Meeting 2021-03-02
+
+You5:25 PM
+https://www.omg.org/spec/UML/2.4.1/Superstructure/PDF
+https://sequencediagram.org/
+Helio Crestana Guardia5:44 PM
+https://stackoverflow.com/questions/1643733/how-to-illustrate-multiple-threads-in-sequence-diagram/47797194
+Helio Crestana Guardia5:54 PM
+https://stackoverflow.com/questions/5583257/writing-pseudocode-for-parallel-programming
+Helio Crestana Guardia6:00 PM
+https://tex.stackexchange.com/questions/503234/writing-pseudocode-for-parallel-programming
+Helio Crestana Guardia6:19 PM
+https://pt.overleaf.com/learn/latex/algorithms
+Helio Crestana Guardia6:22 PM
+https://stackoverflow.com/questions/34332252/how-to-implement-a-pseudocode-of-several-stages-into-latex
+
+- [x] Definir data stream
+- [x] Algoritmo minas
+- [x] Algoritmo para cada componente mfog
+- [x] svg uml seguindo padrão usado em sistemas distribuídos/programas assíncronos.
+
+## Meeting 2021-03-09
+
+- Intro está completa segundo Hermes;
+  - [ ] mais referências?
+- [ ] Reescrever trabalhos relacionados.
+  - [ ] mais 4 referências, de 2020 preferencialmente.
+- [ ] Minas: definição data stream simplificada.
+- [ ] discussão algoritmo com marcações de linha
+  - [ ] Minas
+  - [ ] MFog
+- [ ] Conclusão experimentos.
+- [ ] Conclusão artigo.
+
+### CNPq / prestação de contas Carlos Chagas
+
+Trabalho não está concluído,
+durante o trabalho
+exploramos plataformas de processamento distribuído de fluxo contínuo de dados,
+implementamos e validamos um algoritmo distribuído de detecção de novidade
+para detecção de intrusão em redes IoT.
+No momento estamos em processo de submissão de artigo para evento relevante
+à area de pesquisa, como requisito do programa, portanto esperamos que a defesa
+seja feita antes de Julho.
+Caso comprovação de aprovação seja requerida, solicitamos extensão de prazo
+para entrega do Relatório Técnico com aprovação da banca Agosto.
