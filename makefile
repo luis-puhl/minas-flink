@@ -48,7 +48,17 @@ experiments/tmi-base.log: datasets/test.csv out/offline-model.csv bin/tmpi src/e
 # ds = datasets/training.csv datasets/emtpyline datasets/test.csv
 # n = $(subst experiments/tmi-n,,$(subst .log,,$@))
 out = $(subst experiments/,out/,$(subst .log,,$@))
-# tmpi_nodes := $(foreach wrd,2 3 4,experiments/tmi-n$(wrd).log)
+i = $(subst experiments/speedup-n,,$(subst .log,,$@))
+speedup_logs := $(foreach wrd,2 3 4 5 6 7 8 9 10 11 12,experiments/speedup-n$(wrd).log)
+$(speedup_logs): bin/tmpi out/offline-model.csv datasets/test.csv
+	cat out/offline-model.csv datasets/test.csv \
+		| /usr/bin/time mpirun -n $(i) -hostfile ./conf/hostsfile ./bin/tmpi > $(out)-full.csv 2>> $@
+	grep -E -v '^(Unknown|Cluster):' $(out)-full.csv > $(out)-matches.csv
+	python3 src/evaluation/evaluate.py "Speedup $(i)" datasets/test.csv $(out)-matches.csv $@ >> $@
+	# printf "$$tmftx\n" > $(subst .log,,$@)-simple.log
+	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> experiments/speedup.log
+experiments/speedup.log: $(speedup_logs)
+	for f in $^; do grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $$f >> $@; done
 # experiments/tmi-n: $(tmpi_nodes)
 .PHONY: experiments
 experiments: experiments/online-nd.log experiments/tmi-base.log experiments/tmi-MT-classifers/tmi-n.log experiments/tmi-supressed.log
