@@ -39,9 +39,10 @@ experiments/tmi-base.log: datasets/test.csv out/offline-model.csv bin/tmpi src/e
 	-@mkdir -p experiments
 	printf "$$tmftx\n\n" > $@
 	cat out/offline-model.csv datasets/test.csv \
-		| $(TIME) /usr/bin/time --format="$$tmfmt" mpirun -n 4 ./bin/tmpi 2 2 2>> $@ > out/tmi-full.csv
+		| $(TIME) /usr/bin/time --format="$$tmfmt" \
+		mpirun -n 4 ./bin/tmpi 2 2 2>> $@ > out/tmi-full.csv
 	grep -E -v '^(Unknown|Cluster):' out/tmi-full.csv > out/tmi-matches.csv
-	python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv $@ >> $@
+	-python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv $@ >> $@
 	printf "$$tmftx\n" > $(subst .log,,$@)-simple.log
 	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> $(subst .log,,$@)-simple.log
 
