@@ -4,120 +4,299 @@ Processing datasets/training.csv initial phase...
 ********************** Offline phase ****************************
 Classes for the training phase (offline): 1
 Class N
-Offline time 51.986578335000004s 0.8664429722500001m
+K-Means improvement: 0.000000e+00, totalSum 7.513956e+03, iter 25
+Offline time 49.92926901800001s 0.8321544836333334m
+Kmeans Offline wasted time 0s 0m
 ********************** Online phase****************************
+10000
+20000
+30000
+40000
+50000
+K-Means improvement: 0.000000e+00, totalSum 2.275768e+02, iter 71
 Novelties  11, Extensions   0, Unknowns   2000, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.379886e+02, iter 88
 Novelties   0, Extensions  11, Unknowns   2025, consumed      0, reclassified      0, garbageCollected      0
+60000
+K-Means improvement: 0.000000e+00, totalSum 2.380638e+02, iter 77
 Novelties   0, Extensions  10, Unknowns   2032, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.382640e+02, iter 76
 Novelties   0, Extensions  10, Unknowns   2039, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.464959e+02, iter 76
 Novelties   0, Extensions  10, Unknowns   2043, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.494450e+02, iter 83
 Novelties   2, Extensions  11, Unknowns   2073, consumed      0, reclassified      0, garbageCollected      0
+70000
+K-Means improvement: 0.000000e+00, totalSum 2.523391e+02, iter 75
 Novelties   0, Extensions  13, Unknowns   2085, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.544002e+02, iter 83
 Novelties   0, Extensions  13, Unknowns   2094, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.601387e+02, iter 76
 Novelties   0, Extensions  12, Unknowns   2106, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.632177e+02, iter 76
 Novelties   0, Extensions  12, Unknowns   2116, consumed      0, reclassified      0, garbageCollected      0
+80000
+K-Means improvement: 0.000000e+00, totalSum 2.671002e+02, iter 75
 Novelties   0, Extensions  13, Unknowns   2140, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.769687e+02, iter 81
 Novelties   1, Extensions  12, Unknowns   2165, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.797365e+02, iter 81
 Novelties   1, Extensions  13, Unknowns   2189, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.819156e+02, iter 81
 Novelties   1, Extensions  14, Unknowns   2197, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.095196e+02, iter 79
 Novelties   2, Extensions  14, Unknowns   2261, consumed      0, reclassified      0, garbageCollected      0
+90000
+K-Means improvement: 0.000000e+00, totalSum 3.163416e+02, iter 79
 Novelties   1, Extensions  16, Unknowns   2285, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.168130e+02, iter 79
 Novelties   1, Extensions  16, Unknowns   2310, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.772431e+02, iter 74
 Novelties   1, Extensions  17, Unknowns   2425, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.264261e+02, iter 74
 Novelties   0, Extensions  17, Unknowns   2515, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.389239e+02, iter 76
 Novelties   0, Extensions  18, Unknowns   2537, consumed      0, reclassified      0, garbageCollected      0
+100000
+K-Means improvement: 0.000000e+00, totalSum 4.507982e+02, iter 76
 Novelties   0, Extensions  17, Unknowns   2553, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.541548e+02, iter 76
 Novelties   0, Extensions  18, Unknowns   2566, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.539539e+02, iter 76
 Novelties   3, Extensions  18, Unknowns   2576, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.664721e+02, iter 76
 Novelties   1, Extensions  19, Unknowns   2590, consumed      0, reclassified      0, garbageCollected      0
+110000
+K-Means improvement: 0.000000e+00, totalSum 7.689744e+02, iter 76
 Novelties   0, Extensions  20, Unknowns   2593, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.775782e+02, iter 76
 Novelties   0, Extensions  20, Unknowns   2613, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.832171e+02, iter 76
 Novelties   0, Extensions  20, Unknowns   2616, consumed      0, reclassified      0, garbageCollected      0
+120000
+K-Means improvement: 0.000000e+00, totalSum 7.840758e+02, iter 76
 Novelties   1, Extensions  19, Unknowns   2621, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.827430e+02, iter 76
 Novelties   0, Extensions  20, Unknowns   2626, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.833447e+02, iter 76
 Novelties   0, Extensions  20, Unknowns   2631, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.905762e+02, iter 74
 Novelties   1, Extensions  19, Unknowns   2644, consumed   2644, reclassified      0, garbageCollected      0
+130000
+140000
+150000
+160000
+170000
+180000
+190000
+200000
+210000
+220000
+230000
+240000
+250000
+260000
+270000
+280000
+K-Means improvement: 0.000000e+00, totalSum 7.942598e+02, iter 69
 Novelties  12, Extensions   2, Unknowns   2000, consumed   2000, reclassified      0, garbageCollected      0
+290000
+300000
+310000
+320000
+330000
+340000
+350000
+360000
+370000
+380000
+K-Means improvement: 0.000000e+00, totalSum 1.146002e+02, iter 87
 Novelties   9, Extensions   2, Unknowns   2000, consumed      0, reclassified      0, garbageCollected      0
+390000
+K-Means improvement: 0.000000e+00, totalSum 1.113583e+02, iter 66
 Novelties   0, Extensions  12, Unknowns   2019, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.078775e+02, iter 66
 Novelties   0, Extensions  11, Unknowns   2023, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.339131e+02, iter 65
 Novelties   2, Extensions  11, Unknowns   2106, consumed      0, reclassified      0, garbageCollected      0
+400000
+K-Means improvement: 0.000000e+00, totalSum 1.340419e+02, iter 65
 Novelties   0, Extensions  13, Unknowns   2107, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.405973e+02, iter 66
 Novelties   2, Extensions  15, Unknowns   2140, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.430666e+02, iter 66
 Novelties   0, Extensions  17, Unknowns   2144, consumed      0, reclassified      0, garbageCollected      0
+410000
+K-Means improvement: 0.000000e+00, totalSum 1.486365e+02, iter 66
 Novelties   1, Extensions  14, Unknowns   2199, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.583332e+02, iter 66
 Novelties   0, Extensions  15, Unknowns   2217, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.625480e+02, iter 66
 Novelties   0, Extensions  15, Unknowns   2224, consumed      0, reclassified      0, garbageCollected      0
+420000
+K-Means improvement: 0.000000e+00, totalSum 1.694774e+02, iter 66
 Novelties   0, Extensions  14, Unknowns   2260, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 1.822064e+02, iter 66
 Novelties   1, Extensions  14, Unknowns   2291, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.056237e+02, iter 88
 Novelties   2, Extensions  15, Unknowns   2851, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.131602e+02, iter 88
 Novelties   1, Extensions  17, Unknowns   2985, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.157106e+02, iter 88
 Novelties   0, Extensions  18, Unknowns   2990, consumed      0, reclassified      0, garbageCollected      0
+430000
+K-Means improvement: 0.000000e+00, totalSum 2.192270e+02, iter 88
 Novelties   0, Extensions  18, Unknowns   2993, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.218755e+02, iter 88
 Novelties   0, Extensions  18, Unknowns   2995, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.223429e+02, iter 88
 Novelties   0, Extensions  18, Unknowns   2996, consumed      0, reclassified      0, garbageCollected      0
+440000
+K-Means improvement: 0.000000e+00, totalSum 2.240116e+02, iter 89
 Novelties   0, Extensions  18, Unknowns   2998, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.248317e+02, iter 89
 Novelties   0, Extensions  18, Unknowns   3001, consumed      0, reclassified      0, garbageCollected      0
+450000
+K-Means improvement: 0.000000e+00, totalSum 2.263022e+02, iter 89
 Novelties   0, Extensions  18, Unknowns   3003, consumed      0, reclassified      0, garbageCollected      0
+460000
+K-Means improvement: 0.000000e+00, totalSum 2.268585e+02, iter 88
 Novelties   0, Extensions  18, Unknowns   3004, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.299628e+02, iter 88
 Novelties   0, Extensions  19, Unknowns   3006, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.309166e+02, iter 87
 Novelties   0, Extensions  19, Unknowns   3007, consumed      0, reclassified      0, garbageCollected      0
+470000
+K-Means improvement: 0.000000e+00, totalSum 2.315918e+02, iter 87
 Novelties   0, Extensions  19, Unknowns   3008, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.419854e+02, iter 80
 Novelties   0, Extensions  18, Unknowns   3077, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.426929e+02, iter 84
 Novelties   1, Extensions  18, Unknowns   3113, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.531261e+02, iter 85
 Novelties   0, Extensions  20, Unknowns   3152, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.702060e+02, iter 85
 Novelties   2, Extensions  21, Unknowns   3700, consumed      0, reclassified      0, garbageCollected      0
+480000
+K-Means improvement: 0.000000e+00, totalSum 2.873553e+02, iter 85
 Novelties   3, Extensions  23, Unknowns   4094, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.897845e+02, iter 86
 Novelties   0, Extensions  26, Unknowns   4106, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 2.919528e+02, iter 66
 Novelties   1, Extensions  26, Unknowns   4180, consumed      0, reclassified      0, garbageCollected      0
+490000
+K-Means improvement: 0.000000e+00, totalSum 3.030892e+02, iter 86
 Novelties   1, Extensions  27, Unknowns   4257, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.093265e+02, iter 85
 Novelties   0, Extensions  28, Unknowns   4277, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.158920e+02, iter 86
 Novelties   1, Extensions  27, Unknowns   4317, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.187892e+02, iter 77
 Novelties   0, Extensions  27, Unknowns   4328, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.250964e+02, iter 75
 Novelties   0, Extensions  27, Unknowns   4333, consumed      0, reclassified      0, garbageCollected      0
+500000
+K-Means improvement: 0.000000e+00, totalSum 3.323703e+02, iter 86
 Novelties   1, Extensions  28, Unknowns   4349, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.424067e+02, iter 85
 Novelties   2, Extensions  30, Unknowns   4502, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.452279e+02, iter 85
 Novelties   0, Extensions  32, Unknowns   4507, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.654434e+02, iter 86
 Novelties   2, Extensions  31, Unknowns   4593, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 3.939880e+02, iter 73
 Novelties   2, Extensions  31, Unknowns   4664, consumed      0, reclassified      0, garbageCollected      0
+510000
+K-Means improvement: 0.000000e+00, totalSum 3.958154e+02, iter 74
 Novelties   0, Extensions  32, Unknowns   4671, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.371362e+02, iter 74
 Novelties   1, Extensions  33, Unknowns   4731, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.447071e+02, iter 74
 Novelties   0, Extensions  34, Unknowns   4745, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.460653e+02, iter 73
 Novelties   0, Extensions  34, Unknowns   4754, consumed      0, reclassified      0, garbageCollected      0
+520000
+K-Means improvement: 0.000000e+00, totalSum 4.491303e+02, iter 74
 Novelties   0, Extensions  35, Unknowns   4761, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.454041e+02, iter 72
 Novelties   1, Extensions  36, Unknowns   4771, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.541615e+02, iter 73
 Novelties   0, Extensions  36, Unknowns   4803, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.601220e+02, iter 75
 Novelties   5, Extensions  36, Unknowns   4899, consumed      0, reclassified      0, garbageCollected      0
+530000
+K-Means improvement: 0.000000e+00, totalSum 4.638966e+02, iter 75
 Novelties   0, Extensions  41, Unknowns   4908, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.649410e+02, iter 76
 Novelties   0, Extensions  40, Unknowns   4912, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 4.859601e+02, iter 76
 Novelties   1, Extensions  40, Unknowns   4921, consumed      0, reclassified      0, garbageCollected      0
+540000
+K-Means improvement: 0.000000e+00, totalSum 4.889968e+02, iter 76
 Novelties   0, Extensions  42, Unknowns   4940, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 5.076280e+02, iter 76
 Novelties   1, Extensions  41, Unknowns   4954, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 5.498237e+02, iter 77
 Novelties   7, Extensions  42, Unknowns   6220, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 5.548070e+02, iter 77
 Novelties   1, Extensions  48, Unknowns   6234, consumed      0, reclassified      0, garbageCollected      0
+550000
+K-Means improvement: 0.000000e+00, totalSum 5.594027e+02, iter 77
 Novelties   0, Extensions  48, Unknowns   6249, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 5.611762e+02, iter 71
 Novelties   0, Extensions  49, Unknowns   6303, consumed      0, reclassified      0, garbageCollected      0
+560000
+K-Means improvement: 0.000000e+00, totalSum 5.571473e+02, iter 74
 Novelties   0, Extensions  50, Unknowns   6313, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 5.615675e+02, iter 79
 Novelties   0, Extensions  50, Unknowns   6331, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.392267e+02, iter 79
 Novelties   4, Extensions  47, Unknowns   6816, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.231263e+02, iter 79
 Novelties   0, Extensions  52, Unknowns   6843, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.280528e+02, iter 81
 Novelties   0, Extensions  51, Unknowns   6863, consumed      0, reclassified      0, garbageCollected      0
+570000
+K-Means improvement: 0.000000e+00, totalSum 6.314086e+02, iter 70
 Novelties   0, Extensions  51, Unknowns   6898, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.392300e+02, iter 75
 Novelties   0, Extensions  53, Unknowns   6919, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.412517e+02, iter 75
 Novelties   0, Extensions  53, Unknowns   6923, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.440740e+02, iter 79
 Novelties   1, Extensions  53, Unknowns   6929, consumed      0, reclassified      0, garbageCollected      0
+580000
+K-Means improvement: 0.000000e+00, totalSum 6.679008e+02, iter 79
 Novelties   0, Extensions  53, Unknowns   6936, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.784930e+02, iter 80
 Novelties   0, Extensions  53, Unknowns   6957, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.839620e+02, iter 71
 Novelties   0, Extensions  51, Unknowns   6962, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.844501e+02, iter 71
 Novelties   0, Extensions  51, Unknowns   6963, consumed      0, reclassified      0, garbageCollected      0
+590000
+K-Means improvement: 0.000000e+00, totalSum 6.864475e+02, iter 71
 Novelties   0, Extensions  51, Unknowns   6966, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.870617e+02, iter 71
 Novelties   0, Extensions  51, Unknowns   6971, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.909193e+02, iter 71
 Novelties   1, Extensions  51, Unknowns   6984, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.938039e+02, iter 71
 Novelties   0, Extensions  52, Unknowns   6989, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 6.989329e+02, iter 79
 Novelties   1, Extensions  53, Unknowns   7002, consumed      0, reclassified      0, garbageCollected      0
+600000
+K-Means improvement: 0.000000e+00, totalSum 7.060541e+02, iter 77
 Novelties   0, Extensions  53, Unknowns   7006, consumed      0, reclassified      0, garbageCollected      0
+K-Means improvement: 0.000000e+00, totalSum 7.116963e+02, iter 70
 Novelties   0, Extensions  55, Unknowns   7013, consumed   7013, reclassified      0, garbageCollected      0
-Online time 105.689020494s 1.7614836749m
+610000
+620000
+630000
+640000
+650000
+Online time 109.171217208s 1.8195202868m
+Kmeans Online wasted time 0s 0m
 ********************** Results ****************************
 Final Confusion Matrix Using the Proposed methodology:
 	C N	N 1	N 2	N 3	N 4	N 5	N 6	N 7	N 8	N 9	N 10	N 11	N 12	Unk
@@ -133,12 +312,12 @@ Final Confusion Matrix Using the Literature methodology:
 C N	199263	0	79	44	0	0	0	229	181	826	5088	289	0	279
 
 C A	439530	123	145	368	8	52	165	1	1046	2133	3467	71	26	44
-Results time 2.120076304s 0.03533460506666666m
-Minas time 159795675133ns, 159.795675133s 2m
+Results time 2.219963271s 0.03699938785m
+Minas time 161320449497ns, 161.320449497s 2m
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" java -ea -classpath bin/minas/revised.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/revised-java.log true
-        175.47 user	2.02 system	2:40.17 elapsed
-        110% CPU        (0 avgtext+0 avgdata    1544224 maxresident)k
-        0 inputs+80056 outputs  (0 major+564091 minor)pagefaults        0 swaps
+	175.66 user	2.24 system	2:41.77 elapsed
+	109% CPU	(0 avgtext+0 avgdata	1534052 maxresident)k
+	0 inputs+80056 outputs	(0 major+516802 minor)pagefaults	0 swaps
 "
 Evaluate
 	title = Minas Ref. mk1.1
@@ -189,9 +368,9 @@ Metric   &       Value \\\hline
 Hits     &    0.305618 \\\hline
 Misses   &    0.676049 \\\hline
 Unknowns &    0.018333 \\\hline
-Time     &  175.470000 \\\hline
-System   &    2.020000 \\\hline
-Elapsed  &  160.170000 
+Time     &  175.660000 \\\hline
+System   &    2.240000 \\\hline
+Elapsed  &  161.770000 
 \end{tabular}
 
                Value
@@ -199,7 +378,7 @@ Metric
 Hits        0.305618
 Misses      0.676049
 Unknowns    0.018333
-Time      175.470000
-System      2.020000
-Elapsed   160.170000
+Time      175.660000
+System      2.240000
+Elapsed   161.770000
 

@@ -48,3 +48,28 @@
 	372% CPU	(0 avgtext+0 avgdata	153408 maxresident)k
 	0 inputs+40416 outputs	(1 major+76478 minor)pagefaults	0 swaps
 "
+"./bin/offline
+	194.94 user	0.05 system	3:15.05 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16884 maxresident)k
+	0 inputs+96 outputs	(0 major+3964 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	80.48 user	11.71 system	1:33.35 elapsed
+	98% CPU	(0 avgtext+0 avgdata	2852 maxresident)k
+	0 inputs+48560 outputs	(0 major+438 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	194.88 user	0.07 system	3:14.98 elapsed
+	99% CPU	(0 avgtext+0 avgdata	16768 maxresident)k
+	0 inputs+96 outputs	(0 major+3964 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	81.33 user	11.82 system	1:33.93 elapsed
+	99% CPU	(0 avgtext+0 avgdata	2852 maxresident)k
+	0 inputs+48592 outputs	(0 major+437 minor)pagefaults	0 swaps
+"
+"/usr/bin/time --format=[%C %x]\t %E \t %S \t %U \t %P; \t %M \t %F \t %R \t %w \t %c \t %W; \t %I \t %O \t %r \t %s \t %k; mpirun -n 4 ./bin/tmpi 2 2
+	574.16 user	49.42 system	2:39.05 elapsed
+	392% CPU	(0 avgtext+0 avgdata	22856 maxresident)k
+	13784 inputs+38136 outputs	(110 major+11360 minor)pagefaults	0 swaps
+"

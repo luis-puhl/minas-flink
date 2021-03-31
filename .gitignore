@@ -68,3 +68,7 @@ __pycache__
 
 # diretório de referencias não publicas
 ref
+
+overleaf
+*/venv
+*/.venv
