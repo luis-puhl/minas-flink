@@ -1,13 +1,14 @@
-a08f4ef5508197ac85d1381499151b34dc7a0785  bin/minas/revised.jar
+0a0c493bbb080dc1d697a57327d63f3ec471249e  bin/minas/revised-lag.jar
 Fast K-Means
 Processing datasets/training.csv initial phase...
 ********************** Offline phase ****************************
 Classes for the training phase (offline): 1
 Class N
 K-Means improvement: 0.000000e+00, totalSum 7.513956e+03, iter 25
-Offline time 49.92926901800001s 0.8321544836333334m
+Offline time 58.704907031000005s 0.9784151171833334m
 Kmeans Offline wasted time 0s 0m
 ********************** Online phase****************************
+0
 10000
 20000
 30000
@@ -295,7 +296,7 @@ Novelties   0, Extensions  55, Unknowns   7013, consumed   7013, reclassified   
 630000
 640000
 650000
-Online time 109.171217208s 1.8195202868m
+Online time 120.970059749s 2.0161676624833333m
 Kmeans Online wasted time 0s 0m
 ********************** Results ****************************
 Final Confusion Matrix Using the Proposed methodology:
@@ -312,15 +313,15 @@ Final Confusion Matrix Using the Literature methodology:
 C N	199263	0	79	44	0	0	0	229	181	826	5088	289	0	279
 
 C A	439530	123	145	368	8	52	165	1	1046	2133	3467	71	26	44
-Results time 2.219963271s 0.03699938785m
-Minas time 161320449497ns, 161.320449497s 2m
-"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" java -ea -classpath bin/minas/revised.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/revised-java.log true
-	175.66 user	2.24 system	2:41.77 elapsed
-	109% CPU	(0 avgtext+0 avgdata	1534052 maxresident)k
-	0 inputs+80056 outputs	(0 major+516802 minor)pagefaults	0 swaps
+Results time 2.4128640000000003s 0.040214400000000004m
+Minas time 182087830780ns, 182.08783078000002s 3m
+"/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" java -ea -classpath bin/minas/revised-lag.jar: NoveltyDetection.MinasRevised datasets/training.csv datasets/test.csv out/revised-java.log true
+	197.07 user	2.11 system	3:02.55 elapsed
+	109% CPU	(0 avgtext+0 avgdata	1572404 maxresident)k
+	0 inputs+36656 outputs	(0 major+549880 minor)pagefaults	0 swaps
 "
 Evaluate
-	title = Minas Ref. mk1.1
+	title = Minas Ref. mk1.2
 	examplesFileName = datasets/test.csv
 	matchesFileName = out/revised-java.log
 	logPath = experiments/revised-java.log
@@ -330,37 +331,38 @@ Count per class
 class        
 A      447179
 N      206278
-### Minas Ref. mk1.1
+### Minas Ref. mk1.2
 
 saving experiments/revised-java.log.png
 NaN labels: 0
 Confusion Matrix
-Classes       A       N assigned    hits          og_labels
-Labels                                                     
--          3774    8206        -       0              [Unk]
-1           123       0        A     123         [ExtNov 1]
-10         2489    4066        N    4066  [ExtNov 10, N 10]
-11           71     289        N     289  [ExtNov 11, N 11]
-12           26       0        A      26  [N 12, ExtNov 12]
-2           145      79        A     145         [ExtNov 2]
-3           368      44        A     368         [ExtNov 3]
-4             8       0        A       8         [ExtNov 4]
-5            52       0        A      52         [ExtNov 5]
-6           165       0        A     165    [N 6, ExtNov 6]
-7             1     229        N     229         [ExtNov 7]
-8          1046     181        A    1046    [N 8, ExtNov 8]
-9           161     154        A     161              [N 9]
-N        438750  193030        N  193030    [C N, ExtCon N]
+Classes       A       N assigned    hits
+Labels                                  
+-          3774    8206        -       0
+1           123       0        A     123
+10         2489    4066        N    4066
+11           71     289        N     289
+12           26       0        A      26
+2           145      79        A     145
+3           368      44        A     368
+4             8       0        A       8
+5            52       0        A      52
+6           165       0        A     165
+7             1     229        N     229
+8          1046     181        A    1046
+9           161     154        A     161
+N        438750  193030        N  193030
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels (item)     [('N', 0), ('-', 19), ('2', 58967), ('5', 68703), ('1', 72359), ('4', 82210), ('6', 89216), ('8', 92969), ('7', 102815), ('3', 104440), ('9', 132969), ('10', 285552), ('11', 288345), ('12', 524072)] 14
 Total examples    (653457, 25)
-Total matches     (653457, 3)
+Total matches     (653457, 5)
 Hits               199708 ( 30.561766%)
 Misses             441769 ( 67.604907%)
 Unknowns            11980 (  1.833326%)
 Unk. reprocessed        0 (  0.000000%)
 Total              653457 (100.000000%)
+Avg Time Thru      182930 (  0.018293s)
 \begin{tabular}{l|r}
 
 Metric   &       Value \\\hline
@@ -368,9 +370,9 @@ Metric   &       Value \\\hline
 Hits     &    0.305618 \\\hline
 Misses   &    0.676049 \\\hline
 Unknowns &    0.018333 \\\hline
-Time     &  175.660000 \\\hline
-System   &    2.240000 \\\hline
-Elapsed  &  161.770000 
+Time     &  197.070000 \\\hline
+System   &    2.110000 \\\hline
+Elapsed  &  182.550000 
 \end{tabular}
 
                Value
@@ -378,7 +380,7 @@ Metric
 Hits        0.305618
 Misses      0.676049
 Unknowns    0.018333
-Time      175.660000
-System      2.240000
-Elapsed   161.770000
+Time      197.070000
+System      2.110000
+Elapsed   182.550000
 

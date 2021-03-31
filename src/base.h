@@ -1,9 +1,10 @@
 #ifndef _BASE_H
 #define _BASE_H 1
 
-#include <stdio.h>
 #include <err.h>
+#include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #define fail(text, args) \
     errx(EXIT_FAILURE, text". At "__FILE__":%d\n", args, __LINE__)
@@ -34,6 +35,7 @@
 typedef struct t_example {
     unsigned long id; // MAX 4294967295
     unsigned int label;
+    clock_t timeIn;
     double *val;
 } Example;
 

@@ -53,7 +53,7 @@ int main(int argc, char const *argv[]) {
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     if (args.outputMode >= MFOG_OUTPUT_MINIMAL) {
-        printf("#pointId,label\n");
+        printf("#pointId,label,lag\n");
         fflush(stdout);
     }
     char *lineptr = NULL;
@@ -86,6 +86,7 @@ int main(int argc, char const *argv[]) {
             continue;
         }
         example.id = minasState.nextId;
+        example.timeIn = clock();
         minasState.currId = example.id;
         minasState.nextId++;
         assert(minasState.model.size >= minasParams.k);
@@ -97,41 +98,40 @@ int main(int argc, char const *argv[]) {
         clock_t t2 = clock();
         cpuTime += t2 - t1;
         //
-        if (args.outputMode >= MFOG_OUTPUT_MINIMAL) {
-            printf("%20lu,%s\n", example.id, printableLabelReuse(example.label, label));
-            fflush(stdout);
-        }
-        //
         clock_t t3 = clock();
         ioTime += t3 - t2;
-        if (example.label != MINAS_UNK_LABEL) {
-            continue;
-        }
-        if (args.outputMode >= MFOG_OUTPUT_ALL) {
-            printf("Unknown: %20lu", example.id);
-            for (unsigned int d = 0; d < minasParams.dim; d++)
-                printf(", %le", example.val[d]);
-            printf("\n");
-            fflush(stdout);
-        }
-        clock_t t4 = clock();
-        ioTime += t4 - t3;
-        //
-        unsigned int prevSize = minasState.model.size;
-        minasHandleUnknown(&minasParams, &minasState, &example);
-        clock_t t5 = clock();
-        cpuTime += t5 - t4;
-        for (unsigned int k = prevSize; k < minasState.model.size; k++) {
-            Cluster *cl = &minasState.model.clusters[k];
-            cl->isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
+        if (example.label == MINAS_UNK_LABEL) {
             if (args.outputMode >= MFOG_OUTPUT_ALL) {
-                printCluster(minasParams.dim, cl);
+                printf("Unknown: %20lu", example.id);
+                for (unsigned int d = 0; d < minasParams.dim; d++)
+                    printf(", %le", example.val[d]);
+                printf("\n");
+                fflush(stdout);
             }
-            // assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
-            // assertMpi(MPI_Bcast(newCl->center, minasParams.dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            clock_t t4 = clock();
+            ioTime += t4 - t3;
+            //
+            unsigned int prevSize = minasState.model.size;
+            minasHandleUnknown(&minasParams, &minasState, &example);
+            clock_t t5 = clock();
+            cpuTime += t5 - t4;
+            for (unsigned int k = prevSize; k < minasState.model.size; k++) {
+                Cluster *cl = &minasState.model.clusters[k];
+                cl->isIntrest = args.outputMode >= MFOG_OUTPUT_MINIMAL;
+                if (args.outputMode >= MFOG_OUTPUT_ALL) {
+                    printCluster(minasParams.dim, cl);
+                }
+                // assertMpi(MPI_Bcast(newCl, sizeof(Cluster), MPI_BYTE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+                // assertMpi(MPI_Bcast(newCl->center, minasParams.dim, MPI_DOUBLE, MFOG_RANK_MAIN, MPI_COMM_WORLD));
+            }
+            clock_t t6 = clock();
+            ioTime += t6 - t5;
         }
-        clock_t t6 = clock();
-        ioTime += t6 - t5;
+        clock_t lag = clock() - example.timeIn;
+        if (args.outputMode >= MFOG_OUTPUT_MINIMAL) {
+          printf("%20lu,%s,%ld\n", example.id, printableLabelReuse(example.label, label), lag);
+          fflush(stdout);
+        }
     }
     char *stats = calloc(minasState.model.size * 30, sizeof(char));
     restoreSleep(&minasParams, &minasState);

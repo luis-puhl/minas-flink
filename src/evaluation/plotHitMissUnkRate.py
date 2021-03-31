@@ -79,4 +79,4 @@ def plotHitMissUnkRate(df, assignment, off, plotSavePath=None, title=None):
     else:
         print('showing')
         plt.show()
-    return (df, labelSet)
+    return (df, labelSet, xcoords, allPos)

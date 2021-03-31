@@ -194,10 +194,10 @@ experiments/rpi/reboot.log: code@almoco
 # -------------------------- Experiments ---------------------------------------
 # --------- Experiments: Java reference ---------
 
-experiments/revised-java.log: bin/minas/revised.jar datasets/training.csv datasets/test.csv
-	sha1sum bin/minas/revised.jar > $@
-	$(TIME) java -ea -classpath 'bin/minas/revised.jar:' NoveltyDetection.MinasRevised \
+experiments/revised-java.log: bin/minas/revised-lag.jar datasets/training.csv datasets/test.csv
+	sha1sum bin/minas/revised-lag.jar > $@
+	$(TIME) java -ea -classpath 'bin/minas/revised-lag.jar:' NoveltyDetection.MinasRevised \
 		datasets/training.csv datasets/test.csv out/revised-java.log true 2>&1 | tee -a $@
-	python3 src/evaluation/evaluate.py "Minas Ref. mk1.1" datasets/test.csv out/revised-java.log $@ >> $@
+	python3 src/evaluation/evaluate.py "Minas Ref. mk1.2" datasets/test.csv out/revised-java.log $@ >> $@
 	cp out/revised-java.log-{Literature,Proposed}-chart.png experiments
 #
