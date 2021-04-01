@@ -72,3 +72,5 @@ ref
 overleaf
 */venv
 */.venv
+
+experiments/packets/*

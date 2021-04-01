@@ -32,7 +32,7 @@ typedef struct ThreadArgs_st {
     MinasState *minasState;
     char outputMode, nClassifiers;
     // mpi stuff
-    int mpiRank, mpiSize;
+    int mpiRank, mpiSize, packetSize;
     pthread_rwlock_t modelLock;
     sem_t modelReadySemaphore;
 } ThreadArgs;
@@ -44,6 +44,7 @@ typedef struct ThreadArgs_st {
     double totalTime_d = ((double)clock() - start) / 1000000.0;                                                       \
     fprintf(stderr, "[" who " %3d] (items %8lu) (ioTime %le), (cpuTime %le), (lockTime %le), (total %le). At %s:%d\n", \
             args->mpiRank, items, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
+//
 
 void *classifier(void *arg) {
     clock_t start = clock();
@@ -54,22 +55,34 @@ void *classifier(void *arg) {
     double valuePtr[dim];
     unsigned long items = 0, sends = 0;
     //
-    int exampleBufferLen, valueBufferLen;
+    int exampleBufferLen, valueBufferLen, packSizeBufferLen;
     int mpiReturn;
+    assertMpi(MPI_Pack_size(1, MPI_INT, MPI_COMM_WORLD, &packSizeBufferLen));
     assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
     assertMpi(MPI_Pack_size(dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
-    int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
-    int *buffer = (int *)malloc(bufferSize);
+    int bufferSize = packSizeBufferLen
+         + (exampleBufferLen + valueBufferLen) * args->packetSize
+         + 2 * MPI_BSEND_OVERHEAD;
+    int *inBuffer = (int *)malloc(bufferSize);
+    int *outBuffer = (int *)malloc(bufferSize);
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
+    int packetSize = 0, currentPacket = 0, rcvPosition = 0, sendPosition = 0;
     while (1) {
         clock_t l0 = clock();
-        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-        int position = 0;
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        if (packetSize == 0) {
+            assertMpi(MPI_Recv(inBuffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+            rcvPosition = 0;
+            currentPacket = 0;
+            assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, &packetSize, 1, MPI_INT, MPI_COMM_WORLD));
+            sendPosition = 0;
+            assertMpi(MPI_Pack(&packetSize, 1, MPI_INT, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
+        }
+        currentPacket++;
+        assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
+        assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, valuePtr, dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
         if (example.label == MFOG_EOS_MARKER) {
-            assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+            assertMpi(MPI_Send(inBuffer, rcvPosition, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             break;
         }
         // fprintf(stderr, "[classifier %d] id %u\n", args->mpiRank, example.id);
@@ -91,17 +104,19 @@ void *classifier(void *arg) {
         cpuTime += (l3 - l2);
         pthread_rwlock_unlock(&args->modelLock);
         //
-        position = 0;
-        if (example.label == MINAS_UNK_LABEL || match.cluster->isIntrest) {
-            assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMpi(MPI_Pack(valuePtr, dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-            assertMpi(MPI_Send(buffer, position, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
+        assertMpi(MPI_Pack(valuePtr, dim, MPI_DOUBLE, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
+        // if (example.label == MINAS_UNK_LABEL || match.cluster->isIntrest) {
+        if (currentPacket == packetSize) {
+            assertMpi(MPI_Send(outBuffer, sendPosition, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             sends++;
+            packetSize = 0;
         }
         clock_t l4 = clock();
         ioTime += (l4 - l3);
     }
-    free(buffer);
+    free(outBuffer);
+    free(inBuffer);
     fprintf(stderr, "[classifier %d] sends %lu\n", args->mpiRank, sends);
     printTiming("classifier");
     return NULL;
@@ -175,11 +190,15 @@ void *sampler(void *arg) {
     char *lineptr = NULL;
     unsigned long items = 0;
     //
-    int clusterBufferLen, exampleBufferLen, valueBufferLen;
+    int clusterBufferLen, packSizeBufferLen, exampleBufferLen, valueBufferLen;
     MPI_Pack_size(sizeof(Cluster), MPI_BYTE, MPI_COMM_WORLD, &clusterBufferLen);
+    MPI_Pack_size(1, MPI_INT, MPI_COMM_WORLD, &packSizeBufferLen);
     MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen);
     MPI_Pack_size(args->minasParams->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen);
-    int bufferSize = clusterBufferLen + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
+    int bufferSize = clusterBufferLen
+        + packSizeBufferLen
+        + (exampleBufferLen + valueBufferLen) * args->packetSize
+        + exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
     int mpiReturn, dest = 0;
     int *buffer = (int *)malloc(bufferSize);
     //
@@ -191,7 +210,12 @@ void *sampler(void *arg) {
     }
     size_t n = 0;
     unsigned long int *itemsWhere = calloc(args->mpiSize, sizeof(unsigned long int));
+    Example sampleBuffer[args->packetSize];
+    for (size_t i = 0; i < args->packetSize; i++) {
+        sampleBuffer[i].val = calloc(args->minasParams->dim, sizeof(double));
+    }
     // char label[140];
+    int packetSize = 0;
     while (!feof(stdin)) {
         clock_t t0 = clock();
         char lineType = getMfogLine(stdin, &lineptr, &n, args->minasParams->k, args->minasParams->dim, &cluster, &example);
@@ -235,15 +259,49 @@ void *sampler(void *arg) {
         // }
         // continue;
         //
-        int position = 0;
-        assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
-        assertMpi(MPI_Pack(example.val, args->minasParams->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        double *valPtr = sampleBuffer[packetSize].val;
+        sampleBuffer[packetSize] = example;
+        sampleBuffer[packetSize].val = valPtr;
+        for (size_t d = 0; d < args->minasParams->dim; d++) {
+            valPtr[d] = example.val[d];
+        }
+        //
+        packetSize++;
         clock_t t2 = clock();
         cpuTime += t2 - t1;
+        if (packetSize < args->packetSize) {
+            continue;
+        }
+        int position = 0;
+        assertMpi(MPI_Pack(&packetSize, 1, MPI_INT, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        for (int i = 0; i < packetSize; i++) {
+            assertMpi(MPI_Pack(&(sampleBuffer[i]), sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+            assertMpi(MPI_Pack(sampleBuffer[i].val, args->minasParams->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        }
         do {
             dest = (dest + 1) % args->mpiSize;
         } while (dest == MFOG_RANK_MAIN);
         assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+        packetSize = 0;
+        // fprintf(stderr, "[sampler %d] id %u to %d\n", args->mpiRank, example.id, dest);
+        itemsWhere[dest]++;
+        clock_t t3 = clock();
+        ioTime += t3 - t2;
+    }
+    if (packetSize > 0) {
+        clock_t t2 = clock();
+        int position = 0;
+        assertMpi(MPI_Pack(&packetSize, 1, MPI_INT, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        for (int i = 0; i < packetSize; i++) {
+            assertMpi(MPI_Pack(&(sampleBuffer[i]), sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+            assertMpi(MPI_Pack(sampleBuffer[i].val, args->minasParams->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
+        }
+        do {
+            dest = (dest + 1) % args->mpiSize;
+        } while (dest == MFOG_RANK_MAIN);
+        assertMpi(MPI_Send(buffer, position, MPI_PACKED, dest, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD));
+        position = 0;
+        packetSize = 0;
         // fprintf(stderr, "[sampler %d] id %u to %d\n", args->mpiRank, example.id, dest);
         itemsWhere[dest]++;
         clock_t t3 = clock();
@@ -259,6 +317,8 @@ void *sampler(void *arg) {
     free(itemsWhere);
     example.label = MFOG_EOS_MARKER;
     int position = 0;
+    packetSize = 1;
+    assertMpi(MPI_Pack(&packetSize, 1, MPI_INT, buffer, bufferSize, &position, MPI_COMM_WORLD));
     assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     assertMpi(MPI_Pack(example.val, args->minasParams->dim, MPI_DOUBLE, buffer, bufferSize, &position, MPI_COMM_WORLD));
     for (dest = 1; dest < args->mpiSize; dest++) {
@@ -288,21 +348,30 @@ void *detector(void *arg) {
     Example example;
     double valuePtr[args->minasParams->dim];
     //
-    int mpiReturn, exampleBufferLen, valueBufferLen, position;
+    int mpiReturn, packSizeBufferLen, exampleBufferLen, valueBufferLen, position;
     MPI_Status st;
+    assertMpi(MPI_Pack_size(1, MPI_INT, MPI_COMM_WORLD, &packSizeBufferLen));
     assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
     assertMpi(MPI_Pack_size(args->minasParams->dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
-    int bufferSize = exampleBufferLen + valueBufferLen + 2 * MPI_BSEND_OVERHEAD;
+    int bufferSize = packSizeBufferLen
+         + (exampleBufferLen + valueBufferLen) * args->packetSize
+         + 2 * MPI_BSEND_OVERHEAD;
     int *buffer = calloc(bufferSize, sizeof(int));
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     unsigned long int *itemsWhere = calloc(args->mpiSize, sizeof(unsigned long int));
+    int packetSize = 0, currentPacket = 0;
     while (endOfStreams < streams) {
         clock_t t0 = clock();
-        assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
+        if (packetSize == 0) {
+            assertMpi(MPI_Recv(buffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD, &st));
+            position = 0;
+            currentPacket = 0;
+            assertMpi(MPI_Unpack(buffer, bufferSize, &position, &packetSize, 1, MPI_INT, MPI_COMM_WORLD));
+        }
         clock_t t1 = clock();
         ioTime += t1 - t0;
-        position = 0;
+        currentPacket++;
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
         assertMpi(MPI_Unpack(buffer, bufferSize, &position, valuePtr, args->minasParams->dim, MPI_DOUBLE, MPI_COMM_WORLD));
         example.val = valuePtr;
@@ -311,6 +380,9 @@ void *detector(void *arg) {
             args->minasState->currId = example.id;
         }
         items++;
+        if (currentPacket == packetSize) {
+            packetSize = 0;
+        }
         if (example.label == MFOG_EOS_MARKER) {
             endOfStreams++;
             fprintf(stderr, "[detector %3d] MFOG_EOS_MARKER %d / %d\n", args->mpiRank, endOfStreams, streams);
@@ -388,13 +460,13 @@ int main(int argc, char const *argv[]) {
     }
     //
     ThreadArgs args = {
-        .outputMode = argc >= 2 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
-        .nClassifiers = argc >= 3 ? atoi(argv[2]) : 1,
+        .outputMode = argc > 1 ? atoi(argv[1]) : MFOG_OUTPUT_ALL,
+        .nClassifiers = argc > 2 ? atoi(argv[2]) : 1,
+        .packetSize = argc > 3 ? atoi(argv[3]) : 8,
         .minasParams = &minasParams,
         .minasState = &minasState,
     };
     // printArgs(minasParams, args.outputMode, args.nClassifiers);
-    //
     int provided;
     int mpiReturn = MPI_Init_thread(&argc, (char ***)&argv, MPI_THREAD_MULTIPLE, &provided);
     if (mpiReturn != MPI_SUCCESS || provided != MPI_THREAD_MULTIPLE) {
@@ -413,7 +485,11 @@ int main(int argc, char const *argv[]) {
         int namelen;
         char mpiProcessorName[MPI_MAX_PROCESSOR_NAME + 1];
         MPI_Get_processor_name(mpiProcessorName, &namelen);
-        printArgs(minasParams, args.outputMode, args.nClassifiers);
+        // printArgs(minasParams, args.outputMode, args.nClassifiers);
+        fprintf(stderr, "%s; kParam=%d; dim=%d; precision=%le; radiusF=%le; minExamplesPerCluster=%d; noveltyF=%le;\n",
+                argv[0], minasParams.k, minasParams.dim, minasParams.precision, minasParams.radiusF, minasParams.minExamplesPerCluster, minasParams.noveltyF);
+        fprintf(stderr, "%s; outputMode=%d; nClassifiers=%d; packetSize=%d;\n",
+                argv[0], args.outputMode, args.nClassifiers, args.packetSize);
         pthread_t detector_t;
         assertErrno(pthread_create(&detector_t, NULL, detector, (void *)&args) == 0, "Thread creation fail%c.", '.', MPI_Finalize());
         //

@@ -13,12 +13,12 @@ Novelties   0, Extensions  12, Unknowns   2000, consumed   1799, reclassified   
 [classifier] Statistics: items:     671189, hits:     651001, misses:      20188,
 '   N':     648191, '   1':        575, '   2':       1164, '   3':         60, '   4':        316,
 '   5':        614, '   6':         46, '   7':         35
-[./bin/ond] (ioTime 4.599075e+00), (cpuTime 6.445537e+00), (lockTime 0.000000e+00), (total 1.480321e+01), (rest -1.104460e+07). At src/online-nd.c:154
+[./bin/ond] (ioTime 4.350782e+00), (cpuTime 6.193313e+00), (lockTime 0.000000e+00), (total 1.403265e+01), (rest -1.054408e+07). At src/online-nd.c:154
 
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/ond
-	10.53 user	4.27 system	0:14.87 elapsed
-	99% CPU	(0 avgtext+0 avgdata	3316 maxresident)k
-	0 inputs+45824 outputs	(0 major+516 minor)pagefaults	0 swaps
+	10.00 user	4.02 system	0:14.09 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
+	0 inputs+45760 outputs	(0 major+507 minor)pagefaults	0 swaps
 "
 Repeats 0
 Evaluate
@@ -67,9 +67,9 @@ Metric   &            \\\hline
 Hits     &   0.310063 \\\hline
 Misses   &   0.659042 \\\hline
 Unknowns &   0.030894 \\\hline
-Time     &  10.530000 \\\hline
-System   &   4.270000 \\\hline
-Elapsed  &  14.870000 
+Time     &  10.000000 \\\hline
+System   &   4.020000 \\\hline
+Elapsed  &  14.090000 
 \end{tabular}
 
               Value
@@ -77,7 +77,7 @@ Metric
 Hits       0.310063
 Misses     0.659042
 Unknowns   0.030894
-Time      10.530000
-System     4.270000
-Elapsed   14.870000
+Time      10.000000
+System     4.020000
+Elapsed   14.090000
 

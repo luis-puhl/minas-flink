@@ -39,7 +39,7 @@ experiments/tmi-base.log: datasets/test.csv out/offline-model.csv bin/tmpi src/e
 	-@mkdir -p experiments
 	printf "$$tmftx\n\n" > $@
 	cat out/offline-model.csv datasets/test.csv \
-		| $(TIME) /usr/bin/time --format="$$tmfmt" \
+		| /usr/bin/time --format="$$tmfmt" $(TIME) \
 		mpirun -n 4 ./bin/tmpi 2 2 2>> $@ > out/tmi-full.csv
 	grep -E -v '^(Unknown|Cluster):' out/tmi-full.csv > out/tmi-matches.csv
 	-python3 src/evaluation/evaluate.py "Cluster tmi" datasets/test.csv out/tmi-matches.csv $@ >> $@
@@ -60,6 +60,20 @@ $(speedup_logs): bin/tmpi out/offline-model.csv datasets/test.csv
 	-grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $@ >> experiments/speedup.log
 experiments/speedup.log: $(speedup_logs)
 	for f in $^; do grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )' $$f >> $@; done
+#
+packets = $(subst experiments/packets/n,,$(subst .log,,$@))
+packets_logs := $(foreach wrd,01 02 03 04 05 06 07 08 09 10 11 12,experiments/packets/n$(wrd).log)
+experiments/packets out/packets:
+	mkdir -p $@
+$(packets_logs): experiments/packets out/packets bin/tmpi out/offline-model.csv datasets/test.csv
+	cat out/offline-model.csv datasets/test.csv \
+		| /usr/bin/time mpirun ./bin/tmpi 2 1 $(packets) > $(out)-full.csv 2> $@
+	@grep -E -v '^(Unknown|Cluster):' $(out)-full.csv > $(out)-matches.csv
+	python3 src/evaluation/evaluate.py "packets $(packets)" datasets/test.csv $(out)-matches.csv $@ >> $@
+experiments/packets.log: $(packets_logs)
+	# experiments/packets/n
+	cat $^ | grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )|(Avg Time Thru)' > $@
+	# for f in $^; do grep -E '(-------- cluster)|(./bin/tmpi)|(Hits  )|(Unknowns      )|(Avg Time Thru)' $$f >> $@; done
 # experiments/tmi-n: $(tmpi_nodes)
 .PHONY: experiments
 experiments: experiments/online-nd.log experiments/tmi-base.log experiments/tmi-MT-classifers/tmi-n.log experiments/tmi-supressed.log

@@ -1,9 +1,9 @@
 ['cmd' ex]	 elapsed 	 kernel 	 user 	 cpu%; 	 max-KB 	 pf 	 pf-rec 	 waits 	 switch 	 swap; 	 ins 	 outs 	 rcv 	 sent 	 sigs;
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00; outputMode 2, nClassifiers 2
-[./bin/tmpi 0/4 c2] 1.825906e+01 seconds. At src/threaded-mpi.c:466
-[mpirun -n 4 ./bin/tmpi 2 2 0]	 0:11.76 	 11.74 	 52.80 	 548%; 	 23260 	 130 	 19475 	 173969 	 474564 	 0; 	 0 	 46384 	 0 	 0 	 0;
+[./bin/tmpi 0/4 c2] 1.880364e+01 seconds. At src/threaded-mpi.c:539
+[mpirun -n 4 ./bin/tmpi 2 2 0]	 0:11.80 	 11.91 	 54.57 	 563%; 	 21752 	 106 	 12929 	 236642 	 514556 	 0; 	 0 	 45888 	 0 	 0 	 0;
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" /usr/bin/time --format=[%C %x]\t %E \t %S \t %U \t %P; \t %M \t %F \t %R \t %w \t %c \t %W; \t %I \t %O \t %r \t %s \t %k; mpirun -n 4 ./bin/tmpi 2 2
-Hits               204343 ( 31.271023%)
-Unknowns            14445 (  2.210548%)
-Hits     &   0.312710 \\\hline
-Hits       0.312710
+Hits               204105 ( 31.234601%)
+Unknowns            14465 (  2.213608%)
+Hits     &   0.312346 \\\hline
+Hits       0.312346
