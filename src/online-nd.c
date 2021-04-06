@@ -47,8 +47,8 @@ int main(int argc, char const *argv[]) {
     //
     printArgs(minasParams, args.outputMode, args.nClassifiers);
     //
-    Example example;
-    example.val = calloc(minasParams.dim, sizeof(double));
+    Example sample;
+    sample.val = calloc(minasParams.dim, sizeof(double));
     //
     char label[20];
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
@@ -62,7 +62,7 @@ int main(int argc, char const *argv[]) {
     cluster.center = calloc(minasParams.dim, sizeof(double));
     while (!feof(stdin)) {
         clock_t t0 = clock();
-        char lineType = getMfogLine(stdin, &lineptr, &n, minasParams.k, minasParams.dim, &cluster, &example);
+        char lineType = getMfogLine(stdin, &lineptr, &n, minasParams.k, minasParams.dim, &cluster, &sample);
         clock_t t1 = clock();
         ioTime += t1 - t0;
         if (lineType == 'C') {
@@ -85,26 +85,26 @@ int main(int argc, char const *argv[]) {
         if (lineType != 'E') {
             continue;
         }
-        example.id = minasState.nextId;
-        example.timeIn = clock();
-        minasState.currId = example.id;
+        sample.id = minasState.nextId;
+        sample.timeIn = clock();
+        minasState.currId = sample.id;
         minasState.nextId++;
         assert(minasState.model.size >= minasParams.k);
         //
         Match match;
-        identify(&minasParams, &minasState, &example, &match);
-        example.label = match.label;
+        identify(&minasParams, &minasState, &sample, &match);
+        sample.label = match.label;
         minasHandleSleep(&minasParams, &minasState);
         clock_t t2 = clock();
         cpuTime += t2 - t1;
         //
         clock_t t3 = clock();
         ioTime += t3 - t2;
-        if (example.label == MINAS_UNK_LABEL) {
+        if (sample.label == MINAS_UNK_LABEL) {
             if (args.outputMode >= MFOG_OUTPUT_ALL) {
-                printf("Unknown: %20lu", example.id);
+                printf("Unknown: %20lu", sample.id);
                 for (unsigned int d = 0; d < minasParams.dim; d++)
-                    printf(", %le", example.val[d]);
+                    printf(", %le", sample.val[d]);
                 printf("\n");
                 fflush(stdout);
             }
@@ -112,7 +112,7 @@ int main(int argc, char const *argv[]) {
             ioTime += t4 - t3;
             //
             unsigned int prevSize = minasState.model.size;
-            minasHandleUnknown(&minasParams, &minasState, &example);
+            minasHandleUnknown(&minasParams, &minasState, &sample);
             clock_t t5 = clock();
             cpuTime += t5 - t4;
             for (unsigned int k = prevSize; k < minasState.model.size; k++) {
@@ -127,9 +127,9 @@ int main(int argc, char const *argv[]) {
             clock_t t6 = clock();
             ioTime += t6 - t5;
         }
-        clock_t lag = clock() - example.timeIn;
+        clock_t lag = clock() - sample.timeIn;
         if (args.outputMode >= MFOG_OUTPUT_MINIMAL) {
-          printf("%20lu,%s,%ld\n", example.id, printableLabelReuse(example.label, label), lag);
+          printf("%20lu,%s,%ld\n", sample.id, printableLabelReuse(sample.label, label), lag);
           fflush(stdout);
         }
     }
