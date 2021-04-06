@@ -13,12 +13,13 @@ Novelties   0, Extensions  12, Unknowns   2000, consumed   1799, reclassified   
 [classifier] Statistics: items:     671189, hits:     651001, misses:      20188,
 '   N':     648191, '   1':        575, '   2':       1164, '   3':         60, '   4':        316,
 '   5':        614, '   6':         46, '   7':         35
-[./bin/ond] (ioTime 4.350782e+00), (cpuTime 6.193313e+00), (lockTime 0.000000e+00), (total 1.403265e+01), (rest -1.054408e+07). At src/online-nd.c:154
+[lag] min=0, max=0, avg=0.039398, time=15.601688
+[./bin/ond] (ioTime 4.895388e+00), (cpuTime 6.523183e+00), (lockTime 0.000000e+00), (total 1.548218e+01), (rest -1.141856e+07). At src/online-nd.c:163
 
 "/usr/bin/time --output=experiments/timing.log --append --format="%C\n\t%U user\t%S system\t%E elapsed\n\t%P CPU\t(%X avgtext+%D avgdata\t%M maxresident)k\n\t%I inputs+%O outputs\t(%F major+%R minor)pagefaults\t%W swaps\n" ./bin/ond
-	10.00 user	4.02 system	0:14.09 elapsed
-	99% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
-	0 inputs+45760 outputs	(0 major+507 minor)pagefaults	0 swaps
+	11.53 user	3.95 system	0:15.60 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3128 maxresident)k
+	0 inputs+54400 outputs	(0 major+518 minor)pagefaults	0 swaps
 "
 Repeats 0
 Evaluate
@@ -48,6 +49,8 @@ Labels
 5            12       0        A      12
 6             0       5        N       5
 N        430518  201312        N  201312
+lagMin, lagMax 2e-06 0.194074
+ylim (1.124168648446004e-06, 0.3590864774231329) (1.124168648446004e-06, 0.3590864774231329) (1.124168648446004e-06, 0.3590864774231329)
 Classes           ['A' 'N']
 Initial labels    ['-', 'N']
 Labels (item)     [('N', 0), ('-', 19), ('2', 163228), ('3', 167099), ('1', 217774), ('0', 324906), ('5', 501312), ('4', 508715), ('6', 511666)] 9
@@ -58,7 +61,7 @@ Misses             430656 ( 65.904159%)
 Unknowns            20188 (  3.089410%)
 Unk. reprocessed        1 (  0.004953%)
 Total              653457 ( 99.999847%)
-Avg Time Thru          10 (  0.000001s)
+Avg Time Thru      0.000011s)
 \begin{tabular}{l|r}
 
 Metric   &      Value \\\hline
@@ -67,9 +70,9 @@ Metric   &            \\\hline
 Hits     &   0.310063 \\\hline
 Misses   &   0.659042 \\\hline
 Unknowns &   0.030894 \\\hline
-Time     &  10.000000 \\\hline
-System   &   4.020000 \\\hline
-Elapsed  &  14.090000 
+Time     &  11.530000 \\\hline
+System   &   3.950000 \\\hline
+Elapsed  &  15.600000 
 \end{tabular}
 
               Value
@@ -77,7 +80,7 @@ Metric
 Hits       0.310063
 Misses     0.659042
 Unknowns   0.030894
-Time      10.000000
-System     4.020000
-Elapsed   14.090000
+Time      11.530000
+System     3.950000
+Elapsed   15.600000
 

@@ -13,3 +13,160 @@
 	563% CPU	(0 avgtext+0 avgdata	21752 maxresident)k
 	0 inputs+45888 outputs	(106 major+13009 minor)pagefaults	0 swaps
 "
+"./bin/offline
+	21.83 user	0.01 system	0:21.88 elapsed
+	99% CPU	(0 avgtext+0 avgdata	19576 maxresident)k
+	0 inputs+96 outputs	(0 major+4556 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	9.69 user	3.61 system	0:13.34 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3320 maxresident)k
+	0 inputs+45736 outputs	(0 major+430 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	9.88 user	3.69 system	0:13.61 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3360 maxresident)k
+	0 inputs+45736 outputs	(0 major+430 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	9.70 user	3.67 system	0:13.41 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3272 maxresident)k
+	0 inputs+45736 outputs	(0 major+428 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.27 user	4.06 system	0:14.41 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3348 maxresident)k
+	0 inputs+45800 outputs	(0 major+430 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.32 user	4.25 system	0:14.66 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3204 maxresident)k
+	0 inputs+45808 outputs	(0 major+426 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	11.34 user	4.58 system	0:16.01 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3324 maxresident)k
+	0 inputs+45880 outputs	(0 major+429 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	23.18 user	0.01 system	0:23.27 elapsed
+	99% CPU	(0 avgtext+0 avgdata	20288 maxresident)k
+	0 inputs+88 outputs	(0 major+4706 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.64 user	3.82 system	0:14.53 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3200 maxresident)k
+	0 inputs+45824 outputs	(0 major+438 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	23.78 user	0.02 system	0:23.89 elapsed
+	99% CPU	(0 avgtext+0 avgdata	20240 maxresident)k
+	0 inputs+88 outputs	(0 major+4703 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.28 user	3.75 system	0:14.11 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3128 maxresident)k
+	0 inputs+49560 outputs	(0 major+435 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	9.99 user	3.62 system	0:13.67 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
+	0 inputs+49568 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.20 user	3.41 system	0:13.68 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3224 maxresident)k
+	0 inputs+49568 outputs	(0 major+440 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.24 user	3.55 system	0:13.85 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3264 maxresident)k
+	0 inputs+49552 outputs	(0 major+440 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.86 user	3.63 system	0:14.57 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3192 maxresident)k
+	0 inputs+49600 outputs	(0 major+440 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.42 user	3.67 system	0:14.17 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
+	0 inputs+49584 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	11.09 user	3.84 system	0:15.02 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3256 maxresident)k
+	0 inputs+49624 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	26.69 user	0.02 system	0:26.88 elapsed
+	99% CPU	(0 avgtext+0 avgdata	20220 maxresident)k
+	0 inputs+96 outputs	(0 major+4705 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	11.42 user	4.25 system	0:15.89 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
+	0 inputs+49688 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	11.86 user	4.17 system	0:16.20 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3200 maxresident)k
+	0 inputs+49688 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+Command terminated by signal 2
+"./bin/ond
+	15.31 user	5.88 system	0:21.63 elapsed
+	97% CPU	(0 avgtext+0 avgdata	3308 maxresident)k
+	0 inputs+46304 outputs	(0 major+438 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	16.08 user	5.71 system	0:22.03 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
+	0 inputs+50048 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	15.08 user	5.57 system	0:20.89 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3264 maxresident)k
+	0 inputs+50000 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	15.17 user	5.55 system	0:20.97 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3224 maxresident)k
+	0 inputs+50008 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	13.09 user	4.74 system	0:18.00 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3128 maxresident)k
+	0 inputs+49840 outputs	(0 major+435 minor)pagefaults	0 swaps
+"
+"./bin/offline
+	32.04 user	0.03 system	0:32.28 elapsed
+	99% CPU	(0 avgtext+0 avgdata	20232 maxresident)k
+	0 inputs+88 outputs	(0 major+4705 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	15.26 user	5.48 system	0:20.99 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3236 maxresident)k
+	0 inputs+45448 outputs	(0 major+440 minor)pagefaults	0 swaps
+"
+Command terminated by signal 2
+"./bin/ond
+	6.41 user	2.44 system	0:09.06 elapsed
+	97% CPU	(0 avgtext+0 avgdata	3072 maxresident)k
+	0 inputs+25688 outputs	(0 major+378 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	17.05 user	6.22 system	0:23.65 elapsed
+	98% CPU	(0 avgtext+0 avgdata	3232 maxresident)k
+	0 inputs+54376 outputs	(0 major+439 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	10.97 user	3.83 system	0:14.92 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3240 maxresident)k
+	0 inputs+54416 outputs	(0 major+438 minor)pagefaults	0 swaps
+"
+"./bin/ond
+	11.53 user	3.95 system	0:15.60 elapsed
+	99% CPU	(0 avgtext+0 avgdata	3128 maxresident)k
+	0 inputs+54392 outputs	(0 major+435 minor)pagefaults	0 swaps
+"

@@ -1,108 +1,96 @@
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=1;
-[./bin/tmpi 0/4 c1] 2.204282e+01 seconds. At src/threaded-mpi.c:542
-62.77user 10.60system 0:13.87elapsed 529%CPU (0avgtext+0avgdata 21256maxresident)k
-Hits               207829 ( 31.804492%)
-Unknowns            15007 (  2.296552%)
-Avg Time Thru      135618 (  0.013562s)
-Hits     &  0.318045 \\\hline
-Hits      0.318045
+[./bin/tmpi 0/4 c1] 2.005939e+01 seconds. At src/threaded-mpi.c:543
+Hits               204328 ( 31.268727%)
+Unknowns            15843 (  2.424486%)
+Avg Time Thru      316092 (  0.031609s)
+Hits     &  0.312687 \\\hline
+Hits      0.312687
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=2;
-[./bin/tmpi 0/4 c1] 2.936392e+01 seconds. At src/threaded-mpi.c:542
-95.43user 13.06system 0:21.49elapsed 504%CPU (0avgtext+0avgdata 23452maxresident)k
-Hits               211902 ( 32.427792%)
-Unknowns            15655 (  2.395716%)
-Avg Time Thru       62100 (  0.006210s)
-Hits     &  0.324278 \\\hline
-Hits      0.324278
+[./bin/tmpi 0/4 c1] 2.675826e+01 seconds. At src/threaded-mpi.c:543
+Hits               204476 ( 31.291376%)
+Unknowns            14633 (  2.239318%)
+Avg Time Thru       66255 (  0.006626s)
+Hits     &  0.312914 \\\hline
+Hits      0.312914
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=3;
-[./bin/tmpi 0/4 c1] 2.607126e+01 seconds. At src/threaded-mpi.c:542
-82.27user 12.13system 0:18.27elapsed 516%CPU (0avgtext+0avgdata 23316maxresident)k
-Hits               204654 ( 31.318616%)
-Unknowns            15321 (  2.344604%)
-Avg Time Thru       60569 (  0.006057s)
-Hits     &  0.313186 \\\hline
-Hits      0.313186
+[./bin/tmpi 0/4 c1] 2.514755e+01 seconds. At src/threaded-mpi.c:543
+Hits               204879 ( 31.353048%)
+Unknowns            13580 (  2.078175%)
+Avg Time Thru       71919 (  0.007192s)
+Hits     &  0.313530 \\\hline
+Hits      0.313530
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=4;
-[./bin/tmpi 0/4 c1] 2.650270e+01 seconds. At src/threaded-mpi.c:542
-83.68user 12.16system 0:18.61elapsed 514%CPU (0avgtext+0avgdata 21336maxresident)k
-Hits               204483 ( 31.292447%)
-Unknowns            17265 (  2.642098%)
-Avg Time Thru       86287 (  0.008629s)
-Hits     &  0.312924 \\\hline
-Hits      0.312924
+[./bin/tmpi 0/4 c1] 2.291301e+01 seconds. At src/threaded-mpi.c:543
+Hits               204282 ( 31.261688%)
+Unknowns            14463 (  2.213302%)
+Avg Time Thru       61086 (  0.006109s)
+Hits     &  0.312617 \\\hline
+Hits      0.312617
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=5;
-[./bin/tmpi 0/4 c1] 2.620120e+01 seconds. At src/threaded-mpi.c:542
-82.82user 12.33system 0:18.38elapsed 517%CPU (0avgtext+0avgdata 23684maxresident)k
-Hits               204832 ( 31.345855%)
-Unknowns            14650 (  2.241919%)
-Avg Time Thru       75517 (  0.007552s)
-Hits     &  0.313459 \\\hline
-Hits      0.313459
+[./bin/tmpi 0/4 c1] 2.270391e+01 seconds. At src/threaded-mpi.c:543
+Hits               204157 ( 31.242559%)
+Unknowns            15600 (  2.387300%)
+Avg Time Thru       84799 (  0.008480s)
+Hits     &  0.312426 \\\hline
+Hits      0.312426
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=6;
-[./bin/tmpi 0/4 c1] 2.730260e+01 seconds. At src/threaded-mpi.c:542
-84.82user 12.63system 0:18.71elapsed 520%CPU (0avgtext+0avgdata 22580maxresident)k
-Hits               204207 ( 31.250210%)
-Unknowns            17458 (  2.671633%)
-Avg Time Thru      101594 (  0.010159s)
-Hits     &  0.312502 \\\hline
-Hits      0.312502
+[./bin/tmpi 0/4 c1] 2.055218e+01 seconds. At src/threaded-mpi.c:543
+Hits               204228 ( 31.253424%)
+Unknowns            17187 (  2.630161%)
+Avg Time Thru       62426 (  0.006243s)
+Hits     &  0.312534 \\\hline
+Hits      0.312534
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=7;
-[./bin/tmpi 0/4 c1] 2.654028e+01 seconds. At src/threaded-mpi.c:542
-80.72user 13.67system 0:17.62elapsed 535%CPU (0avgtext+0avgdata 21024maxresident)k
-Hits               204311 ( 31.266126%)
-Unknowns            17814 (  2.726112%)
-Avg Time Thru       88058 (  0.008806s)
-Hits     &  0.312661 \\\hline
-Hits      0.312661
+[./bin/tmpi 0/4 c1] 2.094687e+01 seconds. At src/threaded-mpi.c:543
+Hits               204100 ( 31.233836%)
+Unknowns            15689 (  2.400919%)
+Avg Time Thru       90993 (  0.009099s)
+Hits     &  0.312338 \\\hline
+Hits      0.312338
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=8;
-[./bin/tmpi 0/4 c1] 2.352576e+01 seconds. At src/threaded-mpi.c:542
-68.24user 13.17system 0:14.17elapsed 574%CPU (0avgtext+0avgdata 29700maxresident)k
-Hits               204958 ( 31.365137%)
-Unknowns            15139 (  2.316752%)
-Avg Time Thru      174092 (  0.017409s)
-Hits     &  0.313651 \\\hline
-Hits      0.313651
+[./bin/tmpi 0/4 c1] 2.214909e+01 seconds. At src/threaded-mpi.c:543
+Hits               204346 ( 31.271482%)
+Unknowns            17098 (  2.616542%)
+Avg Time Thru      117435 (  0.011744s)
+Hits     &  0.312715 \\\hline
+Hits      0.312715
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=9;
-[./bin/tmpi 0/4 c1] 2.408470e+01 seconds. At src/threaded-mpi.c:542
-71.61user 13.50system 0:15.13elapsed 562%CPU (0avgtext+0avgdata 21060maxresident)k
-Hits               204261 ( 31.258474%)
-Unknowns            14873 (  2.276045%)
-Avg Time Thru       82881 (  0.008288s)
-Hits     &  0.312585 \\\hline
-Hits      0.312585
+[./bin/tmpi 0/4 c1] 2.200938e+01 seconds. At src/threaded-mpi.c:543
+Hits               205167 ( 31.397121%)
+Unknowns            14900 (  2.280177%)
+Avg Time Thru       56262 (  0.005626s)
+Hits     &  0.313971 \\\hline
+Hits      0.313971
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=10;
-[./bin/tmpi 0/4 c1] 2.311489e+01 seconds. At src/threaded-mpi.c:542
-66.79user 13.03system 0:13.85elapsed 576%CPU (0avgtext+0avgdata 22872maxresident)k
-Hits               204410 ( 31.281276%)
-Unknowns            15884 (  2.430761%)
-Avg Time Thru       82943 (  0.008294s)
-Hits     &  0.312813 \\\hline
-Hits      0.312813
+[./bin/tmpi 0/4 c1] 2.299932e+01 seconds. At src/threaded-mpi.c:543
+Hits               204251 ( 31.256944%)
+Unknowns            18626 (  2.850374%)
+Avg Time Thru      140296 (  0.014030s)
+Hits     &  0.312569 \\\hline
+Hits      0.312569
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=11;
-[./bin/tmpi 0/4 c1] 2.325799e+01 seconds. At src/threaded-mpi.c:542
-67.32user 13.54system 0:14.06elapsed 574%CPU (0avgtext+0avgdata 22888maxresident)k
-Hits               204370 ( 31.275155%)
-Unknowns            15084 (  2.308335%)
-Avg Time Thru      103702 (  0.010370s)
-Hits     &  0.312752 \\\hline
-Hits      0.312752
+[./bin/tmpi 0/4 c1] 2.287692e+01 seconds. At src/threaded-mpi.c:543
+Hits               204257 ( 31.257862%)
+Unknowns            16245 (  2.486005%)
+Avg Time Thru      134442 (  0.013444s)
+Hits     &  0.312579 \\\hline
+Hits      0.312579
 ./bin/tmpi; kParam=100; dim=22; precision=1.000000e-08; radiusF=2.500000e-01; minExamplesPerCluster=20; noveltyF=1.400000e+00;
 ./bin/tmpi; outputMode=2; nClassifiers=1; packetSize=12;
-[./bin/tmpi 0/4 c1] 2.289701e+01 seconds. At src/threaded-mpi.c:542
-66.49user 12.54system 0:13.77elapsed 573%CPU (0avgtext+0avgdata 23156maxresident)k
-Hits               204860 ( 31.350140%)
-Unknowns            14933 (  2.285227%)
-Avg Time Thru      115634 (  0.011563s)
-Hits     &  0.313501 \\\hline
-Hits      0.313501
+[./bin/tmpi 0/4 c1] 2.246439e+01 seconds. At src/threaded-mpi.c:543
+Hits               204412 ( 31.281582%)
+Unknowns            16485 (  2.522733%)
+Avg Time Thru      108809 (  0.010881s)
+Hits     &  0.312816 \\\hline
+Hits      0.312816

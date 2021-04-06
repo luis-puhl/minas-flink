@@ -43,7 +43,7 @@ def getMatchesDf(path):
             df = pd.read_csv(filepath_or_buffer=path)
             df['id'] = df['#pointId'].astype(int)
             df['og_label'] = df['label'].str.strip()
-            df['lag'] = df['lag'].astype(int)
+            df['lag'] = df['lag'].astype(float)
             return df
         except pd.errors.ParserError as err:
             print((err, path))
@@ -148,19 +148,26 @@ def printEval(exDf, maDf, logPath=None, title=None):
     repro = totalMatches - totalExamples
     # 
     lag = 0
+    maDf.sort_values('id')
     if 'lag' in maDf:
         lag = maDf['lag'].mean()
         # 
-        maDf['lag'] = maDf['lag'] * 10e-8
-        y_mean = [lag * 10e-8] * max(maDf.index)
+        y_mean = [lag] * max(maDf.index)
         dpi=300
-        ax = maDf[['lag']].plot(title=title + ' lag', figsize=(1920 / dpi, 1080 / dpi), legend=False, markersize=5)
+        ax = maDf[['lag']].plot(title=title + ' lag', figsize=(1920 / dpi, 1080 / dpi), legend=False, markersize=3)
         mean_line = ax.plot(y_mean, label='mean', linestyle='--')
         legend = ax.legend(loc='upper right', fontsize='xx-small')
-        maxTime = max(maDf['lag'])
-        minTime = min(maDf['lag'])
-        tenth = (maxTime - minTime) * 0.04
-        ax.vlines(x=xcoords, ymin=(minTime - tenth), ymax=(maxTime + tenth), colors='gray', ls='--', lw=0.5, label='vline_multiple')
+        lagMax = max(maDf['lag'])
+        lagMin = min(maDf['lag'])
+        print('lagMin, lagMax', lagMin, lagMax)
+        tenth = (lagMax - lagMin) * 0.04
+        ax.vlines(x=xcoords, ymin=(lagMin - tenth), ymax=(lagMax + tenth), colors='gray', ls='--', lw=0.5, label='vline_multiple')
+        if tenth < 0.001 or lag < 1:
+            ax.set_yscale("log")
+            bottom, top = ax.get_ylim()
+            ymin = min(lagMin, bottom)
+            ax.set_ylim(bottom=ymin, top=top)
+            print('ylim', (bottom, top), (ymin, top), ax.get_ylim())
         ax.get_xaxis().set_major_formatter(matplotlib.ticker.EngFormatter())
         ax.get_yaxis().set_major_formatter(matplotlib.ticker.EngFormatter(unit='s'))
         plotSavePath = logPath.replace('.log', '-lag.log.png')
@@ -177,7 +184,8 @@ def printEval(exDf, maDf, logPath=None, title=None):
     print('Unknowns         %8d (%10f%%)' % (unknowns, (unknowns/tot) * 100.0))
     print('Unk. reprocessed %8d (%10f%%)' % (repro, (repro/unknowns) * 100.0))
     print('Total            %8d (%10f%%)' % (hits + misses + unknowns, ((hits + misses + unknowns)/tot) * 100.0))
-    print('Avg Time Thru    %8d (%10fs)' % (lag, lag * 10e-8))
+    if 'lag' in maDf:
+        print('Avg Time Thru    %10fs)' % lag)
     #
     tm = getTimeFromLog(logPath)
     resume = pd.DataFrame({

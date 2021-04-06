@@ -1,12 +1,13 @@
 #define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ctype.h>
 #include <err.h>
 #include <errno.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
 #include <time.h>
-#include <ctype.h>
 #include <unistd.h>
 
 #include "./base.h"
@@ -60,6 +61,9 @@ int main(int argc, char const *argv[]) {
     size_t n = 0;
     Cluster cluster;
     cluster.center = calloc(minasParams.dim, sizeof(double));
+    long lagMax = 0, lagMin = 0;
+    struct timespec timeStart, timeEnd;
+    clock_gettime(CLOCK_REALTIME, &(timeStart));
     while (!feof(stdin)) {
         clock_t t0 = clock();
         char lineType = getMfogLine(stdin, &lineptr, &n, minasParams.k, minasParams.dim, &cluster, &sample);
@@ -86,7 +90,7 @@ int main(int argc, char const *argv[]) {
             continue;
         }
         sample.id = minasState.nextId;
-        sample.timeIn = clock();
+        clock_gettime(CLOCK_REALTIME, &(sample.timeIn));
         minasState.currId = sample.id;
         minasState.nextId++;
         assert(minasState.model.size >= minasParams.k);
@@ -127,24 +131,29 @@ int main(int argc, char const *argv[]) {
             clock_t t6 = clock();
             ioTime += t6 - t5;
         }
-        clock_t lag = clock() - sample.timeIn;
         if (args.outputMode >= MFOG_OUTPUT_MINIMAL) {
-          printf("%20lu,%s,%ld\n", sample.id, printableLabelReuse(sample.label, label), lag);
-          fflush(stdout);
+            struct timespec out;
+            clock_gettime(CLOCK_REALTIME, &(out));
+            long double lag = timespecdiff(&out, &(sample.timeIn), NULL);
+            if (lagMax == 0 || lagMax < lag) {
+                lagMax = lag;
+            }
+            if (lagMin == 0 || lagMin > lag) {
+                lagMin = lag;
+            }
+            printf("%20lu,%s,%Lf\n", sample.id, printableLabelReuse(sample.label, label), lag);
+            fflush(stdout);
         }
     }
+    clock_gettime(CLOCK_REALTIME, &(timeEnd));
+    // 
     char *stats = calloc(minasState.model.size * 30, sizeof(char));
     restoreSleep(&minasParams, &minasState);
     fprintf(stderr, "[classifier] Statistics: %s\n", labelMatchStatistics(&minasState.model, stats));
+    long double f = timespecdiff(&timeEnd, &timeStart, NULL);
+    fprintf(stderr, "[lag] min=%ld, max=%ld, avg=%Lf, time=%Lf\n", lagMin, lagMax, f/n, f);
     free(stats);
-    // free(minasParams);
     free(minasState.unknowns);
-    // free(minasState.model.clusters);
-    // free(minasState.model);
-    // free(minasState.sleep->clusters);
-    // free(minasState.sleep);
-    // free(minasState);
-    // free(args);
     double ioTime_d = ((double)ioTime) / 1000000.0;
     double cpuTime_d = ((double)cpuTime) / 1000000.0;
     double lockTime_d = ((double)lockTime) / 1000000.0;

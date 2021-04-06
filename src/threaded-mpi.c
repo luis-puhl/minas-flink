@@ -46,43 +46,61 @@ typedef struct ThreadArgs_st {
             args->mpiRank, items, ioTime_d, cpuTime_d, lockTime_d, totalTime_d, __FILE__, __LINE__);
 //
 
+#define PACK_SIZE_MAX 12
+#define DIM_MAX 22
+struct sample {
+    unsigned long id; // MAX 4294967295
+    unsigned int label;
+    struct timespec timeIn;
+    double val[DIM_MAX];
+};
+struct fixedMessage {
+    int size;
+    struct sample samples[PACK_SIZE_MAX];
+};
+
 void *classifier(void *arg) {
     clock_t start = clock();
     ThreadArgs *args = arg;
     unsigned int dim = args->minasParams->dim;
     fprintf(stderr, "[classifier %d]\n", args->mpiRank);
-    Example example;
-    double valuePtr[dim];
+    Example* example;
+    // double valuePtr[dim];
     unsigned long items = 0, sends = 0;
     //
-    int exampleBufferLen, valueBufferLen, packSizeBufferLen;
+    // int exampleBufferLen, valueBufferLen, packSizeBufferLen;
     int mpiReturn;
-    assertMpi(MPI_Pack_size(1, MPI_INT, MPI_COMM_WORLD, &packSizeBufferLen));
-    assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
-    assertMpi(MPI_Pack_size(dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
-    int bufferSize = packSizeBufferLen
-         + (exampleBufferLen + valueBufferLen) * args->packetSize
-         + 2 * MPI_BSEND_OVERHEAD;
-    int *inBuffer = (int *)malloc(bufferSize);
-    int *outBuffer = (int *)malloc(bufferSize);
+    // assertMpi(MPI_Pack_size(1, MPI_INT, MPI_COMM_WORLD, &packSizeBufferLen));
+    // assertMpi(MPI_Pack_size(sizeof(Example), MPI_BYTE, MPI_COMM_WORLD, &exampleBufferLen));
+    // assertMpi(MPI_Pack_size(dim, MPI_DOUBLE, MPI_COMM_WORLD, &valueBufferLen));
+    // int bufferSize = packSizeBufferLen
+    //      + (exampleBufferLen + valueBufferLen) * args->packetSize
+    //      + 2 * MPI_BSEND_OVERHEAD;
+    // int *inBuffer = (int *)malloc(bufferSize);
+    // int *outBuffer = (int *)malloc(bufferSize);
+    // 
+    struct fixedMessage msg;
+    // 
     clock_t ioTime = 0, cpuTime = 0, lockTime = 0;
     int packetSize = 0, currentPacket = 0, rcvPosition = 0, sendPosition = 0;
     while (1) {
         clock_t l0 = clock();
         if (packetSize == 0) {
-            assertMpi(MPI_Recv(inBuffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
-            rcvPosition = 0;
-            currentPacket = 0;
-            assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, &packetSize, 1, MPI_INT, MPI_COMM_WORLD));
-            sendPosition = 0;
-            assertMpi(MPI_Pack(&packetSize, 1, MPI_INT, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
+            assertMpi(MPI_Recv(&msg, sizeof(struct fixedMessage), MPI_BYTE, MPI_ROOT, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+            // assertMpi(MPI_Recv(inBuffer, bufferSize, MPI_PACKED, MPI_ANY_SOURCE, MFOG_TAG_EXAMPLE, MPI_COMM_WORLD, MPI_STATUS_IGNORE));
+            // rcvPosition = 0;
+            // currentPacket = 0;
+            // assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, &packetSize, 1, MPI_INT, MPI_COMM_WORLD));
+            // sendPosition = 0;
+            // assertMpi(MPI_Pack(&packetSize, 1, MPI_INT, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
         }
+        example = (Example*) & msg.samples[currentPacket];
+        example->val = (double *) & msg.samples[currentPacket].val;
         currentPacket++;
-        assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
-        assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, valuePtr, dim, MPI_DOUBLE, MPI_COMM_WORLD));
-        example.val = valuePtr;
-        if (example.label == MFOG_EOS_MARKER) {
-            assertMpi(MPI_Send(inBuffer, rcvPosition, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+        // assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, &example, sizeof(Example), MPI_BYTE, MPI_COMM_WORLD));
+        // assertMpi(MPI_Unpack(inBuffer, bufferSize, &rcvPosition, valuePtr, dim, MPI_DOUBLE, MPI_COMM_WORLD));
+        if (example->label == MFOG_EOS_MARKER) {
+            assertMpi(MPI_Send(&msg, sizeof(struct fixedMessage), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             break;
         }
         // fprintf(stderr, "[classifier %d] id %u\n", args->mpiRank, example.id);
@@ -97,26 +115,27 @@ void *classifier(void *arg) {
         clock_t l2 = clock();
         lockTime += l2 - l1;
         Match match;
-        identify(args->minasParams, args->minasState, &example, &match);
+        identify(args->minasParams, args->minasState, example, &match);
         items++;
-        example.label = match.label;
+        example->label = match.label;
         clock_t l3 = clock();
         cpuTime += (l3 - l2);
         pthread_rwlock_unlock(&args->modelLock);
         //
-        assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
-        assertMpi(MPI_Pack(valuePtr, dim, MPI_DOUBLE, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
+        // assertMpi(MPI_Pack(&example, sizeof(Example), MPI_BYTE, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
+        // assertMpi(MPI_Pack(valuePtr, dim, MPI_DOUBLE, outBuffer, bufferSize, &sendPosition, MPI_COMM_WORLD));
         // if (example.label == MINAS_UNK_LABEL || match.cluster->isIntrest) {
         if (currentPacket == packetSize) {
-            assertMpi(MPI_Send(outBuffer, sendPosition, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+            // assertMpi(MPI_Send(outBuffer, sendPosition, MPI_PACKED, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
+            assertMpi(MPI_Send(&msg, sizeof(struct fixedMessage), MPI_BYTE, MFOG_RANK_MAIN, MFOG_TAG_UNKNOWN, MPI_COMM_WORLD));
             sends++;
             packetSize = 0;
         }
         clock_t l4 = clock();
         ioTime += (l4 - l3);
     }
-    free(outBuffer);
-    free(inBuffer);
+    // free(outBuffer);
+    // free(inBuffer);
     fprintf(stderr, "[classifier %d] sends %lu\n", args->mpiRank, sends);
     printTiming("classifier");
     return NULL;
@@ -539,7 +558,8 @@ int main(int argc, char const *argv[]) {
             }
         }
         fprintf(stderr, "[root    ] Statistics %s\n", labelMatchStatistics(&minasState.model, stats));
-        fprintf(stderr, "[%s %d/%d c%d] %le seconds. At %s:%d\n", argv[0], args.mpiRank, args.mpiSize, args.nClassifiers, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
+        fprintf(stderr, "[%s %d/%d c%d] %le seconds. At %s:%d\n",
+            argv[0], args.mpiRank, args.mpiSize, args.nClassifiers, ((double)clock() - start) / 1000000.0, __FILE__, __LINE__);
     }
     free(root_matches);
     free(root_misses);

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 // #include <unistd.h>
 #include <ctype.h>
+#include <limits.h>
 #include <math.h>
 
 #include "./base.h"
@@ -112,6 +113,10 @@ double kMeans(int kParam, int dim, double precision, Cluster clusters[], Example
     } while (fabs(improvement) > precision && iteration < 100);
     return globalDistance;
 }
+
+// Cluster cluStream() {
+    
+// }
 
 Cluster* clustering(MinasParams *params, Example trainingSet[], unsigned int trainingSetSize, unsigned int initalId) {
     Cluster *clusters = kMeansInit(params->k, params->dim, trainingSet, trainingSetSize, initalId);
@@ -554,6 +559,16 @@ char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, un
         free(cl);
     }
     return ret;
+}
+
+long double timespecdiff(struct timespec *a, struct timespec *b, struct timespec *diff) {
+    long tv_sec = a->tv_sec - b->tv_sec;
+    long tv_nsec = a->tv_nsec - b->tv_nsec;
+    if (diff != NULL) {
+        diff->tv_sec = tv_sec;
+        diff->tv_nsec = tv_nsec;
+    }
+    return tv_sec + tv_nsec / 1e9;
 }
 
 #endif // _BASE_C

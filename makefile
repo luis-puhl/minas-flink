@@ -25,7 +25,7 @@ out/offline-model.csv: datasets/training.csv bin/offline
 	-@mkdir -p experiments
 	cat datasets/training.csv | $(TIME) ./bin/offline > out/offline-model.csv 2> experiments/offline-model.log
 
-experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond
+experiments/online-nd.log: out/offline-model.csv datasets/test.csv bin/ond src/evaluation/evaluate.py
 	-@mkdir -p experiments
 	cat out/offline-model.csv datasets/test.csv | $(TIME) ./bin/ond > out/ond-0full.csv 2> $@
 	-grep -E -v '^(Unknown|Cluster):' out/ond-0full.csv > out/ond-1matches.csv

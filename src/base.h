@@ -35,7 +35,7 @@
 typedef struct t_example {
     unsigned long id; // MAX 4294967295
     unsigned int label;
-    clock_t timeIn;
+    struct timespec timeIn;
     double *val;
 } Example;
 
@@ -140,5 +140,7 @@ char getMfogLine(FILE *fd, char **line, size_t *lineLen, unsigned int kParam, un
 
 int printCluster(int dim, Cluster *cl);
 char *labelMatchStatistics(Model *model, char *stats);
+
+long double timespecdiff(struct timespec *a, struct timespec *b, struct timespec *diff);
 
 #endif // _BASE_H
